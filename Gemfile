@@ -8,6 +8,8 @@ ruby "3.4.1"
 gem "bootsnap", require: false
 # Bundle and process CSS [https://github.com/rails/cssbundling-rails]
 gem "cssbundling-rails"
+# Flexible authentication solution for Rails with Warden
+gem "devise", "~> 4.9"
 # Use Active Storage variants [https://guides.rubyonrails.org/active_storage_overview.html#transforming-images]
 # gem "image_processing", "~> 1.2"
 # Build JSON APIs with ease [https://github.com/rails/jbuilder]
