@@ -19,8 +19,7 @@ gem "cssbundling-rails"
 # gem "image_processing", "~> 1.2"
 # Authentication
 gem "devise", "~> 4.9", ">= 4.9.4"
-# Two-factor authentication (2FA) support to Devise for enhanced account security
-gem "devise-two-factor", "~> 6.1"
+
 # Build JSON APIs with ease [https://github.com/rails/jbuilder]
 gem "jbuilder"
 # Bundle and transpile JavaScript [https://github.com/rails/jsbundling-rails]
