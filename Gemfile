@@ -4,11 +4,12 @@ ruby "3.4.1"
 
 # Use Active Model has_secure_password [https://guides.rubyonrails.org/active_model_basics.html#securepassword]
 
-# Admin panel framework
+# A framework for creating elegant and customizable admin panels
 gem "activeadmin", "~> 3.2", ">= 3.2.5"
 # gem "bcrypt", "~> 3.1.7"
-# Style framework
+# Provides a front-end framework with responsive design, pre-styled components
 gem "bootstrap", "~> 5.3", ">= 5.3.3"
+# Sass compiler
 gem "sassc", "~> 2.4"
 # Reduces boot times through caching; required in config/boot.rb
 gem "bootsnap", require: false
@@ -18,6 +19,7 @@ gem "cssbundling-rails"
 # gem "image_processing", "~> 1.2"
 # Authentication
 gem "devise", "~> 4.9", ">= 4.9.4"
+# Two-factor authentication (2FA) support to Devise for enhanced account security
 gem "devise-two-factor", "~> 6.1"
 # Build JSON APIs with ease [https://github.com/rails/jbuilder]
 gem "jbuilder"
@@ -51,19 +53,25 @@ group :development, :test do
   gem "brakeman", require: false
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "debug", platforms: %i[ mri windows ], require: "debug/prelude"
-
+  # Loads environment variables from '.env'
   gem "dotenv"
 
+  # Provides fixtures replacement for easier test object creation
   gem "factory_bot_rails"
+  # # Generates fake data for testing
   gem "faker"
+  # Handles Cross-Origin Resource Sharing (CORS) for secure API requests
   gem "rack-cors"
+  # Testing framework for Rails applications, providing tools for writing and running tests
   gem "rspec-rails"
 
   # Rubocop Ruby on Rails Style
   gem "rubocop"
   gem "rubocop-rails", require: false
 
+  # Opens sent emails in the browser for easy debugging during development
   gem "letter_opener"
+  # Provides simple and clean one-liner tests for Rails models, controllers, and other components.
   gem "shoulda-matchers"
 end
 
