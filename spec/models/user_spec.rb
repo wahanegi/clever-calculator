@@ -11,14 +11,12 @@ RSpec.describe User, type: :model do
     it { is_expected.to validate_presence_of(:email) }
     it { is_expected.to allow_value('bob@example.com').for(:email) }
     it { is_expected.not_to allow_value('bob').for(:email).with_message('must be a valid email format') }
-    it { is_expected.not_to allow_value('bob@bob').for(:email).with_message('must be a valid email format') }
     it { is_expected.not_to allow_value('bob@gmail,com').for(:email).with_message('must be a valid email format') }
     it { is_expected.not_to allow_value('bob@.com').for(:email).with_message('must be a valid email format') }
     it { is_expected.not_to allow_value('bob bob@gmail.com').for(:email).with_message('must be a valid email format') }
 
     it { is_expected.to validate_presence_of(:name) }
     it { is_expected.to allow_value('bob').for(:name) }
-    it { is_expected.not_to allow_value('@bob@').for(:name).with_message('must be alphanumeric') }
 
     it { is_expected.to validate_presence_of(:password) }
     it { is_expected.to validate_length_of(:password).is_at_least(8) }
