@@ -44,11 +44,20 @@ group :development, :test do
   gem "brakeman", require: false
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "debug", platforms: %i[ mri windows ], require: "debug/prelude"
-
+  # Loads environment variables from '.env'
   gem "dotenv"
+
+  # Provides fixtures replacement for easier test object creation
+  gem "factory_bot_rails"
+  # Generates fake data for testing
+  gem "faker"
+  # Testing framework for Rails applications, providing tools for writing and running tests
+  gem "rspec-rails"
 
   # Rubocop Ruby on Rails Style
   gem "rubocop-rails", require: false
+  # Provides simple and clean one-liner tests for Rails models, controllers, and other components.
+  gem "shoulda-matchers"
 end
 
 group :development do
