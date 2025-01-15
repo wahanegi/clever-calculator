@@ -33,7 +33,8 @@ RSpec.describe User, type: :model do
 
     it 'does not allow a password longer than 128 characters' do
       long_password = 'a' * 129
-      is_expected.not_to allow_value(long_password).for(:password).with_message("is too long (maximum is 128 characters)")
+      is_expected.not_to allow_value(long_password).for(:password)
+                                                   .with_message('is too long (maximum is 128 characters)')
     end
 
     it 'does not allow duplicate emails' do
