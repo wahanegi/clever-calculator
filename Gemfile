@@ -56,6 +56,8 @@ group :development, :test do
 
   # Rubocop Ruby on Rails Style
   gem "rubocop-rails", require: false
+  gem "rubocop-rspec_rails", require: false
+
   # Provides simple and clean one-liner tests for Rails models, controllers, and other components.
   gem "shoulda-matchers"
 end
