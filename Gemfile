@@ -3,13 +3,22 @@ source "https://rubygems.org"
 ruby "3.4.1"
 
 # Use Active Model has_secure_password [https://guides.rubyonrails.org/active_model_basics.html#securepassword]
+
+# Admin panel framework
+gem "activeadmin", "~> 3.2", ">= 3.2.5"
 # gem "bcrypt", "~> 3.1.7"
+# Style framework
+gem "bootstrap", "~> 5.3", ">= 5.3.3"
+gem "sassc", "~> 2.4"
 # Reduces boot times through caching; required in config/boot.rb
 gem "bootsnap", require: false
 # Bundle and process CSS [https://github.com/rails/cssbundling-rails]
 gem "cssbundling-rails"
 # Use Active Storage variants [https://guides.rubyonrails.org/active_storage_overview.html#transforming-images]
 # gem "image_processing", "~> 1.2"
+# Authentication
+gem "devise", "~> 4.9", ">= 4.9.4"
+gem "devise-two-factor", "~> 5.1"
 # Build JSON APIs with ease [https://github.com/rails/jbuilder]
 gem "jbuilder"
 # Bundle and transpile JavaScript [https://github.com/rails/jsbundling-rails]
@@ -45,8 +54,17 @@ group :development, :test do
 
   gem "dotenv"
 
+  gem "factory_bot_rails"
+  gem "faker"
+  gem "rack-cors"
+  gem "rspec-rails"
+
   # Rubocop Ruby on Rails Style
+  gem "rubocop"
   gem "rubocop-rails", require: false
+
+  gem "letter_opener"
+  gem "shoulda-matchers"
 end
 
 group :development do
