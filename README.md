@@ -19,12 +19,12 @@ ___
 
 ___
 ## Technologies and System dependencies
-Ruby 3.4.1
-Rails 8.0.1
-PostgreSQL
-Bootstrap
-React.js
-esbuild (for JavaScript bundling)
+- Ruby 3.4.1
+- Rails 8.0.1
+- PostgreSQL
+- Bootstrap
+- React.js
+- esbuild (for JavaScript bundling)
 
 ## Additional Files
 
