@@ -58,7 +58,7 @@ group :development, :test do
 
   # Provides fixtures replacement for easier test object creation
   gem "factory_bot_rails"
-  # # Generates fake data for testing
+  # Generates fake data for testing
   gem "faker"
   # Handles Cross-Origin Resource Sharing (CORS) for secure API requests
   gem "rack-cors"
