@@ -31,6 +31,11 @@ RSpec.describe User, type: :model do
       is_expected.not_to allow_value('!23456').for(:password).with_message('is too short (minimum is 8 characters)')
     }
 
+    it 'does not allow a password longer than 128 characters' do
+      long_password = 'a' * 129
+      is_expected.not_to allow_value(long_password).for(:password).with_message("is too long (maximum is 128 characters)")
+    end
+
     it 'does not allow duplicate emails' do
       create(:user, email: 'duplicate@example.com')
       duplicate_user = build(:user, email: 'duplicate@example.com')
