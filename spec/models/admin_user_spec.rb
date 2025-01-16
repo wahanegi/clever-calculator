@@ -1,5 +1,11 @@
 require 'rails_helper'
 
 RSpec.describe AdminUser, type: :model do
-  pending "add some examples to (or delete) #{__FILE__}"
+  subject { build(:admin_user) }
+
+  it 'is expect to have valid factory' do
+    expect(subject).to be_valid
+  end
+
+  it_behaves_like 'validatable user'
 end
