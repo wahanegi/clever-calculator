@@ -1,8 +1,9 @@
 # Welcome to the Clever Calculator app
 ## Introduction
 
-The Clever Calculator app is built using Ruby on Rails. The main functionality of this app is to help sales manager 
-to create the best price for customers.
+The Clever Calculator app is a customizable sales calculator for businesses. An admin section allows for a sales manager 
+to create and modify products and services with default pricing. Members of their sales team can then assemble quotes 
+for individual customers with a user-friendly interface.
 
 ___
 ## Table of Contents
@@ -21,10 +22,10 @@ ___
 ## Technologies and System dependencies
 - Ruby 3.4.1
 - Rails 8.0.1
-- PostgreSQL
-- Bootstrap
-- React.js
-- esbuild (for JavaScript bundling)
+- PostgreSQL 16.2
+- Bootstrap 5.3.3
+- React.js 19.0.0
+- esbuild 0.24.2 (for JavaScript bundling)
 
 ## Additional Files
 
