@@ -21,9 +21,14 @@
     <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
     <%= javascript_include_tag "application", "data-turbo-track": "reload", type: "module" %>
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+
+    <%#= TODO: Delete this styles link when the markup for Clever Calculator is ready %>
+    <%= stylesheet_link_tag "http://cdn.simplecss.org/simple.css" %>
   </head>
 
   <body>
+    <p class="notice"><%= notice %></p>
+    <p class="alert"><%= alert %></p>
     <%= yield %>
   </body>
 </html>

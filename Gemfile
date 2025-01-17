@@ -67,6 +67,7 @@ group :development, :test do
   # Rubocop Ruby on Rails Style
   gem "rubocop"
   gem "rubocop-rails", require: false
+  gem "rubocop-rspec_rails", require: false
 
   # Opens sent emails in the browser for easy debugging during development
   gem "letter_opener"
