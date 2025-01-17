@@ -8,24 +8,12 @@ RSpec.shared_examples 'validatable user' do
     it { is_expected.to validate_presence_of(:email) }
     it { is_expected.to allow_value('bob@example.com').for(:email) }
 
-    # Testing a list of invalid email addresses (example as different from the following 4)
     invalid_emails = ['bob', 'bob@gmail,com', 'bob@.com', 'bob bob@gmail.com']
     invalid_emails.each do |email|
       it { is_expected.not_to allow_value(email).for(:email).with_message('must be a valid email format') }
     end
-    # it { is_expected.not_to allow_value('bob').for(:email).with_message('must be a valid email format') }
-    # it { is_expected.not_to allow_value('bob@gmail,com').for(:email).with_message('must be a valid email format') }
-    # it { is_expected.not_to allow_value('bob@.com').for(:email).with_message('must be a valid email format') }
-    # it { is_expected.not_to allow_value('bob bob@gmail.com').for(:email).with_message('must be a valid email format') }
 
-    it { is_expected.to validate_uniqueness_of(:email).case_insensitive } # example for does not allow duplicate emails
-
-    # it 'does not allow duplicate emails' do
-    #   create(:user, email: 'duplicate@example.com')
-    #   duplicate_user = build(:user, email: 'duplicate@example.com')
-    #   expect(duplicate_user).not_to be_valid
-    #   expect(duplicate_user.errors[:email]).to include('has already been taken')
-    # end
+    it { is_expected.to validate_uniqueness_of(:email).case_insensitive }
   end
 
   context 'validations for password' do
