@@ -1,6 +1,7 @@
 # Add rules from rubocop-rails
 require:
   - rubocop-rails
+  - rubocop-rspec_rails
 
 # Overwrite or add rules to create your own house style
 #
@@ -31,3 +32,11 @@ Layout/SpaceInsidePercentLiteralDelimiters:
 
 Bundler/OrderedGems:
   Enabled: true
+
+Metrics/MethodLength:
+  Exclude:
+    - db/migrate/*.rb
+
+Metrics/BlockLength:
+  Exclude:
+    - spec/**/*
