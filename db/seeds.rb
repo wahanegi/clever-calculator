@@ -9,7 +9,9 @@
 #   end
 
 if Rails.env.development?
+  Rails.logger.info 'Creating Admin User'
   AdminUser.create!(email: 'admin@example.com',
-                    password: 'password',
-                    password_confirmation: 'password')
+                    name: 'Admin User',
+                    password: 'password@1',
+                    password_confirmation: 'password@1')
 end
