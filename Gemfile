@@ -2,7 +2,6 @@ source "https://rubygems.org"
 
 ruby "3.4.1"
 
-
 # A framework for creating elegant and customizable admin panels
 gem "activeadmin", "~> 3.2", ">= 3.2.5"
 # Use Active Model has_secure_password [https://guides.rubyonrails.org/active_model_basics.html#securepassword]
