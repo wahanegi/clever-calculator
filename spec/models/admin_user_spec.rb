@@ -1,7 +1,7 @@
 require 'rails_helper'
 
-RSpec.describe User, type: :model do
-  subject { build(:user) }
+RSpec.describe AdminUser, type: :model do
+  subject { build(:admin_user) }
 
   context 'factory' do
     it 'is expect to have valid factory' do
