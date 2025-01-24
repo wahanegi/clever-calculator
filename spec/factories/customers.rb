@@ -1,11 +1,11 @@
 FactoryBot.define do
   factory :customer do
-    company_name { "MyString" }
-    first_name { "MyString" }
-    last_name { "MyString" }
-    email { "MyString" }
-    position { "MyString" }
-    address { "MyString" }
-    notes { "MyText" }
+    company_name { Faker::Company.unique.name }
+    first_name { Faker::Name.first_name }
+    last_name { Faker::Name.last_name }
+    email { Faker::Internet.email }
+    position { Faker::Job.title }
+    address { Faker::Address.full_address }
+    notes { Faker::Lorem.sentence }
   end
 end
