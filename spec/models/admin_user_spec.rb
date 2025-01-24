@@ -3,13 +3,13 @@ require 'rails_helper'
 RSpec.describe AdminUser, type: :model do
   subject { build(:admin_user) }
 
-  context 'Validations' do
-    describe 'factory' do
-      it 'is expect to have valid factory' do
-        expect(subject).to be_valid
-      end
+  context 'factory' do
+    it 'is expect to have valid factory' do
+      expect(subject).to be_valid
     end
+  end
 
+  context 'Validations' do
     describe 'name' do
       it { is_expected.to validate_presence_of(:name) }
       it { is_expected.to allow_value('bob').for(:name) }
