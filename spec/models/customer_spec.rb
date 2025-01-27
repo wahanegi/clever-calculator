@@ -11,12 +11,14 @@ RSpec.describe Customer, type: :model do
 
       it { should validate_presence_of(:company_name) }
 
-      it do
-        customer_created
-        customer.company_name = customer_created.company_name
+      context 'when company_name is not unique' do
+        it do
+          customer_created
+          customer.company_name = customer_created.company_name
 
-        expect(customer).not_to be_valid
-        expect(customer.errors[:company_name]).to include('has already been taken')
+          expect(customer).not_to be_valid
+          expect(customer.errors[:company_name]).to include('has already been taken')
+        end
       end
     end
   end
