@@ -2,15 +2,14 @@ source "https://rubygems.org"
 
 ruby "3.4.1"
 
-# Use Active Model has_secure_password [https://guides.rubyonrails.org/active_model_basics.html#securepassword]
-
 # A framework for creating elegant and customizable admin panels
 gem "activeadmin", "~> 3.2", ">= 3.2.5"
+# Use Active Model has_secure_password [https://guides.rubyonrails.org/active_model_basics.html#securepassword]
 # gem "bcrypt", "~> 3.1.7"
 # Provides a front-end framework with responsive design, pre-styled components
 gem "bootstrap", "~> 5.3", ">= 5.3.3"
 # Sass compiler
-gem "sassc", "~> 2.4"
+gem "sass"
 # Reduces boot times through caching; required in config/boot.rb
 gem "bootsnap", require: false
 # Bundle and process CSS [https://github.com/rails/cssbundling-rails]
@@ -19,7 +18,6 @@ gem "cssbundling-rails"
 # gem "image_processing", "~> 1.2"
 # Authentication
 gem "devise", "~> 4.9", ">= 4.9.4"
-
 # Build JSON APIs with ease [https://github.com/rails/jbuilder]
 gem "jbuilder"
 # Bundle and transpile JavaScript [https://github.com/rails/jsbundling-rails]
@@ -28,8 +26,6 @@ gem "jsbundling-rails"
 gem "kamal", require: false
 # Use postgresql as the database for Active Record
 gem "pg", "~> 1.1"
-# The modern asset pipeline for Rails [https://github.com/rails/propshaft]
-gem "propshaft"
 # Use the Puma web server [https://github.com/puma/puma]
 gem "puma", ">= 5.0"
 # Bundle edge Rails instead: gem "rails", github: "rails/rails", branch: "main"
@@ -46,6 +42,8 @@ gem "tzinfo-data", platforms: %i[ windows jruby ]
 gem "solid_cable"
 gem "solid_cache"
 gem "solid_queue"
+# The modern asset pipeline for Rails [https://github.com/rails/propshaft]
+gem "sprockets-rails"
 
 group :development, :test do
   # Static analysis for security vulnerabilities [https://brakemanscanner.org/]

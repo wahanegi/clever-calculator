@@ -39,4 +39,6 @@ Metrics/MethodLength:
 
 Metrics/BlockLength:
   Exclude:
-    - spec/**/*
+    - app/admin/**/*.rb
+    - db/migrate/**/*.rb
+    - spec/**/*_spec.rb
