@@ -45,6 +45,7 @@ gem "solid_cable"
 gem "solid_cache"
 gem "solid_queue"
 # The modern asset pipeline for Rails [https://github.com/rails/propshaft]
+gem "sprockets", "~> 3.7.5"
 gem "sprockets-rails"
 
 group :development, :test do
