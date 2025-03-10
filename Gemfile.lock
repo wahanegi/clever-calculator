@@ -444,7 +444,6 @@ DEPENDENCIES
   jsbundling-rails
   kamal
   letter_opener
-  net-smtp
   pg (~> 1.1)
   puma (>= 5.0)
   rack-cors
