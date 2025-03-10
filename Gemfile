@@ -24,6 +24,8 @@ gem "jbuilder"
 gem "jsbundling-rails"
 # Deploy this application anywhere as a Docker container [https://kamal-deploy.org]
 gem "kamal", require: false
+
+gem "net-smtp"
 # Use postgresql as the database for Active Record
 gem "pg", "~> 1.1"
 # Use the Puma web server [https://github.com/puma/puma]
