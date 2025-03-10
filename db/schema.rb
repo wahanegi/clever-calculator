@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_03_07_122113) do
+ActiveRecord::Schema[8.0].define(version: 2025_03_10_130216) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -50,6 +50,21 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_07_122113) do
     t.index ["company_name"], name: "index_customers_on_company_name", unique: true
   end
 
+  create_table "item_pricings", force: :cascade do |t|
+    t.bigint "item_id", null: false
+    t.decimal "default_fixed_price", precision: 10, scale: 2
+    t.jsonb "fixed_parameters", default: {}
+    t.boolean "is_selectable_options", default: false
+    t.jsonb "pricing_options", default: {}
+    t.boolean "is_open", default: false
+    t.text "open_parameters_label", default: [], array: true
+    t.jsonb "formula_parameters", default: {}
+    t.string "calculation_formula"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["item_id"], name: "index_item_pricings_on_item_id"
+  end
+
   create_table "items", force: :cascade do |t|
     t.string "name", null: false
     t.text "description"
@@ -75,5 +90,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_07_122113) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
+  add_foreign_key "item_pricings", "items"
   add_foreign_key "items", "categories"
 end
