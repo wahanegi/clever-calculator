@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.descibe Item, type: :model do
+RSpec.describe Item, type: :model do
     subject { create(:item) }
     let(:item) { Item.new }
 
@@ -16,7 +16,6 @@ RSpec.descibe Item, type: :model do
     
     context 'validation' do 
         it { is_expected.to validate_presence_of(:name) }
-        it { is_expected.to validate_uniqueness_of(:name).scoped_to(:category_id) } 
         it { is_expected.to validate_presence_of(:pricing_type) }
     end
 

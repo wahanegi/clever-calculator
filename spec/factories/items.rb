@@ -5,6 +5,6 @@ FactoryBot.define do
         pricing_type { :fixed }
         is_disabled { false }
 
-        assosiation :category
+        association :category
     end
 end
