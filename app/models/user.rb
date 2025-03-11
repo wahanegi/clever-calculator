@@ -5,6 +5,7 @@ class User < ApplicationRecord
   PASSWORD_SYMBOL_FORMAT = /\A(?=.*[^\w\s])[^\s]*\z/
   PASSWORD_REPEATED_CHAR_FORMAT = /\A(?!.*(.)\1\1).*\z/
 
+  has_many :quotes, dependent: :destroy
   validates :name, presence: true
   validates :email, presence: true, uniqueness: true,
                     format: { with: URI::MailTo::EMAIL_REGEXP, message: "must be a valid email format" }
