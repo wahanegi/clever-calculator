@@ -38,8 +38,7 @@ RSpec.describe ItemPricing, type: :model do
         expect(item_pricing.open_parameters_label).to eq([])
       end
     end
-    
-    
+
     context "when is_open is true" do
       it "allows default_fixed_price to be nil" do
         item_pricing.is_open = true
@@ -47,13 +46,12 @@ RSpec.describe ItemPricing, type: :model do
         expect(item_pricing).to be_valid
       end
     end
-     
+
     context "when calculation_formula is present" do
       it "accepts valid formula strings" do
         item_pricing.calculation_formula = "base_price * multiplier"
         expect(item_pricing).to be_valid
       end
     end
-      
   end
 end
