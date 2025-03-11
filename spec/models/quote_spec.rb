@@ -1,6 +1,14 @@
 require 'rails_helper'
 
 RSpec.describe Quote, type: :model do
+  describe 'factory' do
+    subject { build(:quote) }
+
+    it 'is valid' do
+      is_expected.to be_valid
+    end
+  end
+
   describe 'associations' do
     it { is_expected.to belong_to(:customer).required }
     it { is_expected.to belong_to(:user).required }
