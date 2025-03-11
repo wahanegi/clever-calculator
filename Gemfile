@@ -9,7 +9,7 @@ gem "activeadmin", "~> 3.2", ">= 3.2.5"
 # Provides a front-end framework with responsive design, pre-styled components
 gem "bootstrap", "~> 5.3", ">= 5.3.3"
 # Sass compiler
-gem "sass"
+gem "sass-rails", "~> 5"
 # Reduces boot times through caching; required in config/boot.rb
 gem "bootsnap", require: false
 # Bundle and process CSS [https://github.com/rails/cssbundling-rails]
