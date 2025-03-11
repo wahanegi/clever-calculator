@@ -21,7 +21,21 @@ ActiveAdmin.register Item do
       links << link_to("View", admin_item_path(item), class: "member_link")
       links << link_to("Edit", edit_admin_item_path(item), class: "member_link")
       links << link_to("Disable", "#", class: "member_link disable-link")
+      safe_join(links)
     end
+  end
+
+  before_action only: :show do
+    active_admin_config.action_items.delete_if do |item|
+      item.name == :destroy
+    end
+  end
+
+  action_item :back, only: :show do
+    link_to "Back", admin_items_path
+  end
+  action_item :disable, only: :show do
+    link_to "Disable item", method: :put, data: { confirm: "Are you sure you want to disable this item?" }
   end
 
   show do
@@ -35,12 +49,41 @@ ActiveAdmin.register Item do
       row :is_disable
       row :created_at
       row :updated_at
-      actions defaults: true do |item|
-        if item.is_disable
-          link_to "Enable", disable_admin_item_path(item), method: :put, class: "member_link"
-        else
-          link_to "Disable", disable_admin_item_path(item), method: :put, class: "member_link"
+    end
+
+    panel "Pricing Details" do
+      item_pricing = item.item_pricing
+      if item_pricing
+        attributes_table_for item_pricing do
+          case item.pricing_type
+          when "fixed"
+            row "Price" do
+              item_pricing.default_fixed_price
+            end
+          when "fixed_open"
+            row "Fixed Parameters" do
+              pre JSON.pretty_generate(item_pricing.fixed_parameters)
+            end
+            row "Open Parameters" do
+              item_pricing.open_parameters_label.join(", ")
+            end
+            if item_pricing.is_selectable_options
+              row "Selectable Options" do
+                pre JSON.pretty_generate(item_pricing.pricing_options)
+              end
+            end
+            row "Formula Parameters" do
+              pre JSON.pretty_generate(item_pricing.formula_parameters)
+            end
+            row "Calculation Formula" do
+              item_pricing.calculation_formula
+            end
+          when "open"
+            div "This item has open pricing, no additional parameters are displayed."
+          end
         end
+      else
+        div "No pricing details available."
       end
     end
   end
