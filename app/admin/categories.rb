@@ -52,4 +52,16 @@ ActiveAdmin.register Category do
       redirect_to admin_category_path(resource), notice: resource.errors.full_messages
     end
   end
+
+  controller do
+    def create
+      @category = Category.new(permitted_params[:category])
+
+      if @category.save
+        redirect_to admin_categories_path, notice: 'Category was successfully created'
+      else
+        render :new
+      end
+    end
+  end
 end
