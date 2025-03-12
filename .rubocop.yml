@@ -46,6 +46,7 @@ Layout/LineLength:
     - app/admin/**/*.rb
     - db/migrate/**/*.rb
     - spec/**/*_spec.rb
+    - Gemfile
 
 Metrics/MethodLength:
   Exclude:
