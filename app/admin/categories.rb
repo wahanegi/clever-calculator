@@ -20,6 +20,14 @@ ActiveAdmin.register Category do
     end
   end
 
+  form do |f|
+    f.inputs do
+      f.input :name
+      f.input :description
+    end
+    f.actions
+  end
+
   # Remove the destroy button only on the show page
   config.action_items.delete_if { |item| item.name == :destroy && item.display_on?(:show) }
 
@@ -35,7 +43,7 @@ ActiveAdmin.register Category do
     if resource.update(is_disabled: true)
       redirect_to admin_categories_path, notice: 'Category was successfully disabled.'
     else
-      redirect_to admin_category_path(resource), notice: resource.errors
+      redirect_to admin_category_path(resource), notice: resource.errors.full_messages
     end
   end
 end
