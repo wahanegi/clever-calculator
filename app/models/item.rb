@@ -1,6 +1,6 @@
 class Item < ApplicationRecord
-  belongs_to :category, optional: true
-  has_one :item_pricing
+  belongs_to :category, optional: true, counter_cache: true
+  has_one :item_pricing, dependent: :destroy
 
   accepts_nested_attributes_for :item_pricing, allow_destroy: true
 

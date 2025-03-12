@@ -1,9 +1,8 @@
 ActiveAdmin.register Item do
   permit_params :name, :pricing_type, :category_id, :is_disable,
                 item_pricing_attributes: [:id, :default_fixed_price, :fixed_parameters, :is_selectable_options,
-                                          :pricing_options, :open_parameters_label, :formula_parameters, 
+                                          :pricing_options, :open_parameters_label, :formula_parameters,
                                           :calculation_formula, :is_open]
-
 
   filter :name_cont, as: :string, label: "Product Name"
   filter :category, as: :select, collection: -> { Category.pluck(:name, :id) }, label: "Category"
@@ -34,25 +33,25 @@ ActiveAdmin.register Item do
       item.name == :destroy
     end
   end
-  
+
   form do |f|
-    f.semantic_errors 
-    
+    f.semantic_errors
+
     f.inputs "Item Details" do
+      f.input :origin, as: :hidden, input_html: { value: params[:origin], name: 'origin' } # used for redirect
       f.input :name, required: true
       f.input :description
       f.input :category_id, as: :select,
-      collection: [["No Category", nil]] + Category.pluck(:name, :id),
-      include_blank: false
+              collection: [["No Category", nil]] + Category.pluck(:name, :id),
+              include_blank: false
       f.input :pricing_type, as: :select, collection: Item.pricing_types.keys, prompt: "Select Pricing Type"
     end
-    
+
     f.inputs "Pricing Details", for: [:item_pricing, f.object.item_pricing || ItemPricing.new] do |pf|
       case f.object.pricing_type
       when "fixed"
         pf.input :default_fixed_price, label: "Fixed Price"
       when "fixed_open"
-        # TODO Додати функцію переходу для кнопки
         f.button "Add Parameters"
         pf.input :fixed_parameters, as: :text, label: "Fixed Parameters"
         pf.input :open_parameters_label, as: :text, label: "Open Parameters"
@@ -121,6 +120,34 @@ ActiveAdmin.register Item do
       else
         div "No pricing details available."
       end
-    end  
+    end
+  end
+
+  controller do
+    def update
+      @item = Item.find(permitted_params[:id])
+
+      if @item.update(permitted_params[:item])
+        redirect_back_or_to_item notice: "Item was successfully updated"
+      else
+        render :edit
+      end
+    end
+
+    def create
+      @item = Item.new(permitted_params[:item])
+
+      if @item.save
+        redirect_back_or_to_item notice: "Item was successfully created"
+      else
+        render :new
+      end
+    end
+
+    private
+
+    def redirect_back_or_to_item(**args)
+      redirect_to params[:origin].presence || admin_item_path(@item), **args
+    end
   end
 end

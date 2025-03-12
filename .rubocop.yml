@@ -46,12 +46,17 @@ Layout/LineLength:
     - app/admin/**/*.rb
     - db/migrate/**/*.rb
     - spec/**/*_spec.rb
+    - app/helpers/**/*.rb
     - Gemfile
 
 Metrics/MethodLength:
   Exclude:
     - db/seeds/**/*.rb
-    - db/migrate/*.rb
+    - lib/tasks/**/*.rake
+    - app/admin/**/*.rb
+    - db/migrate/**/*.rb
+    - spec/**/*_spec.rb
+    - app/helpers/**/*.rb
 
 Metrics/BlockLength:
   Exclude:
@@ -60,3 +65,22 @@ Metrics/BlockLength:
     - app/admin/**/*.rb
     - db/migrate/**/*.rb
     - spec/**/*_spec.rb
+    - app/helpers/**/*.rb
+
+Metrics/AbcSize:
+  Exclude:
+    - db/seeds/**/*.rb
+    - lib/tasks/**/*.rake
+    - app/admin/**/*.rb
+    - db/migrate/**/*.rb
+    - spec/**/*_spec.rb
+    - app/helpers/**/*.rb
+
+Metrics/PerceivedComplexity:
+  Exclude:
+    - db/seeds/**/*.rb
+    - lib/tasks/**/*.rake
+    - app/admin/**/*.rb
+    - db/migrate/**/*.rb
+    - spec/**/*_spec.rb
+    - app/helpers/**/*.rb

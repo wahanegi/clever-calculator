@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_03_10_130216) do
+ActiveRecord::Schema[8.0].define(version: 2025_03_12_165049) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -33,6 +33,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_10_130216) do
     t.boolean "is_disabled", default: false, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "items_count", default: 0, null: false
     t.index ["is_disabled"], name: "index_categories_on_is_disabled"
     t.index ["name"], name: "index_categories_on_name", unique: true, where: "(is_disabled = false)"
   end
