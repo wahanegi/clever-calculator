@@ -1,5 +1,8 @@
 class Item < ApplicationRecord
   belongs_to :category, optional: true
+  has_one :item_pricing
+
+  accepts_nested_attributes_for :item_pricing, allow_destroy: true
 
   enum :pricing_type, { fixed: 0, open: 1, fixed_open: 2 }
 

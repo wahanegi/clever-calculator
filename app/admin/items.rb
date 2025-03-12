@@ -1,5 +1,9 @@
 ActiveAdmin.register Item do
-  permit_params :name, :pricing_type, :category_id, :is_disable
+  permit_params :name, :pricing_type, :category_id, :is_disable,
+                item_pricing_attributes: [:id, :default_fixed_price, :fixed_parameters, :is_selectable_options,
+                                          :pricing_options, :open_parameters_label, :formula_parameters, 
+                                          :calculation_formula, :is_open]
+
 
   filter :name_cont, as: :string, label: "Product Name"
   filter :category, as: :select, collection: -> { Category.pluck(:name, :id) }, label: "Category"
@@ -30,6 +34,38 @@ ActiveAdmin.register Item do
       item.name == :destroy
     end
   end
+  
+  form do |f|
+    f.semantic_errors 
+    
+    f.inputs "Item Details" do
+      f.input :name, required: true
+      f.input :description
+      f.input :category_id, as: :select,
+      collection: [["No Category", nil]] + Category.pluck(:name, :id),
+      include_blank: false
+      f.input :pricing_type, as: :select, collection: Item.pricing_types.keys, prompt: "Select Pricing Type"
+    end
+    
+    f.inputs "Pricing Details", for: [:item_pricing, f.object.item_pricing || ItemPricing.new] do |pf|
+      case f.object.pricing_type
+      when "fixed"
+        pf.input :default_fixed_price, label: "Fixed Price"
+      when "fixed_open"
+        # TODO Додати функцію переходу для кнопки
+        f.button "Add Parameters"
+        pf.input :fixed_parameters, as: :text, label: "Fixed Parameters"
+        pf.input :open_parameters_label, as: :text, label: "Open Parameters"
+        pf.input :is_selectable_options, label: "Has Selectable Options"
+        pf.input :pricing_options, as: :text, label: "Pricing Options", input_html: { disabled: !pf.object.is_selectable_options }
+        pf.input :formula_parameters, label: "Formula Parameters"
+        pf.input :calculation_formula, label: "Calculation Formula"
+      when "open"
+        pf.input :open_parameters_label, as: :text, label: "Open Parameters"
+      end
+    end
+    f.actions
+  end
 
   action_item :back, only: :show do
     link_to "Back", admin_items_path
@@ -52,8 +88,8 @@ ActiveAdmin.register Item do
     end
 
     panel "Pricing Details" do
-      item_pricing = item.item_pricing
-      if item_pricing
+      if item.respond_to?(:item_pricing) && item.item_pricing.present?
+        item_pricing = item.item_pricing
         attributes_table_for item_pricing do
           case item.pricing_type
           when "fixed"
@@ -85,6 +121,6 @@ ActiveAdmin.register Item do
       else
         div "No pricing details available."
       end
-    end
+    end  
   end
 end
