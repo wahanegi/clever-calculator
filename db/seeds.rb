@@ -8,10 +8,5 @@
 #     MovieGenre.find_or_create_by!(name: genre_name)
 #   end
 
-if Rails.env.development?
-  Rails.logger.info 'Creating Admin User'
-  AdminUser.create!(email: 'admin@example.com',
-                    name: 'Admin User',
-                    password: 'password@1',
-                    password_confirmation: 'password@1')
-end
+require_relative 'seeds/admin_users'
+require_relative 'seeds/categories'
