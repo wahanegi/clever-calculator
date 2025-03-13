@@ -26,7 +26,8 @@ ActiveAdmin.register Item do
       links = []
       links << link_to("View", admin_item_path(item), class: "member_link")
       links << link_to("Edit", edit_admin_item_path(item), class: "member_link")
-      links << link_to(item.is_disabled? ? "Enable" : "Disable", toggle_admin_item_path(item), method: :put, data: { confirm: "Are you sure?" }, class: "member_link")
+      links << link_to(item.is_disabled? ? "Enable" : "Disable", toggle_admin_item_path(item), method: :put,
+                                                                                               data: { confirm: "Are you sure?" }, class: "member_link")
       safe_join(links)
     end
   end
@@ -80,7 +81,8 @@ ActiveAdmin.register Item do
   end
 
   action_item :toggle, only: :show do
-    link_to(resource.is_disabled? ? "Enable item" : "Disable item", toggle_admin_item_path(resource), method: :put, data: { confirm: "Are you sure?" })
+    link_to(resource.is_disabled? ? "Enable item" : "Disable item", toggle_admin_item_path(resource), method: :put,
+                                                                                                      data: { confirm: "Are you sure?" })
   end
 
   show do
