@@ -43,6 +43,7 @@ gem "solid_cable"
 gem "solid_cache"
 gem "solid_queue"
 # The modern asset pipeline for Rails [https://github.com/rails/propshaft]
+gem "net-smtp", "~> 0.5.0"
 gem "sprockets-rails"
 
 group :development, :test do
