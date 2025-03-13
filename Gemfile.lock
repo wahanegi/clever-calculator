@@ -137,7 +137,7 @@ GEM
       railties (>= 5.0.0)
     faker (3.5.1)
       i18n (>= 1.8.11, < 2)
-    ffi (1.17.1-arm64-darwin)
+    ffi (1.17.1-x86_64-darwin)
     formtastic (5.0.0)
       actionpack (>= 6.0.0)
     formtastic_i18n (0.7.0)
@@ -410,7 +410,17 @@ GEM
     zeitwerk (2.7.1)
 
 PLATFORMS
-  arm64-darwin
+  aarch64-linux
+  aarch64-linux-gnu
+  aarch64-linux-musl
+  arm-linux-gnu
+  arm-linux-musl
+  arm64-darwin-24
+  x64-mingw-ucrt
+  x86_64-darwin-24
+  x86_64-linux
+  x86_64-linux-gnu
+  x86_64-linux-musl
 
 DEPENDENCIES
   activeadmin (~> 3.2, >= 3.2.5)
