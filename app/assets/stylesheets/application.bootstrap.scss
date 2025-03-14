@@ -1,43 +1,16 @@
+@import 'variables';
 @import 'bootstrap/scss/bootstrap';
-@import 'bootstrap-icons/font/bootstrap-icons';
+@import 'typography';
 
-
-.bg_primary-color {
-  background-color: #FFFFFF;
-}
-
-.primary-color {
-  background-color: #FFFFFF;
-}
-
-.bg_secondary-color {
-  background-color: #293241;
-}
-
-.secondary-color {
-  color: #293241;
-}
-
-.custom-button.btn {
-  background-color: #293241;
-  color: #FFF;
-  border: none;
-}
-
-.hero {
-  width: 100vw;
-  height: 50vh;
-}
-
-.hero img {
-  object-fit: cover;
-  object-position: top;
-  height: 100%;
-  width: 100%;
-}
-
-.overlay {
-  height: 100%;
-  width: 100%;
-  opacity: 0.4;
-}
+// Merge custom font-size utility into Bootstrap's $utilities map
+$utilities: map-merge(
+  $utilities,
+  (
+    'font-size': (
+      property: font-size,
+      class: fs,
+      values: $font-sizes,
+      responsive: true,
+    ),
+  )
+);

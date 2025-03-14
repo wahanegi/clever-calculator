@@ -1,0 +1,110 @@
+@import 'variables';
+@import 'bootstrap/scss/mixins';
+
+// Reset Styles
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+}
+
+img,
+picture,
+video,
+canvas,
+svg {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+input,
+button,
+textarea,
+select {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  overflow-wrap: break-word;
+  hyphens: auto;
+}
+
+ul,
+ol {
+  list-style: none;
+}
+
+a {
+  text-decoration: none;
+  cursor: pointer;
+}
+
+// Base Typography
+body {
+  font-family: $font-family-base;
+  @include rfs($font-size-base); // 16px
+  font-weight: $font-weight-light;
+  line-height: $line-height-base;
+  color: $dark;
+  -webkit-font-smoothing: antialiased;
+}
+
+// Headings
+h1,
+.h1 {
+  font-family: $font-family-base;
+  font-weight: $font-weight-bold;
+  @include rfs($font-size-xl); // 48px
+}
+
+h2,
+.h2 {
+  font-family: $font-family-base;
+  font-weight: $font-weight-medium;
+  @include rfs($font-size-lg); // 32px
+}
+
+.text-inter {
+  font-family: $font-family-secondary; // Inter
+  font-weight: $font-weight-medium; // 500
+  @include rfs($font-size-sm); // 14px
+}
+
+// Utility Classes
+$custom-colors: (
+  'gray': $gray,
+  'gray-light': $gray-light,
+  'blue-light': $blue-light,
+  'red-light': $red-light,
+  'green-light': $green-light,
+  'teal': $teal,
+  'teal-dark': $teal-dark,
+);
+
+@each $name, $color in $custom-colors {
+  .text-#{$name} {
+    color: $color;
+  }
+  .bg-#{$name} {
+    background-color: $color;
+  }
+  .border-#{$name} {
+    border-color: $color;
+  }
+}
