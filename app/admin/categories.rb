@@ -1,13 +1,12 @@
 ActiveAdmin.register Category do
   permit_params :name, :description, :is_disabled
 
-  batch_action :destroy, false
+  actions :all, except: :destroy
 
   filter :name
   filter :is_disabled
 
   index do
-    selectable_column
     id_column
     column 'Category Name', :name
     column :is_disabled
@@ -117,6 +116,7 @@ ActiveAdmin.register Category do
 
   controller do
     helper ActiveAdmin::ResourceHelper
+
     def create
       @category = Category.new(permitted_params[:category])
 
