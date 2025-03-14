@@ -42,8 +42,8 @@ ActiveAdmin.register Item do
       f.input :name, required: true
       f.input :description
       f.input :category_id, as: :select,
-              collection: [["No Category", nil]] + Category.pluck(:name, :id),
-              include_blank: false
+                            collection: [["No Category", nil]] + Category.pluck(:name, :id),
+                            include_blank: false
       f.input :pricing_type, as: :select, collection: Item.pricing_types.keys, prompt: "Select Pricing Type"
     end
 
