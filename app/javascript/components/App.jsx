@@ -1,15 +1,19 @@
 import React from 'react'
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
+import { Layout } from './layout'
 import { Home } from './pages'
+import { ROUTES } from './shared'
 
 const App = () => {
   return (
     <Router>
-      <Routes>
-        <Route path="/" element={<Home />} />
-      </Routes>
+      <Layout>
+        <Routes>
+          <Route path={ROUTES.HOME} element={<Home />} />
+        </Routes>
+      </Layout>
     </Router>
   )
 }
 
-export default App
+export default App 
