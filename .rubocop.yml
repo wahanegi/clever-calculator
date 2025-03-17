@@ -8,16 +8,20 @@ plugins: # Rubocop has been updated and now requires changing 'require' to 'plug
 # # Use `[a, [b, c]]` not `[ a, [ b, c ] ]`
 # Layout/SpaceInsideArrayLiteralBrackets:
 #   Enabled: false
+
+# All Rules:
 AllCops:
   Exclude:
-    - db/schema.rb # Ignore schema because it's auto-generated
-    - db/*_schema.rb # Ignore cable, cache, queue schema because it's auto-generated
-    - node_modules/**/*  # Ignore JavaScript dependencies files
-    - tmp/**/*           # Ignore temporary files
-    - bin/*              # Ignore binaries files
-    - vendor/**/*        # Ignore vendor dependencies files
-  SuggestExtensions: false # Ignore the message about extension suggestions
+    - db/schema.rb          # Ignore schema because it's auto-generated
+    - db/*_schema.rb        # Ignore cable, cache, queue schema because it's auto-generated
+    - node_modules/**/*     # Ignore JavaScript dependencies files
+    - tmp/**/*              # Ignore temporary files
+    - bin/*                 # Ignore binaries files
+    - vendor/**/*           # Ignore vendor dependencies files
+  SuggestExtensions: false  # Ignore the message about extension suggestions
 
+
+# Style Rules:
 Style/StringLiterals:
   Enabled: false
 
@@ -32,6 +36,12 @@ Style/Documentation:
 
 Style/SymbolArray:
   Enabled: false
+
+
+# Layout Rules:
+Layout/ExtraSpacing:
+  Exclude:
+    - Gemfile
 
 Layout/SpaceInsideArrayLiteralBrackets:
   Enabled: false
@@ -49,6 +59,8 @@ Layout/LineLength:
     - app/helpers/**/*.rb
     - Gemfile
 
+
+# Metrics Rules:
 Metrics/MethodLength:
   Exclude:
     - db/seeds/**/*.rb
