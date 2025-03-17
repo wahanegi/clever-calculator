@@ -15,7 +15,7 @@ gem "kamal", require: false                       # Deploy this application anyw
 gem "pg", "~> 1.1"                                # Use postgresql as the database for Active Record
 gem "puma", ">= 5.0"                              # Use the Puma web server [https://github.com/puma/puma]
 gem "rails", "~> 8.0.1"                           # Bundle edge Rails instead: gem "rails", github: "rails/rails", branch: "main"
-gem 'sass-rails', '~> 5'                          # Ruby on Rails stylesheet engine for Sass
+gem 'sass-rails', '~> 6'                          # Ruby on Rails stylesheet engine for Sass
 gem "solid_cable"                                 # Use the database-backed adapters for Action Cable
 gem "solid_cache"                                 # Use the database-backed adapters for Rails.cache
 gem "solid_queue"                                 # Use the database-backed adapters for Active Job
