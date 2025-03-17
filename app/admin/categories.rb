@@ -4,15 +4,14 @@ ActiveAdmin.register Category do
   actions :all, except: :destroy
 
   filter :name
-  filter :is_disabled
+  filter :is_disabled, label: 'Disabled'
 
   index do
     id_column
     column 'Category Name', :name
-    column :is_disabled
+    column 'Disabled', :is_disabled
     column :created_at
     column :updated_at
-    column :items_count
     actions defaults: false do |category|
       item 'View', admin_category_path(category), class: 'view_link member_link'
       item 'Edit', edit_admin_category_path(category), class: 'edit_link member_link'
@@ -30,65 +29,22 @@ ActiveAdmin.register Category do
   end
 
   form do |f|
-    columns do
-      column span: 4 do
-        f.inputs do
-          f.input :name
-          f.input :description
-        end
-        f.actions
-      end
-      column span: 2 do
-        category_navigation = edit_action? ? edit_admin_category_path(resource) : new_admin_category_path
-
-        panel link_to('Add Item', new_admin_item_path('origin': category_navigation)) do
-          items = edit_action? ? resource.items : Item.where(category_id: nil)
-
-          if items.present?
-            table_for items do
-              column 'Item name', :name do |item|
-                link_to item.name, edit_admin_item_path(item, 'origin': category_navigation)
-              end
-              column 'Item description', :description
-            end
-          else
-            div 'No items found'
-          end
-        end
-      end
+    f.inputs do
+      f.input :name
+      f.input :description
     end
+    f.actions
   end
 
   show do
-    columns do
-      column span: 4 do
-        attributes_table do
-          row :name
-          row :description
-          row :is_disabled
-          row :created_at
-          row :updated_at
-        end
-      end
-      column span: 2 do
-        panel 'Items' do
-          if resource.items.present?
-            table_for resource.items do
-              column 'Item name', :name do |item|
-                link_to item.name, admin_item_path(item)
-              end
-              column 'Item description', :description
-            end
-          else
-            div 'No items found'
-          end
-        end
-      end
+    attributes_table do
+      row('Category Name', &:name)
+      row :description
+      row('Disabled', &:is_disabled)
+      row :created_at
+      row :updated_at
     end
   end
-
-  # Remove the destroy button only on the show page
-  config.action_items.delete_if { |item| item.name == :destroy && item.display_on?(:show) }
 
   action_item :toggle, only: :show do
     if resource.is_disabled?
