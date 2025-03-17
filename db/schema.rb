@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_03_12_165049) do
+ActiveRecord::Schema[8.0].define(version: 2025_03_06_111234) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -33,7 +33,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_12_165049) do
     t.boolean "is_disabled", default: false, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.integer "items_count", default: 0, null: false
     t.index ["is_disabled"], name: "index_categories_on_is_disabled"
     t.index ["name"], name: "index_categories_on_name", unique: true, where: "(is_disabled = false)"
   end
@@ -51,33 +50,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_12_165049) do
     t.index ["company_name"], name: "index_customers_on_company_name", unique: true
   end
 
-  create_table "item_pricings", force: :cascade do |t|
-    t.bigint "item_id", null: false
-    t.decimal "default_fixed_price", precision: 10, scale: 2
-    t.jsonb "fixed_parameters", default: {}
-    t.boolean "is_selectable_options", default: false
-    t.jsonb "pricing_options", default: {}
-    t.boolean "is_open", default: false
-    t.text "open_parameters_label", default: [], array: true
-    t.jsonb "formula_parameters", default: {}
-    t.string "calculation_formula"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["item_id"], name: "index_item_pricings_on_item_id"
-  end
-
-  create_table "items", force: :cascade do |t|
-    t.string "name", null: false
-    t.text "description"
-    t.integer "pricing_type", default: 0
-    t.bigint "category_id"
-    t.boolean "is_disabled", default: false, null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["category_id"], name: "index_items_on_category_id"
-    t.index ["name", "category_id"], name: "index_items_on_name_and_category_id", unique: true
-  end
-
   create_table "users", force: :cascade do |t|
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
@@ -90,7 +62,4 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_12_165049) do
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
-
-  add_foreign_key "item_pricings", "items"
-  add_foreign_key "items", "categories"
 end
