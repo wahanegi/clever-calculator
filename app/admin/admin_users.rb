@@ -41,11 +41,7 @@ ActiveAdmin.register AdminUser do
       @admin_user = AdminUser.find(permitted_params[:id])
 
       if password_present?
-        if @admin_user.update(admin_user_params)
-          redirect_to_admin_user
-        else
-          render :edit
-        end
+        @admin_user.update(admin_user_params) ? redirect_to_admin_user : render(:edit)
       elsif @admin_user.update_without_password(admin_user_params)
         redirect_to_admin_user
       else
