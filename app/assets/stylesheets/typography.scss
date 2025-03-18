@@ -24,20 +24,20 @@ h2, .h2 {
 }
 
 .text-inter {
-  font-family: $font-family-secondary; // Inter
+  font-family: $font-family-inter; // Inter
   font-weight: $font-weight-medium; // 500
   @include rfs($font-size-sm); // 14px
 }
 
 // Utility Classes
 $custom-colors: (
-  'gray': $gray,
-  'gray-light': $gray-light,
-  'blue-light': $blue-light,
-  'red-light': $red-light,
-  'green-light': $green-light,
-  'teal': $teal,
-  'teal-dark': $teal-dark,
+ 'gray': $gray,
+ 'gray-light': $gray-light,
+ 'blue-light': $blue-light,
+ 'red-light': $red-light,
+ 'green-light': $green-light,
+ 'teal': $teal,
+ 'teal-dark': $teal-dark,
 );
 
 @each $name, $color in $custom-colors {

@@ -6,16 +6,17 @@
 
 // Merge custom font-size utility into Bootstrap's $utilities map
 $utilities: map-merge(
-    $utilities,
-    (
-      'font-size': (
-        property: font-size,
-        class: fs,
-        values: $font-sizes,
-        responsive: true,
-      ),
-    )
+  $utilities,
+  (
+   'font-size': (
+    property: font-size,
+    class: fs,
+    values: $font-sizes,
+    responsive: true,
+   ),
+  )
 );
 
 // Component styles
 @import 'icons';
+@import 'buttons';
