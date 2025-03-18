@@ -35,7 +35,7 @@ ActiveAdmin.register User do
       f.input :name
       f.input :email
       f.input :password, required: f.object.new_record?
-      f.input :password_confirmation
+      f.input :password_confirmation, required: f.object.new_record?
     end
     f.actions
   end
