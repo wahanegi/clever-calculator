@@ -10,3 +10,4 @@
 
 require_relative 'seeds/admin_users'
 require_relative 'seeds/categories'
+require_relative 'seeds/customers'

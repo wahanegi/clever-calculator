@@ -13,5 +13,10 @@ namespace :db do
     task admin_users: :environment do
       load_seed_for 'admin_users'
     end
+
+    desc "Load the seed data for the admin users from the db/seeds/customers.rb"
+    task customers: :environment do
+      load_seed_for 'customers'
+    end
   end
 end
