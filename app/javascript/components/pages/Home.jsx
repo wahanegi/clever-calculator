@@ -1,8 +1,8 @@
 import React from 'react'
-import { PcButton } from '../ui'
+import { Container } from 'react-bootstrap'
 import { useNavigate } from 'react-router-dom'
 import { ROUTES } from '../shared'
-import { Col, Container, Row } from 'react-bootstrap'
+import { PcButton } from '../ui'
 
 export const Home = () => {
   const navigate = useNavigate()
@@ -13,7 +13,7 @@ export const Home = () => {
   return (
     <Container>
       <h1>Home (Login) Page</h1>
-      <PcButton children={'Customer info'} onClick={handleNext} />
+      <PcButton children={'Login'} onClick={handleNext} />
     </Container>
   )
 }
