@@ -1,8 +1,9 @@
 ActiveAdmin.register Item do
-  permit_params :name, :pricing_type, :category_id, :is_disable,
-                item_pricing_attributes: [:id, :default_fixed_price, :fixed_parameters, :is_selectable_options,
-                                          :pricing_options, :open_parameters_label, :formula_parameters,
-                                          :calculation_formula, :is_open]
+  permit_params :name, :description, :pricing_type, :category_id, :is_disabled,
+  item_pricings_attributes: [:id, :default_fixed_price, :fixed_parameters, :is_selectable_options,
+                             :pricing_options, :open_parameters_label, :formula_parameters,
+                             :calculation_formula, :is_open, :_destroy]
+
 
   filter :name_cont, as: :string, label: "Product Name"
   filter :category, as: :select, collection: -> { Category.pluck(:name, :id) }, label: "Category"
@@ -50,13 +51,13 @@ ActiveAdmin.register Item do
       f.input :pricing_type, as: :select, collection: Item.pricing_types.keys, prompt: "Select Pricing Type"
     end
 
-    f.inputs "Pricing Details", for: [:item_pricing, f.object.item_pricing || ItemPricing.new] do |pf|
+    f.inputs "Pricing Details", for: [:item_pricings, f.object.item_pricings.first] do |pf|
+
       case f.object.pricing_type
       when "fixed"
         pf.input :default_fixed_price, label: "Fixed Price"
       when "fixed_open"
-        # TODO: Додати функцію переходу для кнопки
-        f.button "Add Parameters"
+        f.button "Add Parameter", type: "button", onclick: "window.location='#{new_admin_item_item_pricing_path(f.object)}'"
         pf.input :fixed_parameters, as: :text, label: "Fixed Parameters"
         pf.input :open_parameters_label, as: :text, label: "Open Parameters"
         pf.input :is_selectable_options, label: "Has Selectable Options"
@@ -98,42 +99,6 @@ ActiveAdmin.register Item do
       end
       row :created_at
       row :updated_at
-    end
-
-    panel "Pricing Details" do
-      if item.respond_to?(:item_pricing) && item.item_pricing.present?
-        item_pricing = item.item_pricing
-        attributes_table_for item_pricing do
-          case item.pricing_type
-          when "fixed"
-            row "Price" do
-              item_pricing.default_fixed_price
-            end
-          when "fixed_open"
-            row "Fixed Parameters" do
-              pre JSON.pretty_generate(item_pricing.fixed_parameters)
-            end
-            row "Open Parameters" do
-              item_pricing.open_parameters_label.join(", ")
-            end
-            if item_pricing.is_selectable_options
-              row "Selectable Options" do
-                pre JSON.pretty_generate(item_pricing.pricing_options)
-              end
-            end
-            row "Formula Parameters" do
-              pre JSON.pretty_generate(item_pricing.formula_parameters)
-            end
-            row "Calculation Formula" do
-              item_pricing.calculation_formula
-            end
-          when "open"
-            div "This item has open pricing, no additional parameters are displayed."
-          end
-        end
-      else
-        div "No pricing details available."
-      end
     end
   end
 end
