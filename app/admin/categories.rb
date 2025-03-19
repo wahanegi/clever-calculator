@@ -4,12 +4,12 @@ ActiveAdmin.register Category do
   actions :all, except: :destroy
 
   filter :name
-  filter :is_disabled, label: 'Disabled'
+  filter :is_disabled, label: 'Disabled', as: :select, collection: { 'True' => true, 'False' => false }
 
   index do
     id_column
-    column 'Category Name', :name
-    column 'Disabled', :is_disabled
+    column :name
+    column('Disabled') { |item| status_tag item.is_disabled, label: item.is_disabled? ? 'True' : 'False' }
     column :created_at
     column :updated_at
     actions defaults: false do |category|
@@ -38,9 +38,9 @@ ActiveAdmin.register Category do
 
   show do
     attributes_table do
-      row('Category Name', &:name)
+      row :name
       row :description
-      row('Disabled', &:is_disabled)
+      row('Disabled') { |item| status_tag item.is_disabled, label: item.is_disabled? ? 'True' : 'False' }
       row :created_at
       row :updated_at
     end
@@ -64,20 +64,18 @@ ActiveAdmin.register Category do
     resource.toggle(:is_disabled)
 
     if resource.save
-      redirect_to admin_categories_path, notice: "Category was successfully #{resource.is_disabled? ? 'disabled' : 'enabled'}"
+      redirect_to admin_categories_path, notice: "Category was successfully #{resource.is_disabled? ? 'disabled' : 'enabled'}."
     else
-      redirect_to admin_categories_path, alert: "Failed to #{resource.is_disabled? ? 'disable' : 'enable'} category"
+      redirect_to admin_categories_path, alert: "Failed to #{resource.is_disabled? ? 'disable' : 'enable'} category."
     end
   end
 
   controller do
-    helper ActiveAdmin::ResourceHelper
-
     def create
       @category = Category.new(permitted_params[:category])
 
       if @category.save
-        redirect_to admin_categories_path, notice: 'Category was successfully created'
+        redirect_to admin_categories_path, notice: 'Category was successfully created.'
       else
         render :new
       end
