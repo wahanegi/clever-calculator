@@ -66,7 +66,7 @@ ActiveAdmin.register Category do
     if resource.save
       redirect_to admin_categories_path, notice: "Category was successfully #{resource.is_disabled? ? 'disabled' : 'enabled'}."
     else
-      redirect_to admin_categories_path, alert: "Failed to #{resource.is_disabled? ? 'disable' : 'enable'} category."
+      redirect_to admin_categories_path, alert: resource.errors.messages_for(:name)
     end
   end
 
