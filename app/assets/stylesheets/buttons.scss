@@ -13,24 +13,24 @@
     }
 
     &:active {
-      background: $dark !important;
       border-color: $dark !important;
+      background: $dark !important;
     }
 
     &:disabled {
+      border-color: $gray-disable !important;
       color: $text-gray-disable !important;
       background: $white !important;
-      border-color: $gray-disable !important;
     }
 
     &.warning {
-      background: $coral-primary !important;
       border-color: $coral-primary !important;
+      background: $coral-primary !important;
 
       &:hover,
       &:focus {
-        background: $coral-primary !important;
         border-color: $coral-primary !important;
+        background: $coral-primary !important;
       }
 
       &:focus-visible {
@@ -38,18 +38,16 @@
       }
 
       &:active {
-        background: $coral-dark !important;
         border-color: $coral-dark !important;
+        background: $coral-dark !important;
       }
 
       &:disabled {
+        border-color: $coral-light !important;
         color: $text-coral !important;
         background-color: $coral-light !important;
-        border-color: $coral-light !important;
       }
-
     }
-
   }
 
   // styles for variant="outline-primary"
@@ -63,24 +61,24 @@
     }
 
     &:active {
-      color: $dark !important;
       border-color: $dark !important;
+      color: $dark !important;
       background: inherit !important;
     }
 
     &:disabled {
-      color: $text-gray-disable !important;
       border-color: $gray-light !important;
+      color: $text-gray-disable !important;
     }
 
     &.warning {
-      color: $coral-primary !important;
       border-color: $coral-primary !important;
+      color: $coral-primary !important;
 
       &:hover,
       &:focus {
-        background: inherit !important;
         border-color: $coral-primary !important;
+        background: inherit !important;
       }
 
       &:focus-visible {
@@ -88,15 +86,15 @@
       }
 
       &:active {
+        border-color: $coral-dark !important;
         color: $white !important;
         background: $coral-dark !important;
-        border-color: $coral-dark !important;
       }
 
       &:disabled {
+        border: $coral-light !important;
         color: $text-coral !important;
         background: $coral-light !important;
-        border: $coral-light !important;
       }
     }
   }

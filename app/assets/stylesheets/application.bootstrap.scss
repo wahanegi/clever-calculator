@@ -8,16 +8,16 @@
 $utilities: map-merge(
   $utilities,
   (
-   'font-size': (
-    property: font-size,
-    class: fs,
-    values: $font-sizes,
-    responsive: true,
-   ),
+    'font-size': (
+      property: font-size,
+      class: fs,
+      values: $font-sizes,
+      responsive: true,
+    ),
   )
 );
 
 // Component styles
 @import 'icons';
 @import 'buttons';
-@import "customer_info";
+@import 'customer_info';
