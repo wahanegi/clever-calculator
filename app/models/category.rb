@@ -8,7 +8,7 @@ class Category < ApplicationRecord
     %w[created_at description id id_value is_disabled name updated_at]
   end
 
-  def self.ransackable_associations(auth_object = nil)
+  def self.ransackable_associations(_auth_object = nil)
     []
   end
 end
