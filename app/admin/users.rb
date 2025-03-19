@@ -6,7 +6,7 @@ ActiveAdmin.register User do
   end
 
   action_item :back, only: [:show] do
-    link_to "Back", admin_users_path
+    link_to "Back to Users", admin_users_path
   end
 
   index do
