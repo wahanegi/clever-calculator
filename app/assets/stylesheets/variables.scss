@@ -16,12 +16,12 @@ $teal: #a0c9c8;
 $teal-dark: #115d5b;
 
 // Button Colors
-$coral-primary: #FE6D75;
-$coral-secondary: #FF9298;
-$coral-dark: #E35C67;
-$coral-light: #FFDBDD;
-$text-coral: #FE6D754D;
-$gray-disable: #ECECEC;
+$coral-primary: #fe6d75;
+$coral-secondary: #ff9298;
+$coral-dark: #e35c67;
+$coral-light: #ffdbdd;
+$text-coral: #fe6d754d;
+$gray-disable: #ececec;
 $text-gray-disable: #999999;
 
 // Font Families
@@ -49,29 +49,46 @@ $enable-responsive-font-sizes: true !default;
 // Spacer Customization
 $spacer: 1rem;
 $spacers: (
- 0: 0,
- 1: $spacer * 0.25, // 4px
- 2: $spacer * 0.5, // 8px
- 3: $spacer * 0.75, // 12px
- 4: $spacer * 1, // 16px
- 5: $spacer * 1.5, // 24px
- 6: $spacer * 2, // 32px
- 7: $spacer * 2.5, // 40px
- 8: $spacer * 3, // 48px
- 9: $spacer * 4, // 64px
+  0: 0,
+  1: $spacer * 0.25,
+  // 4px
+  2: $spacer * 0.5,
+  // 8px
+  3: $spacer * 0.75,
+  // 12px
+  4: $spacer * 1,
+  // 16px
+  5: $spacer * 1.5,
+  // 24px
+  6: $spacer * 2,
+  // 32px
+  7: $spacer * 2.5,
+  // 40px
+  8: $spacer * 3,
+  // 48px
+  9: $spacer * 4, // 64px
 );
 $enable-negative-margins: true;
 
 // Custom Font Sizes for Utilities
 $font-sizes: (
- 1: 3rem, // 48px
- 2: 2.75rem, // 44px
- 3: 2.5rem, // 40px
- 4: 2.25rem, // 36px
- 5: 2rem, // 32px
- 6: 1.75rem, // 28px
- 7: 1.5rem, // 24px
- 8: 1.25rem, // 20px
- 9: $font-size-sm, // 14px
- 10: $font-size-xs // 12px
+  1: 3rem,
+  // 48px
+  2: 2.75rem,
+  // 44px
+  3: 2.5rem,
+  // 40px
+  4: 2.25rem,
+  // 36px
+  5: 2rem,
+  // 32px
+  6: 1.75rem,
+  // 28px
+  7: 1.5rem,
+  // 24px
+  8: 1.25rem,
+  // 20px
+  9: $font-size-sm,
+  // 14px
+  10: $font-size-xs, // 12px
 );
