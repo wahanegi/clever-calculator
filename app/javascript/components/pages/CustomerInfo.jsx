@@ -1,30 +1,24 @@
 import React from 'react'
 import { Container, Row } from 'react-bootstrap'
-import { useNavigate } from 'react-router-dom'
-import { ROUTES } from '../shared'
+import { useAppHooks } from '../hooks'
+import { fetchQuotes } from '../services'
+import { ROUTES, STEPS } from '../shared'
 import { PcButton } from '../ui'
-import { fetchQuotes } from '../services/fetchService'
 
 export const CustomerInfo = () => {
-  const navigate = useNavigate()
-
+  const { navigate } = useAppHooks()
   const handleNext = async () => {
-    try {
-      //TODO Hardcode customer_id for now (replace with real logic later)
-      const customerId = 3
-      const response = await fetchQuotes.create({
-        quote: {
-          customer_id: customerId,
-          total_price: 0,
-          step: 'items_pricing',
-        },
-      })
-      const { data } = response.data
-      const quoteId = data.id
-      navigate(`${ROUTES.ITEM_PRICING}?quote_id=${quoteId}`)
-    } catch (error) {
-      console.error('Error creating quote:', error)
-    }
+    //TODO Hardcode customer_id for now (replace with real logic later)
+    const customerId = 3
+    const { data } = await fetchQuotes.create({
+      quote: {
+        customer_id: customerId,
+        total_price: 0,
+        step: STEPS.ITEM_PRICING,
+      },
+    })
+
+    navigate(`${ROUTES.ITEM_PRICING}?quote_id=${data.id}`)
   }
 
   return (

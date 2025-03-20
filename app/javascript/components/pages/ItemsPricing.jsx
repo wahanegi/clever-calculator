@@ -1,25 +1,18 @@
 import React from 'react'
 import { Container, Row } from 'react-bootstrap'
-import { useLocation, useNavigate } from 'react-router-dom'
-import { ROUTES } from '../shared'
+import { useAppHooks } from '../hooks'
+import { fetchQuotes } from '../services'
+import { ROUTES, STEPS } from '../shared'
 import { PcButton } from '../ui'
-import { fetchQuotes } from '../services/fetchService'
 
 export const ItemsPricing = () => {
-  const navigate = useNavigate()
-  const location = useLocation()
-  const queryParams = new URLSearchParams(location.search)
+  const { navigate, queryParams } = useAppHooks()
   const quoteId = queryParams.get('quote_id')
 
   const handleDownload = async () => {
-    try {
-      await fetchQuotes.update(quoteId, {
-        quote: { step: 'completed' },
-      })
-      console.log('Data was downloaded')
-    } catch (error) {
-      console.error('Error completing quote:', error)
-    }
+    await fetchQuotes.update(quoteId, {
+      quote: { step: STEPS.COMPLETED },
+    })
   }
 
   const handleBack = () => {
