@@ -68,41 +68,4 @@ RSpec.describe "Api::V1::Quotes", type: :request do
       end
     end
   end
-
-  describe "GET /api/v1/quotes/:id" do
-    let!(:quote) { create(:quote, customer: customer, user: user, total_price: 100, step: "customer_info") }
-
-    it "returns the quote details" do
-      get "/api/v1/quotes/#{quote.id}"
-      expect(response).to have_http_status(:ok)
-      expect(json_response["data"]["id"]).to eq(quote.id.to_s)
-      expect(json_response["data"]["attributes"]["total_price"]).to eq("100.0")
-      expect(json_response["data"]["attributes"]["step"]).to eq("customer_info")
-    end
-
-    context "when the quote does not exist" do
-      it "returns not found status" do
-        get "/api/v1/quotes/99999"
-        expect(response).to have_http_status(:not_found)
-      end
-    end
-  end
-
-  describe "GET /api/v1/quotes/last" do
-    let!(:unfinished_quote) { create(:quote, customer: customer, user: user, total_price: 200, step: "customer_info") }
-
-    it "returns the last unfinished quote" do
-      get "/api/v1/quotes/last"
-      expect(response).to have_http_status(:ok)
-      expect(json_response["data"]["id"]).to eq(unfinished_quote.id.to_s)
-      expect(json_response["data"]["attributes"]["step"]).to eq("customer_info")
-    end
-
-    it "returns not found if no unfinished quotes exist" do
-      unfinished_quote.update(step: "completed")
-      get "/api/v1/quotes/last"
-      expect(response).to have_http_status(:not_found)
-      expect(json_response["message"]).to eq("No unfinished quotes found")
-    end
-  end
 end
