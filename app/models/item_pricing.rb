@@ -13,6 +13,19 @@ class ItemPricing < ApplicationRecord
   validates :calculation_formula, presence: true, if: -> { item&.pricing_type == "fixed_open" }
   validates :default_fixed_price, presence: true, if: -> { pricing_type == "fixed" }
 
+  def open_parameters_label_as_string
+    if open_parameters_label.present?
+      open_parameters_label.join("\n")
+    else
+      ""
+    end
+  end
+
+  def open_parameters_label_as_string=(val)
+    lines = val.to_s.split(/\r?\n/).map(&:strip).reject(&:blank?)
+    self.open_parameters_label = lines
+  end
+
   def self.ransackable_attributes(auth_object = nil)
     %w[
       id item_id default_fixed_price fixed_parameters is_selectable_options
