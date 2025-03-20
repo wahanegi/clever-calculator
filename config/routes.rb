@@ -5,11 +5,7 @@ Rails.application.routes.draw do
 
   namespace :api do
     namespace :v1 do
-      resources :quotes, only: [:create, :update, :show] do
-        collection do
-          get :last
-        end
-      end
+      resources :quotes, only: [:create, :update]
     end
   end
 

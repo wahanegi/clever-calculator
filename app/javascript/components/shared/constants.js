@@ -8,6 +8,5 @@ export const ROUTES = {
 
 export const ENDPOINTS = {
   QUOTES: '/api/v1/quotes',
-  QUOTES_LAST: '/api/v1/quotes/last',
   LOGOUT: '/users/sign_out',
 }
