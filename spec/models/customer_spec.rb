@@ -4,25 +4,15 @@ RSpec.describe Customer, type: :model do
   describe 'associations' do
     it { is_expected.to have_many(:quotes).dependent(:destroy) }
   end
+
   describe 'validations' do
     let(:customer) { build(:customer) }
 
-    it('should be valid') { expect(customer).to be_valid }
+    it { is_expected.to be_valid }
 
     describe 'company_name' do
-      let(:customer_created) { create(:customer) }
-
-      it { should validate_presence_of(:company_name) }
-
-      context 'when company_name is not unique' do
-        it do
-          customer_created
-          customer.company_name = customer_created.company_name
-
-          expect(customer).not_to be_valid
-          expect(customer.errors[:company_name]).to include('has already been taken')
-        end
-      end
+      it { is_expected.to validate_presence_of(:company_name) }
+      it { is_expected.to validate_uniqueness_of(:company_name).case_insensitive }
     end
   end
 end
