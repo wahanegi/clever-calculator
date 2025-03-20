@@ -98,6 +98,7 @@ ActiveAdmin.register Item do
   
       f.button "Add Parameter", type: "button",
         onclick: "window.location='#{}'"
+    end  
   
     f.actions
   end
