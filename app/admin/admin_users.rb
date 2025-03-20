@@ -40,10 +40,8 @@ ActiveAdmin.register AdminUser do
     def update
       @admin_user = AdminUser.find(permitted_params[:id])
 
-      if password_present?
-        @admin_user.update(admin_user_params) ? redirect_to_admin_user : render(:edit)
-      elsif @admin_user.update_without_password(admin_user_params)
-        redirect_to_admin_user
+      if update_admin_user
+        redirect_to admin_admin_user_path(@admin_user), notice: 'Admin user was successfully updated.'
       else
         render :edit
       end
@@ -61,16 +59,16 @@ ActiveAdmin.register AdminUser do
 
     private
 
-    def password_present?
-      admin_user_params[:password].present?
+    def update_admin_user
+      if admin_user_params[:password].present?
+        @admin_user.update(admin_user_params)
+      else
+        @admin_user.update_without_password(admin_user_params)
+      end
     end
 
     def admin_user_params
       permitted_params[:admin_user]
-    end
-
-    def redirect_to_admin_user
-      redirect_to admin_admin_user_path(@admin_user), notice: 'Admin user was successfully updated.'
     end
   end
 end
