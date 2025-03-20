@@ -27,7 +27,6 @@ export const CustomerInfo = () => {
       <section className={'px-6 mb-2'}>
         <div className={'d-flex justify-content-between mb-6'}>
           <h1>Quote Creation</h1>
-          <PcButton variant={'outline-primary'} children={'Reset'} className={'mt-2'} />
         </div>
         <div style={{ height: '79px', border: '2px solid red' }}>
           <span>Progress bar</span>
@@ -43,7 +42,7 @@ export const CustomerInfo = () => {
       </section>
 
       <section className={'d-flex justify-content-center align-items-center gap-4 mb-5'}>
-        <PcButton variant={'outline-primary'} children={'Next'} onClick={handleNext} />
+        <PcButton variant={'primary'} children={'Next'} onClick={handleNext} />
       </section>
     </Container>
   )
