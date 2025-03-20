@@ -13,5 +13,11 @@ export const patch = (url, data, config = {}) => {
   return instance.patch(url, data, config)
 }
 export const del = (url, config = {}) => {
-  return instance.delete(url, config)
+  return instance.delete(url, {
+    ...config,
+    headers: {
+      ...config.headers,
+      'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]')?.content,
+    },
+  })
 }

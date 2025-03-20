@@ -8,16 +8,17 @@ import { ROUTES } from './shared'
 const App = () => {
   return (
     <Router>
-      <Layout>
-        <Routes>
+      <Routes>
+        <Route path={ROUTES.LOGIN} element={null} />
+        <Route element={<Layout />}>
           <Route path={ROUTES.HOME} element={<Home />} />
           <Route path={ROUTES.CUSTOMER_INFO} element={<CustomerInfo />} />
           <Route path={ROUTES.ITEM_PRICING} element={<ItemsPricing />} />
           <Route path={'*'} element={<Navigate to={ROUTES.HOME} replace />} />
           // TODO: path={'/examples'} will be deleted
           <Route path={'/examples'} element={<Examples />} />
-        </Routes>
-      </Layout>
+        </Route>
+      </Routes>
     </Router>
   )
 }

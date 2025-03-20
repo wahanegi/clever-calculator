@@ -1,13 +1,25 @@
 import React from 'react'
 import { Container, Row } from 'react-bootstrap'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { ROUTES } from '../shared'
 import { PcButton } from '../ui'
+import { fetchQuotes } from '../services/fetchService'
 
 export const ItemsPricing = () => {
   const navigate = useNavigate()
-  const handleNext = () => {
-    console.log('Data was downloaded')
+  const location = useLocation()
+  const queryParams = new URLSearchParams(location.search)
+  const quoteId = queryParams.get('quote_id')
+
+  const handleDownload = async () => {
+    try {
+      await fetchQuotes.update(quoteId, {
+        quote: { step: 'completed' },
+      })
+      console.log('Data was downloaded')
+    } catch (error) {
+      console.error('Error completing quote:', error)
+    }
   }
 
   const handleBack = () => {
@@ -38,7 +50,7 @@ export const ItemsPricing = () => {
       {/* Buttons section */}
       <section className={'d-flex justify-content-center align-items-center gap-4 mb-5'}>
         <PcButton variant={'outline-primary'} children={'Back'} onClick={handleBack} />
-        <PcButton variant={'outline-primary'} children={'Download'} onClick={handleNext} />
+        <PcButton variant={'outline-primary'} children={'Download'} onClick={handleDownload} />
       </section>
     </Container>
   )

@@ -3,11 +3,28 @@ import { Container, Row } from 'react-bootstrap'
 import { useNavigate } from 'react-router-dom'
 import { ROUTES } from '../shared'
 import { PcButton } from '../ui'
+import { fetchQuotes } from '../services/fetchService'
 
 export const CustomerInfo = () => {
   const navigate = useNavigate()
-  const handleNext = () => {
-    navigate(ROUTES.ITEM_PRICING)
+
+  const handleNext = async () => {
+    try {
+      //TODO Hardcode customer_id for now (replace with real logic later)
+      const customerId = 3
+      const response = await fetchQuotes.create({
+        quote: {
+          customer_id: customerId,
+          total_price: 0,
+          step: 'items_pricing',
+        },
+      })
+      const { data } = response.data
+      const quoteId = data.id
+      navigate(`${ROUTES.ITEM_PRICING}?quote_id=${quoteId}`)
+    } catch (error) {
+      console.error('Error creating quote:', error)
+    }
   }
 
   return (
