@@ -1,0 +1,57 @@
+{
+  "environments": {
+    "test": {
+      "formation": {
+        "test": {
+          "size": "standard-2x",
+          "quantity": 1
+        }
+      },
+      "addons": ["heroku-postgresql:in-dyno"],
+      "buildpacks": [
+        {
+          "url": "heroku/nodejs"
+        },
+        {
+          "url": "heroku/ruby"
+        }
+      ],
+      "env": {
+        "DAY_TO_SEND_INVITES": "monday",
+        "EMAIL_DOMAIN": "cloverpop.com",
+        "DISABLE_DATABASE_ENVIRONMENT_CHECK": "1"
+      },
+      "scripts": {
+        "test-setup": "rails assets:precompile",
+        "test": "rspec"
+      }
+    },
+    "review": {
+      "addons": ["heroku-postgresql:mini", "mailtrap:unpaid"],
+      "buildpacks": [
+        {
+          "url": "heroku/nodejs"
+        },
+        {
+          "url": "heroku/ruby"
+        }
+      ],
+      "env": {
+        "ADMIN_USER": "admin@cloverpop.com",
+        "ADMIN_PASSWORD": "Password1!",
+        "DISABLE_DATABASE_ENVIRONMENT_CHECK": "1",
+        "DOMAIN_URL": "HEROKU_APP_NAME.herokuapp.com",
+        "EMAIL_DOMAIN": "cloverpop.com",
+        "SMTP_ADDRESS": "sandbox.smtp.mailtrap.io",
+        "SMTP_AUTHENTICATION": "cram_md5",
+        "SMTP_DOMAIN": "sandbox.smtp.mailtrap.io",
+        "SMTP_PASSWORD": "ADD_FROM_MAILTRAP",
+        "SMTP_PORT": "2525",
+        "SMTP_USERNAME": "ADD_FROM_MAILTRAP"
+      },
+      "scripts": {
+        "postdeploy": "rails db:schema:load db:seed"
+      }
+    }
+  }
+}

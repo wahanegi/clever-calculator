@@ -1,5 +1,6 @@
 class Item < ApplicationRecord
   belongs_to :category, optional: true
+  has_many :quote_items, dependent: :destroy
   has_many :item_pricings
   before_validation :build_default_pricing, if: -> { item_pricings.blank? }
 
