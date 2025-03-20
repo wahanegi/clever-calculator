@@ -10,14 +10,18 @@ class AdminUser < ApplicationRecord
   PASSWORD_REPEATED_CHAR_FORMAT = /\A(?!.*(.)\1\1).*\z/
 
   validates :name, presence: true
-  validates :email, presence: true, uniqueness: true,
-                    format: { with: URI::MailTo::EMAIL_REGEXP, message: "must be a valid email format" }
+  validates :email, presence: true
+  validates :email, uniqueness: true,
+                    format: { with: URI::MailTo::EMAIL_REGEXP,
+                              message: "must be a valid email format" }, if: -> { email.present? }
+  validates :password, presence: true, unless: :skip_password_validation?
   validates :password, length: { minimum: 8, maximum: 128 },
-                       format: { with: PASSWORD_SYMBOL_FORMAT, message: "must contain at least one symbol" },
-                       presence: true,
-                       unless: :skip_password_validation?
-  validates :password, format: { with: PASSWORD_REPEATED_CHAR_FORMAT, message: "must not contain repeated characters" },
-                       unless: :skip_password_validation?
+                       format: { with: PASSWORD_SYMBOL_FORMAT,
+                                 message: "must contain at least one symbol" },
+                       unless: :skip_password_validation?, if: -> { password.present? }
+  validates :password, format: { with: PASSWORD_REPEATED_CHAR_FORMAT,
+                                 message: "must not contain repeated characters" },
+                       unless: :skip_password_validation?, if: -> { password.present? }
 
   def update_without_password(params)
     @skip_password_validation = true
