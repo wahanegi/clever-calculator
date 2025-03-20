@@ -1,0 +1,29 @@
+$select-image-arrow-dark-url: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBzdHlsZT0iZmlsbDogcmdiYSgwLCAwLCAwLCAxKTt0cmFuc2Zvcm06IDttc0ZpbHRlcjo7Ij48cGF0aCBkPSJNMTYuMjkzIDkuMjkzIDEyIDEzLjU4NiA3LjcwNyA5LjI5M2wtMS40MTQgMS40MTRMMTIgMTYuNDE0bDUuNzA3LTUuNzA3eiI+PC9wYXRoPjwvc3ZnPg==';
+$select-border-color: #c9d0d6;
+$select-background-color: #FFF;
+$select-focus-border-color: #99a2aa;
+
+form.filter_form {
+  select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    width: calc(80% - #{$text-input-total-padding});
+    border: $border-width solid $select-border-color;
+    @include rounded;
+    font-size: 0.95em;
+    @include sans-family;
+    outline: none;
+    padding: 8px 25px 7px 7px;
+    background-image: url($select-image-arrow-dark-url);
+    background-repeat: no-repeat;
+    background-position: calc(100% - 7px);
+    background-size: 16px 16px;
+    cursor: pointer;
+
+    &:focus {
+      border: $border-width solid $select-focus-border-color;
+      @include shadow(0, 0, 4px, $select-focus-border-color);
+    }
+  }
+}
