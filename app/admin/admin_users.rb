@@ -2,7 +2,7 @@ ActiveAdmin.register AdminUser do
   permit_params :email, :name, :password
 
   action_item :back, only: :show do
-    link_to 'Back', admin_admin_users_path
+    link_to 'Back to Admin Users', admin_admin_users_path
   end
 
   filter :name
