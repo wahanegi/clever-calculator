@@ -22,6 +22,8 @@ gem "devise", "~> 4.9", ">= 4.9.4"
 gem "jbuilder"
 # Bundle and transpile JavaScript [https://github.com/rails/jsbundling-rails]
 gem "jsbundling-rails"
+# Fast, simple and easy to use JSON:API serialization library (also known as fast_jsonapi).
+gem "jsonapi-serializer", "~> 2.2"
 # Deploy this application anywhere as a Docker container [https://kamal-deploy.org]
 gem "kamal", require: false
 # Use postgresql as the database for Active Record
