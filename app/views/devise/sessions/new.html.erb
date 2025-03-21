@@ -1,6 +1,6 @@
-<div class="d-flex justify-content-center align-items-center bg-blue-sky vh-100">
+<div class="d-flex justify-content-center align-items-center bg-blue-sky vh-100 px-4">
   <%# image_tag "login_background.png", alt: "Company Logo", class: "img-fluid", width: "472" %>
-  <div class="bg-light d-flex flex-row justify-content-around align-items-center w-100 login-card rounded-4 shadow-lg">
+  <div class="bg-light d-flex flex-column flex-sm-row justify-content-around align-items-center gap-2 w-100 login-card rounded-4 shadow-lg">
     <div>
       <%= image_tag "logo.png", alt: "Company Logo", class: "img-fluid", width: "200" %>
       <div class="fs-3 px-2 mt-6">
@@ -18,7 +18,7 @@
           <%= f.email_field :email, autofocus: true, autocomplete: "email", class: "form-control py-2 border border-primary rounded-1 lh-lg pe-5", placeholder: "Enter your e-mail" %>
           <%= f.label :email, "User", class: "border-label fs-11 fw-bold lh-sm px-1" %>
           <div class="position-absolute end-0 top-50 translate-middle-y pe-3">
-            <%= image_tag "person.svg", alt: "Person Icon", class: "icon", with: "24" %>
+            <%= image_tag "person.svg", alt: "Person Icon", class: "icon", width: "24" %>
           </div>
         </div>
         <div class="field w-100 position-relative">
@@ -28,7 +28,7 @@
             <%= image_tag "eye_icon.svg", alt: "Show Password", class: "icon toggle-password", id: "eye-icon", width: "20" %>
           </div>
         </div>
-        <div class="w-100 d-flex">
+        <div class="w-100 d-flex mt-3">
           <%= render "devise/shared/links" %>
         </div>
         <div class="actions w-100 mt-6 mb-5">
@@ -38,7 +38,7 @@
           <div class="or-divider position-relative mb-3">
             <span class="text-secondary pt-2">or</span>
           </div>
-          <p class="lh-sm mt-6 text-secondary fs-10">
+          <p class="lh-sm mt-5 text-secondary fs-10">
             If you don’t have access
             <%= link_to "request here", new_password_path(resource_name), class: "text-primary text-decoration-underline" %>
           </p>
@@ -66,3 +66,11 @@
     }
   });
 </script>
+<style>
+  .bg-blue-sky {
+    background-color: #3f84bd;;
+    background-image: url(<%=asset_path'login_background.png'%>);
+    background-position: center;
+    background-repeat: repeat-x;
+  }
+</style>
