@@ -21,8 +21,8 @@ ActiveAdmin.register AdminUser do
   show do
     attributes_table do
       row :id
-      row :email
       row :name
+      row :email
       row :created_at
     end
   end
