@@ -20,7 +20,7 @@ RSpec.describe "Admin::CategoriesController", type: :request do
   describe "PUT /admin/categories/:id/toggle" do
     let!(:category) { create(:category) }
 
-    it "toggles category to disabled and verifies response" do
+    it "toggles category to disabled" do
       category.update(is_disabled: false)
 
       put toggle_admin_category_path(category)
@@ -32,7 +32,7 @@ RSpec.describe "Admin::CategoriesController", type: :request do
       expect(category.is_disabled).to eq(true)
     end
 
-    it "toggles category to enabled and verifies response" do
+    it "toggles category to enabled" do
       category.update(is_disabled: true)
 
       put toggle_admin_category_path(category)
@@ -46,7 +46,7 @@ RSpec.describe "Admin::CategoriesController", type: :request do
   end
 
   describe 'POST /admin/categories' do
-    it 'follows redirect and checks created category' do
+    it 'checks redirect to the categories page and successfully creates a category' do
       post admin_categories_path, params: { category: { name: 'Category', description: 'Description' } }
 
       expect(response).to redirect_to(admin_categories_path)
@@ -83,11 +83,14 @@ RSpec.describe "Admin::CategoriesController", type: :request do
   describe 'PUT /admin/categories/:id' do
     let!(:category) { create(:category) }
 
-    it 'updates the category and follows redirect' do
+    it 'checks redirect to the category page and successfully updates the name and description' do
       put admin_category_path(category), params: { category: { name: 'Category', description: 'Description' } }
 
+      expect(response).to redirect_to(admin_category_path(category))
+
       follow_redirect!
-      category.reload
+
+      category.reload # reload the category after the update
 
       expect(response).to have_http_status(:ok)
       expect(response.body).to include('Category was successfully updated')
@@ -99,11 +102,14 @@ RSpec.describe "Admin::CategoriesController", type: :request do
   describe 'PATCH /admin/categories/:id' do
     let!(:category) { create(:category) }
 
-    it 'updates the category and follows redirect' do
+    it 'checks redirect to the category page and successfully updates the name and description' do
       patch admin_category_path(category), params: { category: { name: 'Category', description: 'Description' } }
 
+      expect(response).to redirect_to(admin_category_path(category))
+
       follow_redirect!
-      category.reload
+
+      category.reload # reload the category after the update
 
       expect(response).to have_http_status(:ok)
       expect(response.body).to include('Category was successfully updated')
