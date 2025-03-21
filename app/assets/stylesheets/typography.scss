@@ -13,7 +13,6 @@ body {
 // Headings
 h1,
 .h1 {
-  margin: 0;
   font-family: $font-family-base;
   @include rfs($font-size-xl); // 48px
   font-weight: $font-weight-bold;
@@ -21,7 +20,6 @@ h1,
 
 h2,
 .h2 {
-  margin: 0;
   font-family: $font-family-base;
   @include rfs($font-size-lg); // 32px
   font-weight: $font-weight-medium;
@@ -38,6 +36,7 @@ $custom-colors: (
   'gray': $gray,
   'gray-light': $gray-light,
   'blue-light': $blue-light,
+  'blue-sky': $blue-sky,
   'red-light': $red-light,
   'green-light': $green-light,
   'teal': $teal,
