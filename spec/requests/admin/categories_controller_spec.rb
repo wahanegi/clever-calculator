@@ -29,7 +29,7 @@ RSpec.describe "Admin::CategoriesController", type: :request do
 
       expect(response).to have_http_status(:ok)
       expect(response.body).to include('Category was successfully disabled')
-      expect(category.is_disabled).to eq(true)
+      expect(category.is_disabled).to be(true)
     end
 
     it "toggles category to enabled" do
@@ -41,7 +41,7 @@ RSpec.describe "Admin::CategoriesController", type: :request do
 
       expect(response).to have_http_status(:ok)
       expect(response.body).to include('Category was successfully enabled')
-      expect(category.is_disabled).to eq(false)
+      expect(category.is_disabled).to be(false)
     end
   end
 

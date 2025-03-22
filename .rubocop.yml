@@ -58,6 +58,7 @@ Layout/LineLength:
     - spec/**/*_spec.rb
     - app/helpers/**/*.rb
     - Gemfile
+    - config/**/*.rb
 
 
 # Metrics Rules:
@@ -69,6 +70,7 @@ Metrics/MethodLength:
     - db/migrate/**/*.rb
     - spec/**/*_spec.rb
     - app/helpers/**/*.rb
+    - config/**/*.rb
 
 Metrics/BlockLength:
   Exclude:
@@ -78,6 +80,7 @@ Metrics/BlockLength:
     - db/migrate/**/*.rb
     - spec/**/*_spec.rb
     - app/helpers/**/*.rb
+    - config/**/*.rb
 
 Metrics/AbcSize:
   Exclude:
@@ -87,6 +90,7 @@ Metrics/AbcSize:
     - db/migrate/**/*.rb
     - spec/**/*_spec.rb
     - app/helpers/**/*.rb
+    - config/**/*.rb
 
 Metrics/PerceivedComplexity:
   Exclude:
@@ -96,3 +100,4 @@ Metrics/PerceivedComplexity:
     - db/migrate/**/*.rb
     - spec/**/*_spec.rb
     - app/helpers/**/*.rb
+    - config/**/*.rb
