@@ -1,5 +1,5 @@
-# Add rules from rubocop-rails
-require:
+# Add plugins
+plugins: # Rubocop has been updated and now requires changing 'require' to 'plugins.'. More details about the changes here https://docs.rubocop.org/rubocop/plugin_migration_guide.html
   - rubocop-rails
   - rubocop-rspec_rails
 
@@ -9,6 +9,19 @@ require:
 # Layout/SpaceInsideArrayLiteralBrackets:
 #   Enabled: false
 
+# All Rules:
+AllCops:
+  Exclude:
+    - db/schema.rb          # Ignore schema because it's auto-generated
+    - db/*_schema.rb        # Ignore cable, cache, queue schema because it's auto-generated
+    - node_modules/**/*     # Ignore JavaScript dependencies files
+    - tmp/**/*              # Ignore temporary files
+    - bin/*                 # Ignore binaries files
+    - vendor/**/*           # Ignore vendor dependencies files
+  SuggestExtensions: false  # Ignore the message about extension suggestions
+
+
+# Style Rules:
 Style/StringLiterals:
   Enabled: false
 
@@ -24,21 +37,67 @@ Style/Documentation:
 Style/SymbolArray:
   Enabled: false
 
+
+# Layout Rules:
+Layout/ExtraSpacing:
+  Exclude:
+    - Gemfile
+
 Layout/SpaceInsideArrayLiteralBrackets:
   Enabled: false
 
 Layout/SpaceInsidePercentLiteralDelimiters:
   Enabled: false
 
-Bundler/OrderedGems:
-  Enabled: true
-
-Metrics/MethodLength:
+Layout/LineLength:
   Exclude:
-    - db/migrate/*.rb
-
-Metrics/BlockLength:
-  Exclude:
+    - db/seeds/**/*.rb
+    - lib/tasks/**/*.rake
     - app/admin/**/*.rb
     - db/migrate/**/*.rb
     - spec/**/*_spec.rb
+    - app/helpers/**/*.rb
+    - Gemfile
+    - config/**/*.rb
+
+
+# Metrics Rules:
+Metrics/MethodLength:
+  Exclude:
+    - db/seeds/**/*.rb
+    - lib/tasks/**/*.rake
+    - app/admin/**/*.rb
+    - db/migrate/**/*.rb
+    - spec/**/*_spec.rb
+    - app/helpers/**/*.rb
+    - config/**/*.rb
+
+Metrics/BlockLength:
+  Exclude:
+    - db/seeds/**/*.rb
+    - lib/tasks/**/*.rake
+    - app/admin/**/*.rb
+    - db/migrate/**/*.rb
+    - spec/**/*_spec.rb
+    - app/helpers/**/*.rb
+    - config/**/*.rb
+
+Metrics/AbcSize:
+  Exclude:
+    - db/seeds/**/*.rb
+    - lib/tasks/**/*.rake
+    - app/admin/**/*.rb
+    - db/migrate/**/*.rb
+    - spec/**/*_spec.rb
+    - app/helpers/**/*.rb
+    - config/**/*.rb
+
+Metrics/PerceivedComplexity:
+  Exclude:
+    - db/seeds/**/*.rb
+    - lib/tasks/**/*.rake
+    - app/admin/**/*.rb
+    - db/migrate/**/*.rb
+    - spec/**/*_spec.rb
+    - app/helpers/**/*.rb
+    - config/**/*.rb
