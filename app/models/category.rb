@@ -1,6 +1,8 @@
 class Category < ApplicationRecord
   ASCII_CHARACTERS = /\A[[:ascii:]]*\z/
-  SINGLE_SPACES = /\A\S+( \S+)*\z/
+  BETWEEN_WORDS_SPACES = /\A\s*\S+(?:\s\S+)*\s*\z/
+  START_SINGLE_SPACE = /\A\S+/
+  END_SINGLE_SPACE = /\S+\z/
 
   validates :name, presence: true
   validates :name, uniqueness: { scope: :is_disabled,
@@ -11,8 +13,14 @@ class Category < ApplicationRecord
   validates :name, format: { with: ASCII_CHARACTERS,
                              message: "must contain only ASCII characters" },
                    if: -> { name.present? }
-  validates :name, format: { with: SINGLE_SPACES,
-                             message: "must contain only single spaces between words" },
+  validates :name, format: { with: BETWEEN_WORDS_SPACES,
+                             message: "must contain only a single space between words" },
+                   if: -> { name.present? }
+  validates :name, format: { with: START_SINGLE_SPACE,
+                             message: "must not start with space(s)" },
+                   if: -> { name.present? }
+  validates :name, format: { with: END_SINGLE_SPACE,
+                             message: "must not end with space(s)" },
                    if: -> { name.present? }
 
   def self.ransackable_attributes(_auth_object = nil)
