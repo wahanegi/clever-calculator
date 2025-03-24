@@ -8,6 +8,7 @@
 #     MovieGenre.find_or_create_by!(name: genre_name)
 #   end
 
-require_relative 'seeds/admin_users'
-require_relative 'seeds/categories'
-require_relative 'seeds/customers'
+# Change the order of model creation
+%w[admin_users users categories customers quotes].each do |name|
+  require_relative "seeds/#{name}.rb"
+end

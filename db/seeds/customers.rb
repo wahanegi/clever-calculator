@@ -3,8 +3,8 @@ if Rails.env.development?
 
   if Customer.count.zero?
     Rails.logger.info 'Creating customers'
-    customers_count.times do
-      Rails.logger.info 'Creating Customer'
+    customers_count.times do |i|
+      Rails.logger.info "Creating Customer: #{i}"
       Customer.create!(company_name: Faker::Company.unique.name,
                        email: Faker::Internet.email,
                        first_name: Faker::Name.first_name,

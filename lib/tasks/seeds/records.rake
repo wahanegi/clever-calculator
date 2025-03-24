@@ -11,7 +11,7 @@ end
 
 namespace :db do
   namespace :seed do
-    %w[categories admin_users customers].each do |name|
+    Dir.children('./db/seeds').map { |file_format| File.basename(file_format, '.rb') }.each do |name|
       desc "Load the seed data for the #{name} from db/seeds/#{name}.rb"
       task name.to_sym => :environment do
         load_seed_for name
