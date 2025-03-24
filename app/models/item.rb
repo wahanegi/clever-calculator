@@ -4,9 +4,9 @@ class Item < ApplicationRecord
   has_many :item_pricings
   before_validation :build_default_pricing, if: -> { item_pricings.blank? }
 
-  after_initialize :ensure_one_pricing_for_fixed, if: :new_record?
-
-  accepts_nested_attributes_for :item_pricings, allow_destroy: true
+  after_initialize :build_default_item_pricing, if: :new_record?
+  
+  accepts_nested_attributes_for :item_pricings
 
   enum :pricing_type, { fixed: 0, open: 1, fixed_open: 2 }, default: :fixed
 
@@ -31,9 +31,7 @@ class Item < ApplicationRecord
     self.item_pricings << new_pricing 
   end
 
-  def ensure_one_pricing_for_fixed
-    if fixed? && item_pricings.blank?
-      item_pricings.build(default_fixed_price: '')
-    end
+  def build_default_item_pricing
+    item_pricings.build if item_pricings.blank?
   end
 end
