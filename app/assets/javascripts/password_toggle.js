@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', function () {
+function initializePasswordToggle() {
   const passwordField = document.getElementById('password-field')
   const togglePassword = document.getElementById('toggle-password')
   const eyeIcon = document.getElementById('eye-icon')
@@ -14,4 +14,7 @@ document.addEventListener('DOMContentLoaded', function () {
       eyeIcon.src = `/assets/${newIcon}`
     })
   }
-})
+}
+
+document.addEventListener('turbo:load', initializePasswordToggle)
+document.addEventListener('turbo:render', initializePasswordToggle)
