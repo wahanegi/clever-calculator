@@ -1,4 +1,5 @@
 class Customer < ApplicationRecord
+  has_many :quotes, dependent: :destroy
   validates :company_name, presence: true, uniqueness: true
 
   def self.ransackable_attributes(_auth_object = nil)
