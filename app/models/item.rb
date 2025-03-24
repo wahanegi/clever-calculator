@@ -6,7 +6,7 @@ class Item < ApplicationRecord
   
   accepts_nested_attributes_for :item_pricings
 
-  enum :pricing_type, { fixed: 0, open: 1, fixed_open: 2 }, default: :fixed
+  enum :pricing_type, { fixed: 0, open: 1, fixed_open: 2 }
 
   validates :name, presence: true
   validates :pricing_type, presence: true
@@ -24,6 +24,8 @@ class Item < ApplicationRecord
   private
 
   def build_default_item_pricing
-    item_pricings.build if item_pricings.blank?
+    if item_pricings.blank? && pricing_type.in?(%w[fixed open])
+      item_pricings.build
+    end
   end
 end

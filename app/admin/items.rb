@@ -44,14 +44,19 @@ ActiveAdmin.register Item do
       f.input :name, required: true
       f.input :description
       f.input :category_id, as: :select,
-                             collection: Category.pluck(:name, :id).push(["No Category", nil]),
-                             include_blank: false
+                             collection: Category.pluck(:name, :id), 
+                             include_blank: "No Category"
   
       f.input :pricing_type, as: :select, prompt: "Select Pricing Type",
                              input_html: { onchange: 'this.form.submit();' }
     end
   
-    pricing = f.object.item_pricings.first_or_initialize
+    pricing = if f.object.fixed_open? && !f.object.persisted?
+      nil
+    else
+      f.object.item_pricings.first_or_initialize
+    end
+
   
     case f.object.pricing_type
     when "fixed"
@@ -91,27 +96,28 @@ ActiveAdmin.register Item do
 
   controller do
     def create
-      super do |success, failure|
-        success.html do
-          if resource.persisted? && resource.fixed_open?
-            redirect_to edit_admin_item_path(resource) and return
-          else
-            redirect_to admin_item_path(resource) and return
-          end
+      @item = Item.new(permitted_params[:item])
+  
+      if @item.save
+        if @item.fixed_open?
+          redirect_to edit_admin_item_path(@item), notice: "Item was successfully created. Now you can add parameters."
+        else
+          redirect_to admin_item_path(@item), notice: "Item was successfully created."
         end
-        failure.html do
-          render :new
-        end
+      else
+        flash.now[:error] = "Failed to create item: #{@item.errors.full_messages.to_sentence}"
+        render :new, status: :unprocessable_entity
       end
     end
   end
   
+  
 
-  action_item :add_parameter, only: :edit do
-    if resource.fixed_open?
-      link_to "Add Parameter", select_parameter_type_admin_item_path(resource)
-    end
-  end
+  # action_item :add_parameter, only: :edit do
+  #   if resource.fixed_open?
+  #     link_to "Add Parameter", select_parameter_type_admin_item_path(resource)
+  #   end
+  # end
 
   action_item :back, only: :show do
     link_to "Back", admin_items_path
