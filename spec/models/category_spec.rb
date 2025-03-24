@@ -36,25 +36,9 @@ RSpec.describe Category, type: :model do
 
       it { is_expected.to allow_value(printable_ascii_characters).for(:name) }
       it { is_expected.not_to allow_value(printable_utf_8_characters).for(:name).with_message('must contain only ASCII characters') }
-
-      it {
-        name_category = 'Category with  more  than one space  between words     123'
-        message = "must contain only a single space between words"
-
-        is_expected.not_to allow_value(name_category).for(:name).with_message(message)
-      }
-      it {
-        name_category = '   Category with starting spaces'
-        message = "must not start with space(s)"
-
-        is_expected.not_to allow_value(name_category).for(:name).with_message(message)
-      }
-      it {
-        name_category = 'Category with ending spaces   '
-        message = "must not end with space(s)"
-
-        is_expected.not_to allow_value(name_category).for(:name).with_message(message)
-      }
+      it { is_expected.to normalize(:name).from('Category with  more  than one space  between words     123').to('Category with more than one space between words 123') }
+      it { is_expected.to normalize(:name).from('   Category with starting spaces').to('Category with starting spaces') }
+      it { is_expected.to normalize(:name).from('Category with ending spaces   ').to('Category with ending spaces') }
     end
 
     describe 'is_disabled' do
