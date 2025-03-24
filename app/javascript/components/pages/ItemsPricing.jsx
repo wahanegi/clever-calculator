@@ -1,25 +1,18 @@
 import React from 'react'
 import { Container, Row } from 'react-bootstrap'
-import { useLocation, useNavigate } from 'react-router-dom'
-import { ROUTES } from '../shared'
+import { useAppHooks } from '../hooks'
+import { fetchQuotes } from '../services'
+import { ROUTES, STEPS } from '../shared'
 import { PcButton } from '../ui'
-import { fetchQuotes } from '../services/fetchService'
 
 export const ItemsPricing = () => {
-  const navigate = useNavigate()
-  const location = useLocation()
-  const queryParams = new URLSearchParams(location.search)
+  const { navigate, queryParams } = useAppHooks()
   const quoteId = queryParams.get('quote_id')
 
   const handleDownload = async () => {
-    try {
-      await fetchQuotes.update(quoteId, {
-        quote: { step: 'completed' },
-      })
-      console.log('Data was downloaded')
-    } catch (error) {
-      console.error('Error completing quote:', error)
-    }
+    await fetchQuotes.update(quoteId, {
+      quote: { step: STEPS.COMPLETED },
+    })
   }
 
   const handleBack = () => {
@@ -32,7 +25,7 @@ export const ItemsPricing = () => {
       <section className={'px-6 mb-2'}>
         <div className={'d-flex justify-content-between mb-6'}>
           <h1>Items Pricing Page</h1>
-          <PcButton variant={'outline-primary'} children={'Cancel'} className={'mt-2'} />
+          <PcButton variant={'outline-primary'} children={'Reset'} className={'mt-2'} />
         </div>
         <div style={{ height: '79px', border: '2px solid red' }}>
           <span>Progress bar</span>

@@ -1,3 +1,7 @@
+export const STEPS = {
+  ITEM_PRICING: 'items_pricing',
+  COMPLETED: 'completed',
+}
 export const ROUTES = {
   HOME: '/',
   CUSTOMER_INFO: '/customer-info',

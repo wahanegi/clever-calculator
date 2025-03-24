@@ -6,7 +6,7 @@ class Quote < ApplicationRecord
 
   enum :step, { customer_info: 'customer_info', items_pricing: 'items_pricing', completed: 'completed' }
 
-  scope :unfinished, -> { where(step: %w[customer_info items_pricing]) }
+  scope :unfinished, -> { where.not(step: 'completed') }
   scope :completed, -> { where(step: 'completed') }
 
   def self.last_unfinished
