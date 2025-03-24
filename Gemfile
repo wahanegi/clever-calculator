@@ -2,6 +2,7 @@ source "https://rubygems.org"
 
 ruby "3.4.1"
 
+
 gem "activeadmin", "~> 3.2", ">= 3.2.5"           # A framework for creating elegant and customizable admin panels
 # gem "bcrypt", "~> 3.1.7"                        # Use Active Model has_secure_password [https://guides.rubyonrails.org/active_model_basics.html#securepassword]
 gem "bootsnap", require: false                    # Reduces boot times through caching; required in config/boot.rb
@@ -11,6 +12,7 @@ gem "cssbundling-rails"                           # Bundle and process CSS [http
 gem "devise", "~> 4.9", ">= 4.9.4"                # Authentication
 gem "jbuilder"                                    # Build JSON APIs with ease [https://github.com/rails/jbuilder]
 gem "jsbundling-rails"                            # Bundle and transpile JavaScript [https://github.com/rails/jsbundling-rails]
+gem "jsonapi-serializer", "~> 2.2"                # Fast, simple and easy to use JSON:API serialization library (also known as fast_jsonapi).
 gem "kamal", require: false                       # Deploy this application anywhere as a Docker container [https://kamal-deploy.org]
 gem "pg", "~> 1.1"                                # Use postgresql as the database for Active Record
 gem "puma", ">= 5.0"                              # Use the Puma web server [https://github.com/puma/puma]
@@ -41,5 +43,5 @@ group :development, :test do
 end
 
 group :development do
-  gem "web-console"              # Use console on exceptions pages [https://github.com/rails/web-console]
+  gem "web-console"                               # Use console on exceptions pages [https://github.com/rails/web-console]
 end
