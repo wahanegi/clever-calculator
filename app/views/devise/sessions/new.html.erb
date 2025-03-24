@@ -1,4 +1,4 @@
-<div class="d-flex justify-content-center align-items-center bg-blue-sky vh-100 px-4">
+<div class="d-flex justify-content-center align-items-center bg-blue-sky vh-100 px-4" style="background-image: url('<%= image_path('login_background.png') %>');">
   <div class="bg-light d-flex flex-column flex-sm-row justify-content-around align-items-center gap-2 w-100 login-card rounded-4 shadow-lg">
     <div>
       <%= image_tag "logo.png", alt: "Company Logo", class: "img-fluid", width: "200" %>
@@ -12,6 +12,11 @@
         <h2 class="text-primary fw-bold lh-lg">Welcome!</h2>
         <p class="fs-9 lh-sm">Sign in to your account</p>
       </div>
+      <% if flash[:alert].present? || flash[:error].present? %>
+        <div class="alert alert-danger text-center fs-9 lh-1 m-0 w-100" role="alert">
+          <%= flash[:alert] || flash[:error] %>
+        </div>
+      <% end %>
       <%= form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
         <div class="field w-100 mb-5 position-relative">
           <%= f.email_field :email, autofocus: true, autocomplete: "email", class: "form-control py-2 border border-primary rounded-1 lh-lg pe-5", placeholder: "Enter your e-mail" %>
@@ -47,11 +52,3 @@
   </div>
 </div>
 <%= javascript_include_tag "password_toggle", defer: true %>
-<style>
-  .bg-blue-sky {
-  background-color: #3f84bd;;
-  background-image: url(<%=asset_path'login_background.png'%>);
-  background-position: center;
-  background-repeat: repeat-x;
-  }
-</style>

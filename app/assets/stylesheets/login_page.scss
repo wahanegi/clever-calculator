@@ -7,6 +7,12 @@
   max-width: 374px;
 }
 
+.bg-blue-sky {
+  background-color: $blue-sky;
+  background-position: center;
+  background-repeat: repeat-x;
+}
+
 .border-label {
   position: absolute;
   top: -0.4rem;
