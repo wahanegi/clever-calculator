@@ -47,8 +47,7 @@ ActiveAdmin.register Item do
                              collection: Category.pluck(:name, :id), 
                              include_blank: "No Category"
   
-      f.input :pricing_type, as: :select, prompt: "Select Pricing Type",
-                             input_html: { onchange: 'this.form.submit();' }
+      f.input :pricing_type, as: :radio
     end
   
     pricing = if f.object.fixed_open? && !f.object.persisted?
@@ -110,14 +109,68 @@ ActiveAdmin.register Item do
       end
     end
   end
-  
-  
 
-  # action_item :add_parameter, only: :edit do
-  #   if resource.fixed_open?
-  #     link_to "Add Parameter", select_parameter_type_admin_item_path(resource)
-  #   end
-  # end
+  action_item :add_parameter, only: :edit do
+    if resource.fixed_open?
+      link_to "Add Parameter", new_parameter_admin_item_path(resource)
+    end
+  end
+
+  member_action :new_parameter, method: :get do
+    @item = Item.find(params[:id])
+    # Здесь можно отрендерить «кастомную» форму (Arbre / partial),
+    # где пользователь выбирает тип параметра (Fixed/Open/Select) и заполняет поля.
+    # Например, render "admin/items/new_parameter" -- если сделаем partial.
+  end
+  
+  member_action :create_parameter, method: :post do
+    @item = Item.find(params[:id])
+    @item_pricing = @item.item_pricings.first_or_create
+  
+    param_type = params[:parameter_type]  # "Fixed"/"Open"/"Select"
+  
+    case param_type
+    when "Fixed"
+      new_hash = @item_pricing.fixed_parameters || {}
+      new_hash[params[:fixed_parameter_name]] = params[:fixed_parameter_value]
+      @item_pricing.fixed_parameters = new_hash
+  
+      @item_pricing.is_open = false
+      @item_pricing.is_selectable_options = false
+  
+    when "Open"
+      arr = @item_pricing.open_parameters_label || []
+      arr << params[:open_parameter_name].to_s
+      @item_pricing.open_parameters_label = arr
+  
+      @item_pricing.is_open = true
+      @item_pricing.is_selectable_options = false
+  
+    when "Select"
+      sel = @item_pricing.pricing_options || {}
+      sub_hash = {}
+      (1..10).each do |i|
+        desc = params["option_description_#{i}"]
+        val  = params["option_value_#{i}"]
+        next if desc.blank? || val.blank?
+  
+        sub_hash[desc] = val
+      end
+      sel[params[:select_parameter_name]] = sub_hash
+      @item_pricing.pricing_options = sel
+  
+      @item_pricing.is_open = false
+      @item_pricing.is_selectable_options = true
+    end
+
+    if @item_pricing.save
+      redirect_to edit_admin_item_path(@item), notice: "Parameter added!"
+    else
+      flash[:error] = "Parameter not saved: #{@item_pricing.errors.full_messages.join(', ')}"
+      redirect_to new_parameter_admin_item_path(@item)
+    end
+  end
+  
 
   action_item :back, only: :show do
     link_to "Back", admin_items_path

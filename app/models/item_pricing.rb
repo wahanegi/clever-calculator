@@ -10,7 +10,7 @@ class ItemPricing < ApplicationRecord
 
   validates :item, presence: true
   validates :default_fixed_price, numericality: { greater_than_or_equal_to: 0 }, allow_nil: true
-  validates :calculation_formula, presence: true, if: -> { item&.pricing_type == "fixed_open" }
+  # validates :calculation_formula, presence: true, if: -> { item&.pricing_type == "fixed_open" }
   validates :default_fixed_price, presence: true, if: -> { pricing_type == "fixed" }
   validates :open_parameters_label, presence: true, if: -> { pricing_type == "open" }
 

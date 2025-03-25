@@ -1,7 +1,8 @@
 ActiveAdmin.register ItemPricing do
-    # belongs_to :item
+    belongs_to :item
   
-    permit_params :item_id, :is_open, :is_selectable_options, :fixed_parameters, :open_parameters_label, :pricing_options
+    permit_params :item_id, :is_open, :is_selectable_options, :fixed_parameters, 
+                  :open_parameters_label, :pricing_options, :calculation_formula, :formula_parameters
   
     form do |f|
       f.semantic_errors

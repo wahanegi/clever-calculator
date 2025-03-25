@@ -1,0 +1,89 @@
+panel "Add Parameter for #{resource.name}" do
+  para "Choose one of the parameter types below."
+
+  # HTML-форма, отправляемая в create_parameter_admin_item_path(@item)
+  form action: create_parameter_admin_item_path(resource), method: :post do
+    input name: "authenticity_token", type: :hidden, value: form_authenticity_token
+
+    # 1. Radio buttons
+    div do
+      label do
+        input name: "parameter_type", type: :radio, value: "Fixed"
+        span " Fixed Parameter"
+      end
+      br
+      label do
+        input name: "parameter_type", type: :radio, value: "Open"
+        span " Open Parameter"
+      end
+      br
+      label do
+        input name: "parameter_type", type: :radio, value: "Select"
+        span " Select Parameter"
+      end
+    end
+
+    hr
+
+    # 2. Поля для Fixed
+    div id: "fixed_fields", style: "display:none;" do
+      para "Fixed Parameter Fields"
+      label "Parameter Name"
+      input type: :text, name: :fixed_parameter_name
+      br
+      label "Parameter Value"
+      input type: :text, name: :fixed_parameter_value
+    end
+
+    # 3. Поля для Open
+    div id: "open_fields", style: "display:none;" do
+      para "Open Parameter Fields"
+      label "Parameter Name"
+      input type: :text, name: :open_parameter_name
+    end
+
+    # 4. Поля для Select
+    div id: "select_fields", style: "display:none;" do
+      para "Select Parameter Fields"
+      label "Parameter Name"
+      input type: :text, name: :select_parameter_name
+
+      (1..10).each do |i|
+        div do
+          label "Option Description #{i}"
+          input type: :text, name: "option_description_#{i}"
+          br
+          label "Option Value #{i}"
+          input type: :text, name: "option_value_#{i}"
+        end
+        hr
+      end
+    end
+
+    hr
+    # Кнопка сабмита
+    div class: "form-actions" do
+      input type: :submit, value: "Add Parameter"
+    end
+  end
+end
+
+# Добавим JavaScript, чтобы переключать поля по radio
+script do
+  raw %(
+    document.addEventListener("DOMContentLoaded", function(){
+      function toggleFields(){
+        var val = document.querySelector('input[name="parameter_type"]:checked');
+        var type = val ? val.value : "";
+        document.getElementById("fixed_fields").style.display  = (type === "Fixed")  ? "block" : "none";
+        document.getElementById("open_fields").style.display   = (type === "Open")   ? "block" : "none";
+        document.getElementById("select_fields").style.display = (type === "Select") ? "block" : "none";
+      }
+
+      document.querySelectorAll('input[name="parameter_type"]').forEach(function(el){
+        el.addEventListener('change', toggleFields);
+      });
+      toggleFields();
+    });
+  )
+end
