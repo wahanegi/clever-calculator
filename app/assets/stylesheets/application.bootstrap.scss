@@ -1,8 +1,8 @@
 // Base styles
-@import 'variables';
+@import 'application/variables';
 @import 'bootstrap/scss/bootstrap';
-@import 'reset';
-@import 'typography';
+@import 'application/reset';
+@import 'application/typography';
 
 // Merge custom font-size utility into Bootstrap's $utilities map
 $utilities: map-merge(
@@ -18,6 +18,6 @@ $utilities: map-merge(
 );
 
 // Component styles
-@import 'icons';
-@import 'buttons';
-@import 'customer_info';
+@import 'application/icons';
+@import 'application/buttons';
+@import 'application/customer_info';
