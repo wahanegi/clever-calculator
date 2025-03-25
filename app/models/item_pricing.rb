@@ -14,18 +14,15 @@ class ItemPricing < ApplicationRecord
   validates :default_fixed_price, numericality: { greater_than_or_equal_to: 0 }, allow_nil: true
   validates :calculation_formula, presence: true, if: -> { item&.pricing_type == "fixed_open" }
   validates :default_fixed_price, presence: true, if: -> { pricing_type == "fixed" }
+  validates :open_parameters_label, presence: true, if: -> { pricing_type == "open" }
+
 
   def open_parameters_label_as_string
-    if open_parameters_label.present?
-      open_parameters_label.join("\n")
-    else
-      ""
-    end
+    open_parameters_label.present? ? open_parameters_label.first : ""
   end
 
   def open_parameters_label_as_string=(val)
-    lines = val.to_s.split(/\r?\n/).map(&:strip).reject(&:blank?)
-    self.open_parameters_label = lines
+    self.open_parameters_label = [val.to_s.strip]
   end
 
   def self.ransackable_attributes(auth_object = nil)

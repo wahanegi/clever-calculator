@@ -44,65 +44,80 @@ ActiveAdmin.register Item do
       f.input :name, required: true
       f.input :description
       f.input :category_id, as: :select,
-                             collection: Category.pluck(:name, :id).push(["No Category", nil]),
-                             include_blank: false
+                             collection: Category.pluck(:name, :id), 
+                             include_blank: "No Category"
   
       f.input :pricing_type, as: :select, prompt: "Select Pricing Type",
                              input_html: { onchange: 'this.form.submit();' }
     end
   
-    pricing = f.object.item_pricings.first_or_initialize
+    pricing = if f.object.fixed_open? && !f.object.persisted?
+      nil
+    else
+      f.object.item_pricings.first_or_initialize
+    end
+
   
     case f.object.pricing_type
     when "fixed"
-      f.inputs "Fixed Pricing" do
+      f.inputs "Pricing parameter" do
         f.fields_for :item_pricings, pricing do |pf|
           pf.input :default_fixed_price, label: "Fixed Price"
         end
       end
   
     when "open"
-      f.inputs "Open Pricing" do
+      f.inputs "Pricing parameter" do
         f.fields_for :item_pricings, pricing do |pf|
           pf.input :open_parameters_label_as_string,
                    as: :text,
-                   label: "Parameters name (one per line)",
+                   label: "Parameters name",
                    input_html: {
-                     rows: 5,
+                     rows: 1,
                      value: pf.object.open_parameters_label_as_string
                    }
         end
       end
   
     when "fixed_open"
+      if f.object.persisted?
       f.inputs "Fixed + Open Pricing" do
         f.fields_for :item_pricings, pricing do |pf|
-          pf.input :default_fixed_price, label: "Fixed Price"
-          pf.input :fixed_parameters, as: :text, label: "Fixed Parameters (JSON)"
-          pf.input :formula_parameters, as: :text, label: "Formula Parameters (JSON)"
-          pf.input :calculation_formula, label: "Calculation Formula"
-        end
+        pf.input :formula_parameters, as: :text, label: "Formula Parameters (JSON)"
+        pf.input :calculation_formula, label: "Calculation Formula"
       end
-  
-      if f.object.item_pricings.present?
-        panel "Existing Parameters" do
-          ul do
-            f.object.item_pricings.each do |ipr|
-              li "Formula: #{ipr.formula_parameters}, Calculation: #{ipr.calculation_formula}"
-            end
-          end
-        end
-      else
-        div "No parameters yet."
+    end 
+      else 
+        panel "After creating this item, you will be redirected to edit page where you can add parameters."
       end
-  
-      f.button "Add Parameter", type: "button",
-        onclick: "window.location='#{}'"
-    end  
-  
+    end
     f.actions
   end
+
+  controller do
+    def create
+      @item = Item.new(permitted_params[:item])
   
+      if @item.save
+        if @item.fixed_open?
+          redirect_to edit_admin_item_path(@item), notice: "Item was successfully created. Now you can add parameters."
+        else
+          redirect_to admin_item_path(@item), notice: "Item was successfully created."
+        end
+      else
+        flash.now[:error] = "Failed to create item: #{@item.errors.full_messages.to_sentence}"
+        render :new, status: :unprocessable_entity
+      end
+    end
+  end
+  
+  
+
+  # action_item :add_parameter, only: :edit do
+  #   if resource.fixed_open?
+  #     link_to "Add Parameter", select_parameter_type_admin_item_path(resource)
+  #   end
+  # end
 
   action_item :back, only: :show do
     link_to "Back", admin_items_path

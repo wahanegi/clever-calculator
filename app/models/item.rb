@@ -2,13 +2,12 @@ class Item < ApplicationRecord
   belongs_to :category, optional: true
   has_many :quote_items, dependent: :destroy
   has_many :item_pricings
-  before_validation :build_default_pricing, if: -> { item_pricings.blank? }
 
   after_initialize :build_default_item_pricing, if: :new_record?
   
   accepts_nested_attributes_for :item_pricings
 
-  enum :pricing_type, { fixed: 0, open: 1, fixed_open: 2 }, default: :fixed
+  enum :pricing_type, { fixed: 0, open: 1, fixed_open: 2 }
 
   validates :name, presence: true
   validates :pricing_type, presence: true
@@ -23,15 +22,11 @@ class Item < ApplicationRecord
     ["category"]
   end
 
-  
   private
-  def build_default_pricing
-    new_pricing = item_pricings.build
-    new_pricing.item = self 
-    self.item_pricings << new_pricing 
-  end
 
   def build_default_item_pricing
-    item_pricings.build if item_pricings.blank?
+    if item_pricings.blank? && pricing_type.in?(%w[fixed open])
+      item_pricings.build
+    end
   end
 end
