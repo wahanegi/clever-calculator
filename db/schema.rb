@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_03_20_050959) do
+ActiveRecord::Schema[8.0].define(version: 2025_03_25_104727) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -55,17 +55,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_20_050959) do
     t.index ["company_name"], name: "index_customers_on_company_name", unique: true
   end
 
-  create_table "quotes", force: :cascade do |t|
-    t.bigint "customer_id", null: false
-    t.bigint "user_id", null: false
-    t.decimal "total_price", precision: 10, scale: 2, default: "0.0", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.string "step", default: "customer_info", null: false
-    t.index ["customer_id"], name: "index_quotes_on_customer_id"
-    t.index ["user_id"], name: "index_quotes_on_user_id"
-  end
-
   create_table "item_pricings", force: :cascade do |t|
     t.bigint "item_id", null: false
     t.decimal "default_fixed_price", precision: 10, scale: 2
@@ -93,6 +82,19 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_20_050959) do
     t.index ["name", "category_id"], name: "index_items_on_name_and_category_id", unique: true
   end
 
+  create_table "notes", force: :cascade do |t|
+    t.bigint "quote_id", null: false
+    t.bigint "quote_item_id"
+    t.bigint "category_id"
+    t.text "notes", null: false
+    t.boolean "is_printable", default: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["category_id"], name: "index_notes_on_category_id"
+    t.index ["quote_id"], name: "index_notes_on_quote_id"
+    t.index ["quote_item_id"], name: "index_notes_on_quote_item_id"
+  end
+
   create_table "quote_items", force: :cascade do |t|
     t.bigint "quote_id", null: false
     t.bigint "item_id", null: false
@@ -106,6 +108,17 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_20_050959) do
     t.index ["item_id"], name: "index_quote_items_on_item_id"
     t.index ["item_pricing_id"], name: "index_quote_items_on_item_pricing_id"
     t.index ["quote_id"], name: "index_quote_items_on_quote_id"
+  end
+
+  create_table "quotes", force: :cascade do |t|
+    t.bigint "customer_id", null: false
+    t.bigint "user_id", null: false
+    t.decimal "total_price", precision: 10, scale: 2, default: "0.0", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "step", default: "customer_info", null: false
+    t.index ["customer_id"], name: "index_quotes_on_customer_id"
+    t.index ["user_id"], name: "index_quotes_on_user_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -123,6 +136,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_20_050959) do
 
   add_foreign_key "item_pricings", "items"
   add_foreign_key "items", "categories"
+  add_foreign_key "notes", "categories"
+  add_foreign_key "notes", "quote_items"
+  add_foreign_key "notes", "quotes"
   add_foreign_key "quote_items", "item_pricings"
   add_foreign_key "quote_items", "items"
   add_foreign_key "quote_items", "quotes"

@@ -2,6 +2,7 @@ class Quote < ApplicationRecord
   belongs_to :customer
   belongs_to :user
   has_many :quote_items, dependent: :destroy
+  has_many :notes, dependent: :destroy
 
   validates :total_price, presence: true, numericality: { greater_than_or_equal_to: 0 }
   enum :step, { customer_info: 'customer_info', items_pricing: 'items_pricing', completed: 'completed' }

@@ -12,6 +12,7 @@ RSpec.describe Quote, type: :model do
   describe 'associations' do
     it { is_expected.to belong_to(:customer).required }
     it { is_expected.to belong_to(:user).required }
+    it { is_expected.to have_many(:notes).dependent(:destroy) }
   end
 
   describe 'validations' do

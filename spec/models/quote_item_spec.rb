@@ -5,6 +5,7 @@ RSpec.describe QuoteItem, type: :model do
     it { is_expected.to belong_to(:quote).required }
     it { is_expected.to belong_to(:item).required }
     it { is_expected.to belong_to(:item_pricing).required }
+    it { is_expected.to have_many(:notes).dependent(:destroy) }
   end
 
   describe 'validations' do

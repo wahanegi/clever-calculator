@@ -7,7 +7,7 @@ class Customer < ApplicationRecord
        updated_at]
   end
 
-  def self.ransackable_associations(auth_object = nil)
+  def self.ransackable_associations(_auth_object = nil)
     ["quotes"]
   end
 end
