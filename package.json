@@ -27,7 +27,7 @@
     "react-dom": "^19.0.0",
     "react-icons": "^5.5.0",
     "react-router-dom": "^7.1.1",
-    "sass": "^1.83.1"
+    "sass": "1.76.0"
   },
   "browserslist": [
     "defaults"
