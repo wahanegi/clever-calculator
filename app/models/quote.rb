@@ -9,9 +9,11 @@ class Quote < ApplicationRecord
     return all if search.blank?
 
     search = "%#{sanitize_sql_like(search.to_s.downcase)}%"
-    joins(:customer).where('LOWER(customers.first_name) LIKE :search OR LOWER(customers.last_name) LIKE :search',
+    joins(:customer).where('LOWER(customers.first_name) LIKE :search OR LOWER(customers.last_name) LIKE :search OR LOWER(customers.company_name) LIKE :search',
                            search: "%#{search}%")
   }
+
+  accepts_nested_attributes_for :quote_items, allow_destroy: true
 
   def self.ransackable_attributes(_auth_object = nil)
     %w[id customer_id user_id total_price created_at]
