@@ -5,7 +5,6 @@ ruby "3.4.1"
 gem "activeadmin", "~> 3.2", ">= 3.2.5"           # A framework for creating elegant and customizable admin panels
 # gem "bcrypt", "~> 3.1.7"                        # Use Active Model has_secure_password [https://guides.rubyonrails.org/active_model_basics.html#securepassword]
 gem "bootsnap", require: false                    # Reduces boot times through caching; required in config/boot.rb
-gem "bootstrap", "~> 5.3", ">= 5.3.3"             # Provides a front-end framework with responsive design, pre-styled components
 gem "cssbundling-rails"                           # Bundle and process CSS [https://github.com/rails/cssbundling-rails]
 # gem "image_processing", "~> 1.2"                # Use Active Storage variants [https://guides.rubyonrails.org/active_storage_overview.html#transforming-images]
 gem "devise", "~> 4.9", ">= 4.9.4"                # Authentication
