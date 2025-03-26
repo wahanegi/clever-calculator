@@ -37,8 +37,9 @@
         }
       ],
       "env": {
-        "ADMIN_USER": "admin@cloverpop.com",
-        "ADMIN_PASSWORD": "Password1!",
+        "ADMIN_USER_EMAIL": "admin@cloverpop.com",
+        "ADMIN_USER_PASSWORD": "Password1!",
+        "ADMIN_USER_NAME": "Admin",
         "DISABLE_DATABASE_ENVIRONMENT_CHECK": "1",
         "DOMAIN_URL": "HEROKU_APP_NAME.herokuapp.com",
         "EMAIL_DOMAIN": "cloverpop.com",
