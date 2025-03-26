@@ -1,5 +1,6 @@
 class Item < ApplicationRecord
   belongs_to :category, optional: true
+  has_many :quote_items, dependent: :destroy
   has_many :item_pricings
 
   after_initialize :build_default_item_pricing, if: :new_record?

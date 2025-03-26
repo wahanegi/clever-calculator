@@ -68,6 +68,14 @@ RSpec.configure do |config|
   config.filter_rails_from_backtrace!
   # arbitrary gems may also be filtered via:
   # config.filter_gems_from_backtrace("gem name")
+
+  # Include Devise helpers
+  config.include Devise::Test::IntegrationHelpers, type: :request
+  config.include Devise::Test::IntegrationHelpers, type: :feature
+  config.include Devise::Test::ControllerHelpers, type: :controller
+  config.before(:each, type: :request) do
+    Rails.application.reload_routes_unless_loaded
+  end
 end
 
 Shoulda::Matchers.configure do |config|
@@ -75,11 +83,6 @@ Shoulda::Matchers.configure do |config|
     with.test_framework :rspec
     with.library :rails
   end
-end
-
-RSpec.configure do |config|
-  config.include Devise::Test::IntegrationHelpers, type: :request
-  config.include Devise::Test::IntegrationHelpers, type: :feature
 end
 
 Dir[Rails.root.join('spec/support/**/*.rb')].each { |f| require f }

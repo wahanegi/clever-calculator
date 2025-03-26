@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_03_10_130216) do
+ActiveRecord::Schema[8.0].define(version: 2025_03_20_050959) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -23,6 +23,11 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_10_130216) do
     t.string "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "sign_in_count", default: 0, null: false
+    t.datetime "current_sign_in_at"
+    t.datetime "last_sign_in_at"
+    t.string "current_sign_in_ip"
+    t.string "last_sign_in_ip"
     t.index ["email"], name: "index_admin_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_admin_users_on_reset_password_token", unique: true
   end
@@ -77,6 +82,32 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_10_130216) do
     t.index ["name", "category_id"], name: "index_items_on_name_and_category_id", unique: true
   end
 
+  create_table "quote_items", force: :cascade do |t|
+    t.bigint "quote_id", null: false
+    t.bigint "item_id", null: false
+    t.bigint "item_pricing_id", null: false
+    t.jsonb "open_parameters", default: {}
+    t.decimal "price", precision: 10, scale: 2, null: false
+    t.decimal "discount", precision: 5, scale: 2, default: "0.0", null: false
+    t.decimal "final_price", precision: 10, scale: 2, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["item_id"], name: "index_quote_items_on_item_id"
+    t.index ["item_pricing_id"], name: "index_quote_items_on_item_pricing_id"
+    t.index ["quote_id"], name: "index_quote_items_on_quote_id"
+  end
+
+  create_table "quotes", force: :cascade do |t|
+    t.bigint "customer_id", null: false
+    t.bigint "user_id", null: false
+    t.decimal "total_price", precision: 10, scale: 2, default: "0.0", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "step", default: "customer_info", null: false
+    t.index ["customer_id"], name: "index_quotes_on_customer_id"
+    t.index ["user_id"], name: "index_quotes_on_user_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
@@ -92,4 +123,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_10_130216) do
 
   add_foreign_key "item_pricings", "items"
   add_foreign_key "items", "categories"
+  add_foreign_key "quote_items", "item_pricings"
+  add_foreign_key "quote_items", "items"
+  add_foreign_key "quote_items", "quotes"
+  add_foreign_key "quotes", "customers"
+  add_foreign_key "quotes", "users"
 end

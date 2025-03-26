@@ -1,0 +1,57 @@
+@import 'variables';
+@import 'bootstrap/scss/mixins';
+
+// Base Typography
+body {
+  font-family: $font-family-base;
+  @include rfs($font-size-base); // 16px
+  font-weight: $font-weight-light;
+  line-height: $line-height-base;
+  color: $dark;
+}
+
+// Headings
+h1,
+.h1 {
+  margin: 0;
+  font-family: $font-family-base;
+  @include rfs($font-size-xl); // 48px
+  font-weight: $font-weight-bold;
+}
+
+h2,
+.h2 {
+  margin: 0;
+  font-family: $font-family-base;
+  @include rfs($font-size-lg); // 32px
+  font-weight: $font-weight-medium;
+}
+
+.text-inter {
+  font-family: $font-family-inter; // Inter
+  font-weight: $font-weight-medium; // 500
+  @include rfs($font-size-sm); // 14px
+}
+
+// Utility Classes
+$custom-colors: (
+  'gray': $gray,
+  'gray-light': $gray-light,
+  'blue-light': $blue-light,
+  'red-light': $red-light,
+  'green-light': $green-light,
+  'teal': $teal,
+  'teal-dark': $teal-dark,
+);
+
+@each $name, $color in $custom-colors {
+  .text-#{$name} {
+    color: $color;
+  }
+  .bg-#{$name} {
+    background-color: $color;
+  }
+  .border-#{$name} {
+    border-color: $color;
+  }
+}

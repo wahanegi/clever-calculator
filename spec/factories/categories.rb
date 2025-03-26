@@ -1,7 +1,7 @@
 FactoryBot.define do
   factory :category do
-    name { "Category" }
-    description { "Default description" }
+    name { Faker::Team.unique.name }
+    description { Faker::Food.description }
     is_disabled { false }
   end
 end
