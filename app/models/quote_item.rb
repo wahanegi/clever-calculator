@@ -9,6 +9,9 @@ class QuoteItem < ApplicationRecord
 
   before_validation :calculate_final_price, if: -> { should_recalculate_final_price? }
 
+  after_save :recalculate_quote_total_price
+  after_destroy :recalculate_quote_total_price
+
   private
 
   def calculate_final_price
@@ -17,5 +20,9 @@ class QuoteItem < ApplicationRecord
 
   def should_recalculate_final_price?
     price.present? && discount.present? && (price_changed? || discount_changed?)
+  end
+
+  def recalculate_quote_total_price
+    quote.update(total_price: quote.quote_items.sum(:final_price))
   end
 end
