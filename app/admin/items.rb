@@ -1,9 +1,10 @@
 ActiveAdmin.register Item do
   permit_params :name, :description, :pricing_type, :category_id, :is_disabled,
-                item_pricings_attributes: [:id, :default_fixed_price, :fixed_parameters, :is_selectable_options,
-                                          :pricing_options, :open_parameters_label, :open_parameters_label, :open_parameters_label_as_string, :formula_parameters,
-                                          :calculation_formula, :is_open, :_destroy]
-
+                item_pricings_attributes: [
+                  :id, :default_fixed_price, :fixed_parameters, :is_selectable_options,
+                  :pricing_options, { open_parameters_label: [] }, :open_parameters_label_as_string,
+                  :formula_parameters, :calculation_formula, :is_open, :_destroy
+                ]
 
   filter :name_cont, as: :string, label: "Product Name"
   filter :category, as: :select, collection: -> { Category.pluck(:name, :id) }, label: "Category"
@@ -18,7 +19,7 @@ ActiveAdmin.register Item do
     column "Category", sortable: :category_id do |item|
       link_to item.category.name, admin_category_path(item.category) if item.category
     end
-    column("Disabled") {|item| status_tag item.is_disabled, label: item.is_disabled? ? "True" : "False" }
+    column("Disabled") { |item| status_tag item.is_disabled, label: item.is_disabled? ? "True" : "False" }
     column :created_at
     column :updated_at
     actions defaults: false do |item|
@@ -26,37 +27,33 @@ ActiveAdmin.register Item do
       links << link_to("View", admin_item_path(item), class: "member_link")
       links << link_to("Edit", edit_admin_item_path(item), class: "member_link")
       links << link_to(item.is_disabled? ? "Enable" : "Disable", toggle_admin_item_path(item), method: :put,
-                                                                                               data: { confirm: "Are you sure?" }, class: "member_link")
+                        data: { confirm: "Are you sure?" }, class: "member_link")
       safe_join(links)
     end
   end
 
   before_action only: :show do
-    active_admin_config.action_items.delete_if do |item|
-      item.name == :destroy
-    end
+    active_admin_config.action_items.delete_if { |a| a.name == :destroy }
   end
 
   form do |f|
     f.semantic_errors
-  
+
     f.inputs "Item Details" do
       f.input :name, required: true
       f.input :description
       f.input :category_id, as: :select,
-                             collection: Category.pluck(:name, :id), 
+                             collection: Category.pluck(:name, :id),
                              include_blank: "No Category"
-  
       f.input :pricing_type, as: :radio
     end
-  
+
     pricing = if f.object.fixed_open? && !f.object.persisted?
       nil
     else
       f.object.item_pricings.first_or_initialize
     end
 
-  
     case f.object.pricing_type
     when "fixed"
       f.inputs "Pricing parameter" do
@@ -64,29 +61,94 @@ ActiveAdmin.register Item do
           pf.input :default_fixed_price, label: "Fixed Price"
         end
       end
-  
     when "open"
       f.inputs "Pricing parameter" do
         f.fields_for :item_pricings, pricing do |pf|
           pf.input :open_parameters_label_as_string,
                    as: :text,
                    label: "Parameters name",
-                   input_html: {
-                     rows: 1,
-                     value: pf.object.open_parameters_label_as_string
-                   }
+                   input_html: { rows: 1, value: pf.object.open_parameters_label_as_string }
         end
       end
-  
     when "fixed_open"
       if f.object.persisted?
-      f.inputs "Fixed + Open Pricing" do
-        f.fields_for :item_pricings, pricing do |pf|
-        pf.input :formula_parameters, as: :text, label: "Formula Parameters (JSON)"
-        pf.input :calculation_formula, label: "Calculation Formula"
-      end
-    end 
-      else 
+        f.inputs "Fixed + Open Pricing" do
+          f.fields_for :item_pricings, pricing do |pf|
+            pf.input :formula_parameters, as: :text, label: "Formula Parameters (JSON)"
+            pf.input :calculation_formula, label: "Calculation Formula"
+          end
+
+          session_data = controller.view_context.session
+          tmp_params = session_data[:tmp_params] || {}
+          item_key = f.object.id.to_s
+          tmp_data = tmp_params[item_key]&.deep_symbolize_keys || {}
+
+          Rails.logger.debug "EDIT_FORM tmp_data: #{tmp_data.inspect}"
+
+          tmp_fixed  = tmp_data[:fixed]  || {}
+          tmp_open   = tmp_data[:open]   || []
+          tmp_select = tmp_data[:select] || {}
+
+          panel "Parameters" do
+            if tmp_fixed.any?
+              h3 "Fixed Parameters"
+              table do
+                tr { th "Name"; th "Value"; th "Actions" }
+                tmp_fixed.each do |name, value|
+                  tr do
+                    td name
+                    td value
+                    td do
+                      link_to("Delete", remove_parameter_admin_item_path(f.object, param_type: :fixed, param_key: name.to_s),
+                              method: :delete, data: { confirm: "Delete fixed param '#{name}'?" })
+                    end
+                  end
+                end
+              end
+            else
+              para "No fixed parameters."
+            end
+
+            if tmp_open.any?
+              h3 "Open Parameters"
+              ul do
+                tmp_open.each do |label|
+                  li do
+                    text_node label
+                    text_node " "
+                    text_node link_to("[Delete]", remove_parameter_admin_item_path(f.object, param_type: :open, param_key: label),
+                                      method: :delete, data: { confirm: "Delete open param '#{label}'?" })
+                  end
+                end
+              end
+            else
+              para "No open parameters."
+            end
+
+            if tmp_select.any?
+              h3 "Select Parameters"
+              tmp_select.each do |sel_name, options|
+                h4 "Select name: #{sel_name}"
+                table do
+                  tr { th "Option Description"; th "Option Value"; th "Actions" }
+                  options.each do |desc, val|
+                    tr do
+                      td desc
+                      td val
+                      td do
+                        link_to("Delete Option", remove_parameter_admin_item_path(f.object, param_type: :select, param_key: sel_name, desc_key: desc),
+                                method: :delete, data: { confirm: "Delete option '#{desc}' from select '#{sel_name}'?" })
+                      end
+                    end
+                  end
+                end
+              end
+            else
+              para "No select parameters."
+            end
+          end
+        end
+      else
         panel "After creating this item, you will be redirected to edit page where you can add parameters."
       end
     end
@@ -94,9 +156,34 @@ ActiveAdmin.register Item do
   end
 
   controller do
+    before_action :init_session_from_db, only: :edit
+
+    def init_session_from_db
+      @item = Item.find(params[:id])
+      return unless @item.fixed_open?
+      item_key = @item.id.to_s
+      session[:tmp_params] ||= {}
+
+      Rails.logger.debug "INIT_SESSION: before => #{session[:tmp_params][item_key].inspect}"
+
+      unless session[:tmp_params].key?(item_key)
+        pricing = @item.item_pricings.first
+        session[:tmp_params][item_key] = if pricing
+          {
+            fixed:  pricing.fixed_parameters || {},
+            open:   pricing.open_parameters_label || [],
+            select: pricing.pricing_options || {}
+          }
+        else
+          { fixed: {}, open: [], select: {} }
+        end
+      end
+      Rails.logger.debug "INIT_SESSION: after => #{session[:tmp_params][item_key].inspect}"
+    end
+
     def create
+      Rails.logger.debug "SESSION: #{session[:tmp_params].inspect}"
       @item = Item.new(permitted_params[:item])
-  
       if @item.save
         if @item.fixed_open?
           redirect_to edit_admin_item_path(@item), notice: "Item was successfully created. Now you can add parameters."
@@ -108,69 +195,135 @@ ActiveAdmin.register Item do
         render :new, status: :unprocessable_entity
       end
     end
+
+    def update
+      Rails.logger.debug "SESSION: #{session[:tmp_params].inspect}"
+      @item = Item.find(params[:id])
+      item_key = @item.id.to_s
+      tmp = (session[:tmp_params][item_key] || {}).deep_symbolize_keys
+    
+     
+      item_params = permitted_params[:item].to_h
+      item_params.delete("item_pricings_attributes")  
+      @item.assign_attributes(item_params)
+    
+      if @item.fixed_open?
+        pricing = @item.item_pricings.first_or_initialize
+    
+        pricing.fixed_parameters      = tmp[:fixed] || {}
+        Rails.logger.debug "before assign => tmp[:open] = #{tmp[:open].inspect}"
+        pricing.open_parameters_label = tmp[:open]  || []
+        Rails.logger.debug "after assign => pricing.open_parameters_label = #{pricing.open_parameters_label.inspect}"
+        pricing.pricing_options       = tmp[:select] || {}
+    
+        pricing.is_open = pricing.open_parameters_label.any?
+        pricing.is_selectable_options = pricing.pricing_options.any?
+        
+        Rails.logger.debug "DEBUG before pricing.save => open_parameters_label: #{pricing.open_parameters_label.inspect}"
+        unless pricing.save
+          Rails.logger.debug "Pricing save errors: #{pricing.errors.full_messages}"
+          flash[:error] = "Failed to update pricing: #{pricing.errors.full_messages.join(', ')}"
+          return render :edit
+        end
+    
+        Rails.logger.debug "Pricing after save: #{pricing.reload.open_parameters_label.inspect}"
+      end
+  
+      if @item.save
+        session[:tmp_params].delete(item_key)
+        redirect_to admin_item_path(@item), notice: "Item parameter updated!"
+      else
+        flash[:error] = "Failed to update item: #{@item.errors.full_messages.join(', ')}"
+        render :edit
+      end
+    end
   end
 
-  action_item :add_parameter, only: :edit do
-    if resource.fixed_open?
-      link_to "Add Parameter", new_parameter_admin_item_path(resource)
+  
+  
+
+  member_action :remove_parameter, method: :delete do
+    @item = Item.find(params[:id])
+    item_key = @item.id.to_s
+  
+    session[:tmp_params] ||= {}
+    session[:tmp_params][item_key] ||= { fixed: {}, open: [], select: {} }
+    store = session[:tmp_params][item_key]
+    store = store.deep_symbolize_keys
+    session[:tmp_params][item_key] = store
+  
+    param_type = params[:param_type].to_s
+    key = params[:param_key].to_s
+    desc_key = params[:desc_key].to_s if params[:desc_key].present?
+  
+    Rails.logger.debug "REMOVE_PARAM: param_type=#{param_type}, param_key=#{key}, desc_key=#{desc_key}"
+    Rails.logger.debug "STORE BEFORE DELETE: #{store.inspect}"
+  
+    case param_type
+    when "fixed"
+      store[:fixed]&.delete(key)
+    when "open"
+      store[:open]&.delete(key)
+    when "select"
+      if desc_key.present?
+        store[:select][key]&.delete(desc_key)
+      else
+        store[:select]&.delete(key)
+      end
+    else
+      Rails.logger.warn "⚠️ Unknown param_type: #{param_type}"
     end
+  
+    Rails.logger.debug "STORE AFTER DELETE: #{store.inspect}"
+    flash[:notice] = "Parameter removed."
+    redirect_to edit_admin_item_path(@item)
+  end
+  
+  
+
+  action_item :add_parameter, only: :edit do
+    link_to("Add Parameter", new_parameter_admin_item_path(resource)) if resource.fixed_open?
   end
 
   member_action :new_parameter, method: :get do
     @item = Item.find(params[:id])
-    # Здесь можно отрендерить «кастомную» форму (Arbre / partial),
-    # где пользователь выбирает тип параметра (Fixed/Open/Select) и заполняет поля.
-    # Например, render "admin/items/new_parameter" -- если сделаем partial.
   end
-  
+
   member_action :create_parameter, method: :post do
+    Rails.logger.debug "SESSION: #{session[:tmp_params].inspect}"
     @item = Item.find(params[:id])
-    @item_pricing = @item.item_pricings.first_or_create
-  
-    param_type = params[:parameter_type]  # "Fixed"/"Open"/"Select"
-  
-    case param_type
+    item_key = @item.id.to_s
+
+    session[:tmp_params] ||= {}
+    session[:tmp_params][item_key] ||= { fixed: {}, open: [], select: {} }
+    store = session[:tmp_params][item_key]
+    store = store.deep_symbolize_keys
+    session[:tmp_params][item_key] = store
+    Rails.logger.info "DEBUG create_parameter: store before => #{store.inspect}"
+
+    case params[:parameter_type]
     when "Fixed"
-      new_hash = @item_pricing.fixed_parameters || {}
-      new_hash[params[:fixed_parameter_name]] = params[:fixed_parameter_value]
-      @item_pricing.fixed_parameters = new_hash
-  
-      @item_pricing.is_open = false
-      @item_pricing.is_selectable_options = false
-  
+      store[:fixed][params[:fixed_parameter_name]] = params[:fixed_parameter_value]
+      Rails.logger.debug "STORE after Fixed: #{store.inspect}"
     when "Open"
-      arr = @item_pricing.open_parameters_label || []
-      arr << params[:open_parameter_name].to_s
-      @item_pricing.open_parameters_label = arr
-  
-      @item_pricing.is_open = true
-      @item_pricing.is_selectable_options = false
-  
+      Rails.logger.debug "CREATE_PARAM: before open => #{store[:open].inspect}"
+      store[:open] << params[:open_parameter_name].to_s
+      Rails.logger.debug "STORE after Open: #{store.inspect}"
     when "Select"
-      sel = @item_pricing.pricing_options || {}
       sub_hash = {}
       (1..10).each do |i|
         desc = params["option_description_#{i}"]
         val  = params["option_value_#{i}"]
         next if desc.blank? || val.blank?
-  
         sub_hash[desc] = val
       end
-      sel[params[:select_parameter_name]] = sub_hash
-      @item_pricing.pricing_options = sel
-  
-      @item_pricing.is_open = false
-      @item_pricing.is_selectable_options = true
+      store[:select][params[:select_parameter_name]] = sub_hash
+      Rails.logger.debug "STORE after Select: #{store.inspect}"
     end
 
-    if @item_pricing.save
-      redirect_to edit_admin_item_path(@item), notice: "Parameter added!"
-    else
-      flash[:error] = "Parameter not saved: #{@item_pricing.errors.full_messages.join(', ')}"
-      redirect_to new_parameter_admin_item_path(@item)
-    end
+    flash[:notice] = "Parameter '#{params[:parameter_type]}' added (stored in session, not saved yet)."
+    redirect_to edit_admin_item_path(@item)
   end
-  
 
   action_item :back, only: :show do
     link_to "Back", admin_items_path
@@ -183,7 +336,7 @@ ActiveAdmin.register Item do
 
   action_item :toggle, only: :show do
     link_to(resource.is_disabled? ? "Enable item" : "Disable item", toggle_admin_item_path(resource), method: :put,
-                                                                                                      data: { confirm: "Are you sure?" })
+            data: { confirm: "Are you sure?" })
   end
 
   show do
