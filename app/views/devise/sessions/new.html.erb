@@ -1,8 +1,8 @@
 <div class="d-flex justify-content-center align-items-center bg-blue-sky vh-100 px-4" style="background-image: url('<%= image_path('login_background.png') %>');">
   <div class="bg-light d-flex flex-column flex-sm-row justify-content-around align-items-center gap-2 w-100 login-card rounded-4 shadow-lg">
-    <div>
-      <%= image_tag "logo.png", alt: "Company Logo", class: "img-fluid", width: "200" %>
-      <div class="fs-3 px-2 mt-6">
+    <div class="login-logo w-100">
+      <%= image_tag "logo.png", alt: "Company Logo", class: "img-fluid", width: "185" %>
+      <div class="fs-3 mt-6">
         <span class="fw-lighter">Login to</span>
         <span class="fw-bold d-block">Sales Calculator</span>
       </div>
@@ -19,7 +19,7 @@
       <% end %>
       <%= form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
         <div class="field w-100 mb-5 position-relative">
-          <%= f.email_field :email, autofocus: true, autocomplete: "email", class: "form-control py-2 border border-primary rounded-1 lh-lg pe-5", placeholder: "Enter your e-mail" %>
+          <%= f.email_field :email, autofocus: true, autocomplete: "email", class: "form-control py-2 border border-primary rounded-1 lh-lg", placeholder: "Enter your e-mail" %>
           <%= f.label :email, "User", class: "border-label fs-11 fw-bold lh-sm px-1" %>
           <div class="position-absolute end-0 top-50 translate-middle-y pe-3">
             <%= image_tag "person.svg", alt: "Person Icon", class: "icon", width: "24" %>
@@ -32,7 +32,7 @@
             <%= image_tag "eye_show_icon.svg", alt: "Show Password", class: "icon toggle-password", id: "eye-icon", width: "20" %>
           </div>
         </div>
-        <div class="w-100 d-flex mt-3">
+        <div class="w-100 d-flex mt-2 lh-sm">
           <%= link_to "Forgot password?", 
             "mailto:#{ENV['SUPPORT_EMAIL']}?subject=Password%20Reset%20Request&body=Hello,%20I%20need%20help%20resetting%20my%20password%20for%20The%20Sales%20Calculator.%0D%0A%0D%0A" \
             "My details:%0D%0A" \
@@ -44,11 +44,11 @@
         <div class="actions w-100 mt-6 mb-5">
           <%= f.submit "LOGIN", class: "btn btn-primary text-white w-100 fw-medium lh-sm rounded-2 py-4 border-0" %>
         </div>
-        <div class="w-100 text-center mt-4 <%= ENV['SUPPORT_EMAIL'].present? ? '' : 'd-none' %>">
+        <div class="w-100 text-center <%= ENV['SUPPORT_EMAIL'].present? ? '' : 'd-none' %>">
           <div class="or-divider position-relative mb-3">
-            <span class="text-secondary pt-2">or</span>
+            <span class="text-secondary py-3">or</span>
           </div>
-          <p class="lh-sm mt-5 text-secondary fs-10">
+          <p class="lh-sm mt-4 text-secondary fs-10 lh-lg">
             If you don’t have access
             <%= link_to "request here", 
               "mailto:#{ENV['SUPPORT_EMAIL']}?subject=Access%20Request&body=Hello,%20I%20would%20like%20to%20request%20access%20to%20The%20Sales%20Calculator.%0D%0A%0D%0A" \

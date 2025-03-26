@@ -7,6 +7,10 @@
   max-width: 374px;
 }
 
+.login-logo {
+  max-width: 307px;
+}
+
 .bg-blue-sky {
   background-color: $blue-sky;
   background-position: center;
@@ -20,13 +24,17 @@
   background: linear-gradient(to bottom, $light 50%, $white 50%);
 }
 
+.form-control {
+  height: 42px;
+}
+
 .form-control::placeholder {
   color: $gray;
 }
 
 .form-control:focus,
 .form-control:active {
-  box-shadow: 0 2px 4px $secondary !important;
+  box-shadow: none !important;
   background-color: $white !important;
 }
 
