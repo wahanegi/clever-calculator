@@ -8,10 +8,7 @@
 #     MovieGenre.find_or_create_by!(name: genre_name)
 #   end
 
-if Rails.env.development?
-  Rails.logger.info 'Creating Admin User'
-  AdminUser.create!(email: 'admin@example.com',
-                    name: 'Admin User',
-                    password: 'password@1',
-                    password_confirmation: 'password@1')
+# Change the order of model creation
+%w[admin_users users categories customers quotes].each do |name|
+  require_relative "seeds/#{name}.rb"
 end
