@@ -9,12 +9,18 @@ class Quote < ApplicationRecord
 
   scope :unfinished, -> { where.not(step: 'completed') }
   scope :completed, -> { where(step: 'completed') }
+
+  CUSTOMER_NAME_SQL = <<~SQL.freeze
+    LOWER(customers.first_name) LIKE :search OR
+    LOWER(customers.last_name) LIKE :search OR
+    LOWER(customers.company_name) LIKE :search
+  SQL
+
   scope :customer_name, lambda { |search = nil|
     return all if search.blank?
 
     search = "%#{sanitize_sql_like(search.to_s.downcase)}%"
-    joins(:customer).where('LOWER(customers.first_name) LIKE :search OR LOWER(customers.last_name) LIKE :search OR LOWER(customers.company_name) LIKE :search',
-                           search: "%#{search}%")
+    joins(:customer).where(CUSTOMER_NAME_SQL, search: "%#{search}%")
   }
 
   accepts_nested_attributes_for :quote_items, allow_destroy: true
