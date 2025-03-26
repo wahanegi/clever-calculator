@@ -14,3 +14,8 @@ export const ENDPOINTS = {
   QUOTES: '/api/v1/quotes',
   LOGOUT: '/users/sign_out',
 }
+
+import cloverpopLogo from '../../../assets/images/header/cloverpop-logo.png'
+export const IMAGE_ASSETS = {
+  CLOVERPOP_LOGO: cloverpopLogo,
+}

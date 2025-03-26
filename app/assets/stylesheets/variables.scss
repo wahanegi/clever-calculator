@@ -50,23 +50,21 @@ $enable-responsive-font-sizes: true !default;
 $spacer: 1rem;
 $spacers: (
   0: 0,
-  1: $spacer * 0.25,
-  // 4px
-  2: $spacer * 0.5,
-  // 8px
-  3: $spacer * 0.75,
-  // 12px
-  4: $spacer * 1,
-  // 16px
-  5: $spacer * 1.5,
-  // 24px
-  6: $spacer * 2,
-  // 32px
-  7: $spacer * 2.5,
-  // 40px
-  8: $spacer * 3,
-  // 48px
+  1: $spacer * 0.25, // 4px
+  2: $spacer * 0.5, // 8px
+  3: $spacer * 0.75, // 12px
+  4: $spacer * 1, // 16px
+  5: $spacer * 1.5, // 24px
+  6: $spacer * 2, // 32px
+  7: $spacer * 2.5, // 40px
+  8: $spacer * 3, // 48px
   9: $spacer * 4, // 64px
+  10: $spacer * 5, // 80px
+  11: $spacer * 6, // 96px
+  12: $spacer * 7, // 112px
+  13: $spacer * 8, // 128px
+  14: $spacer * 9, // 144px
+  15: $spacer * 10, // 160px
 );
 $enable-negative-margins: true;
 
