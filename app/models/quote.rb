@@ -34,4 +34,8 @@ class Quote < ApplicationRecord
   def self.ransackable_scopes(_auth_object = nil)
     [:customer_name]
   end
+
+  def recalculate_total_price
+    update(total_price: quote_items.sum(:final_price))
+  end
 end

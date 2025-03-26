@@ -87,4 +87,16 @@ RSpec.describe QuoteItem, type: :model do
       end
     end
   end
+
+  describe 'after_save callbacks' do
+    let(:quote) { create(:quote) }
+    let(:item) { create(:item, pricing_type: :open) }
+    let(:item_pricing) { create(:item_pricing, item: item) }
+    let(:quote_item) { build(:quote_item, quote: quote, item_pricing: item_pricing, item: item) }
+
+    it 'recalculates quote total_price after saving' do
+      expect(quote).to receive(:recalculate_total_price)
+      quote_item.save
+    end
+  end
 end

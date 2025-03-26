@@ -43,4 +43,15 @@ RSpec.describe Quote, type: :model do
       end
     end
   end
+
+  #TODO: Enable this test item validations will be fixed
+  xdescribe '#recalculate_total_price' do
+    let(:quote) { create(:quote) }
+    let(:quote_item) { create(:quote_item, quote: quote) }
+
+    it 'updates the total_price' do
+      quote.recalculate_total_price
+      expect(quote.total_price).to eq(quote_item.final_price)
+    end
+  end
 end

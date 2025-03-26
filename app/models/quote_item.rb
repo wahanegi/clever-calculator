@@ -23,6 +23,7 @@ class QuoteItem < ApplicationRecord
   end
 
   def recalculate_quote_total_price
-    quote.update(total_price: quote.quote_items.sum(:final_price))
+    # quote.update(total_price: quote.quote_items.sum(:final_price))
+    quote.recalculate_total_price
   end
 end
