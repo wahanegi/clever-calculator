@@ -28,4 +28,7 @@
 #       enabled: "ON"
 
 en:
-  hello: "Hello world"
+  ransack:
+    predicates:
+      matches: equals
+      eq: equivalent

@@ -3,6 +3,13 @@ import { createRoot } from 'react-dom/client'
 import App from './App'
 
 document.addEventListener('turbo:load', () => {
-  const root = createRoot(document.body.appendChild(document.createElement('div')))
-  root.render(<App />)
+  const appElement = document.querySelector('#app')
+
+  if (appElement) {
+    const root = createRoot(appElement)
+    root.render(<App />)
+  } else {
+    console.error('The element #app was not found. Ensure that your HTML document includes <div id=\'app\'></div>.')
+  }
 })
+
