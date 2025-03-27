@@ -8,7 +8,8 @@ ActiveAdmin.register Quote do
                                          :open_parameters,
                                          :price,
                                          :discount,
-                                         :final_price]
+                                         :final_price,
+                                         { note_attributes: [:id, :notes, :is_printable, :_destroy, :quote_item_id] }]
 
   filter :customer_name, as: :string, label: 'Customer Name'
   filter :user, as: :select, collection: proc {
@@ -37,6 +38,7 @@ ActiveAdmin.register Quote do
       f.input :user, as: :select, collection: User.order(:email).map { |u| ["#{u.email} (#{u.name})", u.id] }
       f.input :total_price, input_html: { disabled: true }
     end
+
     f.inputs "Quote Items" do
       f.has_many :quote_items, allow_destroy: true, new_record: true do |qi|
         qi.input :item, as: :select, collection: Item.pluck(:name, :id)
@@ -44,6 +46,11 @@ ActiveAdmin.register Quote do
         qi.input :open_parameters
         qi.input :price
         qi.input :discount
+
+        qi.has_many :note, allow_destroy: true, new_record: true, heading: "Note", max: 1 do |n|
+          n.input :notes, label: "Note"
+          n.input :is_printable, label: "Printable?"
+        end
       end
     end
     f.actions
@@ -60,6 +67,7 @@ ActiveAdmin.register Quote do
       row :total_price
       row :created_at
     end
+
     panel 'Quote Items' do
       table_for quote.quote_items do
         column :item
@@ -68,6 +76,13 @@ ActiveAdmin.register Quote do
         column :price
         column :discount
         column :final_price
+        column :note do |quote_item|
+          if quote_item.note
+            link_to truncate(quote_item.note.notes, length: 50), admin_note_path(quote_item.note)
+          else
+            "No note"
+          end
+        end
       end
     end
   end
