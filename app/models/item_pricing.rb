@@ -14,7 +14,6 @@ class ItemPricing < ApplicationRecord
   validates :default_fixed_price, presence: true, if: -> { pricing_type == "fixed" }
   validates :open_parameters_label, presence: true, if: -> { pricing_type == "open" }
 
-
   def open_parameters_label_as_string
     open_parameters_label.present? ? open_parameters_label.first : ""
   end
@@ -23,7 +22,7 @@ class ItemPricing < ApplicationRecord
     self.open_parameters_label = [val.to_s.strip]
   end
 
-  def self.ransackable_attributes(auth_object = nil)
+  def self.ransackable_attributes(_auth_object = nil)
     %w[
       id item_id default_fixed_price fixed_parameters is_selectable_options
       pricing_options is_open open_parameters_label formula_parameters
@@ -31,7 +30,7 @@ class ItemPricing < ApplicationRecord
     ]
   end
 
-  def self.ransackable_associations(auth_object = nil)
+  def self.ransackable_associations(_auth_object = nil)
     ["item"]
   end
 end

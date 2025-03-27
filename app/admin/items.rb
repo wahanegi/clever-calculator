@@ -24,8 +24,10 @@ ActiveAdmin.register Item do
     actions defaults: false do |resource|
       item("View", admin_item_path(resource), class: "member_link")
       item("Edit", edit_admin_item_path(resource), class: "member_link")
-      item(resource.is_disabled? ? "Enable" : "Disable", toggle_admin_item_path(resource), method: :put,
-           data: { confirm: "Are you sure?" }, class: "member_link")
+      item(resource.is_disabled? ? "Enable" : "Disable", toggle_admin_item_path(resource),
+           method: :put,
+           data: { confirm: "Are you sure?" },
+           class: "member_link")
     end
   end
 
@@ -38,8 +40,8 @@ ActiveAdmin.register Item do
       f.input :name, required: true
       f.input :description
       f.input :category_id, as: :select,
-              collection: Category.pluck(:name, :id),
-              include_blank: "No Category"
+                            collection: Category.pluck(:name, :id),
+                            include_blank: "No Category"
       f.input :pricing_type, as: :radio, input_html: { onclick: "updatePricingType(this.value)" }
     end
 
@@ -49,14 +51,14 @@ ActiveAdmin.register Item do
                 f.object.item_pricings.first_or_initialize
               end
 
-    div id: "pricing_fixed", style: "display:#{f.object.fixed? ? "block" : "none"};" do
+    div id: "pricing_fixed", style: "display:#{f.object.fixed? ? 'block' : 'none'};" do
       f.inputs "Pricing parameter" do
         f.fields_for :item_pricings, pricing do |pf|
           pf.input :default_fixed_price, label: "Fixed Price"
         end
       end
     end
-    div id: "pricing_open", style: "display:#{f.object.open? ? "block" : "none"};" do
+    div id: "pricing_open", style: "display:#{f.object.open? ? 'block' : 'none'};" do
       f.inputs "Pricing parameter" do
         f.fields_for :item_pricings, pricing do |pf|
           pf.input :open_parameters_label_as_string,
@@ -66,7 +68,7 @@ ActiveAdmin.register Item do
         end
       end
     end
-    div id: "pricing_fixed_open", style: "display:#{f.object.fixed_open? ? "block" : "none"};" do
+    div id: "pricing_fixed_open", style: "display:#{f.object.fixed_open? ? 'block' : 'none'};" do
       if f.object.persisted?
         f.inputs "Fixed + Open Pricing" do
           f.fields_for :item_pricings, pricing do |pf|
@@ -89,7 +91,11 @@ ActiveAdmin.register Item do
             if tmp_fixed.any?
               h3 "Fixed Parameters"
               table class: 'parameter-table' do
-                tr { th "Name"; th "Value"; th "Actions" }
+                tr do
+                  th "Name"
+                  th "Value"
+                  th "Actions"
+                end
                 tmp_fixed.each do |name, value|
                   tr do
                     td name
@@ -108,7 +114,11 @@ ActiveAdmin.register Item do
             if tmp_open.any?
               h3 "Open Parameters"
               table class: 'parameter-table' do
-                tr { th "Name"; th "Value"; th "Actions" }
+                tr do
+                  th "Name"
+                  th "Value"
+                  th "Actions"
+                end
                 tmp_open.each do |label|
                   tr do
                     td label
@@ -134,7 +144,11 @@ ActiveAdmin.register Item do
                                     method: :delete, data: { confirm: "Delete whole select '#{sel_name}' and its options?" })
                 end
                 table class: 'parameter-table' do
-                  tr { th "Options"; th "Value"; th "Actions" }
+                  tr do
+                    th "Options"
+                    th "Value"
+                    th "Actions"
+                  end
                   options.each do |desc, val|
                     tr do
                       td desc
@@ -156,6 +170,7 @@ ActiveAdmin.register Item do
         panel "After creating this item, you will be redirected to edit page where you can add parameters."
       end
     end
+
     f.actions
   end
 
@@ -164,6 +179,7 @@ ActiveAdmin.register Item do
     def init_session_from_db
       @item = Item.find(params[:id])
       return unless @item.fixed_open?
+
       item_key = @item.id.to_s
       session[:tmp_params] ||= {}
 
@@ -311,6 +327,7 @@ ActiveAdmin.register Item do
         desc = params["option_description_#{i}"]
         val = params["option_value_#{i}"]
         next if desc.blank? || val.blank?
+
         sub_hash[desc] = val
       end
       store[:select][params[:select_parameter_name]] = sub_hash
@@ -331,7 +348,8 @@ ActiveAdmin.register Item do
   end
 
   action_item :toggle, only: :show do
-    link_to(resource.is_disabled? ? "Enable item" : "Disable item", toggle_admin_item_path(resource), method: :put,
+    link_to(resource.is_disabled? ? "Enable item" : "Disable item", toggle_admin_item_path(resource),
+            method: :put,
             data: { confirm: "Are you sure?" })
   end
 
