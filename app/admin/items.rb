@@ -12,7 +12,6 @@ ActiveAdmin.register Item do
   filter :is_disabled, label: "Disabled"
 
   index do
-    selectable_column
     id_column
     column :name
     column :pricing_type
@@ -22,19 +21,15 @@ ActiveAdmin.register Item do
     column("Disabled") { |item| status_tag item.is_disabled, label: item.is_disabled? ? "True" : "False" }
     column :created_at
     column :updated_at
-    actions defaults: false do |item|
-      links = []
-      links << link_to("View", admin_item_path(item), class: "member_link")
-      links << link_to("Edit", edit_admin_item_path(item), class: "member_link")
-      links << link_to(item.is_disabled? ? "Enable" : "Disable", toggle_admin_item_path(item), method: :put,
-                        data: { confirm: "Are you sure?" }, class: "member_link")
-      safe_join(links)
+    actions defaults: false do |resource|
+      item("View", admin_item_path(resource), class: "member_link")
+      item("Edit", edit_admin_item_path(resource), class: "member_link")
+      item(resource.is_disabled? ? "Enable" : "Disable", toggle_admin_item_path(resource), method: :put,
+           data: { confirm: "Are you sure?" }, class: "member_link")
     end
   end
 
-  before_action only: :show do
-    active_admin_config.action_items.delete_if { |a| a.name == :destroy }
-  end
+  actions :all, except: :destroy
 
   form do |f|
     f.semantic_errors
@@ -43,25 +38,25 @@ ActiveAdmin.register Item do
       f.input :name, required: true
       f.input :description
       f.input :category_id, as: :select,
-                             collection: Category.pluck(:name, :id),
-                             include_blank: "No Category"
-      f.input :pricing_type, as: :radio
+              collection: Category.pluck(:name, :id),
+              include_blank: "No Category"
+      f.input :pricing_type, as: :radio, input_html: { onclick: "updatePricingType(this.value)" }
     end
 
     pricing = if f.object.fixed_open? && !f.object.persisted?
-      nil
-    else
-      f.object.item_pricings.first_or_initialize
-    end
+                nil
+              else
+                f.object.item_pricings.first_or_initialize
+              end
 
-    case f.object.pricing_type
-    when "fixed"
+    div id: "pricing_fixed", style: "display:#{f.object.fixed? ? "block" : "none"};" do
       f.inputs "Pricing parameter" do
         f.fields_for :item_pricings, pricing do |pf|
           pf.input :default_fixed_price, label: "Fixed Price"
         end
       end
-    when "open"
+    end
+    div id: "pricing_open", style: "display:#{f.object.open? ? "block" : "none"};" do
       f.inputs "Pricing parameter" do
         f.fields_for :item_pricings, pricing do |pf|
           pf.input :open_parameters_label_as_string,
@@ -70,7 +65,8 @@ ActiveAdmin.register Item do
                    input_html: { rows: 1, value: pf.object.open_parameters_label_as_string }
         end
       end
-    when "fixed_open"
+    end
+    div id: "pricing_fixed_open", style: "display:#{f.object.fixed_open? ? "block" : "none"};" do
       if f.object.persisted?
         f.inputs "Fixed + Open Pricing" do
           f.fields_for :item_pricings, pricing do |pf|
@@ -85,8 +81,8 @@ ActiveAdmin.register Item do
 
           Rails.logger.debug "EDIT_FORM tmp_data: #{tmp_data.inspect}"
 
-          tmp_fixed  = tmp_data[:fixed]  || {}
-          tmp_open   = tmp_data[:open]   || []
+          tmp_fixed = tmp_data[:fixed] || {}
+          tmp_open = tmp_data[:open] || []
           tmp_select = tmp_data[:select] || {}
 
           panel "Parameters" do
@@ -132,10 +128,10 @@ ActiveAdmin.register Item do
               h3 "Select Parameters"
               tmp_select.each do |sel_name, options|
                 h4 do
-                text_node "Select name: #{sel_name}"
-                text_node " "
-                text_node link_to("[Delete #{sel_name} parameter]", remove_parameter_admin_item_path(f.object, param_type: :select, param_key: sel_name),
-                        method: :delete, data: { confirm: "Delete whole select '#{sel_name}' and its options?" })
+                  text_node "Select name: #{sel_name}"
+                  text_node " "
+                  text_node link_to("[Delete #{sel_name} parameter]", remove_parameter_admin_item_path(f.object, param_type: :select, param_key: sel_name),
+                                    method: :delete, data: { confirm: "Delete whole select '#{sel_name}' and its options?" })
                 end
                 table class: 'parameter-table' do
                   tr { th "Options"; th "Value"; th "Actions" }
@@ -147,7 +143,7 @@ ActiveAdmin.register Item do
                         link_to("Delete", remove_parameter_admin_item_path(f.object, param_type: :select, param_key: sel_name, desc_key: desc),
                                 method: :delete, data: { confirm: "Delete option '#{desc}' from select '#{sel_name}'?" })
                       end
-                    end  
+                    end
                   end
                 end
               end
@@ -165,7 +161,6 @@ ActiveAdmin.register Item do
 
   controller do
     before_action :init_session_from_db, only: :edit
-
     def init_session_from_db
       @item = Item.find(params[:id])
       return unless @item.fixed_open?
@@ -177,14 +172,14 @@ ActiveAdmin.register Item do
       unless session[:tmp_params].key?(item_key)
         pricing = @item.item_pricings.first
         session[:tmp_params][item_key] = if pricing
-          {
-            fixed:  pricing.fixed_parameters || {},
-            open:   pricing.open_parameters_label || [],
-            select: pricing.pricing_options || {}
-          }
-        else
-          { fixed: {}, open: [], select: {} }
-        end
+                                           {
+                                             fixed: pricing.fixed_parameters || {},
+                                             open: pricing.open_parameters_label || [],
+                                             select: pricing.pricing_options || {}
+                                           }
+                                         else
+                                           { fixed: {}, open: [], select: {} }
+                                         end
       end
       Rails.logger.debug "INIT_SESSION: after => #{session[:tmp_params][item_key].inspect}"
     end
@@ -206,26 +201,25 @@ ActiveAdmin.register Item do
 
     def update
       Rails.logger.debug "SESSION: #{session[:tmp_params].inspect}"
-      @item = Item.find(params[:id])
       item_key = @item.id.to_s
       tmp = (session[:tmp_params][item_key] || {}).deep_symbolize_keys
-    
+
       item_params = permitted_params[:item].to_h
-    
+
       if @item.fixed_open?
-        item_params.delete("item_pricings_attributes")  
+        item_params.delete("item_pricings_attributes")
         @item.assign_attributes(item_params)
         pricing = @item.item_pricings.first_or_initialize
-    
-        pricing.fixed_parameters      = tmp[:fixed] || {}
+
+        pricing.fixed_parameters = tmp[:fixed] || {}
         Rails.logger.debug "before assign => tmp[:open] = #{tmp[:open].inspect}"
-        pricing.open_parameters_label = tmp[:open]  || []
+        pricing.open_parameters_label = tmp[:open] || []
         Rails.logger.debug "after assign => pricing.open_parameters_label = #{pricing.open_parameters_label.inspect}"
-        pricing.pricing_options       = tmp[:select] || {}
-    
+        pricing.pricing_options = tmp[:select] || {}
+
         pricing.is_open = pricing.open_parameters_label.any?
         pricing.is_selectable_options = pricing.pricing_options.any?
-        
+
         Rails.logger.debug "DEBUG before pricing.save => open_parameters_label: #{pricing.open_parameters_label.inspect}"
         unless pricing.save
           Rails.logger.debug "Pricing save errors: #{pricing.errors.full_messages}"
@@ -235,7 +229,7 @@ ActiveAdmin.register Item do
       else
         @item.assign_attributes(item_params)
       end
-  
+
       if @item.save
         session[:tmp_params].delete(item_key)
         redirect_to admin_item_path(@item), notice: "Item parameter updated!"
@@ -246,25 +240,22 @@ ActiveAdmin.register Item do
     end
   end
 
-  
-  
-
   member_action :remove_parameter, method: :delete do
     @item = Item.find(params[:id])
     item_key = @item.id.to_s
-  
+
     session[:tmp_params] ||= {}
     session[:tmp_params][item_key] ||= { fixed: {}, open: [], select: {} }
     store = session[:tmp_params][item_key].deep_symbolize_keys
     session[:tmp_params][item_key] = store
-  
+
     param_type = params[:param_type].to_s
     key = params[:param_key].to_s
     desc_key = params[:desc_key].to_s if params[:desc_key].present?
-  
+
     Rails.logger.debug "REMOVE_PARAM: param_type=#{param_type}, param_key=#{key}, desc_key=#{desc_key}"
     Rails.logger.debug "STORE BEFORE DELETE: #{store.inspect}"
-  
+
     case param_type
     when "fixed"
       store[:fixed]&.delete(key.to_sym)
@@ -279,13 +270,11 @@ ActiveAdmin.register Item do
     else
       Rails.logger.warn "⚠️ Unknown param_type: #{param_type}"
     end
-  
+
     Rails.logger.debug "STORE AFTER DELETE: #{store.inspect}"
     flash[:notice] = "Parameter removed."
     redirect_to edit_admin_item_path(@item)
   end
-  
-  
 
   action_item :add_parameter, only: :edit do
     link_to("Add Parameter", new_parameter_admin_item_path(resource)) if resource.fixed_open?
@@ -319,7 +308,7 @@ ActiveAdmin.register Item do
       sub_hash = {}
       (1..10).each do |i|
         desc = params["option_description_#{i}"]
-        val  = params["option_value_#{i}"]
+        val = params["option_value_#{i}"]
         next if desc.blank? || val.blank?
         sub_hash[desc] = val
       end
