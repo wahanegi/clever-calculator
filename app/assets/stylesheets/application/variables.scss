@@ -70,23 +70,14 @@ $enable-negative-margins: true;
 
 // Custom Font Sizes for Utilities
 $font-sizes: (
-  1: 3rem,
-  // 48px
-  2: 2.75rem,
-  // 44px
-  3: 2.5rem,
-  // 40px
-  4: 2.25rem,
-  // 36px
-  5: 2rem,
-  // 32px
-  6: 1.75rem,
-  // 28px
-  7: 1.5rem,
-  // 24px
-  8: 1.25rem,
-  // 20px
-  9: $font-size-sm,
-  // 14px
+  1: 3rem, // 48px
+  2: 2.75rem, // 44px
+  3: 2.5rem, // 40px
+  4: 2.25rem, // 36px
+  5: 2rem, // 32px
+  6: 1.75rem, // 28px
+  7: 1.5rem, // 24px
+  8: 1.25rem, // 20px
+  9: $font-size-sm, // 14px
   10: $font-size-xs, // 12px
 );

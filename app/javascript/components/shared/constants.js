@@ -15,7 +15,7 @@ export const ENDPOINTS = {
   LOGOUT: '/users/sign_out',
 }
 
-import cloverpopLogo from '../../../assets/images/header/cloverpop-logo.png'
+import logoUrl from '../../../assets/images/header/logo.svg'
 export const IMAGE_ASSETS = {
-  CLOVERPOP_LOGO: cloverpopLogo,
+  LOGO: logoUrl,
 }

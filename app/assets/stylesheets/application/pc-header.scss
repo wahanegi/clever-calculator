@@ -2,17 +2,22 @@
   height: 60px;
 
   &-logo {
-    width: 100px;
-    height: 25px;
-  }
+    &-image {
+      width: 25px;
+      height: 25px;
+      margin-right: 12.5px;
+    }
 
-  //&-padding {
-  //  &-left {
-  //    padding-left: 160px;
-  //  }
-  //
-  //  &-right {
-  //    padding-right: 144px;
-  //  }
-  //}
+    &-text {
+      span:first-of-type {
+        line-height: 10px;
+        font-size: 10px;
+      }
+
+      span:last-of-type {
+        line-height: 16px;
+        font-size: 16px;
+      }
+    }
+  }
 }
