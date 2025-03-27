@@ -92,7 +92,7 @@ ActiveAdmin.register Item do
           panel "Parameters" do
             if tmp_fixed.any?
               h3 "Fixed Parameters"
-              table do
+              table class: 'parameter-table' do
                 tr { th "Name"; th "Value"; th "Actions" }
                 tmp_fixed.each do |name, value|
                   tr do
@@ -111,13 +111,16 @@ ActiveAdmin.register Item do
 
             if tmp_open.any?
               h3 "Open Parameters"
-              ul do
+              table class: 'parameter-table' do
+                tr { th "Name"; th "Value"; th "Actions" }
                 tmp_open.each do |label|
-                  li do
-                    text_node label
-                    text_node " "
-                    text_node link_to("[Delete]", remove_parameter_admin_item_path(f.object, param_type: :open, param_key: label),
-                                      method: :delete, data: { confirm: "Delete open param '#{label}'?" })
+                  tr do
+                    td label
+                    td "Value is entered by the user"
+                    td do
+                      link_to("Delete", remove_parameter_admin_item_path(f.object, param_type: :open, param_key: label),
+                              method: :delete, data: { confirm: "Delete open param '#{label}'?" })
+                    end
                   end
                 end
               end
@@ -128,18 +131,23 @@ ActiveAdmin.register Item do
             if tmp_select.any?
               h3 "Select Parameters"
               tmp_select.each do |sel_name, options|
-                h4 "Select name: #{sel_name}"
-                table do
-                  tr { th "Option Description"; th "Option Value"; th "Actions" }
+                h4 do
+                text_node "Select name: #{sel_name}"
+                text_node " "
+                text_node link_to("[Delete #{sel_name} parameter]", remove_parameter_admin_item_path(f.object, param_type: :select, param_key: sel_name),
+                        method: :delete, data: { confirm: "Delete whole select '#{sel_name}' and its options?" })
+                end
+                table class: 'parameter-table' do
+                  tr { th "Options"; th "Value"; th "Actions" }
                   options.each do |desc, val|
                     tr do
                       td desc
                       td val
                       td do
-                        link_to("Delete Option", remove_parameter_admin_item_path(f.object, param_type: :select, param_key: sel_name, desc_key: desc),
+                        link_to("Delete", remove_parameter_admin_item_path(f.object, param_type: :select, param_key: sel_name, desc_key: desc),
                                 method: :delete, data: { confirm: "Delete option '#{desc}' from select '#{sel_name}'?" })
                       end
-                    end
+                    end  
                   end
                 end
               end
@@ -202,12 +210,11 @@ ActiveAdmin.register Item do
       item_key = @item.id.to_s
       tmp = (session[:tmp_params][item_key] || {}).deep_symbolize_keys
     
-     
       item_params = permitted_params[:item].to_h
-      item_params.delete("item_pricings_attributes")  
-      @item.assign_attributes(item_params)
     
       if @item.fixed_open?
+        item_params.delete("item_pricings_attributes")  
+        @item.assign_attributes(item_params)
         pricing = @item.item_pricings.first_or_initialize
     
         pricing.fixed_parameters      = tmp[:fixed] || {}
@@ -225,8 +232,8 @@ ActiveAdmin.register Item do
           flash[:error] = "Failed to update pricing: #{pricing.errors.full_messages.join(', ')}"
           return render :edit
         end
-    
-        Rails.logger.debug "Pricing after save: #{pricing.reload.open_parameters_label.inspect}"
+      else
+        @item.assign_attributes(item_params)
       end
   
       if @item.save
@@ -248,8 +255,7 @@ ActiveAdmin.register Item do
   
     session[:tmp_params] ||= {}
     session[:tmp_params][item_key] ||= { fixed: {}, open: [], select: {} }
-    store = session[:tmp_params][item_key]
-    store = store.deep_symbolize_keys
+    store = session[:tmp_params][item_key].deep_symbolize_keys
     session[:tmp_params][item_key] = store
   
     param_type = params[:param_type].to_s
@@ -261,7 +267,7 @@ ActiveAdmin.register Item do
   
     case param_type
     when "fixed"
-      store[:fixed]&.delete(key)
+      store[:fixed]&.delete(key.to_sym)
     when "open"
       store[:open]&.delete(key)
     when "select"
