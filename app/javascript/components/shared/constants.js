@@ -15,7 +15,13 @@ export const ENDPOINTS = {
   LOGOUT: '/users/sign_out',
 }
 
-import logoUrl from '../../../assets/images/header/logo.svg'
+import logoUrl from '../../../assets/images/icons/logo.svg'
+import logoutUrl from '../../../assets/images/icons/logout.svg'
+
 export const IMAGE_ASSETS = {
-  LOGO: logoUrl,
+  ICONS: {
+    logo: logoUrl,
+    logout: logoutUrl,
+  },
+  // future asset files can be added here
 }
