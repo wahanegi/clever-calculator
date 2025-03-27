@@ -201,6 +201,7 @@ ActiveAdmin.register Item do
 
     def update
       Rails.logger.debug "SESSION: #{session[:tmp_params].inspect}"
+      @item = Item.find(params[:id])
       item_key = @item.id.to_s
       tmp = (session[:tmp_params][item_key] || {}).deep_symbolize_keys
 
