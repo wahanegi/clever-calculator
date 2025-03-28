@@ -1,11 +1,9 @@
 panel "Add Parameter for #{resource.name}" do
   para "Choose one of the parameter types below."
 
-  # HTML-форма, отправляемая в create_parameter_admin_item_path(@item)
   form action: create_parameter_admin_item_path(resource), method: :post do
     input name: "authenticity_token", type: :hidden, value: form_authenticity_token
 
-    # 1. Radio buttons
     div do
       label do
         input name: "parameter_type", type: :radio, value: "Fixed"
@@ -25,7 +23,6 @@ panel "Add Parameter for #{resource.name}" do
 
     hr
 
-    # 2. Поля для Fixed
     div id: "fixed_fields", style: "display:none;" do
       para "Fixed Parameter Fields"
       label "Parameter Name"
@@ -35,14 +32,12 @@ panel "Add Parameter for #{resource.name}" do
       input type: :text, name: :fixed_parameter_value
     end
 
-    # 3. Поля для Open
     div id: "open_fields", style: "display:none;" do
       para "Open Parameter Fields"
       label "Parameter Name"
       input type: :text, name: :open_parameter_name
     end
 
-    # 4. Поля для Select
     div id: "select_fields", style: "display:none;" do
       para "Select Parameter Fields"
       label "Parameter Name"
@@ -61,14 +56,12 @@ panel "Add Parameter for #{resource.name}" do
     end
 
     hr
-    # Кнопка сабмита
     div class: "form-actions" do
       input type: :submit, value: "Add Parameter"
     end
   end
 end
 
-# Добавим JavaScript, чтобы переключать поля по radio
 script do
   raw %(
     document.addEventListener("DOMContentLoaded", function(){

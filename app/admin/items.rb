@@ -36,6 +36,10 @@ ActiveAdmin.register Item do
   form do |f|
     f.semantic_errors
 
+    div id: "add-parameter-button-wrapper", style: "margin-top: 20px;" do
+      # Порожній div — JS вставить туди кнопку
+    end
+
     f.inputs "Item Details" do
       f.input :name, required: true
       f.input :description
@@ -50,6 +54,8 @@ ActiveAdmin.register Item do
               else
                 f.object.item_pricings.first_or_initialize
               end
+
+              
 
     div id: "pricing_fixed", style: "display:#{f.object.fixed? ? 'block' : 'none'};" do
       f.inputs "Pricing parameter" do
@@ -176,6 +182,7 @@ ActiveAdmin.register Item do
 
   controller do
     before_action :init_session_from_db, only: :edit
+
     def init_session_from_db
       @item = Item.find(params[:id])
       return unless @item.fixed_open?
@@ -216,45 +223,23 @@ ActiveAdmin.register Item do
     end
 
     def update
-      Rails.logger.debug "SESSION: #{session[:tmp_params].inspect}"
       @item = Item.find(params[:id])
       item_key = @item.id.to_s
-      tmp = (session[:tmp_params][item_key] || {}).deep_symbolize_keys
 
-      item_params = permitted_params[:item].to_h
+      new_pricing_type = permitted_params[:item][:pricing_type]
+      session[:tmp_params]&.delete(item_key) if new_pricing_type != "fixed_open"
 
-      if @item.fixed_open?
-        item_params.delete("item_pricings_attributes")
-        @item.assign_attributes(item_params)
-        pricing = @item.item_pricings.first_or_initialize
-
-        pricing.fixed_parameters = tmp[:fixed] || {}
-        Rails.logger.debug "before assign => tmp[:open] = #{tmp[:open].inspect}"
-        pricing.open_parameters_label = tmp[:open] || []
-        Rails.logger.debug "after assign => pricing.open_parameters_label = #{pricing.open_parameters_label.inspect}"
-        pricing.pricing_options = tmp[:select] || {}
-
-        pricing.is_open = pricing.open_parameters_label.any?
-        pricing.is_selectable_options = pricing.pricing_options.any?
-
-        Rails.logger.debug "DEBUG before pricing.save => open_parameters_label: #{pricing.open_parameters_label.inspect}"
-        unless pricing.save
-          Rails.logger.debug "Pricing save errors: #{pricing.errors.full_messages}"
-          flash[:error] = "Failed to update pricing: #{pricing.errors.full_messages.join(', ')}"
-          return render :edit
-        end
+      session_data = new_pricing_type == "fixed_open" ? session[:tmp_params][item_key] : nil
+    
+      updater = ItemUpdater.new(@item, permitted_params[:item], session_data)
+    
+      if updater.call
+        redirect_to admin_item_path(@item), notice: "Item updated!"
       else
-        @item.assign_attributes(item_params)
-      end
-
-      if @item.save
-        session[:tmp_params].delete(item_key)
-        redirect_to admin_item_path(@item), notice: "Item parameter updated!"
-      else
-        flash[:error] = "Failed to update item: #{@item.errors.full_messages.join(', ')}"
+        flash[:error] = "Failed to update item"
         render :edit
       end
-    end
+    end    
   end
 
   member_action :remove_parameter, method: :delete do
@@ -294,8 +279,14 @@ ActiveAdmin.register Item do
   end
 
   action_item :add_parameter, only: :edit do
-    link_to("Add Parameter", new_parameter_admin_item_path(resource)) if resource.fixed_open?
+    content_tag(:span, id: "add-parameter-action-item", style: "display:none") do
+      link_to "Add Parameter", new_parameter_admin_item_path(resource),
+              class: "button",
+              id: "add-parameter-link"
+    end
   end
+  
+  
 
   member_action :new_parameter, method: :get do
     @item = Item.find(params[:id])
