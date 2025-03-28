@@ -47,7 +47,9 @@ ActiveAdmin.register Quote do
         qi.input :price
         qi.input :discount
 
-        qi.has_many :note, allow_destroy: true, new_record: true, heading: "Note", max: 1 do |n|
+        qi.has_many :note, allow_destroy: true,
+                           new_record: qi.object.note.blank?,
+                           heading: "Note" do |n|
           n.input :notes, label: "Note"
           n.input :is_printable, label: "Printable?"
         end

@@ -12,5 +12,57 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   
     toggleFields();
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+  const form = document.querySelector('form');
+  if (!form) {
+    return;
+  }
+
+  // Function to toggle the Add New Note button visibility
+  function toggleAddNoteButton(addButton, noteContainer) {
+    const noteFields = noteContainer.querySelectorAll('.has_many_fields:not(.has_many_remove)');
+    if (noteFields.length >= 1) {
+      addButton.style.display = 'none';
+    } else {
+      addButton.style.display = 'inline-block';
+    }
+  }
+
+  // Set up each Note container
+  function setupNoteContainer(noteContainer) {
+    const addNoteButton = noteContainer.querySelector('.has_many_add');
+    if (!addNoteButton) {
+      return;
+    }
+    // Hide button immediately on click
+    addNoteButton.addEventListener('click', function() {
+      addNoteButton.style.display = 'none';
+      setTimeout(() => toggleAddNoteButton(addNoteButton, noteContainer), 200);
+    });
+
+    // Show button again if Note is removed
+    noteContainer.addEventListener('click', function(event) {
+      if (event.target.classList.contains('has_many_remove')) {
+        setTimeout(() => toggleAddNoteButton(addNoteButton, noteContainer), 200);
+      }
+    });
+  }
+  // Watch for dynamically added QuoteItems in new form
+  const observer = new MutationObserver(function(mutations) {
+    mutations.forEach(function(mutation) {
+      if (mutation.addedNodes.length) {
+        mutation.addedNodes.forEach(function(node) {
+          if (node.nodeType === 1) { // Element node
+            const noteContainers = node.querySelectorAll('.has_many_container.note');
+            noteContainers.forEach(function(noteContainer) {
+              setupNoteContainer(noteContainer);
+            });
+          }
+        });
+      }
+    });
   });
-  
+  observer.observe(form, { childList: true, subtree: true });
+});
