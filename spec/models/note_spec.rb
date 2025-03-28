@@ -26,17 +26,11 @@ RSpec.describe Note, type: :model do
   context 'associations' do
     it { is_expected.to belong_to(:quote).required }
     it { is_expected.to belong_to(:quote_item).optional }
-    it { is_expected.to belong_to(:category).optional }
   end
 
   context 'optional associations' do
     it 'can be valid without a quote_item' do
       note.quote_item = nil
-      expect(note).to be_valid
-    end
-
-    it 'can be valid without a category' do
-      note.category = nil
       expect(note).to be_valid
     end
   end
