@@ -85,12 +85,10 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_25_104727) do
   create_table "notes", force: :cascade do |t|
     t.bigint "quote_id", null: false
     t.bigint "quote_item_id"
-    t.bigint "category_id"
     t.text "notes", null: false
     t.boolean "is_printable", default: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["category_id"], name: "index_notes_on_category_id"
     t.index ["quote_id"], name: "index_notes_on_quote_id"
     t.index ["quote_item_id"], name: "index_notes_on_quote_item_id"
   end
@@ -136,7 +134,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_25_104727) do
 
   add_foreign_key "item_pricings", "items"
   add_foreign_key "items", "categories"
-  add_foreign_key "notes", "categories"
   add_foreign_key "notes", "quote_items"
   add_foreign_key "notes", "quotes"
   add_foreign_key "quote_items", "item_pricings"
