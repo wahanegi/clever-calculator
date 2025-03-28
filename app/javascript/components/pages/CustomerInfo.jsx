@@ -3,7 +3,7 @@ import { Container, Row } from 'react-bootstrap'
 import { useAppHooks } from '../hooks'
 import { fetchQuotes } from '../services'
 import { ROUTES, STEPS } from '../shared'
-import { PcButton } from '../ui'
+import { PcButton, QuoteCreation } from '../ui'
 
 export const CustomerInfo = () => {
   const { navigate } = useAppHooks()
@@ -23,11 +23,11 @@ export const CustomerInfo = () => {
 
   return (
     <Container className={'wrapper'}>
-      {/* Title & progress bar */}
+      {/* Title */}
+      <QuoteCreation />
+
+      {/* Progress bar */}
       <section className={'px-6 mb-2'}>
-        <div className={'d-flex justify-content-between mb-6'}>
-          <h1>Quote Creation</h1>
-        </div>
         <div style={{ height: '79px', border: '2px solid red' }}>
           <span>Progress bar</span>
         </div>

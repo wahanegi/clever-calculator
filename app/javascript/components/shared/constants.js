@@ -14,3 +14,14 @@ export const ENDPOINTS = {
   QUOTES: '/api/v1/quotes',
   LOGOUT: '/users/sign_out',
 }
+
+import logoUrl from '../../../assets/images/icons/logo.svg'
+import logoutUrl from '../../../assets/images/icons/logout.svg'
+
+export const IMAGE_ASSETS = {
+  ICONS: {
+    logo: logoUrl,
+    logout: logoutUrl,
+  },
+  // future asset files can be added here
+}
