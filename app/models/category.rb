@@ -3,6 +3,8 @@ class Category < ApplicationRecord
 
   normalizes :name, with: ->(name) { name.gsub(/\s+/, ' ').strip }
 
+  has_many :notes, dependent: :destroy
+
   validates :name, presence: true
   validates :name, uniqueness: { scope: :is_disabled,
                                  case_sensitive: false,
