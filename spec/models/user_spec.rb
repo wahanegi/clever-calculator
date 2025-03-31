@@ -9,6 +9,9 @@ RSpec.describe User, type: :model do
     end
   end
 
+  context 'Associations' do
+    it { is_expected.to have_many(:quotes).dependent(:destroy) }
+  end
   context 'Validations' do
     describe 'name' do
       it { is_expected.to validate_presence_of(:name) }
