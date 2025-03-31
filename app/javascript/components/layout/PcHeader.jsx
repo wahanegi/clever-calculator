@@ -8,7 +8,7 @@ export const PcHeader = () => {
 
   const Logo = () =>
     <Navbar.Brand href={ROUTES.HOME}
-                  className={'ms-1 ms-xxl-15 ms-xl-15 ms-lg-10 ms-md-2'}>
+                  className={'ms-1 ms-xxl-22 ms-xl-22 ms-lg-10 ms-md-2'}>
       <div className={'pc-header-logo d-flex'}>
         <PcIcon name={'logo'} className={'pc-header-logo-separator'} alt={'Logo'} />
         <div className={'pc-header-logo-text d-flex flex-column'}>
@@ -30,7 +30,7 @@ export const PcHeader = () => {
 
     return <Nav.Link onClick={handleLogout}
                      href={ROUTES.HOME}
-                     className={'me-1 me-xxl-14 me-xl-14 me-lg-10 me-md-2 text-white'}>
+                     className={'me-1 me-xxl-20 me-xl-20 me-lg-10 me-md-2 text-white'}>
       <span className={'me-2 fw-normal text-decoration-underline'}>Logout</span>
       <PcIcon name={'logout'} alt={'Logout'} />
     </Nav.Link>

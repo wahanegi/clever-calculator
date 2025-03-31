@@ -17,17 +17,11 @@ export const STEPS = {
   COMPLETED: 'completed',
 }
 
-export const TITLES = {
-  MAIN: 'Quote Creation',
-  CUSTOMER_INFO: 'Customer Information',
-  ITEM_PRICING: 'Items & Pricing'
-}
-
 // STEPS_DATA is for PcProgressBar component
 export const STEPS_DATA = [
   // step_id must be a number
-  { step_id: 1, step: ROUTES.CUSTOMER_INFO, title: TITLES.CUSTOMER_INFO },
-  { step_id: 2, step: ROUTES.ITEM_PRICING, title: TITLES.ITEM_PRICING },
+  { step_id: 1, step: ROUTES.CUSTOMER_INFO, title: 'Customer Information' },
+  { step_id: 2, step: ROUTES.ITEM_PRICING, title: 'Items & Pricing' },
 ];
 
 // Centralized storage for image assets
