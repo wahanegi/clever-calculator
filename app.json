@@ -44,7 +44,7 @@
         "AWS_REGION": "us-west-1",
         "AWS_ACCESS_KEY_ID": "",
         "AWS_SECRET_ACCESS_KEY": "",
-        "ATTACHMENTS_DISTRIBUTION": "https://clevercalculator-test.s3.us-west-1.amazonaws.com",
+        "AWS_FILES_DISTRIBUTION": "https://dyupp1g93540k.cloudfront.net",
         "DISABLE_DATABASE_ENVIRONMENT_CHECK": "1",
         "DOMAIN_URL": "HEROKU_APP_NAME.herokuapp.com",
         "EMAIL_DOMAIN": "cloverpop.com",
