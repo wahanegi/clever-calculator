@@ -75,7 +75,7 @@ ActiveAdmin.register Item do
       end
     end
     div id: "pricing_fixed_open", style: "display:#{f.object.fixed_open? ? 'block' : 'none'};" do
-      if f.object.persisted?
+      if f.object.fixed_open? && f.object.persisted?
         f.inputs "Fixed + Open Pricing" do
           f.fields_for :item_pricings, pricing do |pf|
             pf.input :formula_parameters, as: :text, label: "Formula Parameters (JSON)"
@@ -173,7 +173,7 @@ ActiveAdmin.register Item do
           end
         end
       else
-        panel "After creating this item, you will be redirected to edit page where you can add parameters."
+        panel "After creating or updating this item, you will be redirected to edit page where you can add parameters."
       end
     end
 
@@ -225,21 +225,26 @@ ActiveAdmin.register Item do
     def update
       @item = Item.find(params[:id])
       item_key = @item.id.to_s
-
+    
       new_pricing_type = permitted_params[:item][:pricing_type]
       session[:tmp_params]&.delete(item_key) if new_pricing_type != "fixed_open"
-
+    
       session_data = new_pricing_type == "fixed_open" ? session[:tmp_params][item_key] : nil
     
       updater = ItemUpdater.new(@item, permitted_params[:item], session_data)
     
       if updater.call
-        redirect_to admin_item_path(@item), notice: "Item updated!"
+        if @item.fixed_open?
+          redirect_to edit_admin_item_path(@item), notice: "Item updated! Now you can add parameters."
+        else
+          redirect_to admin_item_path(@item), notice: "Item updated!"
+        end
       else
         flash[:error] = "Failed to update item"
         render :edit
       end
-    end    
+    end
+        
   end
 
   member_action :remove_parameter, method: :delete do
@@ -279,14 +284,8 @@ ActiveAdmin.register Item do
   end
 
   action_item :add_parameter, only: :edit do
-    content_tag(:span, id: "add-parameter-action-item", style: "display:none") do
-      link_to "Add Parameter", new_parameter_admin_item_path(resource),
-              class: "button",
-              id: "add-parameter-link"
-    end
-  end
-  
-  
+    link_to("Add Parameter", new_parameter_admin_item_path(resource)) if resource.fixed_open?
+  end  
 
   member_action :new_parameter, method: :get do
     @item = Item.find(params[:id])
