@@ -37,7 +37,6 @@ ActiveAdmin.register Item do
     f.semantic_errors
 
     div id: "add-parameter-button-wrapper", style: "margin-top: 20px;" do
-      # Порожній div — JS вставить туди кнопку
     end
 
     f.inputs "Item Details" do
@@ -92,82 +91,12 @@ ActiveAdmin.register Item do
           tmp_select = tmp_data[:select] || {}
 
           panel "Parameters" do
-            if tmp_fixed.any?
-              h3 "Fixed Parameters"
-              table class: 'parameter-table' do
-                tr do
-                  th "Name"
-                  th "Value"
-                  th "Actions"
-                end
-                tmp_fixed.each do |name, value|
-                  tr do
-                    td name
-                    td value
-                    td do
-                      link_to("Delete", remove_parameter_admin_item_path(f.object, param_type: :fixed, param_key: name.to_s),
-                              method: :delete, data: { confirm: "Delete fixed param '#{name}'?" })
-                    end
-                  end
-                end
-              end
-            else
-              para "No fixed parameters."
-            end
-
-            if tmp_open.any?
-              h3 "Open Parameters"
-              table class: 'parameter-table' do
-                tr do
-                  th "Name"
-                  th "Value"
-                  th "Actions"
-                end
-                tmp_open.each do |label|
-                  tr do
-                    td label
-                    td "Value is entered by the user"
-                    td do
-                      link_to("Delete", remove_parameter_admin_item_path(f.object, param_type: :open, param_key: label),
-                              method: :delete, data: { confirm: "Delete open param '#{label}'?" })
-                    end
-                  end
-                end
-              end
-            else
-              para "No open parameters."
-            end
-
-            if tmp_select.any?
-              h3 "Select Parameters"
-              tmp_select.each do |sel_name, options|
-                h4 do
-                  text_node "Select name: #{sel_name}"
-                  text_node " "
-                  text_node link_to("[Delete #{sel_name} parameter]", remove_parameter_admin_item_path(f.object, param_type: :select, param_key: sel_name),
-                                    method: :delete, data: { confirm: "Delete whole select '#{sel_name}' and its options?" })
-                end
-                table class: 'parameter-table' do
-                  tr do
-                    th "Options"
-                    th "Value"
-                    th "Actions"
-                  end
-                  options.each do |desc, val|
-                    tr do
-                      td desc
-                      td val
-                      td do
-                        link_to("Delete", remove_parameter_admin_item_path(f.object, param_type: :select, param_key: sel_name, desc_key: desc),
-                                method: :delete, data: { confirm: "Delete option '#{desc}' from select '#{sel_name}'?" })
-                      end
-                    end
-                  end
-                end
-              end
-            else
-              para "No select parameters."
-            end
+            render partial: "admin/items/parameters", locals: {
+              tmp_fixed: tmp_fixed,
+              tmp_open: tmp_open,
+              tmp_select: tmp_select,
+              item: f.object
+            }
           end
         end
       else
@@ -187,22 +116,22 @@ ActiveAdmin.register Item do
 
       item_key = @item.id.to_s
       session[:tmp_params] ||= {}
+      initialize_tmp_params(item_key)
+    end
 
-      Rails.logger.debug "INIT_SESSION: before => #{session[:tmp_params][item_key].inspect}"
+    def initialize_tmp_params(item_key)
+      return if session[:tmp_params].key?(item_key)
 
-      unless session[:tmp_params].key?(item_key)
-        pricing = @item.item_pricings.first
-        session[:tmp_params][item_key] = if pricing
-                                           {
-                                             fixed: pricing.fixed_parameters || {},
-                                             open: pricing.open_parameters_label || [],
-                                             select: pricing.pricing_options || {}
-                                           }
-                                         else
-                                           { fixed: {}, open: [], select: {} }
-                                         end
-      end
-      Rails.logger.debug "INIT_SESSION: after => #{session[:tmp_params][item_key].inspect}"
+      pricing = @item.item_pricings.first
+      session[:tmp_params][item_key] = if pricing
+                                         {
+                                           fixed: pricing.fixed_parameters || {},
+                                           open: pricing.open_parameters_label || [],
+                                           select: pricing.pricing_options || {}
+                                         }
+                                       else
+                                         { fixed: {}, open: [], select: {} }
+                                       end
     end
 
     def create

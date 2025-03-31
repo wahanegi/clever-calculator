@@ -1,0 +1,88 @@
+<% if tmp_fixed.any? %>
+  <h3>Fixed Parameters</h3>
+  <table class="parameter-table">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Value</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% tmp_fixed.each do |name, value| %>
+        <tr>
+          <td><%= name %></td>
+          <td><%= value %></td>
+          <td>
+            <%= link_to "Delete", remove_parameter_admin_item_path(item, param_type: :fixed, param_key: name.to_s),
+                        method: :delete, data: { confirm: "Delete fixed param '#{name}'?" } %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% else %>
+  <p>No fixed parameters.</p>
+<% end %>
+
+<% if tmp_open.any? %>
+  <h3>Open Parameters</h3>
+  <table class="parameter-table">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Value</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% tmp_open.each do |label| %>
+        <tr>
+          <td><%= label %></td>
+          <td>Value is entered by the user</td>
+          <td>
+            <%= link_to "Delete", remove_parameter_admin_item_path(item, param_type: :open, param_key: label),
+                        method: :delete, data: { confirm: "Delete open param '#{label}'?" } %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% else %>
+  <p>No open parameters.</p>
+<% end %>
+
+<% if tmp_select.any? %>
+  <h3>Select Parameters</h3>
+  <% tmp_select.each do |sel_name, options| %>
+    <h4>
+      Select name: <%= sel_name %>
+      <%= link_to "[Delete #{sel_name} parameter]",
+                  remove_parameter_admin_item_path(item, param_type: :select, param_key: sel_name),
+                  method: :delete, data: { confirm: "Delete whole select '#{sel_name}' and its options?" } %>
+    </h4>
+    <table class="parameter-table">
+      <thead>
+        <tr>
+          <th>Options</th>
+          <th>Value</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% options.each do |desc, val| %>
+          <tr>
+            <td><%= desc %></td>
+            <td><%= val %></td>
+            <td>
+              <%= link_to "Delete", remove_parameter_admin_item_path(item, param_type: :select, param_key: sel_name, desc_key: desc),
+                          method: :delete, data: { confirm: "Delete option '#{desc}' from select '#{sel_name}'?" } %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% end %>
+<% else %>
+  <p>No select parameters.</p>
+<% end %>

@@ -8,27 +8,11 @@ class ItemUpdater
   end
 
   def call
-    item.assign_attributes(params.except("item_pricings_attributes"))
-
+    assign_item_attributes
     pricing = item.item_pricings.first_or_initialize
-
     reset_all_fields(pricing)
-
-    case item.pricing_type
-    when "fixed"
-      update_fixed(pricing)
-    when "open"
-      update_open(pricing)
-    when "fixed_open"
-      update_fixed_open(pricing)
-    end
-
-    ActiveRecord::Base.transaction do
-      pricing.save!
-      item.save!
-    end
-
-    true
+    update_by_pricing_type(pricing)
+    persist!(pricing)
   rescue ActiveRecord::RecordInvalid => e
     Rails.logger.debug "‼️ Failed to update item: #{e.record.errors.full_messages}"
     false
@@ -36,15 +20,37 @@ class ItemUpdater
 
   private
 
+  def assign_item_attributes
+    item.assign_attributes(params.except("item_pricings_attributes"))
+  end
+
+  def persist!(pricing)
+    ActiveRecord::Base.transaction do
+      pricing.save!
+      item.save!
+    end
+    true
+  end
+
+  def update_by_pricing_type(pricing)
+    case item.pricing_type
+    when "fixed"      then update_fixed(pricing)
+    when "open"       then update_open(pricing)
+    when "fixed_open" then update_fixed_open(pricing)
+    end
+  end
+
   def reset_all_fields(pricing)
-    pricing.default_fixed_price    = nil
-    pricing.fixed_parameters       = {}
-    pricing.open_parameters_label  = []
-    pricing.pricing_options        = {}
-    pricing.formula_parameters     = {}
-    pricing.calculation_formula    = nil
-    pricing.is_open               = false
-    pricing.is_selectable_options = false
+    pricing.assign_attributes(
+      default_fixed_price: nil,
+      fixed_parameters: {},
+      open_parameters_label: [],
+      pricing_options: {},
+      formula_parameters: {},
+      calculation_formula: nil,
+      is_open: false,
+      is_selectable_options: false
+    )
   end
 
   def update_fixed(pricing)
