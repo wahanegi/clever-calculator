@@ -1,9 +1,8 @@
 import React from 'react'
-import { Container, Row } from 'react-bootstrap'
+import { Container, Row, Button } from 'react-bootstrap'
 import { useAppHooks } from '../hooks'
 import { fetchQuotes } from '../services'
 import { QuoteCreation, ROUTES, STEPS } from '../shared'
-import { PcButton } from '../ui'
 import { getCurrentStepId } from '../utils';
 
 export const CustomerInfo = () => {
@@ -36,7 +35,7 @@ export const CustomerInfo = () => {
       </section>
 
       <section className={'d-flex justify-content-center align-items-center gap-4 mb-5'}>
-        <PcButton variant={'outline-primary'} children={'Next'} onClick={handleNext} hidden={true} />
+        <Button onClick={handleNext} className={'pc-btn-next'}>Next</Button>
       </section>
     </Container>
   )

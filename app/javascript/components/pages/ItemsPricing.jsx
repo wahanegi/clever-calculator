@@ -1,9 +1,8 @@
 import React from 'react'
-import { Container, Row } from 'react-bootstrap'
+import { Button, Container, Row } from 'react-bootstrap'
 import { useAppHooks } from '../hooks'
 import { fetchQuotes } from '../services'
 import { QuoteCreation, ROUTES, STEPS } from '../shared'
-import { PcButton } from '../ui'
 import { getCurrentStepId } from '../utils';
 
 export const ItemsPricing = () => {
@@ -34,8 +33,8 @@ export const ItemsPricing = () => {
 
       {/* Buttons section */}
       <section className={'d-flex justify-content-center align-items-center gap-4 mb-5'}>
-        <PcButton variant={'outline-primary'} children={'Back'} onClick={handleBack} />
-        <PcButton variant={'outline-primary'} children={'Download'} onClick={handleDownload} />
+        <Button variant={'outline-primary'} className={'fw-bold pc-btn-back'} onClick={handleBack}>Back</Button>
+        <Button variant={'outline-primary'} className={'fw-bold pc-btn-download'} onClick={handleDownload} disabled={true}>Download</Button>
       </section>
     </Container>
   )

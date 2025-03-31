@@ -1,12 +1,9 @@
-// Base styles for PcButton component
-.pc-btn {
-  width: 96px;
-  height: 38px;
+// Base styles
+.btn {
   font-family: $font-family-lato;
-  border-width: 1px !important; // TODO: do not match 1px in DevTools-computed
 
   // styles for variant="primary"
-  &.primary {
+  &-primary {
     color: white !important;
 
     &:hover,
@@ -27,7 +24,7 @@
   }
 
   // styles for variant="warning"
-  &.warning {
+  &-warning {
     color: $white;
     border-color: $coral-primary !important;
     background: $coral-primary !important;
@@ -56,7 +53,7 @@
   }
 
   // styles for variant="outline-primary"
-  &.outline-primary {
+  &-outline-primary {
     color: $primary !important;
     background-color: $white;
 
@@ -79,8 +76,21 @@
 }
 
 // Additional styles for buttons
-.pc-btn-reset {
-  width: 103.71px;
-  height: 38px;
-  font-family: $font-family-lato;
+.pc-btn {
+  &-reset, &-back, &-download, &-next {
+    height: 38px;
+  }
+
+  &-reset {
+    width: 103.71px;
+  }
+
+  &-back,  &-next {
+    width: 96px;
+  }
+
+  &-download {
+    width: 106px;
+  }
 }
+
