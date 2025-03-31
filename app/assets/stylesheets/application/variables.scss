@@ -5,11 +5,13 @@ $primary: #2487bf;
 $secondary: #9aa9b8;
 $light: #f0f6fc;
 $dark: #1f2f3f;
+$danger: #f12711;
 
 // Other Colors
 $gray: #9e9e9e;
 $gray-light: #d9d9d9;
 $blue-light: #e2e6f9;
+$blue-sky: #3f84bd;
 $red-light: #f5b8b8;
 $green-light: #f3fbeb;
 $teal: #a0c9c8;
@@ -38,10 +40,19 @@ $font-size-lg: 2rem; // 32px
 $font-size-xl: 3rem; // 48px
 
 // Font Weights
+$font-weight-lighter: 200;
 $font-weight-light: 400;
 $font-weight-medium: 500;
 $font-weight-semibold: 600;
 $font-weight-bold: 700;
+
+// line-height variables
+$line-height-sm: 1.2;
+$line-height-base: 1.4;
+$line-height-lg: 1.6;
+
+// Button styles
+$border-radius: 8px;
 
 // Enable RFS
 $enable-responsive-font-sizes: true !default;
@@ -50,34 +61,51 @@ $enable-responsive-font-sizes: true !default;
 $spacer: 1rem;
 $spacers: (
   0: 0,
-  1: $spacer * 0.25, // 4px
-  2: $spacer * 0.5, // 8px
-  3: $spacer * 0.75, // 12px
-  4: $spacer * 1, // 16px
-  5: $spacer * 1.5, // 24px
-  6: $spacer * 2, // 32px
-  7: $spacer * 2.5, // 40px
-  8: $spacer * 3, // 48px
-  9: $spacer * 4, // 64px
-  10: $spacer * 5, // 80px
-  11: $spacer * 6, // 96px
-  12: $spacer * 7, // 112px
-  13: $spacer * 8, // 128px
-  14: $spacer * 9, // 144px
-  15: $spacer * 10, // 160px
+  1: $spacer * 0.25,
+  // 4px
+  2: $spacer * 0.5,
+  // 8px
+  3: $spacer * 0.75,
+  // 12px
+  4: $spacer * 1,
+  // 16px
+  5: $spacer * 1.5,
+  // 24px
+  6: $spacer * 2,
+  // 32px
+  7: $spacer * 2.5,
+  // 40px
+  8: $spacer * 3,
+  // 48px
+  9: $spacer * 3.5,
+  // 56px
+  10: $spacer * 4,
+  // 64px
 );
 $enable-negative-margins: true;
 
 // Custom Font Sizes for Utilities
 $font-sizes: (
-  1: 3rem, // 48px
-  2: 2.75rem, // 44px
-  3: 2.5rem, // 40px
-  4: 2.25rem, // 36px
-  5: 2rem, // 32px
-  6: 1.75rem, // 28px
-  7: 1.5rem, // 24px
-  8: 1.25rem, // 20px
-  9: $font-size-sm, // 14px
-  10: $font-size-xs, // 12px
+  1: 3rem,
+  // 48px
+  2: 2.75rem,
+  // 44px
+  3: 2.5rem,
+  // 40px
+  4: 2.25rem,
+  // 36px
+  5: 2rem,
+  // 32px
+  6: 1.75rem,
+  // 28px
+  7: 1.5rem,
+  // 24px
+  8: 1.25rem,
+  // 20px
+  9: 1.125rem,
+  // 18px
+  10: $font-size-sm,
+  // 14px
+  11: $font-size-xs,
+  // 12px
 );
