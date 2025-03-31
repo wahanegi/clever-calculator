@@ -55,8 +55,6 @@ ActiveAdmin.register Item do
                 f.object.item_pricings.first_or_initialize
               end
 
-              
-
     div id: "pricing_fixed", style: "display:#{f.object.fixed? ? 'block' : 'none'};" do
       f.inputs "Pricing parameter" do
         f.fields_for :item_pricings, pricing do |pf|
@@ -225,14 +223,14 @@ ActiveAdmin.register Item do
     def update
       @item = Item.find(params[:id])
       item_key = @item.id.to_s
-    
+
       new_pricing_type = permitted_params[:item][:pricing_type]
       session[:tmp_params]&.delete(item_key) if new_pricing_type != "fixed_open"
-    
+
       session_data = new_pricing_type == "fixed_open" ? session[:tmp_params][item_key] : nil
-    
+
       updater = ItemUpdater.new(@item, permitted_params[:item], session_data)
-    
+
       if updater.call
         if @item.fixed_open?
           redirect_to edit_admin_item_path(@item), notice: "Item updated! Now you can add parameters."
@@ -244,7 +242,6 @@ ActiveAdmin.register Item do
         render :edit
       end
     end
-        
   end
 
   member_action :remove_parameter, method: :delete do
@@ -285,7 +282,7 @@ ActiveAdmin.register Item do
 
   action_item :add_parameter, only: :edit do
     link_to("Add Parameter", new_parameter_admin_item_path(resource)) if resource.fixed_open?
-  end  
+  end
 
   member_action :new_parameter, method: :get do
     @item = Item.find(params[:id])
