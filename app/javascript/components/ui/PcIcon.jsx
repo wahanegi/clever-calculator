@@ -1,6 +1,7 @@
-import { IMAGE_ASSETS } from '../shared'
 import React from 'react'
-export const PcIcon = ({name, alt, className, ...props}) => {
+import { IMAGE_ASSETS } from '../shared'
+
+export const PcIcon = ({ name, alt, className, ...props }) => {
   const icon = IMAGE_ASSETS.ICONS[name]
 
   if (!icon) {

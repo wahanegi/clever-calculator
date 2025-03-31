@@ -1,9 +1,9 @@
-@import 'buttons/pc-reset-button';
-
+// Base styles for PcButton component
 .pc-btn {
   width: 96px;
   height: 38px;
   font-family: $font-family-lato;
+  border-width: 1px !important; // TODO: do not match 1px in DevTools-computed
 
   // styles for variant="primary"
   &.primary {
@@ -24,31 +24,34 @@
       color: $text-gray-disable !important;
       background: $white !important;
     }
+  }
 
-    &.warning {
+  // styles for variant="warning"
+  &.warning {
+    color: $white;
+    border-color: $coral-primary !important;
+    background: $coral-primary !important;
+
+    &:hover,
+    &:focus {
+      color: $white;
       border-color: $coral-primary !important;
       background: $coral-primary !important;
+    }
 
-      &:hover,
-      &:focus {
-        border-color: $coral-primary !important;
-        background: $coral-primary !important;
-      }
+    &:focus-visible {
+      box-shadow: $coral-light 0px 0px 0px 4px;
+    }
 
-      &:focus-visible {
-        box-shadow: $coral-light 0px 0px 0px 4px;
-      }
+    &:active {
+      border-color: $coral-dark !important;
+      background: $coral-dark !important;
+    }
 
-      &:active {
-        border-color: $coral-dark !important;
-        background: $coral-dark !important;
-      }
-
-      &:disabled {
-        border-color: $coral-light !important;
-        color: $text-coral !important;
-        background-color: $coral-light !important;
-      }
+    &:disabled {
+      border-color: $coral-light !important;
+      color: $text-coral !important;
+      background-color: $coral-light !important;
     }
   }
 
@@ -72,32 +75,10 @@
       border-color: $gray-light !important;
       color: $text-gray-disable !important;
     }
-
-    &.warning {
-      border-color: $coral-primary !important;
-      color: $coral-primary !important;
-
-      &:hover,
-      &:focus {
-        border-color: $coral-primary !important;
-        background: inherit !important;
-      }
-
-      &:focus-visible {
-        box-shadow: $coral-light 0px 0px 0px 4px;
-      }
-
-      &:active {
-        border-color: $coral-dark !important;
-        color: $white !important;
-        background: $coral-dark !important;
-      }
-
-      &:disabled {
-        border: $coral-light !important;
-        color: $text-coral !important;
-        background: $coral-light !important;
-      }
-    }
   }
+}
+
+// Additional styles for buttons
+.pc-btn-reset {
+  width: 103.71px;
 }

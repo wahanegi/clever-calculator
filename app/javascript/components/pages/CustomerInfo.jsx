@@ -2,11 +2,14 @@ import React from 'react'
 import { Container, Row } from 'react-bootstrap'
 import { useAppHooks } from '../hooks'
 import { fetchQuotes } from '../services'
-import { ROUTES, STEPS } from '../shared'
-import { PcButton, QuoteCreation } from '../ui'
+import { QuoteCreation, ROUTES, STEPS } from '../shared'
+import { PcButton } from '../ui'
+import { getCurrentStepId } from '../utils';
 
 export const CustomerInfo = () => {
-  const { navigate } = useAppHooks()
+  const { navigate, location } = useAppHooks()
+  const currentStepId = getCurrentStepId(location.pathname)
+
   const handleNext = async () => {
     //TODO Hardcode customer_id for now (replace with real logic later)
     const customerId = 3
@@ -23,26 +26,17 @@ export const CustomerInfo = () => {
 
   return (
     <Container className={'wrapper'}>
-      {/* Title */}
-      <QuoteCreation />
-
-      {/* Progress bar */}
-      <section className={'px-6 mb-2'}>
-        <div style={{ height: '79px', border: '2px solid red' }}>
-          <span>Progress bar</span>
-        </div>
-      </section>
+      <QuoteCreation currentStepId={currentStepId} isBtnShow={false} />
 
       {/* Customer Information dashboard*/}
       <section className={'mb-8'}>
-        <h2 className={'text-center mb-7'}>Customer Information</h2>
         <Row>
           <div style={{ height: '387px', border: '2px solid red' }}></div>
         </Row>
       </section>
 
       <section className={'d-flex justify-content-center align-items-center gap-4 mb-5'}>
-        <PcButton variant={'primary'} children={'Next'} onClick={handleNext} />
+        <PcButton variant={'outline-primary'} children={'Next'} onClick={handleNext} hidden={true} />
       </section>
     </Container>
   )
