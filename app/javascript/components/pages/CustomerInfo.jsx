@@ -2,8 +2,8 @@ import React from 'react'
 import { Container, Row, Button } from 'react-bootstrap'
 import { useAppHooks } from '../hooks'
 import { fetchQuotes } from '../services'
-import { QuoteCreation, ROUTES, STEPS } from '../shared'
-import { getCurrentStepId } from '../utils';
+import { QuoteCreation, ROUTES, STEPS, CustomerForm } from '../shared'
+import { getCurrentStepId } from '../utils'
 
 export const CustomerInfo = () => {
   const { navigate, location } = useAppHooks()
@@ -28,14 +28,14 @@ export const CustomerInfo = () => {
       <QuoteCreation currentStepId={currentStepId} isBtnShow={false} />
 
       {/* Customer Information dashboard*/}
-      <section className={'mb-8'}>
-        <Row>
-          <div style={{ height: '387px', border: '2px solid red' }}></div>
-        </Row>
+      <section className={'mb-8 mt-7'}>
+        <CustomerForm />
       </section>
 
       <section className={'d-flex justify-content-center align-items-center gap-4 mb-5'}>
-        <Button onClick={handleNext} className={'pc-btn-next'}>Next</Button>
+        <Button onClick={handleNext} className={'pc-btn-next'}>
+          Next
+        </Button>
       </section>
     </Container>
   )

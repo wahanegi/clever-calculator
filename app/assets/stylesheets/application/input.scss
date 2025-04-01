@@ -1,0 +1,34 @@
+.border-label {
+  position: absolute;
+  top: -0.4rem;
+  left: 0.8rem;
+  background: linear-gradient(to bottom, $light 50%, $white 50%);
+}
+
+.form-control,
+.form-select {
+  height: 42px;
+}
+
+.form-control::placeholder {
+  color: $gray;
+}
+
+.form-control:focus,
+.form-control:active,
+.form-select:focus,
+.form-select:active {
+  box-shadow: none !important;
+  background-color: $white !important;
+}
+
+.form-control:-webkit-autofill,
+.form-select:-webkit-autofill {
+  background-color: white !important;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+.form-control:-webkit-autofill:focus,
+.form-select:-webkit-autofill:focus {
+  background-color: white !important;
+}
