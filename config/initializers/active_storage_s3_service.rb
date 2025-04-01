@@ -1,5 +1,5 @@
 module ActiveStorage
-  module Service
+  class Service
     class S3Service
       def url(key, **)
         "#{ENV['AWS_FILES_DISTRIBUTION']}/#{key}"
