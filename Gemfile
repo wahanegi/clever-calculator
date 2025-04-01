@@ -3,6 +3,7 @@ source "https://rubygems.org"
 ruby "3.4.1"
 
 gem "activeadmin", "~> 3.2", ">= 3.2.5"           # A framework for creating elegant and customizable admin panels
+gem "aws-sdk-s3", require: false                  # AWS SDK for Ruby
 # gem "bcrypt", "~> 3.1.7"                        # Use Active Model has_secure_password [https://guides.rubyonrails.org/active_model_basics.html#securepassword]
 gem "bootsnap", require: false                    # Reduces boot times through caching; required in config/boot.rb
 gem "cssbundling-rails"                           # Bundle and process CSS [https://github.com/rails/cssbundling-rails]
