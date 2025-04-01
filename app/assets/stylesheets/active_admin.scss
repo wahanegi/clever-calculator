@@ -38,4 +38,80 @@
     }
   }
 
+.parameter-panel {
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+
+  h2 {
+    margin-bottom: 10px;
+  }
+
+  p {
+    margin-bottom: 20px;
+  }
+
+  .radio-group {
+    margin-bottom: 20px;
+
+    label {
+      margin-right: 15px;
+    }
+  }
+
+  .form-field {
+    margin-bottom: 15px;
+
+    label {
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    input {
+      width: 100%;
+      max-width: 400px;
+    }
+  }
+
+  .select-option {
+    margin-bottom: 10px;
+  }
+
+  .form-actions {
+    margin-top: 30px;
+
+    input {
+      background-color: #357edd;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+  }
+}
+.select-option-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 16px;
+  margin-bottom: 12px;
+
+  .select-field {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+
+    label {
+      margin-bottom: 4px;
+      font-weight: 600;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      max-width: 280px;
+    }
+  }
+}
+
+
 @import "active_admin/forms/select";

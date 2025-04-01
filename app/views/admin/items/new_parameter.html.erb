@@ -1,0 +1,58 @@
+<div class="panel parameter-panel">
+  <h2>Add Parameter for <%= resource.name %></h2>
+  <p>Choose one of the parameter types below.</p>
+
+  <%= form_with url: create_parameter_admin_item_path(resource), method: :post, local: true do %>
+    <%= hidden_field_tag :authenticity_token, form_authenticity_token %>
+
+    <div class="radio-group">
+      <label><%= radio_button_tag :parameter_type, "Fixed" %> Fixed</label>
+      <label><%= radio_button_tag :parameter_type, "Open" %> Open</label>
+      <label><%= radio_button_tag :parameter_type, "Select" %> Select</label>
+    </div>
+
+    <div id="fixed_fields" style="display:none;">
+      <h4>Fixed Parameter</h4>
+      <div class="form-field">
+        <%= label_tag :fixed_parameter_name, "Parameter Name" %>
+        <%= text_field_tag :fixed_parameter_name %>
+      </div>
+      <div class="form-field">
+        <%= label_tag :fixed_parameter_value, "Parameter Value" %>
+        <%= text_field_tag :fixed_parameter_value %>
+      </div>
+    </div>
+
+    <div id="open_fields" style="display:none;">
+      <h4>Open Parameter</h4>
+      <div class="form-field">
+        <%= label_tag :open_parameter_name, "Parameter Name" %>
+        <%= text_field_tag :open_parameter_name %>
+      </div>
+    </div>
+
+    <div id="select_fields" style="display:none;">
+      <h4>Select Parameter</h4>
+      <div class="form-field">
+        <%= label_tag :select_parameter_name, "Select Name" %>
+        <%= text_field_tag :select_parameter_name %>
+      </div>
+
+      <% 10.times do |i| %>
+        <div class="select-option-row">
+          <div class="select-field">
+            <%= label_tag "option_description_#{i + 1}", "Description #{i + 1}" %>
+            <%= text_field_tag "option_description_#{i + 1}" %>
+          </div>
+          <div class="select-field">
+            <%= label_tag "option_value_#{i + 1}", "Value #{i + 1}" %>
+            <%= text_field_tag "option_value_#{i + 1}" %>
+          </div>
+        </div>
+      <% end %>
+
+    <div class="form-actions">
+      <%= submit_tag "Add Parameter" %>
+    </div>
+  <% end %>
+</div>
