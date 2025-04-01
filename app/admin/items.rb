@@ -92,10 +92,11 @@ ActiveAdmin.register Item do
 
           panel "Parameters" do
             render partial: "admin/items/parameters", locals: {
-              tmp_fixed: tmp_fixed,
-              tmp_open: tmp_open,
-              tmp_select: tmp_select,
-              item: f.object
+              fixed_parameters: tmp_fixed,
+              open_parameters_label: tmp_open,
+              select_parameters: tmp_select,
+              item: f.object,
+              mode: :edit
             }
           end
         end
@@ -282,6 +283,23 @@ ActiveAdmin.register Item do
       end
       row :created_at
       row :updated_at
+    end
+
+    if item.fixed?
+      panel "Price" do
+        para "Price: #{item.item_pricings.first&.default_fixed_price}"
+      end
+    elsif item.fixed_open?
+      pricing = item.item_pricings.first
+      panel "Pricing Parameters" do
+        render partial: "admin/items/parameters", locals: {
+          fixed_parameters: pricing&.fixed_parameters || {},
+          open_parameters_label: pricing&.open_parameters_label || [],
+          select_parameters: pricing&.pricing_options || {},
+          item: item,
+          mode: :show
+        }
+      end
     end
   end
 end
