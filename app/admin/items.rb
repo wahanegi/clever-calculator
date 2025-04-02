@@ -73,6 +73,9 @@ ActiveAdmin.register Item do
     end
     div id: "pricing_fixed_open", style: "display:#{f.object.fixed_open? ? 'block' : 'none'};" do
       if f.object.fixed_open? && f.object.persisted?
+        div class: "add-param-link-wrapper" do
+          para link_to("Add Parameter", new_parameter_admin_item_path(f.object), class: "button")
+        end
         f.inputs "Fixed + Open Pricing" do
           f.fields_for :item_pricings, pricing do |pf|
             pf.input :formula_parameters, as: :text, label: "Formula Parameters (JSON)"
@@ -210,9 +213,9 @@ ActiveAdmin.register Item do
     redirect_to edit_admin_item_path(@item)
   end
 
-  action_item :add_parameter, only: :edit do
-    link_to("Add Parameter", new_parameter_admin_item_path(resource)) if resource.fixed_open?
-  end
+  # action_item :add_parameter, only: :edit do
+  #   link_to("Add Parameter", new_parameter_admin_item_path(resource)) if resource.fixed_open?
+  # end
 
   member_action :new_parameter, method: :get do
     @item = Item.find(params[:id])
