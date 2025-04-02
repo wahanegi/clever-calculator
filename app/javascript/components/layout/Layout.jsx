@@ -1,11 +1,11 @@
 import React from 'react'
-import { PcHeader } from './PcHeader'
+import { Header } from './Header'
 import { Outlet } from 'react-router-dom'
 
 export const Layout = () => {
   return (
     <div className={'d-flex flex-column min-vh-100'}>
-      <PcHeader />
+      <Header />
       <main>
         <Outlet />
       </main>
