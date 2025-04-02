@@ -28,7 +28,7 @@ export const Header = () => {
       }
     }
 
-    return <Nav.Link onClick={handleLogout} className={'me-1 me-xxl-20 me-xl-20 me-lg-10 me-md-2'}>
+    return <Nav.Link onClick={handleLogout} className={'me-1 me-xxl-20 me-xl-20 me-lg-10 me-md-2 header-logout'}>
       <span className={'text-white me-2 fw-normal text-decoration-underline'}>Logout</span>
       <PcIcon name={'logout'} alt={'Logout'} className={'pc-icon-logout'} />
     </Nav.Link>
