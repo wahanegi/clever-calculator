@@ -6,7 +6,7 @@ export const CustomerForm = () => {
   return (
     <div className="border rounded border-primary customer-form bg-light">
       <Row className="mb-6">
-        <div className="d-flex align-items-center gap-6">
+        <div className="d-flex flex-column flex-sm-row gap-6">
           <Col className="image-placeholder w-100 bg-white border rounded border-primary p-1 d-flex justify-content-center align-items-center">
             <PcIcon name="placeholder" alt="Logo" />
           </Col>
@@ -28,7 +28,7 @@ export const CustomerForm = () => {
               </Col>
             </Row>
             <Row>
-              <div className="d-flex gap-6">
+              <div className="d-flex flex-column flex-sm-row gap-6">
                 <Col className="client-input">
                   <PcInput id="client" placeholder="Client name" label="Client" height="42px" />
                 </Col>
@@ -41,7 +41,7 @@ export const CustomerForm = () => {
         </div>
       </Row>
       <Row className="mb-6">
-        <div className="d-flex gap-6">
+        <div className="d-flex flex-column flex-sm-row gap-6">
           <Col>
             <PcInput id="email" type="email" placeholder="E-mail" label="E-mail" height="42px" />
           </Col>
