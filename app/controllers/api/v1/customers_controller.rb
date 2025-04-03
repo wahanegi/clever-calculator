@@ -9,8 +9,8 @@ module Api
       end
 
       def upsert
-        # TODO: Add service class that would receive params and finds existing Customer based on all attributes or creates it.
-        # Also assigns customer to quote.
+        # TODO: Add service class that would receive params and finds existing Customer
+        # based on all attributes or creates it. Also assigns customer to quote.
       end
     end
   end
