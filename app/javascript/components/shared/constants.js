@@ -28,12 +28,16 @@ export const STEPS_DATA = [
 import logoUrl from '../../../assets/images/icons/logo.svg'
 import logoutUrl from '../../../assets/images/icons/logout.svg'
 import placeholderUrl from '../../../assets/images/icons/placeholder.svg'
+import dropdownArrowDownUrl from '../../../assets/images/icons/arrow-down.svg'
+import dropdownArrowUpUrl from '../../../assets/images/icons/arrow-up.svg'
 
 export const IMAGE_ASSETS = {
   ICONS: {
     logo: logoUrl,
     logout: logoutUrl,
     placeholder: placeholderUrl,
+    dropdownArrowDown: dropdownArrowDownUrl,
+    dropdownArrowUp: dropdownArrowUpUrl,
   },
   // future asset files can be added here
 }

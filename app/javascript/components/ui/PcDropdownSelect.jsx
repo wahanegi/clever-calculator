@@ -1,6 +1,7 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Form } from 'react-bootstrap'
 import { Typeahead } from 'react-bootstrap-typeahead'
+import { PcIcon } from './PcIcon'
 
 export const PcDropdownSelect = ({
   id,
@@ -12,7 +13,10 @@ export const PcDropdownSelect = ({
   value,
   label,
   maxResults = 5,
+  hasIcon = false,
 }) => {
+  const [isMenuOpen, setIsMenuOpen] = useState(false)
+
   const selectedOption =
     options.find((opt) => opt.value === value) || (value ? { value, label: value, customOption: true } : null)
 
@@ -44,8 +48,17 @@ export const PcDropdownSelect = ({
         selected={selectedOption ? [selectedOption] : []}
         maxResults={maxResults}
         paginate={false}
+        onMenuToggle={(isOpen) => setIsMenuOpen(isOpen)}
       />
       <Form.Label className="border-label fw-bold fs-11 lh-sm px-1">{label}</Form.Label>
+      {hasIcon && (
+        <div className="position-absolute end-0 top-50 translate-middle-y pe-3">
+          <PcIcon
+            name={isMenuOpen ? 'dropdownArrowUp' : 'dropdownArrowDown'}
+            alt={isMenuOpen ? 'Arrow pointing up' : 'Arrow pointing down'}
+          />
+        </div>
+      )}
     </Form.Group>
   )
 }

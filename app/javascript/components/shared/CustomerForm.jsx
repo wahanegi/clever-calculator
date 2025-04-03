@@ -90,6 +90,7 @@ export const CustomerForm = () => {
                   value={selectedCustomerID}
                   onChange={handleCompanyChange}
                   onInputChange={handleInputChange}
+                  hasIcon={true}
                 />
               </Col>
             </Row>
