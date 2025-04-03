@@ -1,5 +1,6 @@
 class Customer < ApplicationRecord
   has_many :quotes, dependent: :destroy
+  has_one_attached :logo
 
   validates :company_name, presence: true, uniqueness: { case_sensitive: false }
 
