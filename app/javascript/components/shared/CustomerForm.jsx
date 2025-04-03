@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react'
+import React, { useEffect, useState } from 'react'
 import { Row, Col } from 'react-bootstrap'
 import { PcDropdownSelect, PcIcon, PcInput } from '../ui'
 
@@ -25,14 +25,14 @@ export const CustomerForm = () => {
       .then((customersResponse) => {
         setCustomers(customersResponse.data)
       })
-  }, []);
+  }, [])
 
   const options = () => {
     if (!customers) return []
 
     return customers.map((customer) => ({
       value: customer.id,
-      label: customer.attributes.company_name
+      label: customer.attributes.company_name,
     }))
   }
 
@@ -59,11 +59,17 @@ export const CustomerForm = () => {
     console.log(e)
     setCustomer({
       ...customer,
-      [e.target.id]: e.target.value
+      [e.target.id]: e.target.value,
     })
   }
 
   if (!customers) return null
+
+  const companyInputLabel = (
+    <span>
+      Company <span className="text-danger">*</span>
+    </span>
+  )
 
   return (
     <div className="border rounded border-primary customer-form bg-light">
@@ -80,7 +86,7 @@ export const CustomerForm = () => {
                   options={options()}
                   placeholder={placeholder}
                   height="42px"
-                  label="Company"
+                  label={companyInputLabel}
                   value={selectedCustomerID}
                   onChange={handleCompanyChange}
                   onInputChange={handleInputChange}
@@ -90,12 +96,13 @@ export const CustomerForm = () => {
             <Row>
               <div className="d-flex flex-column flex-sm-row gap-6">
                 <Col className="client-input">
-                  <PcInput id="full_name"
-                           placeholder="Client name"
-                           label="Client"
-                           height="42px"
-                           value={customer.full_name}
-                           onChange={handleInputChange}
+                  <PcInput
+                    id="full_name"
+                    placeholder="Client name"
+                    label="Client"
+                    height="42px"
+                    value={customer.full_name}
+                    onChange={handleInputChange}
                   />
                 </Col>
                 <Col className="title-input">
@@ -123,7 +130,8 @@ export const CustomerForm = () => {
               label="E-mail"
               height="42px"
               value={customer.email}
-              onChange={handleInputChange} />
+              onChange={handleInputChange}
+            />
           </Col>
           <Col>
             <PcInput
@@ -132,7 +140,8 @@ export const CustomerForm = () => {
               label="Address"
               height="42px"
               value={customer.address}
-              onChange={handleInputChange} />
+              onChange={handleInputChange}
+            />
           </Col>
         </div>
       </Row>
@@ -145,7 +154,8 @@ export const CustomerForm = () => {
             label="Notes"
             height="100px"
             value={customer.notes}
-            onChange={handleInputChange} />
+            onChange={handleInputChange}
+          />
         </Col>
       </Row>
     </div>

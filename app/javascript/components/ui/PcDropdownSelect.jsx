@@ -2,14 +2,20 @@ import React from 'react'
 import { Form } from 'react-bootstrap'
 import { Typeahead } from 'react-bootstrap-typeahead'
 
-export const PcDropdownSelect = ({ id, options, placeholder, onChange, onInputChange, height, value, label }) => {
+export const PcDropdownSelect = ({
+  id,
+  options,
+  placeholder,
+  onChange,
+  onInputChange,
+  height,
+  value,
+  label,
+  maxResults = 5,
+}) => {
   const selectedOption =
-    options.find((opt) => opt.value === value) ||
-    (value ? { value, label: value, customOption: true } : null)
+    options.find((opt) => opt.value === value) || (value ? { value, label: value, customOption: true } : null)
 
-  const renderMenuItemChildren = (option) => {
-    return <span>{option.label}</span>
-  }
   return (
     <Form.Group controlId={id} className="position-relative">
       <Typeahead
@@ -36,7 +42,8 @@ export const PcDropdownSelect = ({ id, options, placeholder, onChange, onInputCh
         className="border border-primary rounded-1"
         style={{ height }}
         selected={selectedOption ? [selectedOption] : []}
-        renderMenuItemChildren={renderMenuItemChildren}
+        maxResults={maxResults}
+        paginate={false}
       />
       <Form.Label className="border-label fw-bold fs-11 lh-sm px-1">{label}</Form.Label>
     </Form.Group>
