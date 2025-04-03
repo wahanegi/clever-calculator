@@ -1,8 +1,6 @@
 module Api
   module V1
-    class CustomersController < ApplicationController
-      before_action :authenticate_user!
-
+    class CustomersController < BaseController
       def index
         customers = Customer.select('DISTINCT ON (company_name) *')
         render json: CustomerSerializer.new(customers).serializable_hash, status: :ok

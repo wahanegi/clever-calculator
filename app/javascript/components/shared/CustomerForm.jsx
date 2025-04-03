@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Row, Col } from 'react-bootstrap'
+import { Row, Col, Form } from 'react-bootstrap'
 import { PcDropdownSelect, PcIcon, PcInput } from '../ui'
 
 export const CustomerForm = () => {
@@ -14,6 +14,7 @@ export const CustomerForm = () => {
     position: '',
     address: '',
     notes: '',
+    logo: null,
   }
   const [customers, setCustomers] = useState([])
   const [customer, setCustomer] = useState(defaultCustomer)
@@ -41,17 +42,9 @@ export const CustomerForm = () => {
     const selectedCustomer = customers.find((customer) => customer.id === e.target.value)
 
     if (selectedCustomer) {
-      setCustomer({
-        id: selectedCustomer.id,
-        company_name: selectedCustomer.attributes.company_name,
-        full_name: selectedCustomer.attributes.full_name,
-        // first_name: selectedCustomer.attributes.first_name,
-        // last_name: selectedCustomer.attributes.last_name,
-        email: selectedCustomer.attributes.email,
-        position: selectedCustomer.attributes.position,
-        address: selectedCustomer.attributes.address,
-        notes: selectedCustomer.attributes.notes,
-      })
+      setCustomer(selectedCustomer.attributes)
+    } else {
+      setCustomer({ ...defaultCustomer, customer_name: e.target.value })
     }
   }
 
@@ -63,6 +56,10 @@ export const CustomerForm = () => {
     })
   }
 
+  const handleLogoUpload = (e) => {
+    setCustomer({ ...customer, logo: URL.createObjectURL(e.target.files[0]) })
+  }
+
   if (!customers) return null
 
   const companyInputLabel = (
@@ -71,12 +68,31 @@ export const CustomerForm = () => {
     </span>
   )
 
+  const CompanyLogoUploader = () => <Form.Group>
+    <Form.Label className={'m-0'} column={'sm'}>
+      {customer.logo ?
+        <img src={customer.logo}
+             alt={`${customer.company_name} logo`}
+             style={{ height: '100px', width: '100px' }} />
+        : <PcIcon name="placeholder" alt="Placeholder logo" />}
+      <Form.Control
+        className={'d-none'}
+        name="logo"
+        type={'file'}
+        accept={'image/jpeg,image/png'}
+        onChange={handleLogoUpload}
+      />
+    </Form.Label>
+  </Form.Group>
+
+
   return (
     <div className="border rounded border-primary customer-form bg-light">
       <Row className="mb-6">
         <div className="d-flex flex-column flex-sm-row gap-6">
-          <Col className="image-placeholder w-100 bg-white border rounded border-primary p-1 d-flex justify-content-center align-items-center">
-            <PcIcon name="placeholder" alt="Logo" />
+          <Col
+            className="image-placeholder w-100 bg-white border rounded border-primary p-1 d-flex justify-content-center align-items-center">
+            <CompanyLogoUploader />
           </Col>
           <Col>
             <Row className="mb-6">
