@@ -3,13 +3,8 @@ import { Form } from 'react-bootstrap'
 import { Typeahead } from 'react-bootstrap-typeahead'
 
 export const PcDropdownSelect = ({ id, options, placeholder, onChange, onInputChange, height, value, label }) => {
-  const transformedOptions = options.map((customer) => ({
-    value: customer.id,
-    label: customer.attributes.company_name,
-  }))
-
   const selectedOption =
-    transformedOptions.find((opt) => opt.value === value) ||
+    options.find((opt) => opt.value === value) ||
     (value ? { value, label: value, customOption: true } : null)
 
   const renderMenuItemChildren = (option) => {
@@ -19,7 +14,7 @@ export const PcDropdownSelect = ({ id, options, placeholder, onChange, onInputCh
     <Form.Group controlId={id} className="position-relative">
       <Typeahead
         id={id}
-        options={transformedOptions}
+        options={options}
         placeholder={placeholder}
         onChange={(selected) => {
           if (selected.length > 0) {
@@ -31,7 +26,7 @@ export const PcDropdownSelect = ({ id, options, placeholder, onChange, onInputCh
             onChange({ target: { id, value: '' } })
           }
         }}
-        onInputChange={(text) => onInputChange && onInputChange(text)}
+        onInputChange={(_text, event) => onInputChange && onInputChange(event)}
         filterBy={(option, props) => {
           const inputValue = props.text.trim().toLowerCase()
           return option.label?.toLowerCase().includes(inputValue)

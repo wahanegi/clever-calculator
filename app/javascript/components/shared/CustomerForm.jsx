@@ -1,92 +1,70 @@
-import React, { useState } from 'react'
+import React, {useEffect, useState} from 'react'
 import { Row, Col } from 'react-bootstrap'
 import { PcDropdownSelect, PcIcon, PcInput } from '../ui'
 
-// TODO Remove this after Customer is fetched from database
-const CUSTOMER_EXAMPLE = {
-  data: [
-    {
-      id: '1',
-      type: 'customer',
-      attributes: {
-        company_name: 'Acme Corp',
-        first_name: 'John',
-        last_name: 'Doe',
-        email: 'john.doe@example.com',
-        position: 'Manager',
-        address: '123 Main St, Springfield',
-        notes: 'VIP client',
-        created_at: '2024-04-02T12:00:00Z',
-        updated_at: '2024-04-02T12:30:00Z',
-      },
-    },
-    {
-      id: '2',
-      type: 'customer',
-      attributes: {
-        company_name: 'Globex Ltd',
-        first_name: 'Jane',
-        last_name: 'Smith',
-        email: 'jane.smith@example.com',
-        position: 'CEO',
-        address: '456 Elm St, Metropolis',
-        notes: 'Looking for long-term partnership',
-        created_at: '2024-04-01T10:15:00Z',
-        updated_at: '2024-04-01T11:00:00Z',
-      },
-    },
-    {
-      id: '3',
-      type: 'customer',
-      attributes: {
-        company_name: 'Wayne Enterprises',
-        first_name: 'Bruce',
-        last_name: 'Wayne',
-        email: 'bruce.wayne@example.com',
-        position: 'Owner',
-        address: '1007 Mountain Drive, Gotham',
-        notes: 'High-priority client',
-        created_at: '2024-03-30T08:45:00Z',
-        updated_at: '2024-03-30T09:00:00Z',
-      },
-    },
-  ],
-}
-
 export const CustomerForm = () => {
-  const [formData, setFormData] = useState({
-    company: '',
-    client: '',
-    clientTitle: '',
+  const placeholder = 'Enter a company name'
+  const defaultCustomer = {
+    id: 0,
+    company_name: '',
+    full_name: '',
+    // first_name: '',
+    // last_name: '',
     email: '',
+    position: '',
     address: '',
     notes: '',
-  })
-  const [companies, setCompanies] = useState(CUSTOMER_EXAMPLE.data)
+  }
+  const [customers, setCustomers] = useState([])
+  const [customer, setCustomer] = useState(defaultCustomer)
+  const [selectedCustomerID, setSelectedCustomerID] = useState(0)
 
-  const handleChange = (e) => {
-    const { id, value } = e.target
+  useEffect(() => {
+    fetch('/api/v1/customers')
+      .then((response) => response.json())
+      .then((customersResponse) => {
+        setCustomers(customersResponse.data)
+      })
+  }, []);
 
-    setFormData((prev) => ({ ...prev, [id]: value }))
+  const options = () => {
+    if (!customers) return []
 
-    if (id === 'company' && value) {
-      const isExistingId = companies.some((c) => c.id === value)
-      if (!isExistingId) {
-        const existingCompany = companies.find((c) => c.attributes.company_name.toLowerCase() === value.toLowerCase())
-        if (existingCompany) {
-          setFormData((prev) => ({ ...prev, company: existingCompany.id }))
-        }
-      }
+    return customers.map((customer) => ({
+      value: customer.id,
+      label: customer.attributes.company_name
+    }))
+  }
+
+  const handleCompanyChange = (e) => {
+    setSelectedCustomerID(e.target.value)
+    const selectedCustomer = customers.find((customer) => customer.id === e.target.value)
+
+    if (selectedCustomer) {
+      setCustomer({
+        id: selectedCustomer.id,
+        company_name: selectedCustomer.attributes.company_name,
+        full_name: selectedCustomer.attributes.full_name,
+        // first_name: selectedCustomer.attributes.first_name,
+        // last_name: selectedCustomer.attributes.last_name,
+        email: selectedCustomer.attributes.email,
+        position: selectedCustomer.attributes.position,
+        address: selectedCustomer.attributes.address,
+        notes: selectedCustomer.attributes.notes,
+      })
     }
   }
 
-  const handleInputChange = (inputValue) => {
-    if (inputValue) {
-      setFormData((prev) => ({ ...prev, company: inputValue }))
-    } else {
-      setFormData((prev) => ({ ...prev, company: '' }))
-    }
+  const handleInputChange = (e) => {
+    console.log(e)
+    setCustomer({
+      ...customer,
+      [e.target.id]: e.target.value
+    })
   }
+
+  if (!customers) return null
+
   return (
     <div className="border rounded border-primary customer-form bg-light">
       <Row className="mb-6">
@@ -98,13 +76,13 @@ export const CustomerForm = () => {
             <Row className="mb-6">
               <Col>
                 <PcDropdownSelect
-                  id="company"
-                  options={companies}
-                  placeholder="Enter a company name"
+                  id="company_name"
+                  options={options()}
+                  placeholder={placeholder}
                   height="42px"
                   label="Company"
-                  value={formData.company}
-                  onChange={handleChange}
+                  value={selectedCustomerID}
+                  onChange={handleCompanyChange}
                   onInputChange={handleInputChange}
                 />
               </Col>
@@ -112,23 +90,22 @@ export const CustomerForm = () => {
             <Row>
               <div className="d-flex flex-column flex-sm-row gap-6">
                 <Col className="client-input">
-                  <PcInput
-                    id="client"
-                    placeholder="Client name"
-                    label="Client"
-                    height="42px"
-                    value={formData.client}
-                    onChange={handleChange}
+                  <PcInput id="full_name"
+                           placeholder="Client name"
+                           label="Client"
+                           height="42px"
+                           value={customer.full_name}
+                           onChange={handleInputChange}
                   />
                 </Col>
                 <Col className="title-input">
                   <PcInput
-                    id="clientTitle"
+                    id="position"
                     placeholder="Position"
                     label="Client Title"
                     height="42px"
-                    value={formData.clientTitle}
-                    onChange={handleChange}
+                    value={customer.position}
+                    onChange={handleInputChange}
                   />
                 </Col>
               </div>
@@ -145,9 +122,8 @@ export const CustomerForm = () => {
               placeholder="E-mail"
               label="E-mail"
               height="42px"
-              value={formData.email}
-              onChange={handleChange}
-            />
+              value={customer.email}
+              onChange={handleInputChange} />
           </Col>
           <Col>
             <PcInput
@@ -155,9 +131,8 @@ export const CustomerForm = () => {
               placeholder="Company address"
               label="Address"
               height="42px"
-              value={formData.address}
-              onChange={handleChange}
-            />
+              value={customer.address}
+              onChange={handleInputChange} />
           </Col>
         </div>
       </Row>
@@ -169,9 +144,8 @@ export const CustomerForm = () => {
             placeholder="Important information"
             label="Notes"
             height="100px"
-            value={formData.notes}
-            onChange={handleChange}
-          />
+            value={customer.notes}
+            onChange={handleInputChange} />
         </Col>
       </Row>
     </div>
