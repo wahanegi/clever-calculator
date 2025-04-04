@@ -1,1 +1,7 @@
-@import 'layout/pc-header';
+@import 'layout/header';
+
+.layout {
+  background-image: url('./assets/bg-calculator.png');
+  background-position: left 504px;
+  background-repeat: no-repeat;
+}

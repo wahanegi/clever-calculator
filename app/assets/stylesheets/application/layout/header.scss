@@ -1,4 +1,4 @@
-.pc-header {
+.header {
   height: 60px;
 
   &-logo {
@@ -17,5 +17,9 @@
         font-size: 16px;
       }
     }
+  }
+
+  &-logout {
+    font-family: $font-family-lato;
   }
 }

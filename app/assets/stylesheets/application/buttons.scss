@@ -1,8 +1,5 @@
 // Base styles
 .btn {
-  font-family: $font-family-lato;
-  font-weight: $font-weight-medium;
-
   // styles for variant="primary"
   &-primary {
     color: white !important;
@@ -84,6 +81,7 @@
 
   &-reset {
     width: 103.71px;
+    font-family: $font-family-lato !important;
   }
 
   &-back,  &-next {

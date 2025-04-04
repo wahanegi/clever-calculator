@@ -6,14 +6,14 @@ import { QuoteCreation, ROUTES, STEPS } from '../shared'
 import { getCurrentStepId } from '../utils';
 
 export const ItemsPricing = () => {
-  const { navigate, queryParams } = useAppHooks()
+  const { navigate, queryParams, location} = useAppHooks()
   const quoteId = queryParams.get('quote_id')
   const currentStepId = getCurrentStepId(location.pathname)
 
-  const handleDownload = async () => {
-    await fetchQuotes.update(quoteId, {
-      quote: { step: STEPS.COMPLETED },
-    })
+  const handleDownload = () => {
+    // await fetchQuotes.update(quoteId, {
+    //   quote: { step: STEPS.COMPLETED },
+    // })
   }
 
   const handleBack = () => {

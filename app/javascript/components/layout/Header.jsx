@@ -4,14 +4,12 @@ import { ROUTES } from '../shared'
 import { fetchAuthentication } from '../services'
 import { PcIcon } from '../ui'
 
-export const PcHeader = () => {
-
+export const Header = () => {
   const Logo = () =>
-    <Navbar.Brand href={ROUTES.HOME}
-                  className={'ms-1 ms-xxl-22 ms-xl-22 ms-lg-10 ms-md-2'}>
+    <Navbar.Brand className={'ms-1 ms-xxl-22 ms-xl-22 ms-lg-10 ms-md-2'}>
       <div className={'pc-header-logo d-flex'}>
-        <PcIcon name={'logo'} className={'pc-header-logo-separator'} alt={'Logo'} />
-        <div className={'pc-header-logo-text d-flex flex-column'}>
+        <PcIcon name={'logo'} className={'pc-icon-logo header-logo-separator'} alt={'Logo'} />
+        <div className={'header-logo-text d-flex flex-column'}>
           <span className={'fw-bold text-uppercase text-black'}>This is</span>
           <span className={'fw-bolder text-uppercase text-black'}>My logo</span>
         </div>
@@ -28,15 +26,13 @@ export const PcHeader = () => {
       }
     }
 
-    return <Nav.Link onClick={handleLogout}
-                     href={ROUTES.HOME}
-                     className={'me-1 me-xxl-20 me-xl-20 me-lg-10 me-md-2 text-white'}>
-      <span className={'me-2 fw-normal text-decoration-underline'}>Logout</span>
-      <PcIcon name={'logout'} alt={'Logout'} />
+    return <Nav.Link onClick={handleLogout} className={'me-1 me-xxl-20 me-xl-20 me-lg-10 me-md-2 header-logout'}>
+      <span className={'text-white me-2 fw-normal text-decoration-underline'}>Logout</span>
+      <PcIcon name={'logout'} alt={'Logout'} className={'pc-icon-logout'} />
     </Nav.Link>
   }
 
-  return <header className={'pc-header bg-primary'}>
+  return <header className={'header bg-primary'}>
     <Navbar className={'justify-content-between align-items-center h-100'}>
       <Logo />
       <UserProfile />
