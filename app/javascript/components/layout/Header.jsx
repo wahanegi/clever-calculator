@@ -5,10 +5,8 @@ import { fetchAuthentication } from '../services'
 import { PcIcon } from '../ui'
 
 export const Header = () => {
-
   const Logo = () =>
-    <Navbar.Brand href={ROUTES.HOME}
-                  className={'ms-1 ms-xxl-22 ms-xl-22 ms-lg-10 ms-md-2'}>
+    <Navbar.Brand className={'ms-1 ms-xxl-22 ms-xl-22 ms-lg-10 ms-md-2'}>
       <div className={'pc-header-logo d-flex'}>
         <PcIcon name={'logo'} className={'pc-icon-logo header-logo-separator'} alt={'Logo'} />
         <div className={'header-logo-text d-flex flex-column'}>
