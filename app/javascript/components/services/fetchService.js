@@ -9,3 +9,7 @@ export const fetchQuotes = {
 export const fetchAuthentication = {
   logout: () => del(ENDPOINTS.LOGOUT),
 }
+
+export const fetchCustomers = {
+  upsert: (data) => post(ENDPOINTS.CUSTOMERS_UPSERT, data),
+}

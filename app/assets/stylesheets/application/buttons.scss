@@ -15,8 +15,8 @@
     }
 
     &:disabled {
-      border-color: $gray-disable !important;
-      color: $text-gray-disable !important;
+      border-color: $secondary!important;
+      color: $secondary!important;
       background: $white !important;
     }
   }

@@ -43,3 +43,7 @@ end
 group :development do
   gem "web-console"                               # Use console on exceptions pages [https://github.com/rails/web-console]
 end
+
+group :production do
+  gem "aws-sdk-s3", '~> 1.183.0'                  # AWS SDK for Ruby
+end

@@ -1,12 +1,11 @@
 import React from 'react'
-import { Container, Row, Button } from 'react-bootstrap'
+import { Container } from 'react-bootstrap'
+import { QuoteCreation, CustomerForm } from '../shared'
+import { getCurrentStepId } from '../utils'
 import { useAppHooks } from '../hooks'
-import { fetchQuotes } from '../services'
-import { QuoteCreation, ROUTES, STEPS } from '../shared'
-import { getCurrentStepId } from '../utils';
 
 export const CustomerInfo = () => {
-  const { navigate, location } = useAppHooks()
+  const { location } = useAppHooks()
   const currentStepId = getCurrentStepId(location.pathname)
 
   // const handleNext = async () => {
@@ -31,16 +30,8 @@ export const CustomerInfo = () => {
   return (
     <Container className={'wrapper'}>
       <QuoteCreation currentStepId={currentStepId} isBtnShow={false} />
-
-      {/* Customer Information dashboard*/}
-      <section className={'mb-8'}>
-        <Row>
-          <div style={{ height: '387px', border: '2px solid red' }}></div>
-        </Row>
-      </section>
-
-      <section className={'d-flex justify-content-center align-items-center gap-4 mb-5'}>
-        <Button onClick={handleNext} className={'pc-btn-next'}>Next</Button>
+      <section className={'mt-7 d-flex flex-column gap-4 align-items-center'}>
+        <CustomerForm />
       </section>
     </Container>
   )
