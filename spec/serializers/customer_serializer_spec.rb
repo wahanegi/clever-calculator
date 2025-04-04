@@ -14,7 +14,8 @@ RSpec.describe CustomerSerializer do
       notes: customer.notes,
       first_name: customer.first_name,
       last_name: customer.last_name,
-      full_name: customer.full_name
+      full_name: customer.full_name,
+      logo: customer.logo.url
     }
   end
 
