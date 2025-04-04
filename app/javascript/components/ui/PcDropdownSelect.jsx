@@ -16,9 +16,15 @@ export const PcDropdownSelect = ({
   hasIcon = false,
 }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const [inputValue, setInputValue] = useState('')
 
   const selectedOption =
     options.find((opt) => opt.value === value) || (value ? { value, label: value, customOption: true } : null)
+
+  const hasMatchingOption = () => {
+    const trimmedInput = inputValue.trim().toLowerCase()
+    return options.some((option) => option.label.toLowerCase() === trimmedInput)
+  }
 
   return (
     <Form.Group controlId={id} className="position-relative">
@@ -29,19 +35,21 @@ export const PcDropdownSelect = ({
         onChange={(selected) => {
           if (selected.length > 0) {
             const selectedOption = selected[0]
-
             const valueToPass = selectedOption.customOption ? selectedOption.label : selectedOption.value
             onChange({ target: { id, value: valueToPass } })
           } else {
             onChange({ target: { id, value: '' } })
           }
         }}
-        onInputChange={(_text, event) => onInputChange && onInputChange(event)}
+        onInputChange={(text, event) => {
+          setInputValue(text)
+          if (onInputChange) onInputChange(event)
+        }}
         filterBy={(option, props) => {
           const inputValue = props.text.trim().toLowerCase()
           return option.label?.toLowerCase().includes(inputValue)
         }}
-        allowNew
+        allowNew={!hasMatchingOption()}
         newSelectionPrefix="Add new customer: "
         className="border border-primary rounded-1"
         style={{ height }}

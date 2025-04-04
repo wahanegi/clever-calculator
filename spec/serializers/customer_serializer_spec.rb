@@ -6,7 +6,6 @@ RSpec.describe CustomerSerializer do
   let(:customer) { create(:customer) }
   let(:expected_attributes) do
     {
-      id: customer.id,
       company_name: customer.company_name,
       email: customer.email,
       position: customer.position,

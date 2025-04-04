@@ -1,41 +1,18 @@
 import React from 'react'
-import { Container, Row, Button } from 'react-bootstrap'
-import { useAppHooks } from '../hooks'
-import { fetchQuotes } from '../services'
-import { QuoteCreation, ROUTES, STEPS, CustomerForm } from '../shared'
+import { Container } from 'react-bootstrap'
+import { QuoteCreation, CustomerForm } from '../shared'
 import { getCurrentStepId } from '../utils'
+import { useAppHooks } from '../hooks'
 
 export const CustomerInfo = () => {
-  const { navigate, location } = useAppHooks()
+  const { location } = useAppHooks()
   const currentStepId = getCurrentStepId(location.pathname)
-
-  const handleNext = async () => {
-    //TODO Hardcode customer_id for now (replace with real logic later)
-    const customerId = 3
-    const { data } = await fetchQuotes.create({
-      quote: {
-        customer_id: customerId,
-        total_price: 0,
-        step: STEPS.ITEM_PRICING,
-      },
-    })
-
-    navigate(`${ROUTES.ITEM_PRICING}?quote_id=${data.id}`)
-  }
 
   return (
     <Container className={'wrapper'}>
       <QuoteCreation currentStepId={currentStepId} isBtnShow={false} />
-
-      {/* Customer Information dashboard*/}
-      <section className={'mb-8 mt-7'}>
+      <section className={'mt-7 d-flex flex-column gap-4 align-items-center'}>
         <CustomerForm />
-      </section>
-
-      <section className={'d-flex justify-content-center align-items-center gap-4 mb-5'}>
-        <Button onClick={handleNext} className={'pc-btn-next'}>
-          Next
-        </Button>
       </section>
     </Container>
   )

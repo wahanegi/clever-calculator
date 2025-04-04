@@ -1,6 +1,7 @@
 // Base styles
 .btn {
   font-family: $font-family-lato;
+  font-weight: $font-weight-medium;
 
   // styles for variant="primary"
   &-primary {
@@ -17,8 +18,8 @@
     }
 
     &:disabled {
-      border-color: $gray-disable !important;
-      color: $text-gray-disable !important;
+      border-color: $secondary!important;
+      color: $secondary!important;
       background: $white !important;
     }
   }
