@@ -1,4 +1,4 @@
 export * from './constants'
-export * from './PcMultiStepProgressBar';
+export * from './MultiStepProgressBar'
 export * from './QuoteCreation'
 export * from './CustomerForm'

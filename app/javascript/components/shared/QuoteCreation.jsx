@@ -1,8 +1,8 @@
 import React from 'react'
-import { PcMultiStepProgressBar } from './PcMultiStepProgressBar'
 import { Button } from 'react-bootstrap'
+import { MultiStepProgressBar } from './MultiStepProgressBar'
 
-export const QuoteCreation = ({onClick, currentStepId, isBtnShow = true }) => {
+export const QuoteCreation = ({ onClick, currentStepId, isBtnShow = true }) => {
   const ResetButton = () =>
     <Button variant={'outline-primary'}
             className={'pc-btn-reset fw-medium'}
@@ -16,7 +16,7 @@ export const QuoteCreation = ({onClick, currentStepId, isBtnShow = true }) => {
         <h1>Quote Creation</h1>
         {isBtnShow && <ResetButton />}
       </div>
-      <PcMultiStepProgressBar currentStepId={currentStepId} />
+      <MultiStepProgressBar currentStepId={currentStepId} />
     </section>
   )
 }
