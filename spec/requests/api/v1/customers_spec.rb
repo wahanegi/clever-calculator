@@ -15,9 +15,13 @@ RSpec.describe "Api::V1::Customers", type: :request do
     it "returns a list of customers" do
       expect(response).to have_http_status(:ok)
       expect(json_response["data"].size).to eq(1)
+
+      returned_customer = json_response["data"].first["attributes"]
+      expected_customer = CustomerSerializer.new(customer).serializable_hash[:data][:attributes]
+
       CustomerSerializer.attributes_to_serialize.each_key do |attribute|
-        expect(json_response["data"][0]["attributes"]).to have_key(attribute)
-        expect(json_response["data"][0]["attributes"][attribute]).to eq(customer.send(attribute))
+        expect(returned_customer).to have_key(attribute)
+        expect(returned_customer[attribute]).to eq(expected_customer[attribute])
       end
     end
   end
