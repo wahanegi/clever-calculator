@@ -1,8 +1,8 @@
 import React from 'react'
-import { PcProgressBar, PcStepIndicator } from '../ui';
-import { STEPS_DATA } from './constants';
+import { PcProgressBar, PcStepIndicator } from '../ui'
+import { STEPS_DATA } from './constants'
 
-export const PcMultiStepProgressBar = ({ currentStepId }) => {
+export const MultiStepProgressBar = ({ currentStepId }) => {
   const totalSteps = STEPS_DATA?.length
   const currentTitle = STEPS_DATA.find(item => item.step_id === currentStepId)?.title
 
