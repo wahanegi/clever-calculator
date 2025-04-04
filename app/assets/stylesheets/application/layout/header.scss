@@ -1,0 +1,25 @@
+.header {
+  height: 60px;
+
+  &-logo {
+    &-separator {
+      margin-right: 12.5px;
+    }
+
+    &-text {
+      span:first-of-type {
+        line-height: 10px;
+        font-size: 10px;
+      }
+
+      span:last-of-type {
+        line-height: 16px;
+        font-size: 16px;
+      }
+    }
+  }
+
+  &-logout {
+    font-family: $font-family-lato;
+  }
+}
