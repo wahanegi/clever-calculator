@@ -1,5 +1,5 @@
 import { ENDPOINTS } from '../shared'
-import { del, post, put } from './api/httpRequests'
+import { get, del, post, put } from './api/httpRequests'
 
 export const fetchQuotes = {
   create: (data) => post(ENDPOINTS.QUOTES, data),
@@ -11,5 +11,6 @@ export const fetchAuthentication = {
 }
 
 export const fetchCustomers = {
+  get: () => get(ENDPOINTS.CUSTOMERS),
   upsert: (data) => post(ENDPOINTS.CUSTOMERS_UPSERT, data),
 }

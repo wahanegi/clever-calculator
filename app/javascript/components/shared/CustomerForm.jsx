@@ -17,11 +17,13 @@ export const CustomerForm = () => {
   }
   const [customers, setCustomers] = useState([])
   const [customer, setCustomer] = useState(defaultCustomer)
+
+  const [errors, setErrors] = useState({})
+
   const { navigate } = useAppHooks()
 
   useEffect(() => {
-    fetch('/api/v1/customers')
-      .then((response) => response.json())
+    fetchCustomers.get()
       .then((customersResponse) => {
         setCustomers(customersResponse.data)
       })
@@ -31,6 +33,23 @@ export const CustomerForm = () => {
     value: customer.id,
     label: customer.attributes.company_name,
   }))
+
+  const validateForm = () => {
+    const newErrors = {}
+
+    if (!customer.company_name.trim()) {
+      newErrors.company_name = 'Company name is required'
+    }
+
+    if (!!customer.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(customer.email)) {
+      newErrors.email = 'Invalid email format'
+    }
+
+    setErrors(newErrors)
+
+    return Object.keys(newErrors).length === 0
+  }
+
 
   const handleCompanyChange = (e) => {
     const value = e.target.value
@@ -53,13 +72,20 @@ export const CustomerForm = () => {
       ...customer,
       [id]: value,
     })
+    setErrors((prev) => ({ ...prev, [id]: '' }))
   }
 
   const handleLogoUpload = (e) => {
     setCustomer({ ...customer, logo: URL.createObjectURL(e.target.files[0]) })
   }
 
-  const handleNext = async () => {
+  const handleNext = async (e) => {
+    e.preventDefault()
+
+    if (!validateForm()) {
+      return;
+    }
+
     const { data: customerData } = await fetchCustomers.upsert({
       customer: {
         company_name: customer.company_name,
@@ -144,6 +170,7 @@ export const CustomerForm = () => {
                     height="42px"
                     label={companyInputLabel}
                     value={selectedCompany}
+                    error={errors.company_name}
                     onChange={handleCompanyChange}
                     onInputChange={handleInputChange}
                     hasIcon={true}
@@ -194,6 +221,7 @@ export const CustomerForm = () => {
                 label="E-mail"
                 height="42px"
                 value={customer.email}
+                error={errors.email}
                 onChange={handleInputChange}
               />
             </Col>

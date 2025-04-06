@@ -12,6 +12,7 @@ export const PcDropdownSelect = ({
   height,
   value,
   label,
+  error,
   maxResults = 5,
   hasIcon = false,
 }) => {
@@ -67,6 +68,7 @@ export const PcDropdownSelect = ({
           />
         </div>
       )}
+      {error && <div className="text-danger fs-12">{error}</div>}
     </Form.Group>
   )
 }

@@ -9,6 +9,7 @@ export const ROUTES = {
 export const ENDPOINTS = {
   QUOTES: '/api/v1/quotes',
   LOGOUT: '/users/sign_out',
+  CUSTOMERS: '/api/v1/customers',
   CUSTOMERS_UPSERT: '/api/v1/customers/upsert',
 }
 
