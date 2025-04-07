@@ -54,7 +54,7 @@ export const PcDropdownSelect = ({
       {hasIcon && (
         <div className="position-absolute end-0 top-50 translate-middle-y pe-3">
           <PcIcon
-            name={isMenuOpen ? 'dropdownArrowUp' : 'dropdownArrowDown'}
+            name={isMenuOpen ? 'arrow_up' : 'arrow_down'}
             alt={isMenuOpen ? 'Arrow pointing up' : 'Arrow pointing down'}
           />
         </div>

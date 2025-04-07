@@ -31,6 +31,10 @@ h2,
   @include rfs($font-size-sm); // 14px
 }
 
+.pc-fw-900 {
+  font-weight: 900;
+}
+
 // Utility Classes
 $custom-colors: (
   'gray': $gray,

@@ -1,0 +1,26 @@
+.multi-select-dropdown {
+
+  .pc-label {
+    position: absolute;
+    top: -0.7rem;
+    left: 0.8rem;
+    margin: 0;
+    padding: 0;
+    background: linear-gradient(to bottom, $white 55%, transparent 45%);
+  }
+
+  .btn-close {
+    padding: 0;
+  }
+}
+
+.pc-hr-divider {
+  width: 60px;
+  height: 1px !important;
+  border: none;
+  background-color: $bg-light;
+}
+
+.pc-w-fit-content {
+  width: fit-content;
+}

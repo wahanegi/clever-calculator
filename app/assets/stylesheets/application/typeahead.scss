@@ -1,0 +1,297 @@
+/*** ALL GENERAL STYLES FOR REACT-BOOTSTRAP-TYPEAHEAD ***/
+
+$rbt-color-primary: $primary !default;
+$rbt-color-disabled: $gray-light !default;
+$rbt-color-white: #fff !default;
+
+// Hide IE's native "clear" button
+.rbt .rbt-input-main::-ms-clear {
+  display: none;
+}
+
+.rbt-input-main {
+  border: none !important;
+}
+
+/**
+ *** Menu ***
+ **/
+.rbt-menu {
+  margin-bottom: 2px; // Spacing for dropup
+
+  & > .dropdown-item {
+    padding: 6px 12px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: $gray-700;
+
+    &:focus {
+      outline: none;
+      color: $primary;
+      background-color: $light;
+    }
+
+    &:hover {
+      color: $primary;
+      background-color: $light;
+    }
+  }
+
+  &-pagination-option {
+    text-align: center;
+  }
+
+  &.dropdown-menu {
+    &.show {
+      width: calc(100% + 2px) !important;
+      margin-top: 5px;
+      margin-left: -1px;
+      border: 1px solid $primary;
+    }
+  }
+
+}
+
+/**
+ *** Multi-select Input ***
+ **/
+$rbt-background-color-disabled: #e9ecef !default;
+
+$rbt-border-color-focus: $primary !default;
+$rbt-border-color-focus-invalid: #dc3545 !default;
+$rbt-border-color-focus-valid: #28a745 !default;
+
+$rbt-box-shadow-dimensions: 0 0 0 0.2rem;
+$rbt-box-shadow-color: rgba(0, 123, 255, 0.25) !default;
+$rbt-box-shadow-color-invalid: rgba(220, 53, 69, 0.25) !default;
+$rbt-box-shadow-color-valid: rgba(40, 167, 69, 0.25) !default;
+
+$rbt-color-focus: #495057 !default;
+$rbt-placeholder-color: $secondary !default;
+
+.rbt-input-multi {
+  position: relative;
+  height: 36px;
+  border: 1px solid $primary;
+  border-radius: 4px;
+  overflow: hidden;
+
+  // Apply Bootstrap focus styles
+  &.focus {
+    //border-color: $rbt-border-color-focus;
+    border: 1px solid $primary;
+    outline: 0;
+    //color: $rbt-color-focus;
+    //box-shadow: $rbt-box-shadow-dimensions $rbt-box-shadow-color;
+  }
+
+  &.form-control {
+    height: auto;
+    padding-top: 12px;
+  }
+
+  // BS4 uses the :disabled pseudo-class, which doesn't work with non-inputs.
+  &.disabled {
+    background-color: $rbt-background-color-disabled;
+    opacity: 1;
+  }
+
+  &.is-invalid.focus {
+    border-color: $rbt-border-color-focus-invalid;
+    box-shadow: $rbt-box-shadow-dimensions $rbt-box-shadow-color-invalid;
+  }
+
+  &.is-valid.focus {
+    border-color: $rbt-border-color-focus-valid;
+    box-shadow: $rbt-box-shadow-dimensions $rbt-box-shadow-color-valid;
+  }
+
+  // Apply Bootstrap placeholder styles
+  input {
+    // Firefox
+    &::-moz-placeholder {
+      color: $rbt-placeholder-color;
+      opacity: 1;
+    }
+
+    // Internet Explorer 10+
+    &:-ms-input-placeholder {
+      color: $rbt-placeholder-color;
+    }
+
+    // Safari and Chrome
+    &::-webkit-input-placeholder {
+      color: $rbt-placeholder-color;
+    }
+  }
+
+  .rbt-input-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    //align-items: flex-start;
+    justify-content: start;
+    align-items: center;
+    gap: 5px;
+    margin-top: -1px;
+    margin-bottom: -4px;
+    overflow: hidden;
+  }
+
+  .rbt-input-main {
+    margin: 1px 0 4px;
+  }
+}
+
+/**
+ *** Close Button ***
+ **/
+.rbt-close {
+  z-index: 1;
+
+  &-lg {
+    font-size: 1.5rem;
+  }
+}
+
+/**
+ *** Token ***
+ **/
+$rbt-token-background-color: $bg-light !default;
+$rbt-token-color: $rbt-color-primary !default;
+
+$rbt-token-disabled-background-color: rgba(0, 0, 0, 0.1) !default;
+$rbt-token-disabled-color: $rbt-color-disabled !default;
+
+$rbt-token-active-background-color: $rbt-color-primary !default;
+$rbt-token-active-color: $rbt-color-white !default;
+
+.rbt-token {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1px 12px;
+  border: 0;
+  border-radius: 1rem;
+  line-height: 1rem;
+  color: $rbt-token-color;
+  // TODO: Use `gap` when it's better supported
+  background-color: $rbt-token-background-color;
+
+  .rbt-token-label {
+    //padding: 0.25rem;
+    font-family: $font-family-lato;
+    font-size: 12px;
+
+    &:not(:last-child) {
+      padding-right: 0.25rem;
+    }
+  }
+
+  &-disabled {
+    color: $rbt-token-disabled-color;
+    background-color: $rbt-token-disabled-background-color;
+    pointer-events: none;
+  }
+
+  &-removeable {
+    height: 100%;
+    min-height: 18px;
+    cursor: pointer;
+  }
+
+  &-active {
+    outline: none;
+    text-decoration: none;
+    color: $rbt-token-active-color;
+    background-color: $rbt-token-active-background-color;
+  }
+
+  & &-remove-button {
+    // Hide Bootstrap close button image
+    display: flex;
+    justify-content: center;
+    //padding: 0.25rem 0.5rem;
+    // Override Bootstrap button shadow
+    padding-left: 0;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    outline: none;
+    font-size: inherit;
+    font-weight: normal;
+    color: inherit;
+    background-image: none;
+    box-shadow: none;
+    text-shadow: none;
+    opacity: 1;
+
+    .rbt-close-content {
+      // Override `display: none` in BS5 styles.
+      display: block;
+    }
+  }
+}
+
+/**
+ *** Loader + CloseButton container ***
+ **/
+.rbt-aux {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 2rem;
+  pointer-events: none; /* Don't block clicks on the input */
+
+  &-lg {
+    width: 3rem;
+  }
+
+  & .rbt-close {
+    margin-top: -0.25rem;
+    pointer-events: auto; /* Override pointer-events: none; above */
+  }
+}
+
+.has-aux .form-control {
+  padding-right: 2rem;
+
+  // Position validation icons next to clear button and loader.
+  &.is-valid,
+  &.is-invalid {
+    padding-right: 4rem;
+    background-position: right 2rem center;
+  }
+}
+
+// Default highlight style
+.rbt-highlight-text {
+  padding: 0;
+  color: $primary;
+  background-color: $light;
+}
+
+/**
+ *** Input Groups ***
+ **/
+.input-group > .rbt {
+  flex: 1;
+
+  // Form-controls within input-groups have a higher z-index.
+  & .rbt-input-hint,
+  & .rbt-aux {
+    z-index: 5;
+  }
+
+  &:not(:first-child) .form-control {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+  }
+
+  &:not(:last-child) .form-control {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+}

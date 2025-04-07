@@ -25,6 +25,12 @@ export const STEPS_DATA = [
 ]
 
 // Centralized storage for image assets
+import arrowDownUrl from '../../../assets/images/icons/arrow-down.svg'
+import arrowUpUrl from '../../../assets/images/icons/arrow-up.svg'
+import collapseDisableUrl from '../../../assets/images/icons/collapse-disable.svg'
+import collapseUrl from '../../../assets/images/icons/collapse.svg'
+import expandDisableUrl from '../../../assets/images/icons/expand-disable.svg'
+import expandUrl from '../../../assets/images/icons/expand.svg'
 import logoUrl from '../../../assets/images/icons/logo.svg'
 import logoutUrl from '../../../assets/images/icons/logout.svg'
 import placeholderUrl from '../../../assets/images/icons/placeholder.svg'
@@ -38,6 +44,12 @@ export const IMAGE_ASSETS = {
     logo: logoUrl,
     logout: logoutUrl,
     placeholder: placeholderUrl,
+    arrow_down: arrowDownUrl,
+    arrow_up: arrowUpUrl,
+    collapse_disable: collapseDisableUrl,
+    expand_disable: expandDisableUrl,
+    collapse: collapseUrl,
+    expand: expandUrl,
     dropdownArrowDown: dropdownArrowDownUrl,
     dropdownArrowUp: dropdownArrowUpUrl,
     accordionArrowUp: accordionArrowUpUrl,
