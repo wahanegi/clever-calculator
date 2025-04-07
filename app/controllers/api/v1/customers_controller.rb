@@ -21,7 +21,7 @@ module Api
 
       def customer_params
         params.expect(customer: [:company_name, :first_name, :last_name, :email, :position, :address,
-                                 :notes])
+                                 :notes, :logo])
       end
     end
   end

@@ -20,7 +20,7 @@ class Customer < ApplicationRecord
   def logo_size_and_type
     return unless logo.attached?
 
-    errors.add(:logo, 'must be less than 1 megabyte') if logo.byte_size > 1.megabyte
+    errors.add(:logo, 'must be less than 2 megabytes') if logo.byte_size > 2.megabytes
 
     return if %w[image/jpeg image/png].include?(logo.content_type)
 

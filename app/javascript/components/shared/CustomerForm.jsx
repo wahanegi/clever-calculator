@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Row, Col, Form, Button } from 'react-bootstrap'
-import { PcDropdownSelect, PcIcon, PcInput } from '../ui'
+import { PcDropdownSelect, PcCompanyLogoUploader, PcInput } from '../ui'
 import { ROUTES, STEPS } from './constants'
 import { fetchCustomers, fetchQuotes } from '../services'
 import { useAppHooks } from '../hooks'
@@ -74,7 +74,10 @@ export const CustomerForm = () => {
   }
 
   const handleLogoUpload = (e) => {
-    setCustomer({ ...customer, logo: URL.createObjectURL(e.target.files[0]) })
+    setCustomer({
+      ...customer,
+      logo: URL.createObjectURL(e.target.files[0]),
+    })
   }
 
   const handleNext = async (e) => {
@@ -84,17 +87,20 @@ export const CustomerForm = () => {
       return
     }
 
-    const { data: customerData } = await fetchCustomers.upsert({
-      customer: {
-        company_name: customer.company_name,
-        first_name: customer.first_name || customer.full_name?.split(' ')[0] || '',
-        last_name: customer.last_name || customer.full_name?.split(' ')[1] || '',
-        email: customer.email,
-        position: customer.position,
-        address: customer.address,
-        notes: customer.notes,
-      },
-    })
+    const form = e.target
+    const formData = new FormData()
+    const { first_name, last_name } = extractNames(customer.full_name)
+
+    formData.append('customer[logo]', form[0].files[0] || '')
+    formData.append('customer[company_name]', customer.company_name)
+    formData.append('customer[first_name]', first_name)
+    formData.append('customer[last_name]', last_name)
+    formData.append('customer[position]', customer.position)
+    formData.append('customer[email]', customer.email)
+    formData.append('customer[address]', customer.address)
+    formData.append('customer[notes]', customer.notes)
+
+    const { data: customerData } = await fetchCustomers.upsert(formData)
 
     if (!customers.some((c) => c.id === customerData.id)) {
       setCustomers((prev) => [...prev, customerData])
@@ -113,12 +119,6 @@ export const CustomerForm = () => {
 
   if (!customers) return null
 
-  const companyInputLabel = (
-    <span>
-      Company <span className="text-danger">*</span>
-    </span>
-  )
-
   const extractNames = (fullName = '') => {
     const [first, ...rest] = fullName.trim().split(' ')
     return {
@@ -131,32 +131,17 @@ export const CustomerForm = () => {
     customers.find((c) => c.attributes.company_name.toLowerCase() === customer.company_name.toLowerCase())?.id ||
     customer.company_name
 
-  const CompanyLogoUploader = () => (
-    <Form.Group>
-      <Form.Label className={'m-0'} column={'sm'}>
-        {customer.logo ? (
-          <img src={customer.logo} alt={`${customer.company_name} logo`} style={{ height: '100px', width: '100px' }} />
-        ) : (
-          <PcIcon name="placeholder" alt="Placeholder logo" />
-        )}
-        <Form.Control
-          className={'d-none'}
-          name="logo"
-          type={'file'}
-          accept={'image/jpeg,image/png'}
-          onChange={handleLogoUpload}
-        />
-      </Form.Label>
-    </Form.Group>
-  )
-
   return (
-    <>
+    <Form onSubmit={handleNext} className={'d-flex flex-column w-100 align-items-center'}>
       <div className="border rounded border-primary customer-form bg-light w-100 mb-6">
         <Row className="mb-6">
           <div className="d-flex flex-column flex-sm-row gap-6">
-            <Col className="image-placeholder w-100 bg-white border rounded border-primary p-1 d-flex justify-content-center align-items-center">
-              <CompanyLogoUploader />
+            <Col className={'image-placeholder'}>
+              <PcCompanyLogoUploader
+                id="company_logo"
+                onChange={handleLogoUpload}
+                logo={customer.logo}
+                alt="Company Logo" />
             </Col>
             <Col>
               <Row className="mb-6">
@@ -166,7 +151,7 @@ export const CustomerForm = () => {
                     options={options}
                     placeholder="Enter a company name"
                     height="42px"
-                    label={companyInputLabel}
+                    label={<span>Company <span className="text-danger">*</span></span>}
                     value={selectedCompany}
                     error={errors.company_name}
                     onChange={handleCompanyChange}
@@ -249,9 +234,9 @@ export const CustomerForm = () => {
           </Col>
         </Row>
       </div>
-      <Button onClick={handleNext} className="pc-btn-next" disabled={!customer.company_name}>
+      <Button type={'submit'} className="pc-btn-next" disabled={!customer.company_name}>
         Next
       </Button>
-    </>
+    </Form>
   )
 }

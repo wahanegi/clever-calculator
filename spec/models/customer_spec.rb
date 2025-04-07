@@ -17,11 +17,11 @@ RSpec.describe Customer, type: :model do
 
     context 'logo' do
       let!(:customer) { create(:customer) }
-      let(:valid_logo) { fixture_file_upload(Rails.root.join("spec/fixtures/files/valid_logo.png"), 'image/png') }
-      let(:invalid_logo) { fixture_file_upload(Rails.root.join("spec/fixtures/files/invalid_logo.svg"), 'image/svg+xml') }
-      let(:large_size_logo) { fixture_file_upload(Rails.root.join("spec/fixtures/files/1_7_megabyte_logo.png"), 'image/png') }
-      let(:logo_png) { fixture_file_upload(Rails.root.join("spec/fixtures/files/logo_type.png"), 'image/png') }
-      let(:logo_jpeg) { fixture_file_upload(Rails.root.join("spec/fixtures/files/logo_type.jpeg"), 'image/jpeg') }
+      let(:valid_logo) { file_fixture('valid_logo.png') }
+      let(:invalid_logo) { file_fixture('invalid_logo.svg') }
+      let(:large_size_logo) { file_fixture('3_megabyte_logo.png') }
+      let(:logo_png) { file_fixture('logo_type.png') }
+      let(:logo_jpeg) { file_fixture('logo_type.jpeg') }
 
       it 'attaches a valid image' do
         customer.logo.attach(valid_logo)
@@ -41,10 +41,10 @@ RSpec.describe Customer, type: :model do
         expect(customer).to be_valid
       end
 
-      it 'is invalid when the logo size is greater than 1 megabyte' do
+      it 'is invalid when the logo size is greater than 2 megabytes' do
         customer.logo.attach(large_size_logo)
         expect(customer).to be_invalid
-        expect(customer.errors.messages_for(:logo)).to include('must be less than 1 megabyte')
+        expect(customer.errors.messages_for(:logo)).to include('must be less than 2 megabytes')
       end
 
       it 'is invalid with a wrong file type' do
