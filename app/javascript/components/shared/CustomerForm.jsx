@@ -152,7 +152,7 @@ export const CustomerForm = () => {
 
   return (
     <>
-      <div className="border rounded border-primary customer-form bg-light w-100 mb-6">
+      <div className="border rounded border-primary customer-form bg-light w-100 mb-7">
         <Row className="mb-6">
           <div className="d-flex flex-column flex-sm-row gap-6">
             <Col className="image-placeholder w-100 bg-white border rounded border-primary p-1 d-flex justify-content-center align-items-center">
