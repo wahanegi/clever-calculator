@@ -11,6 +11,6 @@ export const fetchAuthentication = {
 }
 
 export const fetchCustomers = {
-  get: () => get(ENDPOINTS.CUSTOMERS),
+  index: () => get(ENDPOINTS.CUSTOMERS),
   upsert: (data) => post(ENDPOINTS.CUSTOMERS_UPSERT, data),
 }

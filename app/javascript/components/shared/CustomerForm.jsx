@@ -23,10 +23,9 @@ export const CustomerForm = () => {
   const { navigate } = useAppHooks()
 
   useEffect(() => {
-    fetchCustomers.get()
-      .then((customersResponse) => {
-        setCustomers(customersResponse.data)
-      })
+    fetchCustomers.index().then((customersResponse) => {
+      setCustomers(customersResponse.data)
+    })
   }, [])
 
   const options = customers.map((customer) => ({
@@ -50,7 +49,6 @@ export const CustomerForm = () => {
     return Object.keys(newErrors).length === 0
   }
 
-
   const handleCompanyChange = (e) => {
     const value = e.target.value
     const selectedCustomer = customers.find((customer) => customer.id === value)
@@ -58,10 +56,10 @@ export const CustomerForm = () => {
     if (selectedCustomer) {
       setCustomer(selectedCustomer.attributes)
     } else {
-      setCustomer((prev) => ({
-        ...prev,
+      setCustomer({
+        ...defaultCustomer,
         company_name: value,
-      }))
+      })
     }
   }
 
@@ -83,7 +81,7 @@ export const CustomerForm = () => {
     e.preventDefault()
 
     if (!validateForm()) {
-      return;
+      return
     }
 
     const { data: customerData } = await fetchCustomers.upsert({

@@ -22,9 +22,11 @@ export const PcDropdownSelect = ({
   const selectedOption =
     options.find((opt) => opt.value === value) || (value ? { value, label: value, customOption: true } : null)
 
+  const normalizeName = (name) => name?.replace(/\s+/g, ' ').trim().toLowerCase() || ''
+
   const hasMatchingOption = () => {
-    const trimmedInput = inputValue.trim().toLowerCase()
-    return options.some((option) => option.label.toLowerCase() === trimmedInput)
+    const normalizedInput = normalizeName(inputValue)
+    return options.some((option) => normalizeName(option.label) === normalizedInput)
   }
 
   return (
@@ -47,8 +49,8 @@ export const PcDropdownSelect = ({
           if (onInputChange) onInputChange(event)
         }}
         filterBy={(option, props) => {
-          const inputValue = props.text.trim().toLowerCase()
-          return option.label?.toLowerCase().includes(inputValue)
+          const inputValue = normalizeName(props.text)
+          return normalizeName(option.label).includes(inputValue)
         }}
         allowNew={!hasMatchingOption()}
         newSelectionPrefix="Add new customer: "

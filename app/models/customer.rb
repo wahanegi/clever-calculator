@@ -1,6 +1,7 @@
 class Customer < ApplicationRecord
   has_many :quotes, dependent: :destroy
   has_one_attached :logo
+  normalizes :company_name, with: ->(company_name) { company_name.gsub(/\s+/, ' ').strip }
 
   validates :company_name, presence: true, uniqueness: { case_sensitive: false }
   validate :logo_size_and_type
