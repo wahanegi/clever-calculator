@@ -3,7 +3,8 @@ import { Button, Container, Row } from 'react-bootstrap'
 import { useAppHooks } from '../hooks'
 import { fetchQuotes } from '../services'
 import { QuoteCreation, ROUTES, STEPS } from '../shared'
-import { getCurrentStepId } from '../utils';
+import { getCurrentStepId } from '../utils'
+import { PcAccordion } from '../ui'
 
 export const ItemsPricing = () => {
   const { navigate, queryParams } = useAppHooks()
@@ -27,14 +28,23 @@ export const ItemsPricing = () => {
       {/* Items & Pricing dashboard*/}
       <section className={'mb-8'}>
         <Row>
-          <div style={{ height: '180px', border: '2px solid red' }}></div>
+          <PcAccordion />
         </Row>
       </section>
 
       {/* Buttons section */}
       <section className={'d-flex justify-content-center align-items-center gap-4 mb-5'}>
-        <Button variant={'outline-primary'} className={'fw-bold pc-btn-back'} onClick={handleBack}>Back</Button>
-        <Button variant={'outline-primary'} className={'fw-bold pc-btn-download'} onClick={handleDownload} disabled={true}>Download</Button>
+        <Button variant={'outline-primary'} className={'fw-bold pc-btn-back'} onClick={handleBack}>
+          Back
+        </Button>
+        <Button
+          variant={'outline-primary'}
+          className={'fw-bold pc-btn-download'}
+          onClick={handleDownload}
+          disabled={true}
+        >
+          Download
+        </Button>
       </section>
     </Container>
   )

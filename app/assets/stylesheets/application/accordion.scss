@@ -1,0 +1,17 @@
+.accordion-button:not(.collapsed),
+.accordion-button.collapsed {
+  background-color: $light;
+  border-radius: 8px !important;
+  border: 1px solid $primary;
+  padding: 22.4px;
+}
+
+.accordion-button:not(.collapsed):focus,
+.accordion-button.collapsed:focus {
+  outline-offset: none;
+  box-shadow: none;
+}
+
+.accordion-button::after {
+  display: none !important;
+}

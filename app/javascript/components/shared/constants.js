@@ -30,6 +30,8 @@ import logoutUrl from '../../../assets/images/icons/logout.svg'
 import placeholderUrl from '../../../assets/images/icons/placeholder.svg'
 import dropdownArrowDownUrl from '../../../assets/images/icons/arrow-down.svg'
 import dropdownArrowUpUrl from '../../../assets/images/icons/arrow-up.svg'
+import accordionArrowUpUrl from '../../../assets/images/icons/accordion-arrow-up.svg'
+import accordionArrowDownUrl from '../../../assets/images/icons/accordion-arrow-down.svg'
 
 export const IMAGE_ASSETS = {
   ICONS: {
@@ -38,6 +40,8 @@ export const IMAGE_ASSETS = {
     placeholder: placeholderUrl,
     dropdownArrowDown: dropdownArrowDownUrl,
     dropdownArrowUp: dropdownArrowUpUrl,
+    accordionArrowUp: accordionArrowUpUrl,
+    accordionArrowDown: accordionArrowDownUrl,
   },
   // future asset files can be added here
 }
