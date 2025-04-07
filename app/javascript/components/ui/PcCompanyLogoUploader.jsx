@@ -2,11 +2,11 @@ import React from 'react'
 import { PcIcon } from './PcIcon'
 import { Form } from 'react-bootstrap'
 
-export const PcCompanyLogoUploader = ({ id, logo, alt, ...props }) => {
+export const PcCompanyLogoUploader = ({ id, logo, ...props }) => {
   const logoDisplay = logo ?
     <img src={logo}
-         alt={alt}
-         style={{ height: '100%', width: '100%' }} />
+         alt="Company Logo"
+         className={'img-fluid'} />
     : <PcIcon name="placeholder" alt="Placeholder Logo" />
 
   return <Form.Group controlId={id} className="w-100 h-100 bg-white border rounded border-primary p-1">
