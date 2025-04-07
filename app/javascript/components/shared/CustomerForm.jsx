@@ -73,10 +73,12 @@ export const CustomerForm = () => {
     setErrors((prev) => ({ ...prev, [id]: '' }))
   }
 
-  const handleLogoUpload = (e) => {
+  const handleChangeLogo = (e) => {
+    const blobFile = e.target.files[0]
+
     setCustomer({
       ...customer,
-      logo: URL.createObjectURL(e.target.files[0]),
+      logo: blobFile ? URL.createObjectURL(blobFile) : null,
     })
   }
 
@@ -90,8 +92,9 @@ export const CustomerForm = () => {
     const form = e.target
     const formData = new FormData()
     const { first_name, last_name } = extractNames(customer.full_name)
+    const blobLogo = form[0].files[0]
 
-    formData.append('customer[logo]', form[0].files[0] || '')
+    if (blobLogo) formData.append('customer[logo]', blobLogo)
     formData.append('customer[company_name]', customer.company_name)
     formData.append('customer[first_name]', first_name)
     formData.append('customer[last_name]', last_name)
@@ -139,7 +142,7 @@ export const CustomerForm = () => {
             <Col className={'image-placeholder'}>
               <PcCompanyLogoUploader
                 id="company_logo"
-                onChange={handleLogoUpload}
+                onChange={handleChangeLogo}
                 logo={customer.logo} />
             </Col>
             <Col>
