@@ -27,22 +27,22 @@ gem "turbo-rails", '~> 2.0.13'                                      # Hotwire's 
 gem "tzinfo-data", '~> 1.2025.2', platforms: %i[ windows jruby ]    # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 
 group :development, :test do
-  gem "brakeman", '~> 7.0.1', require: false                                          # Static analysis for security vulnerabilities [https://brakemanscanner.org/]
-  gem "debug", '~> 1.10.0', platforms: %i[ mri windows ], require: "debug/prelude"    # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
-  gem "dotenv", '~> 3.1.7'                                                            # Loads environment variables from '.env'
-  gem "factory_bot_rails", '~> 6.4.4'                                                 # Provides fixtures replacement for easier test object creation
-  gem "faker", '~> 3.5.1'                                                             # Generates fake data for testing
-  gem "letter_opener", '~> 1.10.0'                                                    # Opens sent emails in the browser for easy debugging during development
-  gem "rack-cors", '~> 2.0.2'                                                         # Handles Cross-Origin Resource Sharing (CORS) for secure API requests
-  gem "rspec-rails", '~> 7.1.1'                                                       # Testing framework for Rails applications, providing tools for writing and running tests
-  gem "rubocop", '~> 1.75.2', require: false                                          # A Ruby static code analyzer and formatter, based on the community Ruby style guide.
-  gem "rubocop-rails", '~> 2.31.0', require: false                                    # A Rubocop extension focused on enforcing Rails best practices and coding conventions.
-  gem "rubocop-rspec_rails", '~> 2.31.0', require: false                              # A Rubocop extension focused code style checking for Rails-related RSpec files.
-  gem "shoulda-matchers", '~> 6.4.0'                                                  # Provides simple and clean one-liner tests for Rails models, controllers, and other components.
+  gem "brakeman", require: false                                         # Static analysis for security vulnerabilities [https://brakemanscanner.org/]
+  gem "debug", platforms: %i[ mri windows ], require: "debug/prelude"    # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
+  gem "dotenv"                                                           # Loads environment variables from '.env'
+  gem "factory_bot_rails"                                                # Provides fixtures replacement for easier test object creation
+  gem "faker"                                                            # Generates fake data for testing
+  gem "letter_opener"                                                    # Opens sent emails in the browser for easy debugging during development
+  gem "rack-cors"                                                        # Handles Cross-Origin Resource Sharing (CORS) for secure API requests
+  gem "rspec-rails"                                                      # Testing framework for Rails applications, providing tools for writing and running tests
+  gem "rubocop", require: false                                          # A Ruby static code analyzer and formatter, based on the community Ruby style guide.
+  gem "rubocop-rails", require: false                                    # A Rubocop extension focused on enforcing Rails best practices and coding conventions.
+  gem "rubocop-rspec_rails", require: false                              # A Rubocop extension focused code style checking for Rails-related RSpec files.
+  gem "shoulda-matchers"                                                 # Provides simple and clean one-liner tests for Rails models, controllers, and other components.
 end
 
 group :development do
-  gem "web-console", '~> 4.2.1'                    # Use console on exceptions pages [https://github.com/rails/web-console]
+  gem "web-console"                                # Use console on exceptions pages [https://github.com/rails/web-console]
 end
 
 group :production do

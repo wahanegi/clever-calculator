@@ -114,7 +114,7 @@ GEM
     bindex (0.8.1)
     bootsnap (1.18.4)
       msgpack (~> 1.2)
-    brakeman (7.0.1)
+    brakeman (7.0.2)
       racc
     builder (3.3.0)
     childprocess (5.1.0)
@@ -458,28 +458,28 @@ DEPENDENCIES
   activeadmin (~> 3.3.0)
   aws-sdk-s3 (~> 1.183.0)
   bootsnap (~> 1.18.4)
-  brakeman (~> 7.0.1)
+  brakeman
   cssbundling-rails (~> 1.4.3)
-  debug (~> 1.10.0)
+  debug
   devise (~> 4.9.4)
-  dotenv (~> 3.1.7)
-  factory_bot_rails (~> 6.4.4)
-  faker (~> 3.5.1)
+  dotenv
+  factory_bot_rails
+  faker
   jbuilder (~> 2.13.0)
   jsbundling-rails (~> 1.3.1)
   jsonapi-serializer (~> 2.2.0)
   kamal (~> 2.5.3)
-  letter_opener (~> 1.10.0)
+  letter_opener
   pg (~> 1.5.9)
   puma (~> 6.6.0)
-  rack-cors (~> 2.0.2)
+  rack-cors
   rails (~> 8.0.2)
-  rspec-rails (~> 7.1.1)
-  rubocop (~> 1.75.2)
-  rubocop-rails (~> 2.31.0)
-  rubocop-rspec_rails (~> 2.31.0)
+  rspec-rails
+  rubocop
+  rubocop-rails
+  rubocop-rspec_rails
   sass-rails (~> 6.0.0)
-  shoulda-matchers (~> 6.4.0)
+  shoulda-matchers
   solid_cable (~> 3.0.7)
   solid_cache (~> 1.0.7)
   solid_queue (~> 1.1.4)
@@ -489,7 +489,7 @@ DEPENDENCIES
   thruster (~> 0.1.12)
   turbo-rails (~> 2.0.13)
   tzinfo-data (~> 1.2025.2)
-  web-console (~> 4.2.1)
+  web-console
 
 RUBY VERSION
    ruby 3.4.1p0
