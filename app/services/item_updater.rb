@@ -9,7 +9,7 @@ class ItemUpdater
 
   def call
     assign_item_attributes
-    pricing = item.item_pricings.first_or_initialize
+    pricing = item.item_pricing || item.build_item_pricing
     reset_all_fields(pricing)
     update_by_pricing_type(pricing)
     persist!(pricing)
@@ -21,7 +21,7 @@ class ItemUpdater
   private
 
   def assign_item_attributes
-    item.assign_attributes(params.except("item_pricings_attributes"))
+    item.assign_attributes(params.except("item_pricing_attributes"))
   end
 
   def persist!(pricing)
@@ -47,22 +47,21 @@ class ItemUpdater
       open_parameters_label: [],
       pricing_options: {},
       formula_parameters: {},
-      calculation_formula: nil,
+      # calculation_formula: nil,
       is_open: false,
       is_selectable_options: false
     )
   end
 
   def update_fixed(pricing)
-    price = params.dig("item_pricings_attributes", "0", "default_fixed_price")
+    price = params.dig("item_pricing_attributes", "default_fixed_price")
     pricing.default_fixed_price = price.presence
   end
 
   def update_open(pricing)
-    labels_string = params.dig("item_pricings_attributes", "0", "open_parameters_label_as_string") ||
-                    params.dig("item_pricings_attributes", "1", "open_parameters_label_as_string")
+    labels_string = params.dig("item_pricing_attributes", "open_parameters_label_as_string")
     labels = labels_string.to_s.split(',').map(&:strip).reject(&:blank?)
-
+  
     pricing.open_parameters_label = labels
     pricing.is_open = labels.any?
   end
@@ -74,6 +73,7 @@ class ItemUpdater
     pricing.fixed_parameters = data[:fixed] || {}
     pricing.open_parameters_label = data[:open] || []
     pricing.pricing_options = data[:select] || {}
+    pricing.formula_parameters = data[:formula_parameters] || []
 
     pricing.is_open = pricing.open_parameters_label.any?
     pricing.is_selectable_options = pricing.pricing_options.any?

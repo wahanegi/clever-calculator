@@ -63,7 +63,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_31_152930) do
     t.jsonb "pricing_options", default: {}
     t.boolean "is_open", default: false
     t.text "open_parameters_label", default: [], array: true
-    t.jsonb "formula_parameters", default: {}
+    t.text "formula_parameters", default: [], array: true
     t.string "calculation_formula"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false

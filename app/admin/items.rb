@@ -1,10 +1,11 @@
 ActiveAdmin.register Item do
   permit_params :name, :description, :pricing_type, :category_id, :is_disabled,
-                item_pricings_attributes: [
+                item_pricing_attributes: [
                   :id, :default_fixed_price, :fixed_parameters, :is_selectable_options,
                   :pricing_options, { open_parameters_label: [] }, :open_parameters_label_as_string,
                   :formula_parameters, :calculation_formula, :is_open, :_destroy
                 ]
+  
 
   filter :name_cont, as: :string, label: "Product Name"
   filter :category, as: :select, collection: -> { Category.pluck(:name, :id) }, label: "Category"
@@ -41,7 +42,7 @@ ActiveAdmin.register Item do
 
     f.inputs "Item Details" do
       f.input :name, required: true
-      f.input :description
+      f.input :description, as: :string
       f.input :category_id, as: :select,
                             collection: Category.pluck(:name, :id),
                             include_blank: "No Category"
@@ -51,19 +52,19 @@ ActiveAdmin.register Item do
     pricing = if f.object.fixed_open? && !f.object.persisted?
                 nil
               else
-                f.object.item_pricings.first_or_initialize
+                f.object.item_pricing || f.object.build_item_pricing
               end
 
     div id: "pricing_fixed", style: "display:#{f.object.fixed? ? 'block' : 'none'};" do
       f.inputs "Pricing parameter" do
-        f.fields_for :item_pricings, pricing do |pf|
+        f.fields_for :item_pricing, pricing do |pf|
           pf.input :default_fixed_price, label: "Fixed Price"
         end
       end
     end
     div id: "pricing_open", style: "display:#{f.object.open? ? 'block' : 'none'};" do
       f.inputs "Pricing parameter" do
-        f.fields_for :item_pricings, pricing do |pf|
+        f.fields_for :item_pricing, pricing do |pf|
           pf.input :open_parameters_label_as_string,
                    as: :text,
                    label: "Parameters name",
@@ -74,12 +75,24 @@ ActiveAdmin.register Item do
     div id: "pricing_fixed_open", style: "display:#{f.object.fixed_open? ? 'block' : 'none'};" do
       if f.object.fixed_open? && f.object.persisted?
         div class: "add-param-link-wrapper" do
-          para link_to("Add Parameter", new_parameter_admin_item_path(f.object), class: "button")
+          formula_label = pricing&.calculation_formula.present? ? "Update Calculation Formula" : "Create Calculation Formula"
+          para do
+            concat link_to("Add Parameter", new_parameter_admin_item_path(f.object), class: "button")
+            concat link_to(formula_label, new_formula_admin_item_path(f.object), class: "button")
+          end
         end
-        f.inputs "Fixed + Open Pricing" do
-          f.fields_for :item_pricings, pricing do |pf|
-            pf.input :formula_parameters, as: :text, label: "Formula Parameters (JSON)"
-            pf.input :calculation_formula, label: "Calculation Formula"
+        f.inputs "Parameter Pricing" do
+          f.fields_for :item_pricing, pricing do |pf|
+            pf.input :formula_parameters, as: :hidden
+            div class: "formula-preview" do
+              span class: "formula-label" do
+                "Calculation Formula:"
+              end
+              span class: "formula" do
+                pricing.calculation_formula.presence || "No formula yet"
+              end
+            end
+            
           end
 
           session_data = controller.view_context.session
@@ -126,7 +139,7 @@ ActiveAdmin.register Item do
     def initialize_tmp_params(item_key)
       return if session[:tmp_params].key?(item_key)
 
-      pricing = @item.item_pricings.first
+      pricing = @item.item_pricing
       session[:tmp_params][item_key] = if pricing
                                          {
                                            fixed: pricing.fixed_parameters || {},
@@ -155,17 +168,18 @@ ActiveAdmin.register Item do
 
     def update
       @item = Item.find(params[:id])
+      old_pricing_type = @item.pricing_type
       item_key = @item.id.to_s
-
+    
       new_pricing_type = permitted_params[:item][:pricing_type]
       session[:tmp_params]&.delete(item_key) if new_pricing_type != "fixed_open"
-
+    
       session_data = new_pricing_type == "fixed_open" ? session[:tmp_params][item_key] : nil
-
+    
       updater = ItemUpdater.new(@item, permitted_params[:item], session_data)
-
+    
       if updater.call
-        if @item.fixed_open?
+        if old_pricing_type != "fixed_open" && @item.pricing_type == "fixed_open"
           redirect_to edit_admin_item_path(@item), notice: "Item updated! Now you can add parameters."
         else
           redirect_to admin_item_path(@item), notice: "Item updated!"
@@ -196,13 +210,21 @@ ActiveAdmin.register Item do
     case param_type
     when "fixed"
       store[:fixed]&.delete(key.to_sym)
+      Rails.logger.debug "🧪 Adding to formula_parameters: #{param_name}"
+Rails.logger.debug "🧪 Resulting formula_parameters: #{store[:formula_parameters]}"
     when "open"
       store[:open]&.delete(key)
+      Rails.logger.debug "🧪 Adding to formula_parameters: #{param_name}"
+Rails.logger.debug "🧪 Resulting formula_parameters: #{store[:formula_parameters]}"
     when "select"
       if desc_key.present?
         store[:select][key]&.delete(desc_key)
+        Rails.logger.debug "🧪 Adding to formula_parameters: #{param_name}"
+Rails.logger.debug "🧪 Resulting formula_parameters: #{store[:formula_parameters]}"
       else
         store[:select]&.delete(key)
+        Rails.logger.debug "🧪 Adding to formula_parameters: #{param_name}"
+Rails.logger.debug "🧪 Resulting formula_parameters: #{store[:formula_parameters]}"
       end
     else
       Rails.logger.warn "⚠️ Unknown param_type: #{param_type}"
@@ -213,51 +235,84 @@ ActiveAdmin.register Item do
     redirect_to edit_admin_item_path(@item)
   end
 
-  # action_item :add_parameter, only: :edit do
-  #   link_to("Add Parameter", new_parameter_admin_item_path(resource)) if resource.fixed_open?
-  # end
-
   member_action :new_parameter, method: :get do
     @item = Item.find(params[:id])
   end
 
+  
   member_action :create_parameter, method: :post do
     Rails.logger.debug "SESSION: #{session[:tmp_params].inspect}"
     @item = Item.find(params[:id])
     item_key = @item.id.to_s
-
+    
     session[:tmp_params] ||= {}
     session[:tmp_params][item_key] ||= { fixed: {}, open: [], select: {} }
     store = session[:tmp_params][item_key]
     store = store.deep_symbolize_keys
     session[:tmp_params][item_key] = store
     Rails.logger.info "DEBUG create_parameter: store before => #{store.inspect}"
-
+    
     case params[:parameter_type]
     when "Fixed"
-      store[:fixed][params[:fixed_parameter_name]] = params[:fixed_parameter_value]
-      Rails.logger.debug "STORE after Fixed: #{store.inspect}"
+      param_name = params[:fixed_parameter_name].to_s.strip
+      param_value = params[:fixed_parameter_value]
+      store[:fixed][param_name] = param_value if param_name.present?
+      (store[:formula_parameters] ||= []) << param_name unless param_name.blank?
+      
     when "Open"
-      Rails.logger.debug "CREATE_PARAM: before open => #{store[:open].inspect}"
-      store[:open] << params[:open_parameter_name].to_s
-      Rails.logger.debug "STORE after Open: #{store.inspect}"
+      param_name = params[:open_parameter_name].to_s.strip
+      store[:open] << param_name if param_name.present?
+      (store[:formula_parameters] ||= []) << param_name unless param_name.blank?
+      
     when "Select"
+      param_name = params[:select_parameter_name].to_s.strip
       sub_hash = {}
+      
       (1..10).each do |i|
         desc = params["option_description_#{i}"]
         val = params["option_value_#{i}"]
         next if desc.blank? || val.blank?
-
         sub_hash[desc] = val
       end
-      store[:select][params[:select_parameter_name]] = sub_hash
-      Rails.logger.debug "STORE after Select: #{store.inspect}"
+      
+      store[:select][param_name] = sub_hash if param_name.present?
+      (store[:formula_parameters] ||= []) << param_name unless param_name.blank?
     end
-
+    
+    
     flash[:notice] = "Parameter '#{params[:parameter_type]}' added (stored in session, not saved yet)."
     redirect_to edit_admin_item_path(@item)
   end
 
+  member_action :new_formula, method: :get do
+    @item = Item.find(params[:id])
+    item_key = @item.id.to_s
+    session[:tmp_params] ||= {}
+  
+    store = session[:tmp_params][item_key] || {}
+    Rails.logger.debug "🧪 SESSION[#{item_key}] = #{store.inspect}"
+  
+    @formula_params = store["formula_parameters"] || []
+    @initial_formula = @item.item_pricing&.calculation_formula
+    Rails.logger.debug "📦 @formula_params = #{@formula_params.inspect}"
+
+  end
+  
+  
+
+  member_action :update_formula, method: :post do
+    @item = Item.find(params[:id])
+    pricing = @item.item_pricing || @item.build_item_pricing
+    pricing.calculation_formula = params[:calculation_formula]
+    if pricing.save
+      flash[:notice] = "Formula saved!"
+    else
+      flash[:error] = "Failed to save formula."
+    end
+    redirect_to edit_admin_item_path(@item)
+  end
+  
+  
   action_item :back, only: :show do
     link_to "Back", admin_items_path
   end
@@ -290,10 +345,26 @@ ActiveAdmin.register Item do
 
     if item.fixed?
       panel "Price" do
-        para "Price: #{item.item_pricings.first&.default_fixed_price}"
+        para "Price: #{item.item_pricing&.default_fixed_price}"
       end
+    elsif item.open?
+      pricing = item.item_pricing
+      if pricing&.open_parameters_label&.first.present?
+        panel "Open Parameter" do
+          div class: "calculation-formula-box" do
+            pricing.open_parameters_label.first
+          end
+        end        
+      end    
     elsif item.fixed_open?
-      pricing = item.item_pricings.first
+      pricing = item.item_pricing
+      if pricing&.calculation_formula.present?
+        panel "Calculation Formula" do
+          div class: "calculation-formula-box" do
+            pricing.calculation_formula
+          end
+        end
+      end
       panel "Pricing Parameters" do
         render partial: "admin/items/parameters", locals: {
           fixed_parameters: pricing&.fixed_parameters || {},

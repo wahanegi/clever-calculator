@@ -1,5 +1,5 @@
 class ItemPricing < ApplicationRecord
-  belongs_to :item, inverse_of: :item_pricings
+  belongs_to :item, inverse_of: :item_pricing
   delegate :pricing_type, to: :item, allow_nil: true
 
   attr_accessor :parameter_type,

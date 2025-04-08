@@ -1,10 +1,10 @@
 class Item < ApplicationRecord
   belongs_to :category, optional: true
-  has_many :item_pricings, dependent: :destroy
+  has_one :item_pricing, dependent: :destroy
 
   after_initialize :build_default_item_pricing, if: :new_record?
 
-  accepts_nested_attributes_for :item_pricings
+  accepts_nested_attributes_for :item_pricing
 
   enum :pricing_type, { fixed: 0, open: 1, fixed_open: 2 }
 
@@ -23,10 +23,11 @@ class Item < ApplicationRecord
   private
 
   def build_default_item_pricing
-    return unless item_pricings.blank? && pricing_type.in?(%w[fixed open])
-
-    item_pricings.build(
+    return if item_pricing.present?
+    return unless pricing_type.in?(%w[fixed open])
+  
+    build_item_pricing(
       default_fixed_price: pricing_type == "fixed" ? 0.0 : nil
     )
-  end
+  end  
 end
