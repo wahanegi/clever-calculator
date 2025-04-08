@@ -32,8 +32,6 @@ ActiveAdmin.register Item do
     end
   end
 
-  actions :all, except: :destroy
-
   form do |f|
     f.semantic_errors
 
@@ -118,8 +116,55 @@ ActiveAdmin.register Item do
         panel "After creating or updating this item, you will be redirected to edit page where you can add parameters."
       end
     end
-
     f.actions
+  end
+  
+  show do
+    attributes_table do
+      row :id
+      row :name
+      row :pricing_type
+      row "Category" do |item|
+        link_to item.category.name, admin_category_path(item.category) if item.category
+      end
+      row "Status" do |item|
+        status_tag(item.is_disabled? ? "Disable" : "Enable", class: item.is_disabled? ? "red" : "green")
+      end
+      row :created_at
+      row :updated_at
+    end
+
+    if item.fixed?
+      panel "Price" do
+        para "Price: #{item.item_pricing&.default_fixed_price}"
+      end
+    elsif item.open?
+      pricing = item.item_pricing
+      if pricing&.open_parameters_label&.first.present?
+        panel "Open Parameter" do
+          div class: "calculation-formula-box" do
+            pricing.open_parameters_label.first
+          end
+        end              end    
+    elsif item.fixed_open?
+      pricing = item.item_pricing
+      if pricing&.calculation_formula.present?
+        panel "Calculation Formula" do
+          div class: "calculation-formula-box" do
+            pricing.calculation_formula
+          end
+        end
+      end
+      panel "Pricing Parameters" do
+        render partial: "admin/items/parameters", locals: {
+          fixed_parameters: pricing&.fixed_parameters || {},
+          open_parameters_label: pricing&.open_parameters_label || [],
+          select_parameters: pricing&.pricing_options || {},
+          item: item,
+          mode: :show
+        }
+      end
+    end
   end
 
   controller do
@@ -128,7 +173,6 @@ ActiveAdmin.register Item do
     def init_session_from_db
       @item = Item.find(params[:id])
       return unless @item.fixed_open?
-
       item_key = @item.id.to_s
       session[:tmp_params] ||= {}
       initialize_tmp_params(item_key)
@@ -136,7 +180,6 @@ ActiveAdmin.register Item do
 
     def initialize_tmp_params(item_key)
       return if session[:tmp_params].key?(item_key)
-
       pricing = @item.item_pricing
       session[:tmp_params][item_key] = if pricing
                                          {
@@ -167,12 +210,9 @@ ActiveAdmin.register Item do
       @item = Item.find(params[:id])
       old_pricing_type = @item.pricing_type
       item_key = @item.id.to_s
-    
       new_pricing_type = permitted_params[:item][:pricing_type]
       session[:tmp_params]&.delete(item_key) if new_pricing_type != "fixed_open"
-    
       session_data = new_pricing_type == "fixed_open" ? session[:tmp_params][item_key] : nil
-    
       updater = ItemUpdater.new(@item, permitted_params[:item], session_data)
     
       if updater.call
@@ -188,15 +228,30 @@ ActiveAdmin.register Item do
     end
   end
 
+  actions :all, except: :destroy
+
+  action_item :back, only: :show do
+    link_to "Back", admin_items_path
+  end
+
+  action_item :toggle, only: :show do
+    link_to(resource.is_disabled? ? "Enable item" : "Disable item", toggle_admin_item_path(resource),
+            method: :put,
+            data: { confirm: "Are you sure?" })
+  end
+
+  member_action :toggle, method: :put do
+    resource.update(is_disabled: !resource.is_disabled)
+    redirect_to admin_items_path, notice: "Item has been #{resource.is_disabled? ? 'disabled' : 'enabled'}."
+  end
+
   member_action :remove_parameter, method: :delete do
     @item = Item.find(params[:id])
     item_key = @item.id.to_s
-
     session[:tmp_params] ||= {}
     session[:tmp_params][item_key] ||= { fixed: {}, open: [], select: {} }
     store = session[:tmp_params][item_key].deep_symbolize_keys
     session[:tmp_params][item_key] = store
-
     param_type = params[:param_type].to_s
     key = params[:param_key].to_s
     desc_key = params[:desc_key].to_s if params[:desc_key].present?
@@ -214,7 +269,6 @@ ActiveAdmin.register Item do
       end
     else
     end
-
     flash[:notice] = "Parameter removed."
     redirect_to edit_admin_item_path(@item)
   end
@@ -223,7 +277,6 @@ ActiveAdmin.register Item do
     @item = Item.find(params[:id])
   end
 
-  
   member_action :create_parameter, method: :post do
     @item = Item.find(params[:id])
     item_key = @item.id.to_s
@@ -261,7 +314,6 @@ ActiveAdmin.register Item do
       (store[:formula_parameters] ||= []) << param_name unless param_name.blank?
     end
     
-    
     flash[:notice] = "Parameter '#{params[:parameter_type]}' added (stored in session, not saved yet)."
     redirect_to edit_admin_item_path(@item)
   end
@@ -276,8 +328,6 @@ ActiveAdmin.register Item do
     @initial_formula = @item.item_pricing&.calculation_formula
   end
   
-  
-
   member_action :update_formula, method: :post do
     @item = Item.find(params[:id])
     pricing = @item.item_pricing || @item.build_item_pricing
@@ -288,70 +338,5 @@ ActiveAdmin.register Item do
       flash[:error] = "Failed to save formula."
     end
     redirect_to edit_admin_item_path(@item)
-  end
-  
-  
-  action_item :back, only: :show do
-    link_to "Back", admin_items_path
-  end
-
-  member_action :toggle, method: :put do
-    resource.update(is_disabled: !resource.is_disabled)
-    redirect_to admin_items_path, notice: "Item has been #{resource.is_disabled? ? 'disabled' : 'enabled'}."
-  end
-
-  action_item :toggle, only: :show do
-    link_to(resource.is_disabled? ? "Enable item" : "Disable item", toggle_admin_item_path(resource),
-            method: :put,
-            data: { confirm: "Are you sure?" })
-  end
-
-  show do
-    attributes_table do
-      row :id
-      row :name
-      row :pricing_type
-      row "Category" do |item|
-        link_to item.category.name, admin_category_path(item.category) if item.category
-      end
-      row "Status" do |item|
-        status_tag(item.is_disabled? ? "Disable" : "Enable", class: item.is_disabled? ? "red" : "green")
-      end
-      row :created_at
-      row :updated_at
-    end
-
-    if item.fixed?
-      panel "Price" do
-        para "Price: #{item.item_pricing&.default_fixed_price}"
-      end
-    elsif item.open?
-      pricing = item.item_pricing
-      if pricing&.open_parameters_label&.first.present?
-        panel "Open Parameter" do
-          div class: "calculation-formula-box" do
-            pricing.open_parameters_label.first
-          end
-        end        
-      end    
-    elsif item.fixed_open?
-      pricing = item.item_pricing
-      if pricing&.calculation_formula.present?
-        panel "Calculation Formula" do
-          div class: "calculation-formula-box" do
-            pricing.calculation_formula
-          end
-        end
-      end
-      panel "Pricing Parameters" do
-        render partial: "admin/items/parameters", locals: {
-          fixed_parameters: pricing&.fixed_parameters || {},
-          open_parameters_label: pricing&.open_parameters_label || [],
-          select_parameters: pricing&.pricing_options || {},
-          item: item,
-          mode: :show
-        }
-      end
-    end
   end
 end
