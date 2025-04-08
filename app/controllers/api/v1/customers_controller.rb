@@ -2,7 +2,7 @@ module Api
   module V1
     class CustomersController < BaseController
       def index
-        customers = Customer.select('DISTINCT ON (company_name) *')
+        customers = Customer.order(updated_at: :desc)
         render json: CustomerSerializer.new(customers).serializable_hash, status: :ok
       end
 
