@@ -140,10 +140,7 @@ export const CustomerForm = () => {
         <Row className="mb-6">
           <div className="d-flex flex-column flex-sm-row gap-6">
             <Col className={'image-placeholder'}>
-              <PcCompanyLogoUploader
-                id="company_logo"
-                onChange={handleChangeLogo}
-                logo={customer.logo} />
+              <PcCompanyLogoUploader id="company_logo" onChange={handleChangeLogo} logo={customer.logo} />
             </Col>
             <Col>
               <Row className="mb-6">
@@ -153,7 +150,11 @@ export const CustomerForm = () => {
                     options={options}
                     placeholder="Enter a company name"
                     height="42px"
-                    label={<span>Company <span className="text-danger">*</span></span>}
+                    label={
+                      <span>
+                        Company <span className="text-danger">*</span>
+                      </span>
+                    }
                     value={selectedCompany}
                     error={errors.company_name}
                     onChange={handleCompanyChange}

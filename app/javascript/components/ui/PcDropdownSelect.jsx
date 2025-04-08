@@ -63,7 +63,7 @@ export const PcDropdownSelect = ({
       />
       <Form.Label className="border-label fw-bold fs-11 lh-sm px-1">{label}</Form.Label>
       {hasIcon && (
-        <div className="position-absolute end-0 top-50 translate-middle-y pe-3">
+        <div className="position-absolute end-0 top-50 translate-middle-y pe-4 pb-1">
           <PcIcon
             name={isMenuOpen ? 'dropdownArrowUp' : 'dropdownArrowDown'}
             alt={isMenuOpen ? 'Arrow pointing up' : 'Arrow pointing down'}
