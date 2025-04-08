@@ -6,7 +6,6 @@
   <%= @initial_formula.to_s %>
 </div>
 
-    <!-- Автокомпліт контейнер -->
     <div id="autocompleteBox" class="autocomplete-box" style="display:none;"></div>
 
     <h4>Available parameters:</h4>
@@ -40,7 +39,6 @@
     const formulaInput = document.getElementById("formulaInput");
     const autocompleteBox = document.getElementById("autocompleteBox");
 
-    // Клік по кнопках параметрів / операторів
     document.querySelectorAll(".formula-btn").forEach((btn) => {
       btn.addEventListener("click", () => {
         const symbol = btn.innerText;
@@ -48,12 +46,10 @@
       });
     });
 
-    // Перед сабмітом зберігаємо формулу в hidden input
     document.querySelector("form").addEventListener("submit", () => {
       formulaInput.value = formulaDisplay.innerText.trim();
     });
 
-    // Видалення параметра цілком
     formulaDisplay.addEventListener("keydown", (event) => {
       const selection = window.getSelection();
       const node = selection.anchorNode;
@@ -78,7 +74,6 @@
       }
     });
 
-    // Автокомпліт параметрів
     formulaDisplay.addEventListener("keyup", (event) => {
       const text = formulaDisplay.innerText;
       const words = text.split(/\s+/);
@@ -98,7 +93,6 @@
         return;
       }
 
-      // Показуємо підказки
       autocompleteBox.innerHTML = "";
       matches.forEach((match) => {
         const div = document.createElement("div");

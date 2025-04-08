@@ -100,8 +100,6 @@ ActiveAdmin.register Item do
           item_key = f.object.id.to_s
           tmp_data = tmp_params[item_key]&.deep_symbolize_keys || {}
 
-          Rails.logger.debug "EDIT_FORM tmp_data: #{tmp_data.inspect}"
-
           tmp_fixed = tmp_data[:fixed] || {}
           tmp_open = tmp_data[:open] || []
           tmp_select = tmp_data[:select] || {}
@@ -152,7 +150,6 @@ ActiveAdmin.register Item do
     end
 
     def create
-      Rails.logger.debug "SESSION: #{session[:tmp_params].inspect}"
       @item = Item.new(permitted_params[:item])
       if @item.save
         if @item.fixed_open?
@@ -204,33 +201,20 @@ ActiveAdmin.register Item do
     key = params[:param_key].to_s
     desc_key = params[:desc_key].to_s if params[:desc_key].present?
 
-    Rails.logger.debug "REMOVE_PARAM: param_type=#{param_type}, param_key=#{key}, desc_key=#{desc_key}"
-    Rails.logger.debug "STORE BEFORE DELETE: #{store.inspect}"
-
     case param_type
     when "fixed"
       store[:fixed]&.delete(key.to_sym)
-      Rails.logger.debug "🧪 Adding to formula_parameters: #{param_name}"
-Rails.logger.debug "🧪 Resulting formula_parameters: #{store[:formula_parameters]}"
     when "open"
       store[:open]&.delete(key)
-      Rails.logger.debug "🧪 Adding to formula_parameters: #{param_name}"
-Rails.logger.debug "🧪 Resulting formula_parameters: #{store[:formula_parameters]}"
     when "select"
       if desc_key.present?
         store[:select][key]&.delete(desc_key)
-        Rails.logger.debug "🧪 Adding to formula_parameters: #{param_name}"
-Rails.logger.debug "🧪 Resulting formula_parameters: #{store[:formula_parameters]}"
       else
         store[:select]&.delete(key)
-        Rails.logger.debug "🧪 Adding to formula_parameters: #{param_name}"
-Rails.logger.debug "🧪 Resulting formula_parameters: #{store[:formula_parameters]}"
       end
     else
-      Rails.logger.warn "⚠️ Unknown param_type: #{param_type}"
     end
 
-    Rails.logger.debug "STORE AFTER DELETE: #{store.inspect}"
     flash[:notice] = "Parameter removed."
     redirect_to edit_admin_item_path(@item)
   end
@@ -241,7 +225,6 @@ Rails.logger.debug "🧪 Resulting formula_parameters: #{store[:formula_paramete
 
   
   member_action :create_parameter, method: :post do
-    Rails.logger.debug "SESSION: #{session[:tmp_params].inspect}"
     @item = Item.find(params[:id])
     item_key = @item.id.to_s
     
@@ -250,7 +233,6 @@ Rails.logger.debug "🧪 Resulting formula_parameters: #{store[:formula_paramete
     store = session[:tmp_params][item_key]
     store = store.deep_symbolize_keys
     session[:tmp_params][item_key] = store
-    Rails.logger.info "DEBUG create_parameter: store before => #{store.inspect}"
     
     case params[:parameter_type]
     when "Fixed"
@@ -290,12 +272,8 @@ Rails.logger.debug "🧪 Resulting formula_parameters: #{store[:formula_paramete
     session[:tmp_params] ||= {}
   
     store = session[:tmp_params][item_key] || {}
-    Rails.logger.debug "🧪 SESSION[#{item_key}] = #{store.inspect}"
-  
     @formula_params = store["formula_parameters"] || []
     @initial_formula = @item.item_pricing&.calculation_formula
-    Rails.logger.debug "📦 @formula_params = #{@formula_params.inspect}"
-
   end
   
   

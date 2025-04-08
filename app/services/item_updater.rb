@@ -14,7 +14,6 @@ class ItemUpdater
     update_by_pricing_type(pricing)
     persist!(pricing)
   rescue ActiveRecord::RecordInvalid => e
-    Rails.logger.debug "‼️ Failed to update item: #{e.record.errors.full_messages}"
     false
   end
 
