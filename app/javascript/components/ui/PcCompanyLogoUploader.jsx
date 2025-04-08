@@ -9,15 +9,16 @@ export const PcCompanyLogoUploader = ({ id, logo, ...props }) => {
          className={'img-fluid'} />
     : <PcIcon name="placeholder" alt="Placeholder Logo" />
 
-  return <Form.Group controlId={id} className="w-100 h-100 bg-white border rounded border-primary p-1">
-    <Form.Label className={'m-0 d-flex justify-content-center align-items-center h-100'} column={'sm'}>
+  return <Form.Group className="w-100 h-100 bg-white border rounded border-primary p-1">
+    <Form.Label htmlFor={id} className={'m-0 d-flex justify-content-center align-items-center h-100'} column={'sm'}>
       {logoDisplay}
-      <Form.Control
-        className={'d-none'}
-        type={'file'}
-        accept={'image/jpeg,image/png'}
-        {...props}
-      />
     </Form.Label>
+    <Form.Control
+      id={id}
+      className={'d-none'}
+      type={'file'}
+      accept={'image/jpeg,image/png'}
+      {...props}
+    />
   </Form.Group>
 }

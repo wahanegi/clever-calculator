@@ -4,6 +4,7 @@ import { PcDropdownSelect, PcCompanyLogoUploader, PcInput } from '../ui'
 import { ROUTES, STEPS } from './constants'
 import { fetchCustomers, fetchQuotes } from '../services'
 import { useAppHooks } from '../hooks'
+import { extractNames } from '../utils'
 
 export const CustomerForm = () => {
   const defaultCustomer = {
@@ -121,14 +122,6 @@ export const CustomerForm = () => {
   }
 
   if (!customers) return null
-
-  const extractNames = (fullName = '') => {
-    const [first, ...rest] = fullName.trim().split(' ')
-    return {
-      first_name: first || '',
-      last_name: rest.join(' ') || '',
-    }
-  }
 
   const selectedCompany =
     customers.find((c) => c.attributes.company_name.toLowerCase() === customer.company_name.toLowerCase())?.id ||
