@@ -1,7 +1,5 @@
 // Base styles
 .btn {
-  font-family: $font-family-lato;
-
   // styles for variant="primary"
   &-primary {
     color: white !important;
@@ -17,8 +15,8 @@
     }
 
     &:disabled {
-      border-color: $gray-disable !important;
-      color: $text-gray-disable !important;
+      border-color: $secondary!important;
+      color: $secondary!important;
       background: $white !important;
     }
   }
@@ -83,6 +81,7 @@
 
   &-reset {
     width: 103.71px;
+    font-family: $font-family-lato !important;
   }
 
   &-back,  &-next {

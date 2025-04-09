@@ -12,13 +12,22 @@ export const PcDropdownSelect = ({
   height,
   value,
   label,
+  error,
   maxResults = 5,
   hasIcon = false,
 }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const [inputValue, setInputValue] = useState('')
 
   const selectedOption =
     options.find((opt) => opt.value === value) || (value ? { value, label: value, customOption: true } : null)
+
+  const normalizeName = (name) => name?.replace(/\s+/g, ' ').trim().toLowerCase() || ''
+
+  const hasMatchingOption = () => {
+    const normalizedInput = normalizeName(inputValue)
+    return options.some((option) => normalizeName(option.label) === normalizedInput)
+  }
 
   return (
     <Form.Group controlId={id} className="position-relative">
@@ -29,19 +38,21 @@ export const PcDropdownSelect = ({
         onChange={(selected) => {
           if (selected.length > 0) {
             const selectedOption = selected[0]
-
             const valueToPass = selectedOption.customOption ? selectedOption.label : selectedOption.value
             onChange({ target: { id, value: valueToPass } })
           } else {
             onChange({ target: { id, value: '' } })
           }
         }}
-        onInputChange={(_text, event) => onInputChange && onInputChange(event)}
-        filterBy={(option, props) => {
-          const inputValue = props.text.trim().toLowerCase()
-          return option.label?.toLowerCase().includes(inputValue)
+        onInputChange={(text, event) => {
+          setInputValue(text)
+          if (onInputChange) onInputChange(event)
         }}
-        allowNew
+        filterBy={(option, props) => {
+          const inputValue = normalizeName(props.text)
+          return normalizeName(option.label).includes(inputValue)
+        }}
+        allowNew={!hasMatchingOption()}
         newSelectionPrefix="Add new customer: "
         className="border border-primary rounded-1"
         style={{ height }}
@@ -52,13 +63,14 @@ export const PcDropdownSelect = ({
       />
       <Form.Label className="border-label fw-bold fs-11 lh-sm px-1">{label}</Form.Label>
       {hasIcon && (
-        <div className="position-absolute end-0 top-50 translate-middle-y pe-3">
+        <div className="position-absolute end-0 top-50 translate-middle-y pe-4 pb-1">
           <PcIcon
             name={isMenuOpen ? 'arrow_up' : 'arrow_down'}
             alt={isMenuOpen ? 'Arrow pointing up' : 'Arrow pointing down'}
           />
         </div>
       )}
+      {error && <div className="text-danger fs-12">{error}</div>}
     </Form.Group>
   )
 }

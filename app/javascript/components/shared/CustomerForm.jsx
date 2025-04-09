@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from 'react'
-import { Row, Col, Form } from 'react-bootstrap'
-import { PcDropdownSelect, PcIcon, PcInput } from '../ui'
+import { Row, Col, Form, Button } from 'react-bootstrap'
+import { PcDropdownSelect, PcCompanyLogoUploader, PcInput } from '../ui'
+import { ROUTES, STEPS } from './constants'
+import { fetchCustomers, fetchQuotes } from '../services'
+import { useAppHooks } from '../hooks'
+import { extractNames } from '../utils'
 
 export const CustomerForm = () => {
-  const placeholder = 'Enter a company name'
   const defaultCustomer = {
-    id: 0,
     company_name: '',
     full_name: '',
-    // first_name: '',
-    // last_name: '',
     email: '',
     position: '',
     address: '',
@@ -18,163 +18,221 @@ export const CustomerForm = () => {
   }
   const [customers, setCustomers] = useState([])
   const [customer, setCustomer] = useState(defaultCustomer)
-  const [selectedCustomerID, setSelectedCustomerID] = useState(0)
+
+  const [errors, setErrors] = useState({})
+
+  const { navigate } = useAppHooks()
 
   useEffect(() => {
-    fetch('/api/v1/customers')
-      .then((response) => response.json())
-      .then((customersResponse) => {
-        setCustomers(customersResponse.data)
-      })
+    fetchCustomers.index().then((customersResponse) => {
+      setCustomers(customersResponse.data)
+    })
   }, [])
 
-  const options = () => {
-    if (!customers) return []
+  const options = customers.map((customer) => ({
+    value: customer.id,
+    label: customer.attributes.company_name,
+  }))
 
-    return customers.map((customer) => ({
-      value: customer.id,
-      label: customer.attributes.company_name,
-    }))
+  const validateForm = () => {
+    const newErrors = {}
+
+    if (!customer.company_name.trim()) {
+      newErrors.company_name = 'Company name is required'
+    }
+
+    if (!!customer.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(customer.email)) {
+      newErrors.email = 'Invalid email format'
+    }
+
+    setErrors(newErrors)
+
+    return Object.keys(newErrors).length === 0
   }
 
   const handleCompanyChange = (e) => {
-    setSelectedCustomerID(e.target.value)
-    const selectedCustomer = customers.find((customer) => customer.id === e.target.value)
+    const value = e.target.value
+    const selectedCustomer = customers.find((customer) => customer.id === value)
 
     if (selectedCustomer) {
       setCustomer(selectedCustomer.attributes)
     } else {
-      setCustomer({ ...defaultCustomer, customer_name: e.target.value })
+      setCustomer({
+        ...defaultCustomer,
+        company_name: value,
+      })
     }
   }
 
   const handleInputChange = (e) => {
-    console.log(e)
+    const { id, value } = e.target
+
     setCustomer({
       ...customer,
-      [e.target.id]: e.target.value,
+      [id]: value,
+    })
+    setErrors((prev) => ({ ...prev, [id]: '' }))
+  }
+
+  const handleChangeLogo = (e) => {
+    const blobFile = e.target.files[0]
+
+    setCustomer({
+      ...customer,
+      logo: blobFile ? URL.createObjectURL(blobFile) : null,
     })
   }
 
-  const handleLogoUpload = (e) => {
-    setCustomer({ ...customer, logo: URL.createObjectURL(e.target.files[0]) })
+  const handleNext = async (e) => {
+    e.preventDefault()
+
+    if (!validateForm()) {
+      return
+    }
+
+    const form = e.target
+    const formData = new FormData()
+    const { first_name, last_name } = extractNames(customer.full_name)
+    const blobLogo = form[0].files[0]
+
+    if (blobLogo) formData.append('customer[logo]', blobLogo)
+    formData.append('customer[company_name]', customer.company_name)
+    formData.append('customer[first_name]', first_name)
+    formData.append('customer[last_name]', last_name)
+    formData.append('customer[position]', customer.position)
+    formData.append('customer[email]', customer.email)
+    formData.append('customer[address]', customer.address)
+    formData.append('customer[notes]', customer.notes)
+
+    const { data: customerData } = await fetchCustomers.upsert(formData)
+
+    if (!customers.some((c) => c.id === customerData.id)) {
+      setCustomers((prev) => [...prev, customerData])
+    }
+
+    const { data: quoteData } = await fetchQuotes.create({
+      quote: {
+        customer_id: customerData.id,
+        total_price: 0,
+        step: STEPS.ITEM_PRICING,
+      },
+    })
+
+    navigate(`${ROUTES.ITEM_PRICING}?quote_id=${quoteData.id}`)
   }
 
   if (!customers) return null
 
-  const companyInputLabel = (
-    <span>
-      Company <span className="text-danger">*</span>
-    </span>
-  )
-
-  const CompanyLogoUploader = () => <Form.Group>
-    <Form.Label className={'m-0'} column={'sm'}>
-      {customer.logo ?
-        <img src={customer.logo}
-             alt={`${customer.company_name} logo`}
-             style={{ height: '100px', width: '100px' }} />
-        : <PcIcon name="placeholder" alt="Placeholder logo" />}
-      <Form.Control
-        className={'d-none'}
-        name="logo"
-        type={'file'}
-        accept={'image/jpeg,image/png'}
-        onChange={handleLogoUpload}
-      />
-    </Form.Label>
-  </Form.Group>
-
+  const selectedCompany =
+    customers.find((c) => c.attributes.company_name.toLowerCase() === customer.company_name.toLowerCase())?.id ||
+    customer.company_name
 
   return (
-    <div className="border rounded border-primary customer-form bg-light">
-      <Row className="mb-6">
-        <div className="d-flex flex-column flex-sm-row gap-6">
-          <Col
-            className="image-placeholder w-100 bg-white border rounded border-primary p-1 d-flex justify-content-center align-items-center">
-            <CompanyLogoUploader />
-          </Col>
-          <Col>
-            <Row className="mb-6">
-              <Col>
-                <PcDropdownSelect
-                  id="company_name"
-                  options={options()}
-                  placeholder={placeholder}
-                  height="42px"
-                  label={companyInputLabel}
-                  value={selectedCustomerID}
-                  onChange={handleCompanyChange}
-                  onInputChange={handleInputChange}
-                  hasIcon={true}
-                />
-              </Col>
-            </Row>
-            <Row>
-              <div className="d-flex flex-column flex-sm-row gap-6">
-                <Col className="client-input">
-                  <PcInput
-                    id="full_name"
-                    placeholder="Client name"
-                    label="Client"
+    <Form onSubmit={handleNext} className={'d-flex flex-column w-100 align-items-center'}>
+      <div className="border rounded border-primary customer-form bg-light w-100 mb-7">
+        <Row className="mb-6">
+          <div className="d-flex flex-column flex-sm-row gap-6">
+            <Col className={'image-placeholder'}>
+              <PcCompanyLogoUploader id="company_logo" onChange={handleChangeLogo} logo={customer.logo} />
+            </Col>
+            <Col>
+              <Row className="mb-6">
+                <Col>
+                  <PcDropdownSelect
+                    id="company_name"
+                    options={options}
+                    placeholder="Enter a company name"
                     height="42px"
-                    value={customer.full_name}
-                    onChange={handleInputChange}
+                    label={
+                      <span>
+                        Company <span className="text-danger">*</span>
+                      </span>
+                    }
+                    value={selectedCompany}
+                    error={errors.company_name}
+                    onChange={handleCompanyChange}
+                    onInputChange={handleInputChange}
+                    hasIcon={true}
                   />
                 </Col>
-                <Col className="title-input">
-                  <PcInput
-                    id="position"
-                    placeholder="Position"
-                    label="Client Title"
-                    height="42px"
-                    value={customer.position}
-                    onChange={handleInputChange}
-                  />
-                </Col>
-              </div>
-            </Row>
-          </Col>
-        </div>
-      </Row>
-      <Row className="mb-6">
-        <div className="d-flex flex-column flex-sm-row gap-6">
+              </Row>
+              <Row>
+                <div className="d-flex flex-column flex-sm-row gap-6">
+                  <Col className="client-input">
+                    <PcInput
+                      id="full_name"
+                      placeholder="Client name"
+                      label="Client"
+                      height="42px"
+                      value={customer.full_name}
+                      onChange={(e) => {
+                        const { value } = e.target
+                        setCustomer({
+                          ...customer,
+                          ...extractNames(value),
+                          full_name: value,
+                        })
+                      }}
+                    />
+                  </Col>
+                  <Col className="title-input">
+                    <PcInput
+                      id="position"
+                      placeholder="Position"
+                      label="Client Title"
+                      height="42px"
+                      value={customer.position}
+                      onChange={handleInputChange}
+                    />
+                  </Col>
+                </div>
+              </Row>
+            </Col>
+          </div>
+        </Row>
+        <Row className="mb-6">
+          <div className="d-flex flex-column flex-sm-row gap-6">
+            <Col>
+              <PcInput
+                id="email"
+                type="email"
+                placeholder="E-mail"
+                label="E-mail"
+                height="42px"
+                value={customer.email}
+                error={errors.email}
+                onChange={handleInputChange}
+              />
+            </Col>
+            <Col>
+              <PcInput
+                id="address"
+                placeholder="Company address"
+                label="Address"
+                height="42px"
+                value={customer.address}
+                onChange={handleInputChange}
+              />
+            </Col>
+          </div>
+        </Row>
+        <Row>
           <Col>
             <PcInput
-              id="email"
-              type="email"
-              placeholder="E-mail"
-              label="E-mail"
-              height="42px"
-              value={customer.email}
+              id="notes"
+              as="textarea"
+              placeholder="Important information"
+              label="Notes"
+              height="100px"
+              value={customer.notes}
               onChange={handleInputChange}
             />
           </Col>
-          <Col>
-            <PcInput
-              id="address"
-              placeholder="Company address"
-              label="Address"
-              height="42px"
-              value={customer.address}
-              onChange={handleInputChange}
-            />
-          </Col>
-        </div>
-      </Row>
-      <Row>
-        <Col>
-          <PcInput
-            id="notes"
-            as="textarea"
-            placeholder="Important information"
-            label="Notes"
-            height="100px"
-            value={customer.notes}
-            onChange={handleInputChange}
-          />
-        </Col>
-      </Row>
-    </div>
+        </Row>
+      </div>
+      <Button type={'submit'} className="pc-btn-next" disabled={!customer.company_name}>
+        Next
+      </Button>
+    </Form>
   )
 }

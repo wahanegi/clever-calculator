@@ -8,7 +8,7 @@ import { PcAccordion } from '../ui'
 import { getCurrentStepId } from '../utils'
 
 export const ItemsPricing = () => {
-  const { navigate, queryParams } = useAppHooks()
+  const { navigate, queryParams, location} = useAppHooks()
   const quoteId = queryParams.get('quote_id')
   const currentStepId = getCurrentStepId(location.pathname)
   const totalPrice = 123 // TODO: get total price from BE
@@ -30,10 +30,10 @@ export const ItemsPricing = () => {
     setExpandedAccordions([])
   }
 
-  const handleDownload = async () => {
-    await fetchQuotes.update(quoteId, {
-      quote: { step: STEPS.COMPLETED },
-    })
+  const handleDownload = () => {
+    // await fetchQuotes.update(quoteId, {
+    //   quote: { step: STEPS.COMPLETED },
+    // })
   }
 
   const handleBack = () => {

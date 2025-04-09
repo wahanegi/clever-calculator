@@ -26,7 +26,7 @@ gem "turbo-rails"                                 # Hotwire's SPA-like page acce
 gem "tzinfo-data", platforms: %i[ windows jruby ] # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 
 group :development, :test do
-  gem "brakeman", require: false                                      # Static analysis for security vulnerabilities [https://brakemanscanner.org/]
+  gem "brakeman", "~> 7.0", ">= 7.0.2", require: false                # Static analysis for security vulnerabilities [https://brakemanscanner.org/]
   gem "debug", platforms: %i[ mri windows ], require: "debug/prelude" # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "dotenv"                                                        # Loads environment variables from '.env'
   gem "factory_bot_rails"                                             # Provides fixtures replacement for easier test object creation

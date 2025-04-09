@@ -1,5 +1,6 @@
 import React from 'react'
 import { PcProgressBar, PcStepIndicator } from '../ui'
+import { getStepTextClass } from '../utils'
 import { STEPS_DATA } from './constants'
 
 export const MultiStepProgressBar = ({ currentStepId }) => {
@@ -11,7 +12,7 @@ export const MultiStepProgressBar = ({ currentStepId }) => {
       {/* Steps title a top of progress bar*/}
       <div className={'d-flex justify-content-around align-items-center mb-3'}>
         {STEPS_DATA.map(({ step_id, title }) => (
-          <p key={step_id} className={`text-inter ${step_id <= currentStepId ? 'text-primary' : 'text-gray-light'}`}>
+          <p key={step_id} className={getStepTextClass(step_id, currentStepId)}>
             {title}
           </p>
         ))}
