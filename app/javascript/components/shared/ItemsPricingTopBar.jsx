@@ -17,13 +17,7 @@ export const ItemsPricingTopBar = ({
   } = getExpandCollapseStates(selectedCategories, expandedAccordions)
 
   return (
-    <div className="mb-8 px-6 gap-6"
-         style={{
-           gridTemplateColumns: 'minmax(0, 512px) auto auto',
-           columnGap: '20px',
-         }}
-    >
-
+    <div className="pc-grid-bar mb-8 px-6 gap-6">
       {/* Dropdown for selecting categories */}
       <MultiSelectDropdown
         selected={selectedCategories}

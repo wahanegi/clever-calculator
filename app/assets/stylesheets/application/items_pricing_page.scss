@@ -22,6 +22,8 @@
   width: fit-content;
 }
 
-.pc-grid-wrap {
+.pc-grid-bar {
+  display: grid;
+  align-items: center;
   grid-template-columns: minmax(0, 512px) auto auto;
 }

@@ -12,7 +12,7 @@ export const ExpandCollapseButtons = ({ onExpand, onCollapse, disableExpand, dis
         className={'p-0 border-0 rounded-5 overflow-hidden'}
         disabled={disableExpand}
         onClick={onExpand}>
-        <PcIcon name={`${disableExpand ? 'expand_disable' : 'expand'}`} />
+        <PcIcon name={`${disableExpand ? 'disableExpand' : 'expand'}`} />
       </Button>
 
       {/* Button Collapse */}
@@ -21,7 +21,7 @@ export const ExpandCollapseButtons = ({ onExpand, onCollapse, disableExpand, dis
         className={'p-0 border-0 rounded-5 overflow-hidden'}
         disabled={disableCollapse}
         onClick={onCollapse}>
-        <PcIcon name={`${disableCollapse ? 'collapse_disable' : 'collapse'}`} />
+        <PcIcon name={`${disableCollapse ? 'disableCollapse' : 'collapse'}`} />
       </Button>
     </div>
   )

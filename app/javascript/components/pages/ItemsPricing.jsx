@@ -1,14 +1,12 @@
 import React, { useState } from 'react'
 import { Button, Container } from 'react-bootstrap'
 import { useAppHooks } from '../hooks'
-import { fetchQuotes } from '../services'
-import { QuoteCreation, ROUTES, STEPS } from '../shared'
-import { ItemsPricingTopBar } from '../shared/ItemsPricingTopBar'
+import { ItemsPricingTopBar, QuoteCreation, ROUTES } from '../shared'
 import { PcAccordion } from '../ui'
 import { getCurrentStepId } from '../utils'
 
 export const ItemsPricing = () => {
-  const { navigate, queryParams, location} = useAppHooks()
+  const { navigate, queryParams, location } = useAppHooks()
   const quoteId = queryParams.get('quote_id')
   const currentStepId = getCurrentStepId(location.pathname)
   const totalPrice = 123 // TODO: get total price from BE
@@ -61,14 +59,16 @@ export const ItemsPricing = () => {
           </div>)
         }
 
-        {selectedCategories.length > 0 && selectedCategories.map((category) => (
-          <PcAccordion
-            key={category.id}
-            categoryName={category.label}
-            isOpen={expandedAccordions.includes(category.id)}
-            onToggle={() => handleToggle(category.id)}
-          />
-        ))}
+        <div className={'d-flex flex-column gap-4'}>
+          {selectedCategories.length > 0 && selectedCategories.map((category) => (
+            <PcAccordion
+              key={category.id}
+              categoryName={category.label}
+              isOpen={expandedAccordions.includes(category.id)}
+              onToggle={() => handleToggle(category.id)}
+            />
+          ))}
+        </div>
       </section>
 
       {/* Buttons section */}

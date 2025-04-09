@@ -54,11 +54,13 @@ export const MultiSelectDropdown = ({
           open={dropdownOpen}
           multiple
           onMenuToggle={handleMenuOpen}
+          className={'pc-typeahead-items-pricing'}
           renderMenuItemChildren={(option) => (
             <PcCheckboxOption
               option={option}
               isSelected={isSelected}
               toggleSelection={toggleSelection}
+              className={'pc-checkbox-items-pricing'}
             />
           )}
         />
@@ -70,7 +72,7 @@ export const MultiSelectDropdown = ({
         {hasIcon && (
           <div className="position-absolute end-0 top-50 translate-middle-y pe-3">
             <PcIcon
-              name={isMenuOpen ? 'arrow_up' : 'arrow_down'}
+              name={isMenuOpen ? 'arrowUp' : 'arrowDown'}
               alt={isMenuOpen ? 'Arrow pointing up' : 'Arrow pointing down'}
             />
           </div>

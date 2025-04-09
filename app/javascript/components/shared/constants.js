@@ -27,33 +27,29 @@ export const STEPS_DATA = [
 ]
 
 // Centralized storage for image assets
+import accordionArrowDownUrl from '../../../assets/images/icons/accordion-arrow-down.svg'
+import accordionArrowUpUrl from '../../../assets/images/icons/accordion-arrow-up.svg'
 import arrowDownUrl from '../../../assets/images/icons/arrow-down.svg'
 import arrowUpUrl from '../../../assets/images/icons/arrow-up.svg'
-import collapseDisableUrl from '../../../assets/images/icons/collapse-disable.svg'
+import disableCollapseUrl from '../../../assets/images/icons/collapse-disable.svg'
 import collapseUrl from '../../../assets/images/icons/collapse.svg'
-import expandDisableUrl from '../../../assets/images/icons/expand-disable.svg'
+import disableExpandUrl from '../../../assets/images/icons/expand-disable.svg'
 import expandUrl from '../../../assets/images/icons/expand.svg'
 import logoUrl from '../../../assets/images/icons/logo.svg'
 import logoutUrl from '../../../assets/images/icons/logout.svg'
 import placeholderUrl from '../../../assets/images/icons/placeholder.svg'
-import dropdownArrowDownUrl from '../../../assets/images/icons/arrow-down.svg'
-import dropdownArrowUpUrl from '../../../assets/images/icons/arrow-up.svg'
-import accordionArrowUpUrl from '../../../assets/images/icons/accordion-arrow-up.svg'
-import accordionArrowDownUrl from '../../../assets/images/icons/accordion-arrow-down.svg'
 
 export const IMAGE_ASSETS = {
   ICONS: {
     logo: logoUrl,
     logout: logoutUrl,
     placeholder: placeholderUrl,
-    arrow_down: arrowDownUrl,
-    arrow_up: arrowUpUrl,
-    collapse_disable: collapseDisableUrl,
-    expand_disable: expandDisableUrl,
+    arrowDown: arrowDownUrl,
+    arrowUp: arrowUpUrl,
+    disableCollapse: disableCollapseUrl,
+    disableExpand: disableExpandUrl,
     collapse: collapseUrl,
     expand: expandUrl,
-    dropdownArrowDown: dropdownArrowDownUrl,
-    dropdownArrowUp: dropdownArrowUpUrl,
     accordionArrowUp: accordionArrowUpUrl,
     accordionArrowDown: accordionArrowDownUrl,
   },
