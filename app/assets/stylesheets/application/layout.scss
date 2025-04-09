@@ -2,7 +2,7 @@
 
 .layout {
   background-image: url('./assets/bg-calculator.png');
-  background-position: left 504px;
+  background-position: left min(50vh, 504px);
   background-repeat: no-repeat;
 }
 
