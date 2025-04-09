@@ -1,27 +1,42 @@
 import React from 'react'
+import { getExpandCollapseStates } from '../utils'
 import { ExpandCollapseButtons } from './ExpandCollapseButtons'
 import { MultiSelectDropdown } from './MultiSelectDropdown'
 
-export const ItemsPricingTopBar = ({ totalPrice, isExpended, handleToggle }) => {
-  // const [isExpended, setIsExpended] = useState(false)
-  //
-  // const handleToggle = () => {
-  //   setIsExpended((prev) => !prev)
-  //   // TODO: add logic for accordion
-  // }
+export const ItemsPricingTopBar = ({
+  totalPrice,
+  expandAll,
+  collapseAll,
+  expandedAccordions,
+  selectedCategories,
+  setSelectedCategories,
+}) => {
+  const {
+    shouldDisableExpandBtn,
+    shouldDisableCollapseBtn,
+  } = getExpandCollapseStates(selectedCategories, expandedAccordions)
 
   return (
-    <div className="d-grid align-items-center mb-8 px-6"
+    <div className="mb-8 px-6 gap-6"
          style={{
            gridTemplateColumns: 'minmax(0, 512px) auto auto',
            columnGap: '20px',
-         }}>
+         }}
+    >
 
-      {/* Dropdown for selecting items*/}
-      <MultiSelectDropdown />
+      {/* Dropdown for selecting categories */}
+      <MultiSelectDropdown
+        selected={selectedCategories}
+        setSelected={setSelectedCategories}
+      />
 
       {/* Expand/Collapse buttons */}
-      <ExpandCollapseButtons isExpended={isExpended} onClick={handleToggle} />
+      <ExpandCollapseButtons
+        onExpand={expandAll}
+        onCollapse={collapseAll}
+        disableExpand={shouldDisableExpandBtn}
+        disableCollapse={shouldDisableCollapseBtn}
+      />
 
       {/* Total price */}
       <div className={'d-flex flex-column align-items-end'}>

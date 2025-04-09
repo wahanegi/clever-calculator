@@ -1,11 +1,8 @@
 .multi-select-dropdown {
 
   .pc-label {
-    position: absolute;
     top: -0.7rem;
     left: 0.8rem;
-    margin: 0;
-    padding: 0;
     background: linear-gradient(to bottom, $white 55%, transparent 45%);
   }
 
@@ -23,4 +20,8 @@
 
 .pc-w-fit-content {
   width: fit-content;
+}
+
+.pc-grid-wrap {
+  grid-template-columns: minmax(0, 512px) auto auto;
 }
