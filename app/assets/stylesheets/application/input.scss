@@ -6,7 +6,7 @@
 }
 
 .form-control::placeholder {
-  //color: $gray;
+  color: $gray;
 }
 
 textarea {
@@ -17,8 +17,8 @@ textarea {
 .form-control:active,
 .form-select:focus,
 .form-select:active {
-  background-color: $white !important;
   box-shadow: none !important;
+  background-color: $white !important;
 }
 
 .form-control:-webkit-autofill,
@@ -30,33 +30,4 @@ textarea {
 .form-control:-webkit-autofill:focus,
 .form-select:-webkit-autofill:focus {
   background-color: white !important;
-}
-
-.rbt-input-main {
-  //border: none !important;
-  //border-radius: 4px;
-}
-
-.rbt-menu .dropdown-item:hover,
-.rbt-menu .dropdown-item:focus {
-  //background-color: $light;
-  //color: $primary;
-}
-
-.rbt-menu .dropdown-item {
-  //padding: 6px 12px;
-  //color: $gray-700;
-}
-
-.rbt-menu.dropdown-menu.show {
-  //width: calc(100% + 2px) !important;
-  //margin-top: 5px;
-  //margin-left: -1px;
-  //border: 1px solid $primary;
-}
-
-.rbt-highlight-text {
-  //padding: 0;
-  //color: $primary;
-  //background-color: $light;
 }

@@ -1,9 +1,14 @@
-.accordion-button:not(.collapsed),
-.accordion-button.collapsed {
-  background-color: $light;
+.accordion-button {
+  background-color: $light !important;
   border-radius: 8px !important;
   border: 1px solid $primary;
   padding: 22.4px;
+  transition: border-radius 0.8s ease-out;
+
+  &:not(.collapsed) {
+    border-radius: 8px 8px 0 0 !important;
+    border-bottom: 1px solid $teal-blue;
+  }
 }
 
 .accordion-button:not(.collapsed):focus,
@@ -15,3 +20,11 @@
 .accordion-button::after {
   display: none !important;
 }
+
+.pc-accordion-body {
+  padding: 20px 32px;
+}
+
+.accordion-bottom-filling {
+    height: 24px;
+  }

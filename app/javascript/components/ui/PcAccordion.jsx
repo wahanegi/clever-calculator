@@ -3,9 +3,8 @@ import { Accordion } from 'react-bootstrap'
 import { PcIcon } from './PcIcon'
 
 export const PcAccordion = ({ categoryName = 'Category Name', categoryPrice = '$ 0', isOpen, onToggle }) => {
-
   return (
-    <Accordion flush activeKey={isOpen ? ['0'] : []}>
+    <Accordion flush activeKey={isOpen ? ['0'] : []} bsPrefix>
       <Accordion.Item eventKey="0">
         <Accordion.Header onClick={onToggle}>
           <div className="d-flex justify-content-between align-items-center w-100">
@@ -19,9 +18,12 @@ export const PcAccordion = ({ categoryName = 'Category Name', categoryPrice = '$
             </div>
           </div>
         </Accordion.Header>
-        <Accordion.Body>
+        <Accordion.Body className="border border-primary border-top-0 bg-white rounded-bottom-2">
           {/* Category content */}
-          Content for <strong>{categoryName}</strong>
+          <div className="pc-accordion-body">
+            Content for <strong>{categoryName}</strong>
+          </div>
+          <div className="accordion-bottom-filling bg-light rounded-bottom-2" />
         </Accordion.Body>
       </Accordion.Item>
     </Accordion>

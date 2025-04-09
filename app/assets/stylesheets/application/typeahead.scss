@@ -11,6 +11,7 @@ $rbt-color-white: #fff !default;
 
 .rbt-input-main {
   border: none !important;
+  border-radius: 4px;
 }
 
 /**
@@ -157,7 +158,7 @@ $rbt-placeholder-color: $secondary !default;
 /**
  *** Token ***
  **/
-$rbt-token-background-color: $bg-light !default;
+$rbt-token-background-color: $teal-light !default;
 $rbt-token-color: $rbt-color-primary !default;
 
 $rbt-token-disabled-background-color: rgba(0, 0, 0, 0.1) !default;

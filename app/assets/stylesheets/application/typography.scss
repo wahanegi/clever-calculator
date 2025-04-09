@@ -46,6 +46,8 @@ $custom-colors: (
   'green-light': $green-light,
   'teal': $teal,
   'teal-dark': $teal-dark,
+  'teal-light': $teal-light,
+  'teal-blue': $teal-blue,
 );
 
 @each $name, $color in $custom-colors {
