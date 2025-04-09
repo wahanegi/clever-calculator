@@ -5,3 +5,9 @@
   background-position: left 504px;
   background-repeat: no-repeat;
 }
+
+@media (max-width: 1300px) {
+  .layout {
+    background-image: none;
+  }
+}
