@@ -19,7 +19,7 @@ RSpec.describe Customer, type: :model do
       let!(:customer) { create(:customer) }
       let(:valid_logo) { file_fixture('valid_logo.png') }
       let(:invalid_logo) { file_fixture('invalid_logo.svg') }
-      let(:large_size_logo) { file_fixture('3_megabyte_logo.png') }
+      let(:large_size_logo) { file_fixture('3_megabytes_logo.png') }
       let(:logo_png) { file_fixture('logo_type.png') }
       let(:logo_jpeg) { file_fixture('logo_type.jpeg') }
 
@@ -44,7 +44,7 @@ RSpec.describe Customer, type: :model do
       it 'is invalid when the logo size is greater than 2 megabytes' do
         customer.logo.attach(large_size_logo)
         expect(customer).to be_invalid
-        expect(customer.errors.messages_for(:logo)).to include('must be less than 2 megabytes')
+        expect(customer.errors.messages_for(:logo)).to include('must be less than 2MB')
       end
 
       it 'is invalid with a wrong file type' do
@@ -78,6 +78,23 @@ RSpec.describe Customer, type: :model do
       subject.first_name = ''
       subject.last_name = ''
       expect(subject.full_name).to eq('')
+    end
+  end
+
+  describe '#small_logo' do
+    let(:logo) { file_fixture('1000x1000px_logo.png') }
+    let!(:customer) { create(:customer, logo: logo) }
+
+    it 'returns a resized logo' do
+      original_logo = Vips::Image.new_from_buffer(customer.logo.download, "")
+
+      expect(original_logo.width).to eq(1000)
+      expect(original_logo.height).to eq(1000)
+
+      resized_logo = Vips::Image.new_from_buffer(customer.small_logo.download, "")
+
+      expect(resized_logo.width).to be <= Customer::LOGO_RESIZE_LIMIT.first
+      expect(resized_logo.height).to be <= Customer::LOGO_RESIZE_LIMIT.last
     end
   end
 end

@@ -14,8 +14,10 @@ export const CustomerForm = () => {
     position: '',
     address: '',
     notes: '',
-    logo: null,
+    logo_file: null,
+    logo_url: null,
   }
+
   const [customers, setCustomers] = useState([])
   const [customer, setCustomer] = useState(defaultCustomer)
 
@@ -75,11 +77,14 @@ export const CustomerForm = () => {
   }
 
   const handleChangeLogo = (e) => {
-    const blobFile = e.target.files[0]
+    const file = e.target.files[0]
 
-    setCustomer({
-      ...customer,
-      logo: blobFile ? URL.createObjectURL(blobFile) : null,
+    setCustomer((prev) => {
+      return {
+        ...prev,
+        logo_file: file || null,
+        logo_url: file ? URL.createObjectURL(file) : null,
+      }
     })
   }
 
@@ -90,12 +95,10 @@ export const CustomerForm = () => {
       return
     }
 
-    const form = e.target
     const formData = new FormData()
     const { first_name, last_name } = extractNames(customer.full_name)
-    const blobLogo = form[0].files[0]
 
-    if (blobLogo) formData.append('customer[logo]', blobLogo)
+    if (customer.logo_file) formData.append('customer[logo]', customer.logo_file)
     formData.append('customer[company_name]', customer.company_name)
     formData.append('customer[first_name]', first_name)
     formData.append('customer[last_name]', last_name)
@@ -133,7 +136,10 @@ export const CustomerForm = () => {
         <Row className="mb-6">
           <div className="d-flex flex-column flex-sm-row gap-6">
             <Col className={'image-placeholder'}>
-              <PcCompanyLogoUploader id="company_logo" onChange={handleChangeLogo} logo={customer.logo} />
+              <PcCompanyLogoUploader
+                id="company_logo"
+                onChange={handleChangeLogo}
+                logo={customer.logo_url} />
             </Col>
             <Col>
               <Row className="mb-6">
