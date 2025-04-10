@@ -1,4 +1,6 @@
 .multi-select-dropdown {
+  width: 100%;
+  max-width: 512px;
 
   .pc-label {
     top: -0.7rem;
@@ -23,7 +25,5 @@
 }
 
 .pc-grid-bar {
-  display: grid;
-  align-items: center;
-  grid-template-columns: minmax(0, 512px) auto auto;
+  grid-template-columns: minmax(0, 512px) auto;
 }

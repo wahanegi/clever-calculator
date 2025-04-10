@@ -40,10 +40,10 @@ export const ItemsPricing = () => {
 
   return (
     <Container className={'wrapper'}>
-      <QuoteCreation currentStepId={currentStepId} />
+      <section className={'mb-8 px-6'}>
+        <QuoteCreation currentStepId={currentStepId} />
 
-      {/* Items & Pricing dashboard*/}
-      <section className={'mb-8'}>
+        {/* Items & Pricing dashboard*/}
         <ItemsPricingTopBar
           totalPrice={totalPrice}
           selectedCategories={selectedCategories}
@@ -58,6 +58,9 @@ export const ItemsPricing = () => {
             Select one or more items to start your quote.
           </div>)
         }
+      </section>
+
+      <section className={'mb-8'}>
 
         <div className={'d-flex flex-column gap-4'}>
           {selectedCategories.length > 0 && selectedCategories.map((category) => (
