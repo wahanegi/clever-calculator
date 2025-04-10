@@ -1,6 +1,12 @@
 /* 1. Improved font rendering */
 body {
-  font-family: 'Helvetica Neue', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Segoe UI Emoji', Roboto, sans-serif;
+  font-family: 'Helvetica Neue',
+  -apple-system,
+  BlinkMacSystemFont,
+  'Segoe UI',
+  'Segoe UI Emoji',
+  Roboto,
+  sans-serif;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeSpeed;
 }
