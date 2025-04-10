@@ -1,13 +1,12 @@
-.pc-rotate-180 {
-  transform: rotate(180deg);
-}
+.pc-icon {
+  &-logout {
+    width: 24px;
+    height: 24px;
+  }
 
-.pc-logout {
-  width: 24px;
-  height: 24px;
-
-  &-sm {
-    width: 16px;
-    height: 16px;
+  &-logo {
+    width: 25px;
+    height: 25px;
   }
 }
+
