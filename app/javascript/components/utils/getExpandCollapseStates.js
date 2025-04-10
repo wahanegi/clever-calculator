@@ -14,20 +14,20 @@ export const getExpandCollapseStates = (selectedCategories, expandedAccordions) 
     expandedAccordions.includes(category.id),
   ).length
 
-  const allExpanded = expandedAccordionsCount === selectedCategoriesCount // True if all selected categories are expanded
-  const allCollapsed = expandedAccordionsCount === 0 // True if none of the selected categories are expanded
+  // True if all selected categories are expanded
+  const allExpanded = expandedAccordionsCount === selectedCategoriesCount
+  // True if none of the selected categories are expanded
+  const allCollapsed = expandedAccordionsCount === 0
 
   // If exactly one category is selected
   if (selectedCategoriesCount === 1) {
     // Get "true" if one category is already expanded
     shouldDisableExpandBtn = expandedAccordionsCount !== 0
-
     // Get "true" if one category is not expanded
     shouldDisableCollapseBtn = expandedAccordionsCount !== 1
   } else {
     // Get "true" if all selected categories are already expanded
     shouldDisableExpandBtn = allExpanded
-
     // Get "true" if all selected categories are already collapsed
     shouldDisableCollapseBtn = allCollapsed
   }

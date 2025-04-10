@@ -11,6 +11,7 @@ export const ENDPOINTS = {
   LOGOUT: '/users/sign_out',
   CUSTOMERS: '/api/v1/customers',
   CUSTOMERS_UPSERT: '/api/v1/customers/upsert',
+  CATEGORIES: '/api/v1/categories',
 }
 
 export const STEPS = {

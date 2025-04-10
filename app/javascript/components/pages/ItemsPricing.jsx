@@ -66,7 +66,7 @@ export const ItemsPricing = () => {
           {selectedCategories.length > 0 && selectedCategories.map((category) => (
             <PcAccordion
               key={category.id}
-              categoryName={category.label}
+              category={category.name}
               isOpen={expandedAccordions.includes(category.id)}
               onToggle={() => handleToggle(category.id)}
             />

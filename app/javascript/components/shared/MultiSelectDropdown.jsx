@@ -1,15 +1,9 @@
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { Form } from 'react-bootstrap'
 import { Typeahead } from 'react-bootstrap-typeahead'
+import { fetchCategories } from '../services'
 import { PcCheckboxOption, PcIcon } from '../ui'
-
-// TODO: get options from api
-const options = [
-  { id: 1, label: 'Decision Platform' },
-  { id: 2, label: 'Professional Services' },
-  { id: 3, label: 'Forecasting' },
-  { id: 4, label: 'Other' },
-]
+import { normalizeApiCategories } from '../utils'
 
 export const MultiSelectDropdown = ({
   id,
@@ -20,6 +14,7 @@ export const MultiSelectDropdown = ({
 }) => {
   const [dropdownOpen, setDropdownOpen] = useState(false)
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const [categories, setCategories] = useState([])
   const typeaheadRef = useRef()
 
   const handleFocus = () => setDropdownOpen(true)
@@ -37,16 +32,23 @@ export const MultiSelectDropdown = ({
     }
   }
 
+  useEffect(() => {
+    fetchCategories.index().then(res => {
+      const categories = normalizeApiCategories(res.data)
+      setCategories(categories)
+    })
+  }, [])
+
   return (
     <div className={'multi-select-dropdown'}>
       <Form.Group controlId={id} className="position-relative">
         <Typeahead
           id={'items-pricing-typeahead'}
-          labelKey={'label'}
+          labelKey={'name'}
           placeholder={'Make a selection'}
           ref={typeaheadRef}
           selected={selected}
-          options={options} // use with filterBy
+          options={categories} // use with filterBy
           filterBy={() => true} // set array of options with no changes
           onChange={setSelected}
           onFocus={handleFocus}

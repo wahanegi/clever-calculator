@@ -5,10 +5,11 @@ Rails.application.routes.draw do
 
   namespace :api do
     namespace :v1 do
-      resources :quotes, only: [:create, :update]
-      resources :customers, only: [:index] do
+      resources :quotes, only: [ :create, :update ]
+      resources :customers, only: [ :index ] do
         post :upsert, on: :collection
       end
+      resources :categories, only: [ :index ]
     end
   end
 

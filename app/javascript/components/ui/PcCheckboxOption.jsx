@@ -15,7 +15,7 @@ export const PcCheckboxOption = ({ option, isSelected, toggleSelection, classNam
     >
       <Form.Check
         type={'checkbox'}
-        label={option.label}
+        label={option.name}
         checked={checked}
         onChange={handleOnChange}
       />
