@@ -31,6 +31,10 @@ h2,
   @include rfs($font-size-sm); // 14px
 }
 
+.pc-fw-900 {
+  font-weight: 900;
+}
+
 // Utility Classes
 $custom-colors: (
   'gray': $gray,
@@ -42,6 +46,8 @@ $custom-colors: (
   'green-light': $green-light,
   'teal': $teal,
   'teal-dark': $teal-dark,
+  'teal-light': $teal-light,
+  'teal-blue': $teal-blue,
 );
 
 @each $name, $color in $custom-colors {

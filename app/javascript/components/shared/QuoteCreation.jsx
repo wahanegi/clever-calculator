@@ -10,12 +10,12 @@ export const QuoteCreation = ({ onClick, currentStepId, isBtnShow = true }) => {
   )
 
   return (
-    <section className={'px-6'}>
+    <div className={'mb-6'}>
       <div className={'d-flex justify-content-between align-items-center mb-6'}>
         <h1 className={'lh-1'}>Quote Creation</h1>
         {isBtnShow && <ResetButton />}
       </div>
       <MultiStepProgressBar currentStepId={currentStepId} />
-    </section>
+    </div>
   )
 }

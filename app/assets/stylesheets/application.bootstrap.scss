@@ -6,18 +6,22 @@
 
 // Merge custom font-size utility into Bootstrap's $utilities map
 $utilities: map-merge(
-  $utilities,
-  (
-    'font-size': (
-      property: font-size,
-      class: fs,
-      values: $font-sizes,
-      responsive: true,
-    ),
-  )
+    $utilities,
+    (
+      'font-size': (
+        property: font-size,
+        class: fs,
+        values: $font-sizes,
+        responsive: true,
+      ),
+    )
 );
 
+// Libs styles
+@import "application/typeahead";
+
 // Component styles
+@import 'application/common';
 @import 'application/icons';
 @import 'application/buttons';
 @import 'application/customer_info';
@@ -25,3 +29,6 @@ $utilities: map-merge(
 @import 'application/login_page';
 @import 'application/customer_form.scss';
 @import 'application/input.scss';
+@import "application/items_pricing_page";
+@import 'application/accordion.scss';
+@import 'application/checkbox.scss';

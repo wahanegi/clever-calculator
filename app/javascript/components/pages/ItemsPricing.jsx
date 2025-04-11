@@ -1,14 +1,32 @@
-import React from 'react'
-import { Button, Container, Row } from 'react-bootstrap'
+import React, { useState } from 'react'
+import { Button, Container } from 'react-bootstrap'
 import { useAppHooks } from '../hooks'
-import { fetchQuotes } from '../services'
-import { QuoteCreation, ROUTES, STEPS } from '../shared'
-import { getCurrentStepId } from '../utils';
+import { ItemsPricingTopBar, QuoteCreation, ROUTES } from '../shared'
+import { PcAccordion } from '../ui'
+import { getCurrentStepId } from '../utils'
 
 export const ItemsPricing = () => {
-  const { navigate, queryParams, location} = useAppHooks()
+  const { navigate, queryParams, location } = useAppHooks()
   const quoteId = queryParams.get('quote_id')
   const currentStepId = getCurrentStepId(location.pathname)
+  const totalPrice = 123 // TODO: get total price from BE
+
+  const [selectedCategories, setSelectedCategories] = useState([])
+  const [expandedAccordions, setExpandedAccordions] = useState([]) // array of IDs
+
+  const handleToggle = (id) => {
+    setExpandedAccordions((prev) =>
+      prev.includes(id) ? prev.filter(item => item !== id) : [...prev, id],
+    )
+  }
+
+  const expandAll = () => {
+    setExpandedAccordions(selectedCategories.map(category => category.id))
+  }
+
+  const collapseAll = () => {
+    setExpandedAccordions([])
+  }
 
   const handleDownload = () => {
     // await fetchQuotes.update(quoteId, {
@@ -22,19 +40,45 @@ export const ItemsPricing = () => {
 
   return (
     <Container className={'wrapper'}>
-      <QuoteCreation currentStepId={currentStepId} />
+      <section className={'mb-8 px-6'}>
+        <QuoteCreation currentStepId={currentStepId} />
 
-      {/* Items & Pricing dashboard*/}
+        {/* Items & Pricing dashboard*/}
+        <ItemsPricingTopBar
+          totalPrice={totalPrice}
+          selectedCategories={selectedCategories}
+          setSelectedCategories={setSelectedCategories}
+          expandAll={expandAll}
+          collapseAll={collapseAll}
+          expandedAccordions={expandedAccordions}
+        />
+
+        {selectedCategories.length === 0 &&
+          (<div className="text-center text-muted py-5">
+            Select one or more items to start your quote.
+          </div>)
+        }
+      </section>
+
       <section className={'mb-8'}>
-        <Row>
-          <div style={{ height: '180px', border: '2px solid red' }}></div>
-        </Row>
+
+        <div className={'d-flex flex-column gap-4'}>
+          {selectedCategories.length > 0 && selectedCategories.map((category) => (
+            <PcAccordion
+              key={category.id}
+              category={category.name}
+              isOpen={expandedAccordions.includes(category.id)}
+              onToggle={() => handleToggle(category.id)}
+            />
+          ))}
+        </div>
       </section>
 
       {/* Buttons section */}
       <section className={'d-flex justify-content-center align-items-center gap-4 mb-5'}>
         <Button variant={'outline-primary'} className={'fw-bold pc-btn-back'} onClick={handleBack}>Back</Button>
-        <Button variant={'outline-primary'} className={'fw-bold pc-btn-download'} onClick={handleDownload} disabled={true}>Download</Button>
+        <Button variant={'outline-primary'} className={'fw-bold pc-btn-download'} onClick={handleDownload}
+                disabled={true}>Download</Button>
       </section>
     </Container>
   )
