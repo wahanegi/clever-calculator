@@ -1,13 +1,13 @@
 .accordion-button {
-  background-color: $light !important;
-  border-radius: 8px !important;
-  border: 1px solid $primary;
   padding: 22.4px;
+  border: 1px solid $primary;
+  border-radius: 8px !important;
+  background-color: $light !important;
   transition: border-radius 0.8s ease-out;
 
   &:not(.collapsed) {
-    border-radius: 8px 8px 0 0 !important;
     border-bottom: 1px solid $teal-blue;
+    border-radius: 8px 8px 0 0 !important;
   }
 }
 
@@ -26,5 +26,14 @@
 }
 
 .accordion-bottom-filling {
-    height: 24px;
+  height: 24px;
+}
+
+.pc-accordion-quote {
+  .accordion-button {
+    padding: 0;
+    border: transparent;
+    background-color: $white !important;
   }
+
+}

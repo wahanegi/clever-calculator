@@ -38,6 +38,8 @@ import disableExpandUrl from '../../../assets/images/icons/expand-disable.svg'
 import expandUrl from '../../../assets/images/icons/expand.svg'
 import logoUrl from '../../../assets/images/icons/logo.svg'
 import logoutUrl from '../../../assets/images/icons/logout.svg'
+import noteUrl from '../../../assets/images/icons/note.svg'
+import notedUrl from '../../../assets/images/icons/noted.svg'
 import placeholderUrl from '../../../assets/images/icons/placeholder.svg'
 
 export const IMAGE_ASSETS = {
@@ -53,6 +55,8 @@ export const IMAGE_ASSETS = {
     expand: expandUrl,
     accordionArrowUp: accordionArrowUpUrl,
     accordionArrowDown: accordionArrowDownUrl,
+    note: noteUrl,
+    noted: notedUrl,
   },
   // future asset files can be added here
 }

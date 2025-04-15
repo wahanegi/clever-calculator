@@ -1,42 +1,39 @@
 import React, { useState } from 'react'
-import { Button, Container } from 'react-bootstrap'
+import { Button, Container, Form } from 'react-bootstrap'
 import { useAppHooks } from '../hooks'
-import { ItemsPricingTopBar, QuoteCreation, ROUTES } from '../shared'
-import { PcAccordion } from '../ui'
+import { ItemsPricingTopBar, ItemTotalPrice, QuoteCreation, ROUTES } from '../shared'
+import { PcAccordion, PcItemAccordion, PcItemFormGroup, PcItemTextareaControl } from '../ui'
 import { getCurrentStepId } from '../utils'
 
 export const ItemsPricing = () => {
   const { navigate, queryParams, location } = useAppHooks()
-  const quoteId = queryParams.get('quote_id')
-  const currentStepId = getCurrentStepId(location.pathname)
-  const totalPrice = 123 // TODO: get total price from BE
 
   const [selectedCategories, setSelectedCategories] = useState([])
   const [expandedAccordions, setExpandedAccordions] = useState([]) // array of IDs
+  const [isNotesShow, setIsNotesShow] = useState(false)
+  const [notesValue, setNotesValue] = useState('')
+  const [includeNotes, setIncludeNotes] = useState(false)
+
+  const quoteId = queryParams.get('quote_id')
+  const currentStepId = getCurrentStepId(location.pathname)
+  const totalPrice = 123 // TODO: get total price from BE
+  const notesIcon = notesValue.trim() ? 'noted' : 'note'
 
   const handleToggle = (id) => {
     setExpandedAccordions((prev) =>
       prev.includes(id) ? prev.filter(item => item !== id) : [...prev, id],
     )
   }
-
-  const expandAll = () => {
-    setExpandedAccordions(selectedCategories.map(category => category.id))
-  }
-
-  const collapseAll = () => {
-    setExpandedAccordions([])
-  }
-
+  const expandAll = () => setExpandedAccordions(selectedCategories.map(category => category.id))
+  const collapseAll = () => setExpandedAccordions([])
   const handleDownload = () => {
     // await fetchQuotes.update(quoteId, {
     //   quote: { step: STEPS.COMPLETED },
     // })
   }
-
-  const handleBack = () => {
-    navigate(ROUTES.CUSTOMER_INFO)
-  }
+  const handleBack = () => navigate(ROUTES.CUSTOMER_INFO)
+  const handleIncludeNotes = (e) => setIncludeNotes(e.target.checked)
+  const handleNotesValue = (e) => setNotesValue(e.target.value)
 
   return (
     <Container className={'wrapper'}>
@@ -60,18 +57,47 @@ export const ItemsPricing = () => {
         }
       </section>
 
-      <section className={'mb-8'}>
+      <section className={'d-flex flex-column gap-4 mb-8'}>
+        {selectedCategories.length > 0 && selectedCategories.map((category) => (
+          <PcAccordion
+            key={category.id}
+            categoryName={category.name}
+            isOpen={expandedAccordions.includes(category.id)}
+            onToggle={() => handleToggle(category.id)}
+          >
+            {/*List of items */}
+            <div className={'d-flex flex-column gap-5'}>
+              {/*TODO: Example of Fixed Price. Will be changed after adding logic*/}
+              <PcItemAccordion
+                key={'fixed-price'}
+                itemName={'Decision Success'}
+                isNotesShow={isNotesShow}
+                setIsNotesShow={setIsNotesShow}
+                notesIcon={notesIcon}
+              >
+                <ItemTotalPrice name={''} className={'mb-4'} />
 
-        <div className={'d-flex flex-column gap-4'}>
-          {selectedCategories.length > 0 && selectedCategories.map((category) => (
-            <PcAccordion
-              key={category.id}
-              category={category.name}
-              isOpen={expandedAccordions.includes(category.id)}
-              onToggle={() => handleToggle(category.id)}
-            />
-          ))}
-        </div>
+                {isNotesShow &&
+                  <PcItemFormGroup label={'Notes'} itemType={'notes'}>
+                    <PcItemTextareaControl
+                      placeholder={''}
+                      className={'mb-3'}
+                      value={notesValue}
+                      onChange={handleNotesValue}
+                    />
+                    <Form.Check
+                      type={'checkbox'}
+                      label={`Include notes with quote`}
+                      className={'fs-10'}
+                      checked={includeNotes}
+                      onChange={handleIncludeNotes}
+                    />
+                  </PcItemFormGroup>
+                }
+              </PcItemAccordion>
+            </div>
+          </PcAccordion>
+        ))}
       </section>
 
       {/* Buttons section */}
