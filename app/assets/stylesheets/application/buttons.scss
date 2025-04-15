@@ -1,10 +1,7 @@
-.pc-btn {
-  width: 96px;
-  height: 38px;
-  font-family: $font-family-lato;
-
+// Base styles
+.btn {
   // styles for variant="primary"
-  &.primary {
+  &-primary {
     color: white !important;
 
     &:hover,
@@ -22,36 +19,39 @@
       color: $text-gray-disable !important;
       background: $white !important;
     }
+  }
 
-    &.warning {
+  // styles for variant="warning"
+  &-warning {
+    color: $white;
+    border-color: $coral-primary !important;
+    background: $coral-primary !important;
+
+    &:hover,
+    &:focus {
+      color: $white;
       border-color: $coral-primary !important;
       background: $coral-primary !important;
+    }
 
-      &:hover,
-      &:focus {
-        border-color: $coral-primary !important;
-        background: $coral-primary !important;
-      }
+    &:focus-visible {
+      box-shadow: $coral-light 0px 0px 0px 4px;
+    }
 
-      &:focus-visible {
-        box-shadow: $coral-light 0px 0px 0px 4px;
-      }
+    &:active {
+      border-color: $coral-dark !important;
+      background: $coral-dark !important;
+    }
 
-      &:active {
-        border-color: $coral-dark !important;
-        background: $coral-dark !important;
-      }
-
-      &:disabled {
-        border-color: $coral-light !important;
-        color: $text-coral !important;
-        background-color: $coral-light !important;
-      }
+    &:disabled {
+      border-color: $coral-light !important;
+      color: $text-coral !important;
+      background-color: $coral-light !important;
     }
   }
 
   // styles for variant="outline-primary"
-  &.outline-primary {
+  &-outline-primary {
     color: $primary !important;
     background-color: $white;
 
@@ -70,32 +70,26 @@
       border-color: $gray-light !important;
       color: $text-gray-disable !important;
     }
-
-    &.warning {
-      border-color: $coral-primary !important;
-      color: $coral-primary !important;
-
-      &:hover,
-      &:focus {
-        border-color: $coral-primary !important;
-        background: inherit !important;
-      }
-
-      &:focus-visible {
-        box-shadow: $coral-light 0px 0px 0px 4px;
-      }
-
-      &:active {
-        border-color: $coral-dark !important;
-        color: $white !important;
-        background: $coral-dark !important;
-      }
-
-      &:disabled {
-        border: $coral-light !important;
-        color: $text-coral !important;
-        background: $coral-light !important;
-      }
-    }
   }
 }
+
+// Additional styles for buttons
+.pc-btn {
+  &-reset, &-back, &-download, &-next {
+    height: 38px;
+  }
+
+  &-reset {
+    width: 103.71px;
+    font-family: $font-family-lato !important;
+  }
+
+  &-back,  &-next {
+    width: 96px;
+  }
+
+  &-download {
+    width: 106px;
+  }
+}
+
