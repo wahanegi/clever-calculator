@@ -21,10 +21,13 @@ ActiveAdmin.register Item do
     actions defaults: false do |resource|
       item("View", admin_item_path(resource), class: "member_link")
       item("Edit", edit_admin_item_path(resource), class: "member_link")
-      item(resource.is_disabled? ? "Enable" : "Disable", toggle_admin_item_path(resource),
-            method: :put,
-            data: { confirm: "Are you sure?" },
-            class: "member_link")
+    
+      unless resource.category&.is_disabled?
+        item(resource.is_disabled? ? "Enable" : "Disable", toggle_admin_item_path(resource),
+             method: :put,
+             data: { confirm: "Are you sure?" },
+             class: "member_link")
+      end
     end
   end
 
@@ -213,12 +216,16 @@ ActiveAdmin.register Item do
   end
 
   action_item :toggle, only: :show do
-    link_to(
-      resource.is_disabled? ? "Enable item" : "Disable item", 
-      toggle_admin_item_path(resource),
-      method: :put,
-      data: { confirm: "Are you sure?" })
+    unless resource.category&.is_disabled?
+      link_to(
+        resource.is_disabled? ? "Enable item" : "Disable item", 
+        toggle_admin_item_path(resource),
+        method: :put,
+        data: { confirm: "Are you sure?" }
+      )
+    end
   end
+  
 
   member_action :toggle, method: :put do
     resource.update(is_disabled: !resource.is_disabled)
