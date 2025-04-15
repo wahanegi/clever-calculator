@@ -1,3 +1,9 @@
+<% def render_delete_button(path, confirm_message) %>
+  <%= link_to "Delete", path, method: :delete, data: { confirm: confirm_message } %>
+<% end %>
+
+<% item_key = item.id || "new" %>
+
 <% if fixed_parameters.any? %>
   <h3>Fixed Parameters</h3>
   <table class="parameter-table">
@@ -17,8 +23,10 @@
           <td><%= value %></td>
           <% if mode == :edit %>
             <td>
-              <%= link_to "Delete", remove_parameter_admin_item_path(item, param_type: :fixed, param_key: name.to_s),
-                          method: :delete, data: { confirm: "Delete fixed param '#{name}'?" } %>
+              <%= render_delete_button(
+                remove_parameter_admin_item_path(item_key, param_type: :fixed, param_key: name.to_s),
+                "Delete fixed param '#{name}'?"
+              ) %>
             </td>
           <% end %>
         </tr>
@@ -46,8 +54,10 @@
           <td>Value is entered by the user</td>
           <% if mode == :edit %>
             <td>
-              <%= link_to "Delete", remove_parameter_admin_item_path(item, param_type: :open, param_key: label),
-                          method: :delete, data: { confirm: "Delete open param '#{label}'?" } %>
+              <%= render_delete_button(
+                remove_parameter_admin_item_path(item_key, param_type: :open, param_key: label),
+                "Delete open param '#{label}'?"
+              ) %>
             </td>
           <% end %>
         </tr>
@@ -62,9 +72,10 @@
     <h4>
       Select name: <%= sel_name %>
       <% if mode == :edit %>
-        <%= link_to "[Delete #{sel_name} parameter]",
-                    remove_parameter_admin_item_path(item, param_type: :select, param_key: sel_name),
-                    method: :delete, data: { confirm: "Delete whole select '#{sel_name}' and its options?" } %>
+        <%= render_delete_button(
+          remove_parameter_admin_item_path(item_key, param_type: :select, param_key: sel_name),
+          "Delete whole select '#{sel_name}' and its options?"
+        ) %>
       <% end %>
     </h4>
     <table class="parameter-table">
@@ -72,9 +83,6 @@
         <tr>
           <th>Options</th>
           <th>Value</th>
-          <% if mode == :edit %>
-            <th>Actions</th>
-          <% end %>
         </tr>
       </thead>
       <tbody>
@@ -82,13 +90,6 @@
           <tr>
             <td><%= desc %></td>
             <td><%= val %></td>
-            <% if mode == :edit %>
-              <td>
-                <%= link_to "Delete",
-                            remove_parameter_admin_item_path(item, param_type: :select, param_key: sel_name, desc_key: desc),
-                            method: :delete, data: { confirm: "Delete option '#{desc}' from select '#{sel_name}'?" } %>
-              </td>
-            <% end %>
           </tr>
         <% end %>
       </tbody>

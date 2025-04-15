@@ -1,20 +1,5 @@
 //= require active_admin/base
 
-const updatePricingType = (pricing_type) => {
-  switch (pricing_type) {
-    case 'fixed':
-      showPricingForm(true, false, false)
-      break
-    case 'open':
-      showPricingForm(false, true, false)
-      break
-    case 'fixed_open':
-      showPricingForm(false, false, true)
-      break
-    default:
-      showPricingForm(false, false, false); //  Hide all if pricing_type is unknown
-  }
-}
 
 const showPricingForm = (fixed, open, fixed_open) => {
   const fixedSection = document.querySelector('#pricing_fixed')
@@ -67,3 +52,71 @@ document.addEventListener("DOMContentLoaded", function () {
 
   toggleFields();
 });
+
+
+document.addEventListener("DOMContentLoaded", function () {
+  const addParamLinks = document.querySelectorAll(".store-and-navigate");
+
+  if (!addParamLinks.length) return;
+
+  addParamLinks.forEach(link => {
+    link.addEventListener("click", function (event) {
+      event.preventDefault();
+
+      const nameField = document.querySelector("#item_name");
+      const descriptionField = document.querySelector("#item_description");
+      const categoryField = document.querySelector("#item_category_id");
+
+      const data = {
+        name: nameField?.value || "",
+        description: descriptionField?.value || "",
+        category_id: categoryField?.value || ""
+      };
+
+      const itemId = link.dataset.itemId || "new"; // 💡 правильний спосіб
+
+      fetch(`/admin/items/${itemId}/save_meta_to_session`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]').content
+        },
+        body: JSON.stringify(data)
+      }).then(response => {
+        if (response.ok) {
+          window.location.href = link.dataset.redirect; // 💥 редірект тільки після успіху
+        } else {
+          alert("⚠️ Failed to save temporary data to session");
+        }
+      });
+    });
+  });
+});
+
+
+// clear new item session
+document.addEventListener("DOMContentLoaded", function () {
+  const newItemLink = document.querySelector('a[href$="/admin/items/new"]');
+
+  if (newItemLink) {
+    newItemLink.addEventListener("click", function (event) {
+      event.preventDefault();
+
+      fetch("/admin/items/new/clear_session", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]').content
+        },
+      })
+        .then((response) => {
+          if (response.ok) {
+            window.location.href = "/admin/items/new"; 
+          } else {
+            alert("❌ Session clear failed");
+          }
+        });
+    });
+  }
+});
+
