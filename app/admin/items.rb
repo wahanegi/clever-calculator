@@ -1,13 +1,15 @@
 ActiveAdmin.register Item do
-  permit_params :name, :description, :category_id, :is_disabled,
-              :is_fixed, :is_open, :is_selectable_options,
-              :fixed_parameters, :open_parameters_label,
-              :calculation_formula
+  permit_params do
+    %i[
+      name description category_id is_disabled is_fixed is_open is_selectable_options
+      fixed_parameters pricing_options open_parameters_label formula_parameters calculation_formula
+    ]
+  end
 
   filter :name_cont, as: :string, label: "Product Name"
   filter :category, as: :select, collection: -> { Category.pluck(:name, :id) }, label: "Category"
   filter :is_disabled, label: "Disabled"
-            
+
   index do
     id_column
     column :name
@@ -20,7 +22,7 @@ ActiveAdmin.register Item do
     actions defaults: false do |resource|
       item("View", admin_item_path(resource), class: "member_link")
       item("Edit", edit_admin_item_path(resource), class: "member_link")
-    
+
       unless resource.category&.is_disabled?
         item(resource.is_disabled? ? "Enable" : "Disable", toggle_admin_item_path(resource),
              method: :put,
@@ -53,20 +55,20 @@ ActiveAdmin.register Item do
     div class: "add-param-link-wrapper" do
       item_id = f.object.persisted? ? f.object.id.to_s : "new"
       formula_label = f.object.calculation_formula.present? ? "Update Calculation Formula" : "Create Calculation Formula"
-    
+
       para do
-        concat(link_to "Add Parameter", "#", class: "button store-and-navigate", data: {
-          redirect: new_parameter_admin_item_path(id: item_id),
-          item_id: item_id
-        })
-      
-        concat(link_to formula_label, "#", class: "button store-and-navigate", data: {
-          redirect: new_formula_admin_item_path(id: item_id),
-          item_id: item_id
-        })
-      end    
+        concat(link_to("Add Parameter", "#", class: "button store-and-navigate", data: {
+                         redirect: new_parameter_admin_item_path(id: item_id),
+                         item_id: item_id
+                       }))
+
+        concat(link_to(formula_label, "#", class: "button store-and-navigate", data: {
+                         redirect: new_formula_admin_item_path(id: item_id),
+                         item_id: item_id
+                       }))
+      end
     end
-        
+
     f.inputs "Pricing Parameters" do
       f.input :formula_parameters, as: :hidden
       div class: "formula-preview" do
@@ -77,14 +79,13 @@ ActiveAdmin.register Item do
           span class: "formula-label" do
             "Calculation Formula:"
           end
-        
+
           span class: "formula" do
             item_key = f.object.persisted? ? f.object.id.to_s : "new"
             session_formula = controller.view_context.session.dig(:tmp_params, item_key, "calculation_formula")
             f.object.calculation_formula.presence || session_formula.presence || "No formula yet"
           end
         end
-        
       end
 
       item_key = f.object.persisted? ? f.object.id.to_s : "new"
@@ -131,8 +132,7 @@ ActiveAdmin.register Item do
         end
       end
     end
-    
-    
+
     panel "Pricing Parameters" do
       render partial: "admin/items/parameters", locals: {
         fixed_parameters: item.fixed_parameters || {},
@@ -163,7 +163,7 @@ ActiveAdmin.register Item do
     def edit
       @item = Item.find(params[:id])
       item_key = @item.id.to_s
-    
+
       session[:tmp_params] ||= {}
       session[:tmp_params][item_key] ||= {
         fixed: @item.fixed_parameters || {},
@@ -172,22 +172,22 @@ ActiveAdmin.register Item do
         formula_parameters: @item.formula_parameters || [],
         calculation_formula: @item.calculation_formula
       }
-    
+
       super
     end
 
     def update
       @item = Item.find(params[:id])
       item_key = @item.id.to_s
-      
+
       apply_tmp_params(@item, session[:tmp_params][item_key]) if session[:tmp_params]&.key?(item_key)
-      
+
       if @item.update(permitted_params[:item])
         session[:tmp_params]&.delete(item_key)
         redirect_to admin_item_path(@item), notice: "Item was successfully updated."
       else
-      flash[:error] = "Failed to update item"
-      render :edit
+        flash[:error] = "Failed to update item"
+        render :edit
       end
     end
 
@@ -195,13 +195,14 @@ ActiveAdmin.register Item do
 
     def apply_tmp_params(item, tmp)
       return unless tmp.present?
-  
+
       data = tmp.deep_symbolize_keys
       item.fixed_parameters       = data[:fixed] || {}
       item.open_parameters_label  = data[:open] || []
       item.pricing_options        = data[:select] || {}
       item.formula_parameters     = data[:formula_parameters] || []
-  
+      item.calculation_formula    = data[:calculation_formula]
+
       item.is_open                = item.open_parameters_label.any?
       item.is_selectable_options  = item.pricing_options.any?
       item.is_fixed               = item.fixed_parameters.any?
@@ -209,7 +210,7 @@ ActiveAdmin.register Item do
       Rails.logger.info "🧠 APPLY TMP: formula_parameters = #{item.formula_parameters.inspect}"
     end
   end
-  
+
   actions :all, except: [:destroy]
 
   action_item :back, only: :show do
@@ -219,14 +220,13 @@ ActiveAdmin.register Item do
   action_item :toggle, only: :show do
     unless resource.category&.is_disabled?
       link_to(
-        resource.is_disabled? ? "Enable item" : "Disable item", 
+        resource.is_disabled? ? "Enable item" : "Disable item",
         toggle_admin_item_path(resource),
         method: :put,
         data: { confirm: "Are you sure?" }
       )
     end
   end
-  
 
   member_action :toggle, method: :put do
     resource.update(is_disabled: !resource.is_disabled)
@@ -243,67 +243,68 @@ ActiveAdmin.register Item do
 
     session[:tmp_params] ||= {}
     session[:tmp_params][item_key] ||= {}
-  
+
     Rails.logger.info "🔑 item_key: #{item_key}"
     Rails.logger.info "📦 Session before: #{session[:tmp_params][item_key]}"
-  
+
     store = session[:tmp_params][item_key].deep_symbolize_keys
     store[:fixed] ||= {}
     store[:open] ||= []
     store[:select] ||= {}
     store[:formula_parameters] ||= []
-  
+
     param_type = params[:parameter_type]
     param_name = case param_type
                  when "Fixed"  then params[:fixed_parameter_name].to_s.strip
                  when "Open"   then params[:open_parameter_name].to_s.strip
                  when "Select" then params[:select_parameter_name].to_s.strip
                  end
-  
+
     if param_name.blank?
       flash[:error] = "Parameter name can't be blank"
       return redirect_back(fallback_location: edit_admin_item_path(@item))
     end
-  
+
     store[:formula_parameters] << param_name unless store[:formula_parameters].include?(param_name)
-  
+
     case param_type
     when "Fixed"
       param_value = params[:fixed_parameter_value]
       store[:fixed][param_name] = param_value
-  
+
     when "Open"
       store[:open] << param_name unless store[:open].include?(param_name)
-  
+
     when "Select"
       sub_hash = {}
       (1..10).each do |i|
         desc = params["option_description_#{i}"]
         val  = params["option_value_#{i}"]
         next if desc.blank? || val.blank?
+
         sub_hash[desc] = val
       end
       store[:select][param_name] = sub_hash if sub_hash.any?
-  
+
     else
       flash[:error] = "Unknown parameter type"
       return redirect_back(fallback_location: edit_admin_item_path(@item))
     end
-  
+
     session[:tmp_params][item_key] = store.deep_stringify_keys
-  
+
     Rails.logger.info "📤 Session after update: #{session[:tmp_params][item_key]}"
-  
+
     flash[:notice] = "Parameter '#{param_name}' added (stored in session)."
     redirect_to @item.persisted? ? edit_admin_item_path(@item) : new_resource_path
   end
-  
+
   member_action :remove_parameter, method: :delete do
     Rails.logger.info "🧩 REMOVE PARAMETER"
     @item = params[:id] == "new" ? Item.new : Item.find(params[:id])
     item_key = @item.persisted? ? @item.id.to_s : "new"
     Rails.logger.info "🔑 item_key: #{item_key}"
-  
+
     session[:tmp_params] ||= {}
     session[:tmp_params][item_key] ||= {
       fixed: {},
@@ -311,58 +312,58 @@ ActiveAdmin.register Item do
       select: {},
       formula_parameters: []
     }
-  
+
     store = session[:tmp_params][item_key].deep_symbolize_keys
     param_type = params[:param_type].to_s
     key = params[:param_key].to_s
     desc_key = params[:desc_key].to_s if params[:desc_key].present?
-  
+
     Rails.logger.info "📦 Session before delete: #{store}"
     Rails.logger.info "🛠 Param type: #{param_type}, Key: #{key}, Desc key: #{desc_key}"
-  
+
     case param_type
     when "fixed"
       store[:fixed]&.delete(key.to_sym)
       store[:formula_parameters]&.delete(key)
       Rails.logger.info "🗑 Deleted fixed #{key}"
-  
+
     when "open"
       store[:open]&.delete(key)
       store[:formula_parameters]&.delete(key)
       Rails.logger.info "🗑 Deleted open #{key}"
-  
+
     when "select"
       key_str = key.to_s
       if desc_key.present?
         store[:select][key_str]&.delete(desc_key)
-        store[:select].delete(key_str) if store[:select][key_str]&.empty?
+        store[:select].delete(key_str) if store[:select][key_str] && store[:select][key_str].empty?
         Rails.logger.info "🗑 Deleted desc #{desc_key} from #{key_str}"
       else
         store[:select] = store[:select].reject { |k, _| k.to_s == key_str }
         Rails.logger.info "🗑 Deleted whole select #{key_str}"
       end
       store[:formula_parameters]&.delete(key_str)
-  
+
     else
       Rails.logger.warn "⚠️ Unknown param_type=#{param_type}"
     end
-  
+
     session[:tmp_params][item_key] = store.deep_stringify_keys
-  
+
     Rails.logger.info "📦 Session after delete: #{session[:tmp_params][item_key]}"
     redirect_to @item.persisted? ? edit_admin_item_path(@item) : new_resource_path
-  end     
+  end
 
   member_action :save_meta_to_session, method: :post do
     item_key = params[:id] == "new" ? "new" : params[:id].to_s
-  
+
     session[:tmp_params] ||= {}
     session[:tmp_params][item_key] ||= {}
     session[:tmp_params][item_key]["name"] = params[:name]
     session[:tmp_params][item_key]["description"] = params[:description]
     session[:tmp_params][item_key]["category_id"] = params[:category_id]
-  
-    Rails.logger.info "💾 Saved to session: #{session[:tmp_params][item_key].slice("name", "description", "category_id")}"
+
+    Rails.logger.info "💾 Saved to session: #{session[:tmp_params][item_key].slice('name', 'description', 'category_id')}"
 
     head :ok
   end
@@ -370,43 +371,42 @@ ActiveAdmin.register Item do
   member_action :new_formula, method: :get do
     @item = params[:id] == "new" ? Item.new : Item.find(params[:id])
     item_key = @item.persisted? ? @item.id.to_s : "new"
-  
+
     session[:tmp_params] ||= {}
     store = session[:tmp_params][item_key] || {}
-  
+
     @formula_params = store["formula_parameters"] || []
     @initial_formula = store["calculation_formula"] || @item.calculation_formula
   end
-  
 
   member_action :update_formula, method: :post do
     if params[:id] == "new"
       session[:tmp_params] ||= {}
       session[:tmp_params]["new"] ||= {}
       session[:tmp_params]["new"]["calculation_formula"] = params[:calculation_formula]
-  
+
       flash[:notice] = "Formula saved (in session)!"
       redirect_to new_resource_path
     else
       @item = Item.find(params[:id])
       @item.calculation_formula = params[:calculation_formula]
-  
+
       if @item.save
         flash[:notice] = "Formula saved!"
       else
         flash[:error] = "Failed to save formula: #{@item.errors.full_messages.to_sentence}"
       end
-  
+
       redirect_to edit_admin_item_path(@item)
     end
-  end  
+  end
 
   member_action :clear_session, method: :post do
     if params[:id] == "new"
       session[:tmp_params]&.delete("new")
       Rails.logger.info "🧹 Session[:tmp_params][\"new\"] cleared via JS"
     end
-  
+
     head :ok
   end
 end
