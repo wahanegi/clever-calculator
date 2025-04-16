@@ -194,7 +194,7 @@ ActiveAdmin.register Item do
     private
 
     def apply_tmp_params(item, tmp)
-      return unless tmp.present?
+      return if tmp.blank?
 
       data = tmp.deep_symbolize_keys
       item.fixed_parameters       = data[:fixed] || {}

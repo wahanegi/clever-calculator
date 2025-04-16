@@ -13,7 +13,7 @@ class ItemUpdater
     reset_all_fields(pricing)
     update_by_pricing_type(pricing)
     persist!(pricing)
-  rescue ActiveRecord::RecordInvalid => e
+  rescue ActiveRecord::RecordInvalid
     false
   end
 
@@ -60,12 +60,12 @@ class ItemUpdater
   def update_open(pricing)
     labels_string = params.dig("item_pricing_attributes", "open_parameters_label_as_string")
     labels = labels_string.to_s.split(',').map(&:strip).reject(&:blank?)
-  
+
     pricing.open_parameters_label = labels
     pricing.is_open = labels.any?
   end
 
-  def update_fixed_open(pricing)
+  def update_fixed_open(pricing) # rubocop:disable Metrics/AbcSize
     return unless session_data
 
     data = session_data.deep_symbolize_keys

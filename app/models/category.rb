@@ -1,8 +1,8 @@
 class Category < ApplicationRecord
   ASCII_CHARACTERS = /\A[[:ascii:]]*\z/
-  
-  has_many :items
-  
+
+  has_many :items, dependent: :nullify
+
   normalizes :name, with: ->(name) { name.gsub(/\s+/, ' ').strip }
 
   after_update :disable_related_items_if_disabled
@@ -30,6 +30,6 @@ class Category < ApplicationRecord
   def disable_related_items_if_disabled
     return unless saved_change_to_is_disabled? && is_disabled?
 
-    items.update_all(is_disabled: true)
+    items.update_all(is_disabled: true) # rubocop:disable Rails/SkipsModelValidations
   end
 end
