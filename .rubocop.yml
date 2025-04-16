@@ -101,3 +101,13 @@ Metrics/PerceivedComplexity:
     - spec/**/*_spec.rb
     - app/helpers/**/*.rb
     - config/**/*.rb
+
+Metrics/ClassLength:
+  Exclude:
+    - db/seeds/**/*.rb
+    - lib/tasks/**/*.rake
+    - app/admin/**/*.rb
+    - db/migrate/**/*.rb
+    - spec/**/*_spec.rb
+    - app/helpers/**/*.rb
+    - config/**/*.rb
