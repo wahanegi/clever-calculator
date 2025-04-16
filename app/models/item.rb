@@ -6,6 +6,7 @@ class Item < ApplicationRecord
   validate :category_must_be_active
   validate :fixed_parameters_values_must_be_numeric
   validate :pricing_options_values_must_be_numeric
+  validates :calculation_formula, presence: true, if: :requires_calculation_formula?
 
   def self.ransackable_attributes(_auth_object = nil)
     %w[category_id created_at id is_disabled name updated_at]
@@ -62,5 +63,9 @@ class Item < ApplicationRecord
     rescue ArgumentError, TypeError
       false
     end
+  end
+
+  def requires_calculation_formula?
+    is_fixed || is_open || is_selectable_options
   end
 end
