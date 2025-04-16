@@ -1,8 +1,7 @@
 ActiveAdmin.register Item do
   permit_params :name, :description, :category_id, :is_disabled,
               :is_fixed, :is_open, :is_selectable_options,
-              :fixed_parameters, :pricing_options,
-              :open_parameters_label, :formula_parameters,
+              :fixed_parameters, :open_parameters_label,
               :calculation_formula
 
   filter :name_cont, as: :string, label: "Product Name"
@@ -206,6 +205,8 @@ ActiveAdmin.register Item do
       item.is_open                = item.open_parameters_label.any?
       item.is_selectable_options  = item.pricing_options.any?
       item.is_fixed               = item.fixed_parameters.any?
+
+      Rails.logger.info "🧠 APPLY TMP: formula_parameters = #{item.formula_parameters.inspect}"
     end
   end
   
