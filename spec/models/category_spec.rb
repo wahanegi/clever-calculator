@@ -23,10 +23,10 @@ RSpec.describe Category, type: :model do
       end
 
       it 'allows duplicate names for disabled categories' do
-        category = create(:category, is_disabled: true)
+        category = create(:category, :disabled)
 
         2.times do
-          duplicate_category = build(:category, is_disabled: true, name: category.name)
+          duplicate_category = build(:category, :disabled, name: category.name)
 
           expect(duplicate_category).to be_valid
           expect(duplicate_category.errors[:name]).to be_empty
