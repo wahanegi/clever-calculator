@@ -73,7 +73,7 @@ document.addEventListener("DOMContentLoaded", function () {
         category_id: categoryField?.value || ""
       };
 
-      const itemId = link.dataset.itemId || "new"; // 💡 правильний спосіб
+      const itemId = link.dataset.itemId || "new";
 
       fetch(`/admin/items/${itemId}/save_meta_to_session`, {
         method: "POST",
@@ -84,7 +84,7 @@ document.addEventListener("DOMContentLoaded", function () {
         body: JSON.stringify(data)
       }).then(response => {
         if (response.ok) {
-          window.location.href = link.dataset.redirect; // 💥 редірект тільки після успіху
+          window.location.href = link.dataset.redirect;
         } else {
           alert("⚠️ Failed to save temporary data to session");
         }
@@ -162,7 +162,6 @@ document.addEventListener("DOMContentLoaded", () => {
       <button type="button" class="delete-option-button button light">Delete</button>
     `;
 
-    // кнопка Delete
     row.querySelector(".delete-option-button").addEventListener("click", () => {
       if (wrapper.querySelectorAll(".select-option-row").length > 2) {
         row.remove();
@@ -174,13 +173,12 @@ document.addEventListener("DOMContentLoaded", () => {
     return row;
   };
 
-  // Додати новий рядок
   addBtn.addEventListener("click", () => {
     const newRow = createOptionRow();
     wrapper.appendChild(newRow);
   });
 
-  // Додати обробники на існуючі 2 рядки
+
   wrapper.querySelectorAll(".select-option-row").forEach((row) => {
     const delBtn = row.querySelector(".delete-option-button");
     delBtn.addEventListener("click", () => {

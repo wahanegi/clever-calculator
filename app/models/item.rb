@@ -5,7 +5,7 @@ class Item < ApplicationRecord
   validates :name, uniqueness: { scope: :category_id, message: "Item name must be unique within category" }
   validate :category_must_be_active
   validate :fixed_parameters_values_must_be_numeric
-  # validate :pricing_options_values_must_be_numeric
+  validate :pricing_options_values_must_be_numeric
   validates :calculation_formula, presence: true, if: :requires_calculation_formula?
 
   def self.ransackable_attributes(_auth_object = nil)
@@ -29,26 +29,29 @@ class Item < ApplicationRecord
   end
 
   def pricing_options_values_must_be_numeric
-    validate_jsonb_numeric_values(:pricing_options)
+    validate_jsonb_numeric_values(:pricing_options) do |key_path, val|
+      key_path.last != 'value_label' && !numeric?(val)
+    end
   end
 
-  def validate_jsonb_numeric_values(attribute)
+  def validate_jsonb_numeric_values(attribute, &block)
     value = self[attribute] || {}
     unless value.is_a?(Hash)
       errors.add(attribute, "must be a JSON object")
       return
     end
 
-    validate_nested_numeric_values(value, attribute)
+    validate_nested_numeric_values(value, attribute, [], &block)
   end
 
-  def validate_nested_numeric_values(hash, attribute, key_path = [])
+  def validate_nested_numeric_values(hash, attribute, key_path = [], &block)
     hash.each do |key, val|
       current_path = key_path + [key]
       if val.is_a?(Hash)
-        validate_nested_numeric_values(val, attribute, current_path)
+        validate_nested_numeric_values(val, attribute, current_path, &block)
       else
-        errors.add(attribute, "value for '#{current_path.join(' -> ')}' must be a number") unless numeric?(val)
+        should_error = block_given? ? yield(current_path, val) : !numeric?(val)
+        errors.add(attribute, "value for '#{current_path.join(' -> ')}' must be a number") if should_error
       end
     end
   end
