@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react'
-import { Row, Col, Form, Button } from 'react-bootstrap'
-import { PcDropdownSelect, PcCompanyLogoUploader, PcInput } from '../ui'
-import { ROUTES, STEPS } from './constants'
-import { fetchCustomers, fetchQuotes } from '../services'
+import { Button, Col, Form, Row } from 'react-bootstrap'
 import { useAppHooks } from '../hooks'
+import { fetchCustomers, fetchQuotes } from '../services'
+import { PcCompanyLogoUploader, PcDropdownSelect, PcInput } from '../ui'
 import { extractNames } from '../utils'
+import { ROUTES, STEPS } from './constants'
 
 export const CustomerForm = () => {
   const defaultCustomer = {
@@ -230,7 +230,7 @@ export const CustomerForm = () => {
           </Col>
         </Row>
       </div>
-      <Button type={'submit'} className="pc-btn-next" disabled={!customer.company_name}>
+      <Button type={'submit'} className="pc-btn" disabled={!customer.company_name}>
         Next
       </Button>
     </Form>

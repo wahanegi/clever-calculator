@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
 import { Button, Container, Form } from 'react-bootstrap'
 import { useAppHooks } from '../hooks'
-import { ItemsPricingTopBar, ItemTotalPrice, QuoteCreation, ROUTES } from '../shared'
-import { PcAccordion, PcItemAccordion, PcItemFormGroup, PcItemTextareaControl } from '../ui'
+import { DeleteItemModal, ItemsPricingTopBar, ItemTotalPrice, QuoteCreation, ROUTES } from '../shared'
+import { PcCategoryAccordion, PcItemAccordion, PcItemFormGroup, PcItemTextareaControl } from '../ui'
 import { getCurrentStepId } from '../utils'
 
 export const ItemsPricing = () => {
@@ -24,6 +24,11 @@ export const ItemsPricing = () => {
       prev.includes(id) ? prev.filter(item => item !== id) : [...prev, id],
     )
   }
+  const handleDeleteCategory = (categoryId) => {
+    setSelectedCategories((prev) => prev.filter((category) => category.id !== categoryId))
+    setExpandedAccordions((prev) => prev.filter((id) => id !== categoryId))
+  }
+
   const expandAll = () => setExpandedAccordions(selectedCategories.map(category => category.id))
   const collapseAll = () => setExpandedAccordions([])
   const handleDownload = () => {
@@ -59,13 +64,14 @@ export const ItemsPricing = () => {
 
       <section className={'d-flex flex-column gap-4 mb-8'}>
         {selectedCategories.length > 0 && selectedCategories.map((category) => (
-          <PcAccordion
+          <PcCategoryAccordion
             key={category.id}
             categoryName={category.name}
             isOpen={expandedAccordions.includes(category.id)}
             onToggle={() => handleToggle(category.id)}
+            onDelete={() => handleDeleteCategory(category.id)}
           >
-            {/*List of items */}
+            {/*TODO: Skeleton for displaying item inside accordion */}
             <div className={'d-flex flex-column gap-5'}>
               {/*TODO: Example of Fixed Price. Will be changed after adding logic*/}
               <PcItemAccordion
@@ -95,17 +101,21 @@ export const ItemsPricing = () => {
                   </PcItemFormGroup>
                 }
               </PcItemAccordion>
+
             </div>
-          </PcAccordion>
+          </PcCategoryAccordion>
         ))}
       </section>
 
       {/* Buttons section */}
       <section className={'d-flex justify-content-center align-items-center gap-4 mb-5'}>
-        <Button variant={'outline-primary'} className={'fw-bold pc-btn-back'} onClick={handleBack}>Back</Button>
-        <Button variant={'outline-primary'} className={'fw-bold pc-btn-download'} onClick={handleDownload}
+        <Button variant={'outline-primary'} className={'fw-bold pc-btn'} onClick={handleBack}>Back</Button>
+        <Button variant={'outline-primary'} className={'fw-bold pc-btn pc-btn-download'} onClick={handleDownload}
                 disabled={true}>Download</Button>
       </section>
+
+      {/*Modal for confirm delete/cancel category*/}
+      <DeleteItemModal />
     </Container>
   )
 }

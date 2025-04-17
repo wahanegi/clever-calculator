@@ -39,6 +39,10 @@ h2,
   line-height: 1.7;
 }
 
+.pc-ff-lato {
+  font-family: $font-family-lato;
+}
+
 // Utility Classes
 $custom-colors: (
   'gray': $gray,
@@ -53,6 +57,7 @@ $custom-colors: (
   'teal-dark': $teal-dark,
   'teal-light': $teal-light,
   'teal-blue': $teal-blue,
+  'dark-700': $dark-700,
 );
 
 @each $name, $color in $custom-colors {

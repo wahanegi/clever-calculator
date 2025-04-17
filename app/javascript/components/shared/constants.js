@@ -41,6 +41,10 @@ import logoutUrl from '../../../assets/images/icons/logout.svg'
 import noteUrl from '../../../assets/images/icons/note.svg'
 import notedUrl from '../../../assets/images/icons/noted.svg'
 import placeholderUrl from '../../../assets/images/icons/placeholder.svg'
+import trashDangerUrl from '../../../assets/images/icons/trash-danger.svg'
+import trashTwoUrl from '../../../assets/images/icons/trash-default.svg'
+import trashDefaultUrl from '../../../assets/images/icons/trash-default.svg'
+import trashUrl from '../../../assets/images/icons/trash.svg'
 
 export const IMAGE_ASSETS = {
   ICONS: {
@@ -57,6 +61,10 @@ export const IMAGE_ASSETS = {
     accordionArrowDown: accordionArrowDownUrl,
     note: noteUrl,
     noted: notedUrl,
+    trash: trashUrl,
+    trashTwo: trashTwoUrl,
+    trashDefault: trashDefaultUrl,
+    trashDanger: trashDangerUrl,
   },
   // future asset files can be added here
 }

@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { Accordion } from 'react-bootstrap'
-import { PcBtnAddRemoveNotes } from './PcBtnAddRemoveNotes'
+import { PcExtraActionBtn } from './PcExtraActionBtn'
 import { PcIcon } from './PcIcon'
 
 export const PcItemAccordion = ({
@@ -22,28 +22,38 @@ export const PcItemAccordion = ({
   }
 
   return (
-    <Accordion flush activeKey={isOpen ? ['0'] : []} bsPrefix>
-      <Accordion.Item eventKey="0" className={'pc-accordion-quote'}>
-        <Accordion.Header onClick={onToggle} className={'mb-3'}>
-          <div className={'d-flex align-items-center justify-content-between w-100'}>
-            <span className="fs-10 fw-medium lh-lg text-gray-750 p-0">{itemName}</span>
-            <div className="d-flex gap-4 align-items-center">
-              {!isOpen && <div className="fs-10 text-secondary">{`$ ${quotePrice}`}</div>}
-              {isOpen && (
-                <>
-                  <PcBtnAddRemoveNotes title={'Add item'} />
-                  <PcBtnAddRemoveNotes title={'Remove item'} disabled={true} />
-                </>)
-              }
-              <PcBtnAddRemoveNotes title={'Notes'} iconName={notesIcon} onClick={handleNotesShow} />
-              <PcIcon
-                name={isOpen ? 'accordionArrowUp' : 'accordionArrowDown'}
-                alt={isOpen ? 'Arrow pointing up' : 'Arrow pointing down'}
-                className={'ms-4'}
-              />
+    <Accordion flush activeKey={isOpen ? ['0'] : []} bsPrefix={'pc-item-accordion'}>
+      {/*<Accordion.Item eventKey="0" className={'pc-accordion-quote'}>*/}
+      <Accordion.Item eventKey="0">
+        <div className={'position-relative'}>
+          <Accordion.Header onClick={onToggle} className={'position-relative z-0 mb-3'}>
+            <div className={'d-flex align-items-center justify-content-between w-100'}>
+              <span className="fs-10 fw-medium lh-lg text-gray-750 p-0">{itemName}</span>
+              <div className="d-flex gap-4 align-items-center">
+                <PcIcon
+                  name={isOpen ? 'accordionArrowUp' : 'accordionArrowDown'}
+                  alt={isOpen ? 'Arrow pointing up' : 'Arrow pointing down'}
+                  className={'ms-4'}
+                />
+              </div>
+
             </div>
+          </Accordion.Header>
+
+          {/*Extra Accordion.Header elements. For involve button hydration error*/}
+          <div
+            className="pc-extra-actions position-absolute top-50 translate-middle-y d-flex align-items-center gap-5 z-1">
+            {!isOpen && <div className="fs-10 text-secondary">{`$ ${quotePrice}`}</div>}
+            {isOpen && (
+              <>
+                <PcExtraActionBtn children={'Add item'} />
+                <PcExtraActionBtn children={'Remove item'} disabled={true} />
+              </>)
+            }
+            <PcExtraActionBtn iconName={notesIcon} children={'Notes'} onClick={handleNotesShow} />
           </div>
-        </Accordion.Header>
+        </div>
+
         <Accordion.Body>
           {children}
           <hr className={'pc-hr-divider w-100 mt-9'} />

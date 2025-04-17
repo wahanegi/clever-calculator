@@ -4,7 +4,7 @@ import { MultiStepProgressBar } from './MultiStepProgressBar'
 
 export const QuoteCreation = ({ onClick, currentStepId, isBtnShow = true }) => {
   const ResetButton = () => (
-    <Button variant={'outline-primary'} className={'pc-btn-reset fw-medium'} onClick={onClick}>
+    <Button variant={'outline-primary'} className={'pc-btn pc-btn-reset fw-medium'} onClick={onClick}>
       Reset
     </Button>
   )

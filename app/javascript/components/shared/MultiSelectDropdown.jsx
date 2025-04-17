@@ -12,13 +12,13 @@ export const MultiSelectDropdown = ({
   selected,
   setSelected,
 }) => {
-  const [dropdownOpen, setDropdownOpen] = useState(false)
-  const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const [categories, setCategories] = useState([])
   const typeaheadRef = useRef()
+  const [categories, setCategories] = useState([])
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false)
+  const [isMenuOpen, setIsMenuOpen] = useState(false)
 
-  const handleFocus = () => setDropdownOpen(true)
-  const handleBlur = () => setDropdownOpen(false)
+  const handleFocus = () => setIsDropdownOpen(true)
+  const handleBlur = () => setIsDropdownOpen(false)
 
   const handleMenuOpen = (isOpen) => setIsMenuOpen(isOpen)
   const isSelected = (option) => selected.some(item => item.id === option.id)
@@ -53,9 +53,9 @@ export const MultiSelectDropdown = ({
           onChange={setSelected}
           onFocus={handleFocus}
           onBlur={handleBlur}
-          open={dropdownOpen}
-          multiple
           onMenuToggle={handleMenuOpen}
+          open={isDropdownOpen}
+          multiple
           className={'pc-typeahead-items-pricing'}
           renderMenuItemChildren={(option) => (
             <PcCheckboxOption
