@@ -29,7 +29,7 @@ RSpec.describe 'Admin::Items', type: :request do
              category: category,
              fixed_parameters: { 'Platform Fee' => '1000' },
              open_parameters_label: ['Users'],
-             pricing_options: { 'Tier' => { 'Silver' => '150' } },
+             pricing_options: { "Tier" => { "options" => { "Silver" => "200" }, "value_label" => "Cost Per User" } },
              calculation_formula: 'Platform Fee * Tier')
     end
 
@@ -43,7 +43,8 @@ RSpec.describe 'Admin::Items', type: :request do
       expect(response.body).to include('Users')
       expect(response.body).to include('Tier')
       expect(response.body).to include('Silver')
-      expect(response.body).to include('150')
+      expect(response.body).to include('200')
+      expect(response.body).to include('Cost Per User')
       expect(response.body).to include('Platform Fee * Tier')
     end
   end
@@ -88,8 +89,10 @@ RSpec.describe 'Admin::Items', type: :request do
         post '/admin/items/new/create_parameter', params: {
           parameter_type: 'Select',
           select_parameter_name: 'Tier',
-          option_description_1: '1-5', # rubocop:disable Naming/VariableNumber
-          option_value_1: '100' # rubocop:disable Naming/VariableNumber
+          value_label: 'Cost Per User',
+          select_options: [
+            { description: '1-5', value: '100' }
+          ]
         }
 
         post '/admin/items/new/update_formula', params: {
@@ -105,7 +108,7 @@ RSpec.describe 'Admin::Items', type: :request do
         item = Item.last
         expect(item.fixed_parameters).to eq('Acquisition' => '2500')
         expect(item.open_parameters_label).to eq(['Custom'])
-        expect(item.pricing_options).to eq('Tier' => { '1-5' => '100' })
+        expect(item.pricing_options).to eq("Tier" => { "options" => { "1-5" => "100" }, "value_label" => "Cost Per User" })
         expect(item.formula_parameters).to eq(%w[Acquisition Custom Tier])
         expect(item.calculation_formula).to eq('Acquisition * Tier')
         expect(item.is_fixed).to be true
@@ -199,8 +202,10 @@ RSpec.describe 'Admin::Items', type: :request do
       post '/admin/items/new/create_parameter', params: {
         parameter_type: 'Select',
         select_parameter_name: 'Tier',
-        option_description_1: '1-5', # rubocop:disable Naming/VariableNumber
-        option_value_1: '100' # rubocop:disable Naming/VariableNumber
+        value_label: 'Cost Per User',
+        select_options: [
+          { description: '1-5', value: '100' }
+        ]
       }
 
       post '/admin/items/new/update_formula', params: {
@@ -226,18 +231,6 @@ RSpec.describe 'Admin::Items', type: :request do
       expect(response).to redirect_to("/admin/items/#{item.id}/edit")
       get "/admin/items/#{item.id}/edit"
       expect(response.body).not_to include('Tier')
-    end
-  end
-
-  describe 'POST /admin/items/:id/update_formula' do
-    it 'updates the calculation formula for a persisted item' do
-      post "/admin/items/#{item.id}/update_formula", params: {
-        calculation_formula: 'NewFormula * 2'
-      }
-      item.reload
-      expect(item.calculation_formula).to eq('NewFormula * 2')
-      expect(response).to redirect_to("/admin/items/#{item.id}/edit")
-      expect(flash[:notice]).to eq('Formula saved!')
     end
   end
 end

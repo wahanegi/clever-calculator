@@ -268,7 +268,7 @@ ActiveAdmin.register Item do
 
     if param_name.blank?
       flash[:error] = "Parameter name can't be blank"
-      return redirect_back(fallback_location: edit_admin_item_path(@item))
+      return redirect_back(fallback_location: @item&.id ? edit_admin_item_path(@item) : new_admin_item_path)
     end
 
     store[:formula_parameters] << param_name unless store[:formula_parameters].include?(param_name)
@@ -284,7 +284,6 @@ ActiveAdmin.register Item do
     when "Select"
       sub_hash = {}
 
-      # Отримаємо масив select_options з параметрів
       select_options = params[:select_options] || []
 
       select_options.each do |pair|
@@ -298,7 +297,7 @@ ActiveAdmin.register Item do
       value_label = params[:value_label]
       if value_label.blank?
         flash[:error] = "Value Label is required for Select parameter"
-        return redirect_back(fallback_location: edit_admin_item_path(@item))
+        return redirect_back(fallback_location: @item&.id ? edit_admin_item_path(@item) : new_admin_item_path)
       end
 
       store[:select][param_name] = {
@@ -308,7 +307,7 @@ ActiveAdmin.register Item do
 
     else
       flash[:error] = "Unknown parameter type"
-      return redirect_back(fallback_location: edit_admin_item_path(@item))
+      return redirect_back(fallback_location: @item&.id ? edit_admin_item_path(@item) : new_admin_item_path)
     end
 
     session[:tmp_params][item_key] = store.deep_stringify_keys
