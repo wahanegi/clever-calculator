@@ -30,6 +30,8 @@ Rails.application.configure do
 
   # Store uploaded files on the local file system in a temporary directory.
   config.active_storage.service = :test
+  # Configure the variant processor for ActiveStorage to use VIPS
+  config.active_storage.variant_processor = :vips
 
   # Tell Action Mailer not to deliver emails to the real world.
   # The :test delivery method accumulates sent emails in the

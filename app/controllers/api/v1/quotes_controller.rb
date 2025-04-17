@@ -1,7 +1,6 @@
 module Api
   module V1
-    class QuotesController < ApplicationController
-      before_action :authenticate_user!
+    class QuotesController < BaseController
       before_action :set_quote, only: [:update]
 
       def create

@@ -73,8 +73,15 @@ RSpec.configure do |config|
   config.include Devise::Test::IntegrationHelpers, type: :request
   config.include Devise::Test::IntegrationHelpers, type: :feature
   config.include Devise::Test::ControllerHelpers, type: :controller
+
+  # This block executes before each test, but only for requests
   config.before(:each, type: :request) do
     Rails.application.reload_routes_unless_loaded
+  end
+
+  # This block executes after each test
+  config.after(:each) do
+    FileUtils.rm_rf(Dir[Rails.root.join("tmp/storage")])
   end
 end
 

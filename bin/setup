@@ -18,6 +18,20 @@ FileUtils.chdir APP_ROOT do
   # Install JavaScript dependencies
   system("yarn install --check-files")
 
+  # Install the libvips library for image processing
+  if RUBY_PLATFORM.include?("darwin")
+    puts "== Installing libvips for macOS =="
+    system!("brew install libvips")
+  elsif RUBY_PLATFORM.include?("linux")
+    puts "== Installing libvips for Linux =="
+    system!("sudo apt-get update && sudo apt-get install -y libvips")
+  elsif RUBY_PLATFORM.match?(/mswin|mingw|windows/)
+    puts "== Installing libvips for Windows =="
+    system!("gem install ruby-vips")
+  else
+    raise "Unsupported platform: #{RUBY_PLATFORM}"
+  end
+
   # puts "\n== Copying sample files =="
   # unless File.exist?("config/database.yml")
   #   FileUtils.cp "config/database.yml.sample", "config/database.yml"
