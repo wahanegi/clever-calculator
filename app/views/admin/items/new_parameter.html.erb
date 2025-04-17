@@ -38,6 +38,11 @@
         <%= text_field_tag :select_parameter_name %>
       </div>
 
+      <div class="form-field">
+        <%= label_tag :value_label, "Value Label" %>
+        <%= text_field_tag :value_label, nil, class: "value-label-input" %>
+      </div>
+
       <% 10.times do |i| %>
         <div class="select-option-row">
           <div class="select-field">

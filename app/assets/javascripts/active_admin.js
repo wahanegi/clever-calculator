@@ -120,3 +120,24 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 });
 
+
+document.addEventListener("DOMContentLoaded", function () {
+  const cancelButton = document.querySelector(".custom-cancel-button");
+
+  if (cancelButton) {
+    cancelButton.addEventListener("click", function () {
+      const itemId = cancelButton.dataset.itemId;
+
+      fetch(`/admin/items/${itemId}/clear_session`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]').content
+        }
+      }).then(() => {
+        window.location.href = "/admin/items";
+      });
+    });
+  }
+});
+

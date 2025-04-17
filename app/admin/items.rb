@@ -72,9 +72,6 @@ ActiveAdmin.register Item do
     f.inputs "Pricing Parameters" do
       f.input :formula_parameters, as: :hidden
       div class: "formula-preview" do
-        span class: "formula-label" do
-          "Calculation Formula:"
-        end
         div class: "formula-preview" do
           span class: "formula-label" do
             "Calculation Formula:"
@@ -83,7 +80,7 @@ ActiveAdmin.register Item do
           span class: "formula" do
             item_key = f.object.persisted? ? f.object.id.to_s : "new"
             session_formula = controller.view_context.session.dig(:tmp_params, item_key, "calculation_formula")
-            f.object.calculation_formula.presence || session_formula.presence || "No formula yet"
+            session_formula.presence || f.object.calculation_formula.presence || "No formula yet"
           end
         end
       end
@@ -108,7 +105,14 @@ ActiveAdmin.register Item do
       end
     end
 
-    f.actions
+    f.actions do
+      f.action :submit, label: "Update Item"
+      f.action :cancel, label: "Cancel", button_html: {
+        class: "custom-cancel-button",
+        id: "custom-cancel-button",
+        data: { item_id: item_key }
+      }
+    end
   end
 
   show do
@@ -186,7 +190,8 @@ ActiveAdmin.register Item do
         session[:tmp_params]&.delete(item_key)
         redirect_to admin_item_path(@item), notice: "Item was successfully updated."
       else
-        flash[:error] = "Failed to update item"
+        apply_tmp_params(@item, session[:tmp_params][item_key]) if session[:tmp_params]&.key?(item_key)
+        flash[:error] = "Failed to update item: #{@item.errors.full_messages.to_sentence}"
         render :edit
       end
     end
@@ -201,7 +206,8 @@ ActiveAdmin.register Item do
       item.open_parameters_label  = data[:open] || []
       item.pricing_options        = data[:select] || {}
       item.formula_parameters     = data[:formula_parameters] || []
-      item.calculation_formula    = data[:calculation_formula]
+      Rails.logger.info "🧮 TMP calculation_formula = #{data[:calculation_formula]}"
+      item.calculation_formula    = data[:calculation_formula] || nil
 
       item.is_open                = item.open_parameters_label.any?
       item.is_selectable_options  = item.pricing_options.any?
@@ -281,11 +287,22 @@ ActiveAdmin.register Item do
         desc = params["option_description_#{i}"]
         val  = params["option_value_#{i}"]
         next if desc.blank? || val.blank?
-
+    
         sub_hash[desc] = val
       end
-      store[:select][param_name] = sub_hash if sub_hash.any?
-
+    
+      value_label = params[:value_label].to_s.strip
+    
+      if param_name.blank? || value_label.blank? || sub_hash.empty?
+        flash[:error] = "Select Name, Value Label and at least one option are required"
+        return redirect_back(fallback_location: edit_admin_item_path(@item))
+      end
+    
+      store[:select][param_name] = {
+        "options" => sub_hash,
+        "value_label" => value_label
+      }
+    
     else
       flash[:error] = "Unknown parameter type"
       return redirect_back(fallback_location: edit_admin_item_path(@item))
@@ -384,29 +401,35 @@ ActiveAdmin.register Item do
       session[:tmp_params] ||= {}
       session[:tmp_params]["new"] ||= {}
       session[:tmp_params]["new"]["calculation_formula"] = params[:calculation_formula]
-
-      flash[:notice] = "Formula saved (in session)!"
-      redirect_to new_resource_path
     else
       @item = Item.find(params[:id])
+      
+      session[:tmp_params] ||= {}
+      session[:tmp_params][@item.id.to_s] ||= {}
+      session[:tmp_params][@item.id.to_s]["calculation_formula"] = params[:calculation_formula]
+      
       @item.calculation_formula = params[:calculation_formula]
-
-      if @item.save
-        flash[:notice] = "Formula saved!"
-      else
-        flash[:error] = "Failed to save formula: #{@item.errors.full_messages.to_sentence}"
-      end
-
-      redirect_to edit_admin_item_path(@item)
     end
+  
+    flash[:notice] = "Formula saved (in session)!"
+    redirect_to params[:id] == "new" ? new_resource_path : edit_admin_item_path(params[:id])
   end
+  
 
   member_action :clear_session, method: :post do
-    if params[:id] == "new"
-      session[:tmp_params]&.delete("new")
-      Rails.logger.info "🧹 Session[:tmp_params][\"new\"] cleared via JS"
+    item_key = params[:id].to_s
+    if session[:tmp_params].present?
+      Rails.logger.info "⚠️ TRYING TO DELETE session[:tmp_params][#{item_key}]"
+      Rails.logger.info "🔍 BEFORE DELETE: #{session[:tmp_params][item_key].inspect}"
+      
+      session[:tmp_params].delete(item_key)
+  
+      Rails.logger.info "🧹 DELETED! AFTER: #{session[:tmp_params].inspect}"
+    else
+      Rails.logger.warn "⚠️ tmp_params session is empty, nothing to delete"
     end
 
     head :ok
   end
+  
 end

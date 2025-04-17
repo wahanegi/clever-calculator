@@ -68,7 +68,11 @@
 
 <% if select_parameters.any? %>
   <h3>Select Parameters</h3>
-  <% select_parameters.each do |sel_name, options| %>
+  <% select_parameters.each do |sel_name, raw_param_data| %>
+    <% param_data = raw_param_data.with_indifferent_access %>
+    <% value_label = param_data[:value_label] || "—" %>
+    <% options_data = param_data[:options] || {} %>
+
     <h4>
       Select name: <%= sel_name %>
       <% if mode == :edit %>
@@ -78,6 +82,9 @@
         ) %>
       <% end %>
     </h4>
+
+    <p>Value Label: <%= value_label %></p>
+
     <table class="parameter-table">
       <thead>
         <tr>
@@ -86,7 +93,7 @@
         </tr>
       </thead>
       <tbody>
-        <% options.each do |desc, val| %>
+        <% options_data.each do |desc, val| %>
           <tr>
             <td><%= desc %></td>
             <td><%= val %></td>
@@ -96,3 +103,4 @@
     </table>
   <% end %>
 <% end %>
+
