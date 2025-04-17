@@ -43,23 +43,35 @@
         <%= text_field_tag :value_label, nil, class: "value-label-input" %>
       </div>
 
-      <% 10.times do |i| %>
-        <div class="select-option-row">
-          <div class="select-field">
-            <%= label_tag "option_description_#{i + 1}", "Description #{i + 1}" %>
-            <%= text_field_tag "option_description_#{i + 1}" %>
+      <div id="select-options-wrapper">
+        <% 2.times do %>
+          <div class="select-option-row">
+            <div class="select-field">
+              <label>Description</label>
+              <input type="text" name="select_options[][description]" />
+            </div>
+            <div class="select-field">
+              <label>Value</label>
+              <input type="text" name="select_options[][value]" />
+            </div>
+            <button type="button" class="delete-option-button button light">Delete</button>
           </div>
-          <div class="select-field">
-            <%= label_tag "option_value_#{i + 1}", "Value #{i + 1}" %>
-            <%= text_field_tag "option_value_#{i + 1}" %>
-          </div>
-        </div>
-      <% end %>
+        <% end %>
+      </div>
+
+      <div class="form-actions">
+        <button type="button" id="add-option-button" class="button">Add Option</button>
+      </div>
+
     </div>
 
     <div class="form-actions">
-    <% tmp = session[:tmp_params] && session[:tmp_params]["new"] %>
-      <%= submit_tag "Add Parameter" %>
+      <% item_key = resource.persisted? ? resource.id.to_s : "new" %>
+      <% back_path = resource.persisted? ? edit_admin_item_path(resource) : new_resource_path %>
+
+      <%= submit_tag "Add Parameter", class: "button" %>
+      <%= link_to "Cancel", back_path, class: "button cancel-button" %>
     </div>
+
   <% end %>
 </div>

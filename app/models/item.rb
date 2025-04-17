@@ -5,7 +5,7 @@ class Item < ApplicationRecord
   validates :name, uniqueness: { scope: :category_id, message: "Item name must be unique within category" }
   validate :category_must_be_active
   validate :fixed_parameters_values_must_be_numeric
-  validate :pricing_options_values_must_be_numeric
+  # validate :pricing_options_values_must_be_numeric
   validates :calculation_formula, presence: true, if: :requires_calculation_formula?
 
   def self.ransackable_attributes(_auth_object = nil)

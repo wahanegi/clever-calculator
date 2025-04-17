@@ -283,26 +283,29 @@ ActiveAdmin.register Item do
 
     when "Select"
       sub_hash = {}
-      (1..10).each do |i|
-        desc = params["option_description_#{i}"]
-        val  = params["option_value_#{i}"]
+
+      # Отримаємо масив select_options з параметрів
+      select_options = params[:select_options] || []
+
+      select_options.each do |pair|
+        desc = pair["description"]
+        val  = pair["value"]
         next if desc.blank? || val.blank?
-    
+
         sub_hash[desc] = val
       end
-    
-      value_label = params[:value_label].to_s.strip
-    
-      if param_name.blank? || value_label.blank? || sub_hash.empty?
-        flash[:error] = "Select Name, Value Label and at least one option are required"
+
+      value_label = params[:value_label]
+      if value_label.blank?
+        flash[:error] = "Value Label is required for Select parameter"
         return redirect_back(fallback_location: edit_admin_item_path(@item))
       end
-    
+
       store[:select][param_name] = {
         "options" => sub_hash,
         "value_label" => value_label
       }
-    
+
     else
       flash[:error] = "Unknown parameter type"
       return redirect_back(fallback_location: edit_admin_item_path(@item))
@@ -313,6 +316,9 @@ ActiveAdmin.register Item do
     Rails.logger.info "📤 Session after update: #{session[:tmp_params][item_key]}"
 
     flash[:notice] = "Parameter '#{param_name}' added (stored in session)."
+    Rails.logger.info "🧠 Final saved SELECT: #{store[:select][param_name].inspect}"
+    Rails.logger.info "📤 Full session after update: #{session[:tmp_params].inspect}"
+
     redirect_to @item.persisted? ? edit_admin_item_path(@item) : new_resource_path
   end
 
@@ -403,27 +409,26 @@ ActiveAdmin.register Item do
       session[:tmp_params]["new"]["calculation_formula"] = params[:calculation_formula]
     else
       @item = Item.find(params[:id])
-      
+
       session[:tmp_params] ||= {}
       session[:tmp_params][@item.id.to_s] ||= {}
       session[:tmp_params][@item.id.to_s]["calculation_formula"] = params[:calculation_formula]
-      
+
       @item.calculation_formula = params[:calculation_formula]
     end
-  
+
     flash[:notice] = "Formula saved (in session)!"
     redirect_to params[:id] == "new" ? new_resource_path : edit_admin_item_path(params[:id])
   end
-  
 
   member_action :clear_session, method: :post do
     item_key = params[:id].to_s
     if session[:tmp_params].present?
       Rails.logger.info "⚠️ TRYING TO DELETE session[:tmp_params][#{item_key}]"
       Rails.logger.info "🔍 BEFORE DELETE: #{session[:tmp_params][item_key].inspect}"
-      
+
       session[:tmp_params].delete(item_key)
-  
+
       Rails.logger.info "🧹 DELETED! AFTER: #{session[:tmp_params].inspect}"
     else
       Rails.logger.warn "⚠️ tmp_params session is empty, nothing to delete"
@@ -431,5 +436,4 @@ ActiveAdmin.register Item do
 
     head :ok
   end
-  
 end

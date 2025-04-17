@@ -111,7 +111,7 @@ document.addEventListener("DOMContentLoaded", function () {
       })
         .then((response) => {
           if (response.ok) {
-            window.location.href = "/admin/items/new"; 
+            window.location.href = "/admin/items/new";
           } else {
             alert("❌ Session clear failed");
           }
@@ -140,4 +140,57 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 });
+
+
+document.addEventListener("DOMContentLoaded", () => {
+  const wrapper = document.getElementById("select-options-wrapper");
+  const addBtn = document.getElementById("add-option-button");
+
+  const createOptionRow = () => {
+    const row = document.createElement("div");
+    row.className = "select-option-row";
+
+    row.innerHTML = `
+      <div class="select-field">
+        <label>Description</label>
+        <input type="text" name="select_options[][description]" />
+      </div>
+      <div class="select-field">
+        <label>Value</label>
+        <input type="text" name="select_options[][value]" />
+      </div>
+      <button type="button" class="delete-option-button button light">Delete</button>
+    `;
+
+    // кнопка Delete
+    row.querySelector(".delete-option-button").addEventListener("click", () => {
+      if (wrapper.querySelectorAll(".select-option-row").length > 2) {
+        row.remove();
+      } else {
+        alert("At least 2 options are required.");
+      }
+    });
+
+    return row;
+  };
+
+  // Додати новий рядок
+  addBtn.addEventListener("click", () => {
+    const newRow = createOptionRow();
+    wrapper.appendChild(newRow);
+  });
+
+  // Додати обробники на існуючі 2 рядки
+  wrapper.querySelectorAll(".select-option-row").forEach((row) => {
+    const delBtn = row.querySelector(".delete-option-button");
+    delBtn.addEventListener("click", () => {
+      if (wrapper.querySelectorAll(".select-option-row").length > 2) {
+        row.remove();
+      } else {
+        alert("At least 2 options are required.");
+      }
+    });
+  });
+});
+
 

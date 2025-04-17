@@ -28,6 +28,8 @@
       <%= hidden_field_tag :calculation_formula, '', id: 'formulaInput' %>
       <div class="form-actions" style="margin-top: 15px;">
         <%= submit_tag "Save Formula", class: "button" %>
+        <% back_path = @item.persisted? ? edit_admin_item_path(@item) : new_resource_path %>
+        <%= link_to "Cancel", back_path, class: "button cancel-button", style: "margin-left: 10px;" %>
       </div>
     <% end %>
   </div>

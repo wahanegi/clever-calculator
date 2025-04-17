@@ -16,27 +16,31 @@
 //
 //   .status_tag { background: #6090DB; }
 .parameter-table {
-    width: 100%;
-    border-collapse: collapse;
-  
-    th, td {
-      padding: 8px 12px;
-      border: 1px solid #ddd;
-      text-align: left;
-    }
-  
-    th:nth-child(1), td:nth-child(1) {
-      width: 40%;
-    }
-  
-    th:nth-child(2), td:nth-child(2) {
-      width: 40%;
-    }
-  
-    th:nth-child(3), td:nth-child(3) {
-      width: 20%;
-    }
+  width: 100%;
+  border-collapse: collapse;
+
+  th,
+  td {
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    text-align: left;
   }
+
+  th:nth-child(1),
+  td:nth-child(1) {
+    width: 40%;
+  }
+
+  th:nth-child(2),
+  td:nth-child(2) {
+    width: 40%;
+  }
+
+  th:nth-child(3),
+  td:nth-child(3) {
+    width: 20%;
+  }
+}
 
 .parameter-panel {
   padding: 20px;
@@ -69,7 +73,7 @@
 
     input {
       width: 100%;
-      max-width: 400px;
+      max-width: 503px;
     }
   }
 
@@ -90,31 +94,77 @@
     }
   }
 }
+
 .select-option-row {
   display: flex;
+  flex-wrap: wrap;
   align-items: flex-end;
   gap: 16px;
-  margin-bottom: 12px;
+  margin-bottom: 16px;
+  border-radius: 8px;
 
   .select-field {
     display: flex;
     flex-direction: column;
-    flex: 1;
+    flex: 1 1 250px;
+    min-width: 200px;
 
     label {
-      margin-bottom: 4px;
-      font-weight: 600;
+      margin-bottom: 6px;
+      color: #444;
     }
 
     input[type="text"] {
-      width: 100%;
-      max-width: 280px;
+      padding: 8px 10px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+      background-color: #fff;
+      transition: border-color 0.2s;
+
+      &:focus {
+        border-color: #888;
+        outline: none;
+      }
     }
   }
 }
 
-.add-param-link-wrapper{
+.delete-option-button {
+  padding: 8px 14px;
+  font-weight: bold;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  background: linear-gradient(#ffffff, #f7f7f7) !important;
+  text-shadow: none !important;
+  background: #fff;
+  color: #444;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+
+  &:hover {
+    background-color: #eee;
+    color: #000;
+  }
+}
+
+.add-param-link-wrapper {
   margin-bottom: 10px;
+}
+
+.cancel-button {
+  margin-left: 10px;
+  background: linear-gradient(#ffffff, #f7f7f7) !important;
+  border: 1px solid #ccc !important;
+  color: #444 !important;
+  padding: 8px 16px !important;
+  text-shadow: none !important;
+  border-radius: 8px !important;
+}
+
+.cancel-button:hover {
+  background: linear-gradient(#f0f0f0, #e6e6e6) !important;
+  border-color: #aaa !important;
+  color: #222 !important;
 }
 
 
