@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react'
-import { Row, Col, Form, Button } from 'react-bootstrap'
-import { PcDropdownSelect, PcCompanyLogoUploader, PcInput } from '../ui'
-import { ROUTES, STEPS } from './constants'
-import { fetchCustomers, fetchQuotes } from '../services'
+import { Button, Col, Form, Row } from 'react-bootstrap'
 import { useAppHooks } from '../hooks'
+import { fetchCustomers, fetchQuotes } from '../services'
+import { PcCompanyLogoUploader, PcDropdownSelect, PcInput } from '../ui'
 import { extractNames } from '../utils'
+import { ROUTES, STEPS } from './constants'
 
 export const CustomerForm = () => {
   const defaultCustomer = {
@@ -132,9 +132,9 @@ export const CustomerForm = () => {
 
   return (
     <Form onSubmit={handleNext} className={'d-flex flex-column w-100 align-items-center'}>
-      <div className="border rounded border-primary customer-form bg-light w-100 mb-7">
-        <Row className="mb-6">
-          <div className="d-flex flex-column flex-sm-row gap-6">
+      <div className="border rounded border-primary customer-form bg-light w-100 mb-10">
+        <Row className="mb-8">
+          <div className="d-flex flex-column flex-sm-row gap-8">
             <Col className={'image-placeholder'}>
               <PcCompanyLogoUploader
                 id="company_logo"
@@ -142,7 +142,7 @@ export const CustomerForm = () => {
                 logo={customer.logo_url} />
             </Col>
             <Col>
-              <Row className="mb-6">
+              <Row className="mb-8">
                 <Col>
                   <PcDropdownSelect
                     id="company_name"
@@ -163,7 +163,7 @@ export const CustomerForm = () => {
                 </Col>
               </Row>
               <Row>
-                <div className="d-flex flex-column flex-sm-row gap-6">
+                <div className="d-flex flex-column flex-sm-row gap-8">
                   <Col className="client-input">
                     <PcInput
                       id="full_name"
@@ -196,8 +196,8 @@ export const CustomerForm = () => {
             </Col>
           </div>
         </Row>
-        <Row className="mb-6">
-          <div className="d-flex flex-column flex-sm-row gap-6">
+        <Row className="mb-8">
+          <div className="d-flex flex-column flex-sm-row gap-8">
             <Col>
               <PcInput
                 id="email"
@@ -236,7 +236,7 @@ export const CustomerForm = () => {
           </Col>
         </Row>
       </div>
-      <Button type={'submit'} className="pc-btn-next" disabled={!customer.company_name}>
+      <Button type={'submit'} className="pc-btn" disabled={!customer.company_name}>
         Next
       </Button>
     </Form>

@@ -6,7 +6,7 @@ import { PcIcon } from '../ui'
 
 export const Header = () => {
   const Logo = () =>
-    <Navbar.Brand className={'ms-1 ms-xxl-22 ms-xl-22 ms-lg-10 ms-md-2'}>
+    <Navbar.Brand className={'ms-1 ms-xxl-27 ms-xl-27 ms-lg-15 ms-md-2'}>
       <div className={'pc-header-logo d-flex'}>
         <PcIcon name={'logo'} className={'pc-icon-logo header-logo-separator'} alt={'Logo'} />
         <div className={'header-logo-text d-flex flex-column'}>
@@ -26,7 +26,7 @@ export const Header = () => {
       }
     }
 
-    return <Nav.Link onClick={handleLogout} className={'me-1 me-xxl-20 me-xl-20 me-lg-10 me-md-2 header-logout'}>
+    return <Nav.Link onClick={handleLogout} className={'me-1 me-xxl-25 me-xl-25 me-lg-15 me-md-2 header-logout'}>
       <span className={'text-white me-2 fw-normal text-decoration-underline'}>Logout</span>
       <PcIcon name={'logout'} alt={'Logout'} className={'pc-icon-logout'} />
     </Nav.Link>

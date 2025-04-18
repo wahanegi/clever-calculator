@@ -10,3 +10,30 @@
   }
 }
 
+//Styles for trash-icon on category header accordion
+.pc-icon-hover-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  padding: 0;
+  border: none;
+  background: transparent;
+
+  .icon-default {
+    display: inline;
+  }
+
+  .icon-hover {
+    display: none;
+  }
+
+  &:hover {
+    .icon-default {
+      display: none;
+    }
+
+    .icon-hover {
+      display: inline;
+    }
+  }
+}

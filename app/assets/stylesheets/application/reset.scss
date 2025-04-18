@@ -34,10 +34,11 @@ h2,
 h3,
 h4,
 h5,
-h6 {
-  overflow-wrap: break-word;
+h6,
+hr {
   margin: 0;
   padding: 0;
+  overflow-wrap: break-word;
 }
 
 /* 5. Reset styles for form elements */
