@@ -24,21 +24,45 @@
     padding: 8px 12px;
     border: 1px solid #ddd;
     text-align: left;
+    vertical-align: middle;
   }
 
   th:nth-child(1),
   td:nth-child(1) {
-    width: 40%;
+    width: 20%;
   }
 
   th:nth-child(2),
   td:nth-child(2) {
-    width: 40%;
+    width: 20%;
   }
 
   th:nth-child(3),
   td:nth-child(3) {
     width: 20%;
+  }
+
+  th:nth-child(4),
+  td:nth-child(4) {
+    width: 20%;
+  }
+
+  th:nth-child(5),
+  td:nth-child(5) {
+    width: 20%;
+  }
+
+  .options-container {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .option-row {
+    padding: 8px 0;
+    border-bottom: 1px solid #ddd;
+    &:last-child {
+      border-bottom: none;
+    }
   }
 }
 
