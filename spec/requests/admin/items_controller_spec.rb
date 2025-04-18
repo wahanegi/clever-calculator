@@ -190,7 +190,7 @@ RSpec.describe 'Admin::Items', type: :request do
       # Set up session[:tmp_params] via create_parameter requests
       post '/admin/items/new/create_parameter', params: {
         parameter_type: 'Fixed',
-        fixed_parameter_name: 'Acquisition',
+        fixed_parameter_name: 'Platform Fee',
         fixed_parameter_value: '2500'
       }
 
@@ -209,7 +209,7 @@ RSpec.describe 'Admin::Items', type: :request do
       }
 
       post '/admin/items/new/update_formula', params: {
-        calculation_formula: 'Acquisition * Tier'
+        calculation_formula: 'Platform Fee * Tier'
       }
     end
 

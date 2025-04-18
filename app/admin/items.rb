@@ -141,15 +141,14 @@ ActiveAdmin.register Item do
   end
 
   controller do
+    helper_method :session_service
+
     def create
       @item = Item.new(permitted_params[:item])
-      item_key = "new"
-      service = TmpParamsSessionService.new(session, item_key)
-
-      service.update_with_tmp_to_item(@item)
+      session_service.update_with_tmp_to_item(@item)
 
       if @item.save
-        service.delete
+        session_service.delete
         redirect_to admin_item_path(@item), notice: "Item was successfully created."
       else
         flash.now[:error] = "Failed to create item: #{@item.errors.full_messages.to_sentence}"
@@ -159,15 +158,12 @@ ActiveAdmin.register Item do
 
     def edit
       @item = Item.find(params[:id])
-      item_key = @item.id.to_s
-      service = TmpParamsSessionService.new(session, item_key)
-
-      if service.all.blank?
-        service.set(:fixed, @item.fixed_parameters || {})
-        service.set(:open, @item.open_parameters_label || [])
-        service.set(:select, @item.pricing_options || {})
-        service.set(:formula_parameters, @item.formula_parameters || [])
-        service.set(:calculation_formula, @item.calculation_formula)
+      if session_service.all.blank?
+        session_service.set(:fixed, @item.fixed_parameters || {})
+        session_service.set(:open, @item.open_parameters_label || [])
+        session_service.set(:select, @item.pricing_options || {})
+        session_service.set(:formula_parameters, @item.formula_parameters || [])
+        session_service.set(:calculation_formula, @item.calculation_formula)
       end
 
       super
@@ -175,18 +171,23 @@ ActiveAdmin.register Item do
 
     def update
       @item = Item.find(params[:id])
-      item_key = @item.id.to_s
-      service = TmpParamsSessionService.new(session, item_key)
-
-      service.update_with_tmp_to_item(@item)
+      session_service.update_with_tmp_to_item(@item)
 
       if @item.update(permitted_params[:item])
-        service.delete
+        session_service.delete
         redirect_to admin_item_path(@item), notice: "Item was successfully updated."
       else
-        service.update_with_tmp_to_item(@item)
         flash[:error] = "Failed to update item: #{@item.errors.full_messages.to_sentence}"
         render :edit
+      end
+    end
+
+    private
+
+    def session_service
+      @session_service ||= begin
+        item_key = params[:id].presence || "new"
+        TmpParamsSessionService.new(session, item_key.to_s)
       end
     end
   end
@@ -219,8 +220,6 @@ ActiveAdmin.register Item do
 
   member_action :create_parameter, method: :post do
     @item = Item.find_by(id: params[:id]) || Item.new
-    item_key = @item.persisted? ? @item.id.to_s : "new"
-    service = TmpParamsSessionService.new(session, item_key)
 
     param_type = params[:parameter_type]
     param_name = case param_type
@@ -234,19 +233,19 @@ ActiveAdmin.register Item do
       return redirect_back(fallback_location: @item&.id ? edit_admin_item_path(@item) : new_admin_item_path)
     end
 
-    service.add_formula_parameter(param_name)
+    session_service.add_formula_parameter(param_name)
 
     case param_type
     when "Fixed"
       param_value = params[:fixed_parameter_value]
-      fixed = service.get(:fixed) || {}
+      fixed = session_service.get(:fixed) || {}
       fixed[param_name] = param_value
-      service.set(:fixed, fixed)
+      session_service.set(:fixed, fixed)
 
     when "Open"
-      open_params = service.get(:open) || []
+      open_params = session_service.get(:open) || []
       open_params << param_name unless open_params.include?(param_name)
-      service.set(:open, open_params)
+      session_service.set(:open, open_params)
 
     when "Select"
       sub_hash = {}
@@ -264,12 +263,12 @@ ActiveAdmin.register Item do
         return redirect_back(fallback_location: @item&.id ? edit_admin_item_path(@item) : new_admin_item_path)
       end
 
-      select = service.get(:select) || {}
+      select = session_service.get(:select) || {}
       select[param_name] = {
         "options" => sub_hash,
         "value_label" => value_label
       }
-      service.set(:select, select)
+      session_service.set(:select, select)
 
     else
       flash[:error] = "Unknown parameter type"
@@ -282,8 +281,6 @@ ActiveAdmin.register Item do
 
   member_action :remove_parameter, method: :delete do
     @item = params[:id] == "new" ? Item.new : Item.find(params[:id])
-    item_key = @item.persisted? ? @item.id.to_s : "new"
-    service = TmpParamsSessionService.new(session, item_key)
 
     param_type = params[:param_type].to_s
     key = params[:param_key].to_s
@@ -291,19 +288,19 @@ ActiveAdmin.register Item do
 
     case param_type
     when "fixed"
-      fixed = service.get(:fixed) || {}
+      fixed = session_service.get(:fixed) || {}
       fixed.delete(key.to_sym)
-      service.set(:fixed, fixed)
-      service.remove_formula_parameter(key)
+      session_service.set(:fixed, fixed)
+      session_service.remove_formula_parameter(key)
 
     when "open"
-      open = service.get(:open) || []
+      open = session_service.get(:open) || []
       open.delete(key)
-      service.set(:open, open)
-      service.remove_formula_parameter(key)
+      session_service.set(:open, open)
+      session_service.remove_formula_parameter(key)
 
     when "select"
-      select = service.get(:select) || {}
+      select = session_service.get(:select) || {}
 
       if desc_key.present?
         select[key]&.delete(desc_key)
@@ -312,17 +309,14 @@ ActiveAdmin.register Item do
         select = select.reject { |k, _| k.to_s == key }
       end
 
-      service.set(:select, select)
-      service.remove_formula_parameter(key)
+      session_service.set(:select, select)
+      session_service.remove_formula_parameter(key)
     end
     redirect_to @item.persisted? ? edit_admin_item_path(@item) : new_resource_path
   end
 
   member_action :save_meta_to_session, method: :post do
-    item_key = params[:id] == "new" ? "new" : params[:id].to_s
-    service = TmpParamsSessionService.new(session, item_key)
-
-    service.store_meta(
+    session_service.store_meta(
       name: params[:name],
       description: params[:description],
       category_id: params[:category_id]
@@ -333,18 +327,13 @@ ActiveAdmin.register Item do
 
   member_action :new_formula, method: :get do
     @item = params[:id] == "new" ? Item.new : Item.find(params[:id])
-    item_key = @item.persisted? ? @item.id.to_s : "new"
-    service = TmpParamsSessionService.new(session, item_key)
 
-    @formula_params = service.get(:formula_parameters) || []
-    @initial_formula = service.get(:calculation_formula) || @item.calculation_formula
+    @formula_params = session_service.get(:formula_parameters) || []
+    @initial_formula = session_service.get(:calculation_formula) || @item.calculation_formula
   end
 
   member_action :update_formula, method: :post do
-    item_key = params[:id] == "new" ? "new" : params[:id].to_s
-    service = TmpParamsSessionService.new(session, item_key)
-
-    service.set(:calculation_formula, params[:calculation_formula])
+    session_service.set(:calculation_formula, params[:calculation_formula])
 
     if params[:id] != "new"
       @item = Item.find(params[:id])
@@ -356,10 +345,7 @@ ActiveAdmin.register Item do
   end
 
   member_action :clear_session, method: :post do
-    item_key = params[:id].to_s
-    service = TmpParamsSessionService.new(session, item_key)
-
-    service.delete
+    session_service.delete
 
     head :ok
   end
