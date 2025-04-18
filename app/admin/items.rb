@@ -69,7 +69,7 @@ ActiveAdmin.register Item do
       end
     end
 
-    f.inputs "Pricing Parameters" do
+    f.inputs "Calculation Formula" do
       f.input :formula_parameters, as: :hidden
       div class: "formula-preview" do
         div class: "formula-preview" do
@@ -94,7 +94,7 @@ ActiveAdmin.register Item do
       tmp_open = tmp_data[:open] || []
       tmp_select = tmp_data[:select] || {}
 
-      panel "Parameters" do
+      panel "Pricing Parameters" do
         render partial: "admin/items/parameters", locals: {
           fixed_parameters: tmp_fixed,
           open_parameters_label: tmp_open,
