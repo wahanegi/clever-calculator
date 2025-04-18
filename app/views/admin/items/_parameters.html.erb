@@ -1,0 +1,104 @@
+<% item_key = item.id || "new" %>
+<% if fixed_parameters.any? %>
+  <h3>Fixed Parameters</h3>
+  <table class="parameter-table">
+    <thead>
+      <tr>
+        <th style="width: 40%;">Name</th>
+        <th style="width: 40%;">Value</th>
+        <% if mode == :edit %>
+          <th style="width: 20%;">Actions</th>
+        <% end %>
+      </tr>
+    </thead>
+    <tbody>
+      <% fixed_parameters.each do |name, value| %>
+        <tr>
+          <td style="width: 40%;"><%= name %></td>
+          <td style="width: 40%;"><%= value %></td>
+          <% if mode == :edit %>
+            <td style="width: 20%;">
+              <%= link_to "Delete", remove_parameter_admin_item_path(item_key, param_type: :fixed, param_key: name.to_s),
+                          method: :delete, data: { confirm: "Delete fixed param '#{name}'?" } %>
+            </td>
+          <% end %>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% end %>
+<% if open_parameters_label.any? %>
+  <h3>Open Parameters</h3>
+  <table class="parameter-table">
+    <thead>
+      <tr>
+        <th style="width: 40%;">Name</th>
+        <th style="width: 40%;">Value</th>
+        <% if mode == :edit %>
+          <th style="width: 20%;">Actions</th>
+        <% end %>
+      </tr>
+    </thead>
+    <tbody>
+      <% open_parameters_label.each do |label| %>
+        <tr>
+          <td style="width: 40%;"><%= label %></td>
+          <td style="width: 40%;">Value is entered by the user</td>
+          <% if mode == :edit %>
+            <td style="width: 20%;">
+              <%= link_to "Delete", remove_parameter_admin_item_path(item_key, param_type: :open, param_key: label.to_s),
+                          method: :delete, data: { confirm: "Delete fixed param '#{label}'?" } %>
+            </td>
+          <% end %>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% end %>
+<% if select_parameters.any? %>
+  <h3>Select Parameters</h3>
+  <% select_parameters.each do |sel_name, raw_param_data| %>
+    <% param_data = raw_param_data.with_indifferent_access %>
+    <% value_label = param_data[:value_label] || "—" %>
+    <% options_data = param_data[:options] || {} %>
+    <table class="parameter-table">
+      <thead>
+        <tr>
+          <th>Select name</th>
+          <th>Value label</th>
+          <th>Options</th>
+          <th>Value</th>
+          <% if mode == :edit %>
+            <th>Actions</th>
+          <% end %>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><%= sel_name %></td>
+          <td><%= value_label %></td>
+          <td>
+            <div class="options-container">
+              <% options_data.each do |desc, val| %>
+                <div class="option-row"><%= desc %></div>
+              <% end %>
+            </div>
+          </td>
+          <td>
+            <div class="options-container">
+              <% options_data.each do |desc, val| %>
+                <div class="option-row"><%= val %></div>
+              <% end %>
+            </div>
+          </td>
+          <% if mode == :edit %>
+            <td>
+              <%= link_to "Delete", remove_parameter_admin_item_path(item_key, param_type: :select, param_key: sel_name.to_s),
+                          method: :delete, data: { confirm: "Delete fixed param '#{sel_name}'?" } %>
+            </td>
+          <% end %>
+        </tr>
+      </tbody>
+    </table>
+  <% end %>
+<% end %>

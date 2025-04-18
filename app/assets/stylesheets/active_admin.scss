@@ -16,4 +16,221 @@
 //
 //   .status_tag { background: #6090DB; }
 
+// Styles for Admin::Item parameter tables
+.parameter-table {
+  width: 100%;
+  border-collapse: collapse;
+
+  th,
+  td {
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    text-align: left;
+    vertical-align: middle;
+  }
+
+  th:nth-child(1),
+  td:nth-child(1) {
+    width: 20%;
+  }
+
+  th:nth-child(2),
+  td:nth-child(2) {
+    width: 20%;
+  }
+
+  th:nth-child(3),
+  td:nth-child(3) {
+    width: 20%;
+  }
+
+  th:nth-child(4),
+  td:nth-child(4) {
+    width: 20%;
+  }
+
+  th:nth-child(5),
+  td:nth-child(5) {
+    width: 20%;
+  }
+
+  .options-container {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .option-row {
+    padding: 8px 0;
+    border-bottom: 1px solid #ddd;
+
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+}
+
+// === Formula Builder styles ===
+.formula-display {
+  border: 1px solid #ccc;
+  padding: 10px;
+  min-height: 40px;
+  margin-bottom: 15px;
+  background: #fefefe;
+  font-size: 16px;
+}
+
+.formula-buttons {
+  margin-bottom: 15px;
+}
+
+.formula-btn {
+  margin: 3px;
+  padding: 6px 10px;
+  background: rgb(150, 150, 150);
+  color: white;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.formula-btn:hover {
+  background: #d0d0d0;
+}
+
+.autocomplete-box {
+  background: white;
+  border: 1px solid #ccc;
+  max-width: 400px;
+  z-index: 1000;
+  padding: 5px;
+  border-radius: 4px;
+  display: none;
+}
+
+.parameter-panel {
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+
+  h2 {
+    margin-bottom: 10px;
+  }
+
+  p {
+    margin-bottom: 20px;
+  }
+
+  .radio-group {
+    margin-bottom: 20px;
+
+    label {
+      margin-right: 15px;
+    }
+  }
+
+  .form-field {
+    margin-bottom: 15px;
+
+    label {
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    input {
+      width: 100%;
+      max-width: 503px;
+    }
+  }
+
+  .select-option {
+    margin-bottom: 10px;
+  }
+
+  .form-actions {
+    margin-top: 30px;
+
+
+    input {
+      background-color: #357edd;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+  }
+}
+
+.select-option-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 16px;
+  margin-bottom: 16px;
+  border-radius: 8px;
+
+  .select-field {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 250px;
+    min-width: 200px;
+
+    label {
+      margin-bottom: 6px;
+      color: #444;
+    }
+
+    input[type="text"] {
+      padding: 8px 10px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+      background-color: #fff;
+      transition: border-color 0.2s;
+
+      &:focus {
+        border-color: #888;
+        outline: none;
+      }
+    }
+  }
+}
+
+.delete-option-button {
+  padding: 8px 14px;
+  font-weight: bold;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  background: linear-gradient(#ffffff, #f7f7f7) !important;
+  text-shadow: none !important;
+  background: #fff;
+  color: #444;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+
+  &:hover {
+    background-color: #eee;
+  }
+}
+
+.add-param-link-wrapper {
+  margin-bottom: 10px;
+}
+
+.cancel-button {
+  margin-left: 10px;
+  background: linear-gradient(#ffffff, #f7f7f7) !important;
+  border: 1px solid #ccc !important;
+  color: #444 !important;
+  padding: 8px 16px !important;
+  text-shadow: none !important;
+  border-radius: 8px !important;
+}
+
+.cancel-button:hover {
+  background: linear-gradient(#f0f0f0, #e6e6e6) !important;
+  border-color: #aaa !important;
+  color: #222 !important;
+}
+
 @import "active_admin/forms/select";
