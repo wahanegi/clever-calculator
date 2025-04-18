@@ -119,6 +119,9 @@ ActiveAdmin.register Item do
     attributes_table do
       row :id
       row :name
+      row "Description" do |item|
+        item.description.presence || "No description"
+      end
       row "Category" do |item|
         link_to item.category.name, admin_category_path(item.category) if item.category
       end
@@ -220,7 +223,7 @@ ActiveAdmin.register Item do
   actions :all, except: [:destroy]
 
   action_item :back, only: :show do
-    link_to "Back", admin_items_path
+    link_to "Back to Items", admin_items_path
   end
 
   action_item :toggle, only: :show do
