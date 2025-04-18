@@ -1,30 +1,25 @@
-<% def render_delete_button(path, confirm_message) %>
-<%= link_to "Delete", path, method: :delete, data: { confirm: confirm_message } %>
-<% end %>
 <% item_key = item.id || "new" %>
 <% if fixed_parameters.any? %>
   <h3>Fixed Parameters</h3>
   <table class="parameter-table">
     <thead>
       <tr>
-        <th style="width: 40%;">Name</th>
-        <th style="width: 40%;">Value</th>
+        <th>Name</th>
+        <th>Value</th>
         <% if mode == :edit %>
-          <th style="width: 20%;">Actions</th>
+          <th>Actions</th>
         <% end %>
       </tr>
     </thead>
     <tbody>
       <% fixed_parameters.each do |name, value| %>
         <tr>
-          <td style="width: 40%;"><%= name %></td>
-          <td style="width: 40%;"><%= value %></td>
+          <td><%= name %></td>
+          <td><%= value %></td>
           <% if mode == :edit %>
-            <td style="width: 20%;">
-              <%= render_delete_button(
-                remove_parameter_admin_item_path(item_key, param_type: :fixed, param_key: name.to_s),
-                "Delete fixed param '#{name}'?"
-              ) %>
+            <td>
+              <%= link_to "Delete", remove_parameter_admin_item_path(item_key, param_type: :fixed, param_key: name.to_s),
+                          method: :delete, data: { confirm: "Delete fixed param '#{name}'?" } %>
             </td>
           <% end %>
         </tr>
@@ -37,24 +32,22 @@
   <table class="parameter-table">
     <thead>
       <tr>
-        <th style="width: 40%;">Name</th>
-        <th style="width: 40%;">Value</th>
+        <th>Name</th>
+        <th>Value</th>
         <% if mode == :edit %>
-          <th style="width: 20%;">Actions</th>
+          <th>Actions</th>
         <% end %>
       </tr>
     </thead>
     <tbody>
       <% open_parameters_label.each do |label| %>
         <tr>
-          <td style="width: 40%;"><%= label %></td>
-          <td style="width: 40%;">Value is entered by the user</td>
+          <td><%= label %></td>
+          <td>Value is entered by the user</td>
           <% if mode == :edit %>
-            <td style="width: 20%;">
-              <%= render_delete_button(
-                remove_parameter_admin_item_path(item_key, param_type: :open, param_key: label),
-                "Delete open param '#{label}'?"
-              ) %>
+            <td>
+              <%= link_to "Delete", remove_parameter_admin_item_path(item_key, param_type: :fixed, param_key: label.to_s),
+                          method: :delete, data: { confirm: "Delete fixed param '#{label}'?" } %>
             </td>
           <% end %>
         </tr>
@@ -100,10 +93,8 @@
           </td>
           <% if mode == :edit %>
             <td>
-              <%= render_delete_button(
-                remove_parameter_admin_item_path(item_key, param_type: :select, param_key: sel_name),
-                "Delete whole select '#{sel_name}' and its options?"
-          ) %>
+              <%= link_to "Delete", remove_parameter_admin_item_path(item_key, param_type: :fixed, param_key: sel_name.to_s),
+                          method: :delete, data: { confirm: "Delete fixed param '#{sel_name}'?" } %>
             </td>
           <% end %>
         </tr>

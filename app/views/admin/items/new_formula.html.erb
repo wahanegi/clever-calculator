@@ -1,12 +1,12 @@
-<div class="panel parameter-panel">
+<div class="parameter-panel">
   <h2>Formula Builder for <%= @item.name %></h2>
 
-  <div class="formula-builder">
-  <div class="formula-display" id="formulaDisplay" contenteditable="true" placeholder="Click buttons below to build a formula...">
-  <%= @initial_formula.to_s %>
-</div>
+  <div>
+    <div class="formula-display" id="formulaDisplay" contenteditable="true" placeholder="Click buttons below to build a formula...">
+      <%= @initial_formula.to_s %>
+    </div>
 
-    <div id="autocompleteBox" class="autocomplete-box" style="display:none;"></div>
+    <div id="autocompleteBox" class="autocomplete-box"></div>
 
     <h4>Available parameters:</h4>
     <div class="formula-buttons">
@@ -24,150 +24,12 @@
 
     <% item_id = @item.persisted? ? @item.id : "new" %>
     <%= form_with url: update_formula_admin_item_path(id: item_id), method: :post, local: true do %>
-
       <%= hidden_field_tag :calculation_formula, '', id: 'formulaInput' %>
-      <div class="form-actions" style="margin-top: 15px;">
+      <div class="form-actions">
         <%= submit_tag "Save Formula", class: "button" %>
         <% back_path = @item.persisted? ? edit_admin_item_path(@item) : new_resource_path %>
-        <%= link_to "Cancel", back_path, class: "button cancel-button", style: "margin-left: 10px;" %>
+        <%= link_to "Cancel", back_path, class: "button cancel-button" %>
       </div>
     <% end %>
   </div>
 </div>
-
-<script>
-  window.availableParams = <%= raw @formula_params.to_json %>;
-
-  document.addEventListener("DOMContentLoaded", () => {
-    const formulaDisplay = document.getElementById("formulaDisplay");
-    const formulaInput = document.getElementById("formulaInput");
-    const autocompleteBox = document.getElementById("autocompleteBox");
-
-    document.querySelectorAll(".formula-btn").forEach((btn) => {
-      btn.addEventListener("click", () => {
-        const symbol = btn.innerText;
-        formulaDisplay.innerText += ` ${symbol} `;
-      });
-    });
-
-    document.querySelector("form").addEventListener("submit", () => {
-      formulaInput.value = formulaDisplay.innerText.trim();
-    });
-
-    formulaDisplay.addEventListener("keydown", (event) => {
-      const selection = window.getSelection();
-      const node = selection.anchorNode;
-
-      if (!node || node.nodeType !== Node.TEXT_NODE) return;
-
-      const text = node.textContent;
-      const offset = selection.anchorOffset;
-      const match = text.match(/\b\w+\b/g);
-      if (!match) return;
-
-      const caretWord = match.find(word => {
-        const index = text.indexOf(word);
-        return offset >= index && offset <= index + word.length;
-      });
-
-      if (caretWord && (event.key === "Backspace" || event.key === "Delete")) {
-        const newText = text.replace(caretWord, "").replace(/\s{2,}/g, " ").trim();
-        node.textContent = newText;
-        selection.collapse(node, newText.length);
-        event.preventDefault();
-      }
-    });
-
-    formulaDisplay.addEventListener("keyup", (event) => {
-      const text = formulaDisplay.innerText;
-      const words = text.split(/\s+/);
-      const lastWord = words[words.length - 1];
-
-      if (!lastWord || lastWord.length < 1) {
-        autocompleteBox.style.display = "none";
-        return;
-      }
-
-      const matches = window.availableParams.filter(param =>
-        param.toLowerCase().startsWith(lastWord.toLowerCase())
-      );
-
-      if (matches.length === 0) {
-        autocompleteBox.style.display = "none";
-        return;
-      }
-
-      autocompleteBox.innerHTML = "";
-      matches.forEach((match) => {
-        const div = document.createElement("div");
-        div.className = "autocomplete-option";
-        div.innerText = match;
-        div.onclick = () => {
-          words[words.length - 1] = match;
-          formulaDisplay.innerText = words.join(" ") + " ";
-          autocompleteBox.style.display = "none";
-
-          // Встановлюємо курсор в кінець
-          const range = document.createRange();
-          const sel = window.getSelection();
-          range.selectNodeContents(formulaDisplay);
-          range.collapse(false);
-          sel.removeAllRanges();
-          sel.addRange(range);
-        };
-        autocompleteBox.appendChild(div);
-      });
-
-      const rect = formulaDisplay.getBoundingClientRect();
-      autocompleteBox.style.position = "absolute";
-      autocompleteBox.style.top = `${rect.bottom + window.scrollY}px`;
-      autocompleteBox.style.left = `${rect.left + window.scrollX}px`;
-      autocompleteBox.style.display = "block";
-    });
-  });
-</script>
-
-<style>
-  .formula-display {
-    border: 1px solid #ccc;
-    padding: 10px;
-    min-height: 40px;
-    margin-bottom: 15px;
-    background: #fefefe;
-    font-size: 16px;
-  }
-  .formula-buttons {
-    margin-bottom: 15px;
-  }
-  .formula-btn {
-    margin: 3px;
-    padding: 6px 10px;
-    background: rgb(150, 150, 150);
-    color: white;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    cursor: pointer;
-    font-weight: bold;
-  }
-  .formula-btn:hover {
-    background: #d0d0d0;
-  }
-
-  .autocomplete-box {
-    background: white;
-    border: 1px solid #ccc;
-    max-width: 400px;
-    z-index: 1000;
-    padding: 5px;
-    border-radius: 4px;
-  }
-
-  .autocomplete-option {
-    padding: 4px 8px;
-    cursor: pointer;
-  }
-
-  .autocomplete-option:hover {
-    background-color: #f0f0f0;
-  }
-</style>

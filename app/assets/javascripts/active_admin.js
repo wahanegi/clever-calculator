@@ -1,39 +1,5 @@
 //= require active_admin/base
-
-
-const showPricingForm = (fixed, open, fixed_open) => {
-  const fixedSection = document.querySelector('#pricing_fixed')
-  const openSection = document.querySelector('#pricing_open')
-  const fixedOpenSection = document.querySelector('#pricing_fixed_open')
-
-  // Toggle visibility and enable/disable inputs for fixed section
-  fixedSection.style.display = fixed ? 'block' : 'none'
-  fixedSection.querySelectorAll('input, textarea, select').forEach((input) => {
-    input.disabled = !fixed
-  })
-
-  // Toggle visibility and enable/disable inputs for open section
-  openSection.style.display = open ? 'block' : 'none'
-  openSection.querySelectorAll('input, textarea, select').forEach((input) => {
-    input.disabled = !open
-  })
-
-  // Toggle visibility and enable/disable inputs for fixed_open section
-  fixedOpenSection.style.display = fixed_open ? 'block' : 'none'
-  fixedOpenSection
-    .querySelectorAll('input, textarea, select')
-    .forEach((input) => {
-      input.disabled = !fixed_open
-    })
-}
-
-// Run on page load to set initial state
-document.addEventListener('DOMContentLoaded', () => {
-  const selectedType =
-    document.querySelector('input[name="item[pricing_type]"]:checked')?.value ||
-    'fixed'
-  updatePricingType(selectedType)
-})
+//= require formula_builder
 
 document.addEventListener("DOMContentLoaded", function () {
   function toggleFields() {

@@ -15,6 +15,8 @@
 // For example, to change the default status-tag color:
 //
 //   .status_tag { background: #6090DB; }
+
+// Styles for Admin::Item parameter tables
 .parameter-table {
   width: 100%;
   border-collapse: collapse;
@@ -60,10 +62,50 @@
   .option-row {
     padding: 8px 0;
     border-bottom: 1px solid #ddd;
+
     &:last-child {
       border-bottom: none;
     }
   }
+}
+
+// === Formula Builder styles ===
+.formula-display {
+  border: 1px solid #ccc;
+  padding: 10px;
+  min-height: 40px;
+  margin-bottom: 15px;
+  background: #fefefe;
+  font-size: 16px;
+}
+
+.formula-buttons {
+  margin-bottom: 15px;
+}
+
+.formula-btn {
+  margin: 3px;
+  padding: 6px 10px;
+  background: rgb(150, 150, 150);
+  color: white;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.formula-btn:hover {
+  background: #d0d0d0;
+}
+
+.autocomplete-box {
+  background: white;
+  border: 1px solid #ccc;
+  max-width: 400px;
+  z-index: 1000;
+  padding: 5px;
+  border-radius: 4px;
+  display: none;
 }
 
 .parameter-panel {
@@ -107,6 +149,7 @@
 
   .form-actions {
     margin-top: 30px;
+
 
     input {
       background-color: #357edd;
@@ -167,7 +210,6 @@
 
   &:hover {
     background-color: #eee;
-    color: #000;
   }
 }
 
@@ -190,6 +232,5 @@
   border-color: #aaa !important;
   color: #222 !important;
 }
-
 
 @import "active_admin/forms/select";
