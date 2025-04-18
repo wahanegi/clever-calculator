@@ -39,9 +39,8 @@ ActiveAdmin.register Item do
     end
 
     item_key = f.object.persisted? ? f.object.id.to_s : "new"
-    session_data = controller.view_context.session
-    tmp_params = session_data[:tmp_params] || {}
-    meta_data = tmp_params[item_key] || {}
+    session_service = TmpParamsSessionService.new(controller.view_context.session, item_key)
+    meta_data = session_service.all
 
     f.inputs "Item Details" do
       f.input :name, required: true, input_html: { value: f.object.name.presence || meta_data["name"] }
@@ -78,21 +77,15 @@ ActiveAdmin.register Item do
           end
 
           span class: "formula" do
-            item_key = f.object.persisted? ? f.object.id.to_s : "new"
-            session_formula = controller.view_context.session.dig(:tmp_params, item_key, "calculation_formula")
-            session_formula.presence || f.object.calculation_formula.presence || "No formula yet"
+            formula = session_service.get(:calculation_formula) || f.object.calculation_formula
+            formula.presence || "No formula yet"
           end
         end
       end
 
-      item_key = f.object.persisted? ? f.object.id.to_s : "new"
-      session_data = controller.view_context.session
-      tmp_params = session_data[:tmp_params] || {}
-      tmp_data = tmp_params[item_key]&.deep_symbolize_keys || {}
-
-      tmp_fixed = tmp_data[:fixed] || {}
-      tmp_open = tmp_data[:open] || []
-      tmp_select = tmp_data[:select] || {}
+      tmp_fixed  = session_service.get(:fixed) || {}
+      tmp_open   = session_service.get(:open) || []
+      tmp_select = session_service.get(:select) || {}
 
       panel "Pricing Parameters" do
         render partial: "admin/items/parameters", locals: {
@@ -155,11 +148,12 @@ ActiveAdmin.register Item do
     def create
       @item = Item.new(permitted_params[:item])
       item_key = "new"
+      service = TmpParamsSessionService.new(session, item_key)
 
-      apply_tmp_params(@item, session[:tmp_params][item_key]) if session[:tmp_params]&.key?(item_key)
+      service.update_with_tmp_to_item(@item)
 
       if @item.save
-        session[:tmp_params]&.delete(item_key)
+        service.delete
         redirect_to admin_item_path(@item), notice: "Item was successfully created."
       else
         flash.now[:error] = "Failed to create item: #{@item.errors.full_messages.to_sentence}"
@@ -170,15 +164,15 @@ ActiveAdmin.register Item do
     def edit
       @item = Item.find(params[:id])
       item_key = @item.id.to_s
+      service = TmpParamsSessionService.new(session, item_key)
 
-      session[:tmp_params] ||= {}
-      session[:tmp_params][item_key] ||= {
-        fixed: @item.fixed_parameters || {},
-        open: @item.open_parameters_label || [],
-        select: @item.pricing_options || {},
-        formula_parameters: @item.formula_parameters || [],
-        calculation_formula: @item.calculation_formula
-      }
+      if service.all.blank?
+        service.set(:fixed, @item.fixed_parameters || {})
+        service.set(:open, @item.open_parameters_label || [])
+        service.set(:select, @item.pricing_options || {})
+        service.set(:formula_parameters, @item.formula_parameters || [])
+        service.set(:calculation_formula, @item.calculation_formula)
+      end
 
       super
     end
@@ -186,37 +180,18 @@ ActiveAdmin.register Item do
     def update
       @item = Item.find(params[:id])
       item_key = @item.id.to_s
+      service = TmpParamsSessionService.new(session, item_key)
 
-      apply_tmp_params(@item, session[:tmp_params][item_key]) if session[:tmp_params]&.key?(item_key)
+      service.update_with_tmp_to_item(@item)
 
       if @item.update(permitted_params[:item])
-        session[:tmp_params]&.delete(item_key)
+        service.delete
         redirect_to admin_item_path(@item), notice: "Item was successfully updated."
       else
-        apply_tmp_params(@item, session[:tmp_params][item_key]) if session[:tmp_params]&.key?(item_key)
+        service.update_with_tmp_to_item(@item)
         flash[:error] = "Failed to update item: #{@item.errors.full_messages.to_sentence}"
         render :edit
       end
-    end
-
-    private
-
-    def apply_tmp_params(item, tmp)
-      return if tmp.blank?
-
-      data = tmp.deep_symbolize_keys
-      item.fixed_parameters       = data[:fixed] || {}
-      item.open_parameters_label  = data[:open] || []
-      item.pricing_options        = data[:select] || {}
-      item.formula_parameters     = data[:formula_parameters] || []
-      Rails.logger.info "🧮 TMP calculation_formula = #{data[:calculation_formula]}"
-      item.calculation_formula    = data[:calculation_formula] || nil
-
-      item.is_open                = item.open_parameters_label.any?
-      item.is_selectable_options  = item.pricing_options.any?
-      item.is_fixed               = item.fixed_parameters.any?
-
-      Rails.logger.info "🧠 APPLY TMP: formula_parameters = #{item.formula_parameters.inspect}"
     end
   end
 
@@ -249,18 +224,7 @@ ActiveAdmin.register Item do
   member_action :create_parameter, method: :post do
     @item = Item.find_by(id: params[:id]) || Item.new
     item_key = @item.persisted? ? @item.id.to_s : "new"
-
-    session[:tmp_params] ||= {}
-    session[:tmp_params][item_key] ||= {}
-
-    Rails.logger.info "🔑 item_key: #{item_key}"
-    Rails.logger.info "📦 Session before: #{session[:tmp_params][item_key]}"
-
-    store = session[:tmp_params][item_key].deep_symbolize_keys
-    store[:fixed] ||= {}
-    store[:open] ||= []
-    store[:select] ||= {}
-    store[:formula_parameters] ||= []
+    service = TmpParamsSessionService.new(session, item_key)
 
     param_type = params[:parameter_type]
     param_name = case param_type
@@ -274,22 +238,23 @@ ActiveAdmin.register Item do
       return redirect_back(fallback_location: @item&.id ? edit_admin_item_path(@item) : new_admin_item_path)
     end
 
-    store[:formula_parameters] << param_name unless store[:formula_parameters].include?(param_name)
+    service.add_formula_parameter(param_name)
 
     case param_type
     when "Fixed"
       param_value = params[:fixed_parameter_value]
-      store[:fixed][param_name] = param_value
+      fixed = service.get(:fixed) || {}
+      fixed[param_name] = param_value
+      service.set(:fixed, fixed)
 
     when "Open"
-      store[:open] << param_name unless store[:open].include?(param_name)
+      open_params = service.get(:open) || []
+      open_params << param_name unless open_params.include?(param_name)
+      service.set(:open, open_params)
 
     when "Select"
       sub_hash = {}
-
-      select_options = params[:select_options] || []
-
-      select_options.each do |pair|
+      (params[:select_options] || []).each do |pair|
         desc = pair["description"]
         val  = pair["value"]
         next if desc.blank? || val.blank?
@@ -303,92 +268,69 @@ ActiveAdmin.register Item do
         return redirect_back(fallback_location: @item&.id ? edit_admin_item_path(@item) : new_admin_item_path)
       end
 
-      store[:select][param_name] = {
+      select = service.get(:select) || {}
+      select[param_name] = {
         "options" => sub_hash,
         "value_label" => value_label
       }
+      service.set(:select, select)
 
     else
       flash[:error] = "Unknown parameter type"
       return redirect_back(fallback_location: @item&.id ? edit_admin_item_path(@item) : new_admin_item_path)
     end
 
-    session[:tmp_params][item_key] = store.deep_stringify_keys
-
-    Rails.logger.info "📤 Session after update: #{session[:tmp_params][item_key]}"
-
     flash[:notice] = "Parameter '#{param_name}' added (stored in session)."
-    Rails.logger.info "🧠 Final saved SELECT: #{store[:select][param_name].inspect}"
-    Rails.logger.info "📤 Full session after update: #{session[:tmp_params].inspect}"
-
     redirect_to @item.persisted? ? edit_admin_item_path(@item) : new_resource_path
   end
 
   member_action :remove_parameter, method: :delete do
-    Rails.logger.info "🧩 REMOVE PARAMETER"
     @item = params[:id] == "new" ? Item.new : Item.find(params[:id])
     item_key = @item.persisted? ? @item.id.to_s : "new"
-    Rails.logger.info "🔑 item_key: #{item_key}"
+    service = TmpParamsSessionService.new(session, item_key)
 
-    session[:tmp_params] ||= {}
-    session[:tmp_params][item_key] ||= {
-      fixed: {},
-      open: [],
-      select: {},
-      formula_parameters: []
-    }
-
-    store = session[:tmp_params][item_key].deep_symbolize_keys
     param_type = params[:param_type].to_s
     key = params[:param_key].to_s
     desc_key = params[:desc_key].to_s if params[:desc_key].present?
 
-    Rails.logger.info "📦 Session before delete: #{store}"
-    Rails.logger.info "🛠 Param type: #{param_type}, Key: #{key}, Desc key: #{desc_key}"
-
     case param_type
     when "fixed"
-      store[:fixed]&.delete(key.to_sym)
-      store[:formula_parameters]&.delete(key)
-      Rails.logger.info "🗑 Deleted fixed #{key}"
+      fixed = service.get(:fixed) || {}
+      fixed.delete(key.to_sym)
+      service.set(:fixed, fixed)
+      service.remove_formula_parameter(key)
 
     when "open"
-      store[:open]&.delete(key)
-      store[:formula_parameters]&.delete(key)
-      Rails.logger.info "🗑 Deleted open #{key}"
+      open = service.get(:open) || []
+      open.delete(key)
+      service.set(:open, open)
+      service.remove_formula_parameter(key)
 
     when "select"
-      key_str = key.to_s
+      select = service.get(:select) || {}
+
       if desc_key.present?
-        store[:select][key_str]&.delete(desc_key)
-        store[:select].delete(key_str) if store[:select][key_str] && store[:select][key_str].empty?
-        Rails.logger.info "🗑 Deleted desc #{desc_key} from #{key_str}"
+        select[key]&.delete(desc_key)
+        select.delete(key) if select[key] && select[key].empty?
       else
-        store[:select] = store[:select].reject { |k, _| k.to_s == key_str }
-        Rails.logger.info "🗑 Deleted whole select #{key_str}"
+        select = select.reject { |k, _| k.to_s == key }
       end
-      store[:formula_parameters]&.delete(key_str)
 
-    else
-      Rails.logger.warn "⚠️ Unknown param_type=#{param_type}"
+      service.set(:select, select)
+      service.remove_formula_parameter(key)
     end
-
-    session[:tmp_params][item_key] = store.deep_stringify_keys
-
-    Rails.logger.info "📦 Session after delete: #{session[:tmp_params][item_key]}"
     redirect_to @item.persisted? ? edit_admin_item_path(@item) : new_resource_path
   end
 
   member_action :save_meta_to_session, method: :post do
     item_key = params[:id] == "new" ? "new" : params[:id].to_s
+    service = TmpParamsSessionService.new(session, item_key)
 
-    session[:tmp_params] ||= {}
-    session[:tmp_params][item_key] ||= {}
-    session[:tmp_params][item_key]["name"] = params[:name]
-    session[:tmp_params][item_key]["description"] = params[:description]
-    session[:tmp_params][item_key]["category_id"] = params[:category_id]
-
-    Rails.logger.info "💾 Saved to session: #{session[:tmp_params][item_key].slice('name', 'description', 'category_id')}"
+    service.store_meta(
+      name: params[:name],
+      description: params[:description],
+      category_id: params[:category_id]
+    )
 
     head :ok
   end
@@ -396,26 +338,20 @@ ActiveAdmin.register Item do
   member_action :new_formula, method: :get do
     @item = params[:id] == "new" ? Item.new : Item.find(params[:id])
     item_key = @item.persisted? ? @item.id.to_s : "new"
+    service = TmpParamsSessionService.new(session, item_key)
 
-    session[:tmp_params] ||= {}
-    store = session[:tmp_params][item_key] || {}
-
-    @formula_params = store["formula_parameters"] || []
-    @initial_formula = store["calculation_formula"] || @item.calculation_formula
+    @formula_params = service.get(:formula_parameters) || []
+    @initial_formula = service.get(:calculation_formula) || @item.calculation_formula
   end
 
   member_action :update_formula, method: :post do
-    if params[:id] == "new"
-      session[:tmp_params] ||= {}
-      session[:tmp_params]["new"] ||= {}
-      session[:tmp_params]["new"]["calculation_formula"] = params[:calculation_formula]
-    else
+    item_key = params[:id] == "new" ? "new" : params[:id].to_s
+    service = TmpParamsSessionService.new(session, item_key)
+
+    service.set(:calculation_formula, params[:calculation_formula])
+
+    if params[:id] != "new"
       @item = Item.find(params[:id])
-
-      session[:tmp_params] ||= {}
-      session[:tmp_params][@item.id.to_s] ||= {}
-      session[:tmp_params][@item.id.to_s]["calculation_formula"] = params[:calculation_formula]
-
       @item.calculation_formula = params[:calculation_formula]
     end
 
@@ -425,16 +361,9 @@ ActiveAdmin.register Item do
 
   member_action :clear_session, method: :post do
     item_key = params[:id].to_s
-    if session[:tmp_params].present?
-      Rails.logger.info "⚠️ TRYING TO DELETE session[:tmp_params][#{item_key}]"
-      Rails.logger.info "🔍 BEFORE DELETE: #{session[:tmp_params][item_key].inspect}"
+    service = TmpParamsSessionService.new(session, item_key)
 
-      session[:tmp_params].delete(item_key)
-
-      Rails.logger.info "🧹 DELETED! AFTER: #{session[:tmp_params].inspect}"
-    else
-      Rails.logger.warn "⚠️ tmp_params session is empty, nothing to delete"
-    end
+    service.delete
 
     head :ok
   end
