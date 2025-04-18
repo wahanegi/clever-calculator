@@ -129,14 +129,14 @@ export const CustomerForm = () => {
 
   return (
     <Form onSubmit={handleNext} className={'d-flex flex-column w-100 align-items-center'}>
-      <div className="border rounded border-primary customer-form bg-light w-100 mb-7">
-        <Row className="mb-6">
-          <div className="d-flex flex-column flex-sm-row gap-6">
+      <div className="border rounded border-primary customer-form bg-light w-100 mb-10">
+        <Row className="mb-8">
+          <div className="d-flex flex-column flex-sm-row gap-8">
             <Col className={'image-placeholder'}>
               <PcCompanyLogoUploader id="company_logo" onChange={handleChangeLogo} logo={customer.logo} />
             </Col>
             <Col>
-              <Row className="mb-6">
+              <Row className="mb-8">
                 <Col>
                   <PcDropdownSelect
                     id="company_name"
@@ -157,7 +157,7 @@ export const CustomerForm = () => {
                 </Col>
               </Row>
               <Row>
-                <div className="d-flex flex-column flex-sm-row gap-6">
+                <div className="d-flex flex-column flex-sm-row gap-8">
                   <Col className="client-input">
                     <PcInput
                       id="full_name"
@@ -190,8 +190,8 @@ export const CustomerForm = () => {
             </Col>
           </div>
         </Row>
-        <Row className="mb-6">
-          <div className="d-flex flex-column flex-sm-row gap-6">
+        <Row className="mb-8">
+          <div className="d-flex flex-column flex-sm-row gap-8">
             <Col>
               <PcInput
                 id="email"

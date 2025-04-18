@@ -55,7 +55,7 @@ export const PcCategoryAccordion = ({
           </div>
 
           <Accordion.Body className="border border-primary border-top-0 bg-white rounded-bottom-2">
-            <div className={'px-6 py-4'}>
+            <div className={'px-8 py-5'}>
               {children}
             </div>
             <div className="accordion-bottom-filling bg-light rounded-bottom-2" />

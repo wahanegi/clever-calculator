@@ -39,8 +39,12 @@ h2,
   line-height: 1.7;
 }
 
-.pc-ff-lato {
+.text-lato {
   font-family: $font-family-lato;
+  font-weight: $font-weight-medium;
+  line-height: 1.5;
+  text-align: center;
+
 }
 
 // Utility Classes

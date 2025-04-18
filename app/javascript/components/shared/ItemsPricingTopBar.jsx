@@ -17,7 +17,7 @@ export const ItemsPricingTopBar = ({
   } = getExpandCollapseStates(selectedCategories, expandedAccordions)
 
   return (
-    <div className="pc-grid-bar d-flex flex-column-reverse d-sm-grid align-items-center gap-6 mb-6">
+    <div className="pc-grid-bar d-flex flex-column-reverse d-sm-grid align-items-center gap-8 mb-8">
       {/* Dropdown for selecting categories */}
       <MultiSelectDropdown
         selected={selectedCategories}

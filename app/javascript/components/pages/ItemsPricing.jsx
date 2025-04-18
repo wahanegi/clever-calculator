@@ -41,8 +41,8 @@ export const ItemsPricing = () => {
   const handleNotesValue = (e) => setNotesValue(e.target.value)
 
   return (
-    <Container className={'wrapper'}>
-      <section className={'mb-8 px-6'}>
+    <Container className={'wrapper pt-10 pb-8'}>
+      <section className={'mb-12 px-8'}>
         <QuoteCreation currentStepId={currentStepId} />
 
         {/* Items & Pricing dashboard*/}
@@ -56,13 +56,13 @@ export const ItemsPricing = () => {
         />
 
         {selectedCategories.length === 0 &&
-          (<div className="text-center text-muted py-5">
+          (<div className="text-center text-muted py-6">
             Select one or more items to start your quote.
           </div>)
         }
       </section>
 
-      <section className={'d-flex flex-column gap-4 mb-8'}>
+      <section className={'d-flex flex-column gap-4 mb-12'}>
         {selectedCategories.length > 0 && selectedCategories.map((category) => (
           <PcCategoryAccordion
             key={category.id}
@@ -72,7 +72,7 @@ export const ItemsPricing = () => {
             onDelete={() => handleDeleteCategory(category.id)}
           >
             {/*TODO: Skeleton for displaying item inside accordion */}
-            <div className={'d-flex flex-column gap-5'}>
+            <div className={'d-flex flex-column gap-6'}>
               {/*TODO: Example of Fixed Price. Will be changed after adding logic*/}
               <PcItemAccordion
                 key={'fixed-price'}
@@ -108,7 +108,7 @@ export const ItemsPricing = () => {
       </section>
 
       {/* Buttons section */}
-      <section className={'d-flex justify-content-center align-items-center gap-4 mb-5'}>
+      <section className={'d-flex justify-content-center align-items-center gap-4'}>
         <Button variant={'outline-primary'} className={'fw-bold pc-btn'} onClick={handleBack}>Back</Button>
         <Button variant={'outline-primary'} className={'fw-bold pc-btn pc-btn-download'} onClick={handleDownload}
                 disabled={true}>Download</Button>

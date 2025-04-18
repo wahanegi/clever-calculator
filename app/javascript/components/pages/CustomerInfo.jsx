@@ -11,7 +11,7 @@ export const CustomerInfo = () => {
   return (
     <Container className={'wrapper'}>
       <QuoteCreation currentStepId={currentStepId} isBtnShow={false} />
-      <section className={'mt-7 d-flex flex-column align-items-center'}>
+      <section className={'mt-10 d-flex flex-column align-items-center'}>
         <CustomerForm />
       </section>
     </Container>

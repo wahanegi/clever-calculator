@@ -56,7 +56,7 @@ export const PcItemAccordion = ({
 
         <Accordion.Body>
           {children}
-          <hr className={'pc-hr-divider w-100 mt-9'} />
+          <hr className={'pc-hr-divider w-100 mt-14'} />
         </Accordion.Body>
       </Accordion.Item>
     </Accordion>

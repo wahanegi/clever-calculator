@@ -41,6 +41,7 @@
     &:active {
       border-color: $coral-dark !important;
       background: $coral-dark !important;
+      color: $white !important;
     }
 
     &:disabled {
@@ -87,7 +88,6 @@
 
   &-reset {
     width: 103.71px;
-    font-family: $font-family-lato !important;
   }
 
   &-download {
