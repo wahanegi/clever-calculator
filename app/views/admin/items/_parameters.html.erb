@@ -46,7 +46,7 @@
           <td>Value is entered by the user</td>
           <% if mode == :edit %>
             <td>
-              <%= link_to "Delete", remove_parameter_admin_item_path(item_key, param_type: :fixed, param_key: label.to_s),
+              <%= link_to "Delete", remove_parameter_admin_item_path(item_key, param_type: :open, param_key: label.to_s),
                           method: :delete, data: { confirm: "Delete fixed param '#{label}'?" } %>
             </td>
           <% end %>
@@ -93,7 +93,7 @@
           </td>
           <% if mode == :edit %>
             <td>
-              <%= link_to "Delete", remove_parameter_admin_item_path(item_key, param_type: :fixed, param_key: sel_name.to_s),
+              <%= link_to "Delete", remove_parameter_admin_item_path(item_key, param_type: :select, param_key: sel_name.to_s),
                           method: :delete, data: { confirm: "Delete fixed param '#{sel_name}'?" } %>
             </td>
           <% end %>
