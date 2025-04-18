@@ -35,20 +35,29 @@ class TmpParamsSessionService
 
   def update_with_tmp_to_item(item)
     data = all.deep_symbolize_keys
-    item.fixed_parameters       = data[:fixed] || {}
-    item.open_parameters_label  = data[:open] || []
-    item.pricing_options        = data[:select] || {}
-    item.formula_parameters     = data[:formula_parameters] || []
-    item.calculation_formula    = data[:calculation_formula]
-
-    item.is_open                = item.open_parameters_label.any?
-    item.is_selectable_options  = item.pricing_options.any?
-    item.is_fixed               = item.fixed_parameters.any?
+    assign_param_values(item, data)
+    assign_flags(item)
   end
 
   def store_meta(name:, description:, category_id:)
     set(:name, name)
     set(:description, description)
     set(:category_id, category_id)
+  end
+
+  private
+
+  def assign_param_values(item, data)
+    item.fixed_parameters       = data[:fixed] || {}
+    item.open_parameters_label  = data[:open] || []
+    item.pricing_options        = data[:select] || {}
+    item.formula_parameters     = data[:formula_parameters] || []
+    item.calculation_formula    = data[:calculation_formula]
+  end
+
+  def assign_flags(item)
+    item.is_open                = item.open_parameters_label.any?
+    item.is_selectable_options  = item.pricing_options.any?
+    item.is_fixed               = item.fixed_parameters.any?
   end
 end

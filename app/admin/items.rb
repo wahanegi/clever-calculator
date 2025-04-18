@@ -7,15 +7,13 @@ ActiveAdmin.register Item do
   end
 
   filter :name_cont, as: :string, label: "Product Name"
-  filter :category, as: :select, collection: -> { Category.pluck(:name, :id) }, label: "Category"
+  filter :category, as: :select, collection: -> { Category.pluck(:name, :id) }
   filter :is_disabled, label: "Disabled"
 
   index do
     id_column
     column :name
-    column "Category", sortable: :category_id do |item|
-      link_to item.category.name, admin_category_path(item.category) if item.category
-    end
+    column :category, sortable: :category_id
     column("Disabled") { |item| status_tag item.is_disabled, label: item.is_disabled? ? "True" : "False" }
     column :created_at
     column :updated_at
@@ -115,9 +113,7 @@ ActiveAdmin.register Item do
       row "Description" do |item|
         item.description.presence || "No description"
       end
-      row "Category" do |item|
-        link_to item.category.name, admin_category_path(item.category) if item.category
-      end
+      row :category
       row "Status" do |item|
         status_tag(item.is_disabled? ? "Disable" : "Enable", class: item.is_disabled? ? "red" : "green")
       end
