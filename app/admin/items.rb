@@ -106,7 +106,7 @@ ActiveAdmin.register Item do
     end
 
     f.actions do
-      f.action :submit, label: "Update Item"
+      f.action :submit
       f.action :cancel, label: "Cancel", button_html: {
         class: "custom-cancel-button",
         id: "custom-cancel-button",

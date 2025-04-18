@@ -4,20 +4,20 @@
   <table class="parameter-table">
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Value</th>
+        <th style="width: 40%;">Name</th>
+        <th style="width: 40%;">Value</th>
         <% if mode == :edit %>
-          <th>Actions</th>
+          <th style="width: 20%;">Actions</th>
         <% end %>
       </tr>
     </thead>
     <tbody>
       <% fixed_parameters.each do |name, value| %>
         <tr>
-          <td><%= name %></td>
-          <td><%= value %></td>
+          <td style="width: 40%;"><%= name %></td>
+          <td style="width: 40%;"><%= value %></td>
           <% if mode == :edit %>
-            <td>
+            <td style="width: 20%;">
               <%= link_to "Delete", remove_parameter_admin_item_path(item_key, param_type: :fixed, param_key: name.to_s),
                           method: :delete, data: { confirm: "Delete fixed param '#{name}'?" } %>
             </td>
@@ -32,20 +32,20 @@
   <table class="parameter-table">
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Value</th>
+        <th style="width: 40%;">Name</th>
+        <th style="width: 40%;">Value</th>
         <% if mode == :edit %>
-          <th>Actions</th>
+          <th style="width: 20%;">Actions</th>
         <% end %>
       </tr>
     </thead>
     <tbody>
       <% open_parameters_label.each do |label| %>
         <tr>
-          <td><%= label %></td>
-          <td>Value is entered by the user</td>
+          <td style="width: 40%;"><%= label %></td>
+          <td style="width: 40%;">Value is entered by the user</td>
           <% if mode == :edit %>
-            <td>
+            <td style="width: 20%;">
               <%= link_to "Delete", remove_parameter_admin_item_path(item_key, param_type: :fixed, param_key: label.to_s),
                           method: :delete, data: { confirm: "Delete fixed param '#{label}'?" } %>
             </td>
