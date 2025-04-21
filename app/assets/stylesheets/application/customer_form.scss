@@ -6,6 +6,10 @@
 .image-placeholder {
   max-width: 136px;
   min-height: 117px;
+
+  label:hover {
+    cursor: pointer;
+  }
 }
 
 .client-input {
