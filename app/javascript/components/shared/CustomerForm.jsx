@@ -76,19 +76,28 @@ export const CustomerForm = () => {
     setErrors((prev) => ({ ...prev, [id]: '' }))
   }
 
-  const handleChangeLogo = (e) => {
-    const file = e.target.files[0]
-
-    setCustomer((prev) => {
-      return {
-        ...prev,
-        logo_file: file || null,
-        logo_url: file ? URL.createObjectURL(file) : null,
-      }
+  const handleChangeFullName = (e) => {
+    const { value } = e.target
+    setCustomer({
+      ...customer,
+      ...extractNames(value),
+      full_name: value,
     })
   }
 
-  const handleNext = async (e) => {
+  const handleChangeLogo = (e) => {
+    const file = e.target.files[0]
+
+    setCustomer((prev) => ({
+      ...prev,
+      logo_file: file || null,
+      logo_url: file ? URL.createObjectURL(file) : null,
+    }))
+
+    setErrors((prev) => ({ ...prev, logo: '' }))
+  }
+
+  const handleNext = (e) => {
     e.preventDefault()
 
     if (!validateForm()) {
@@ -107,21 +116,26 @@ export const CustomerForm = () => {
     formData.append('customer[address]', customer.address)
     formData.append('customer[notes]', customer.notes)
 
-    const { data: customerData } = await fetchCustomers.upsert(formData)
+    fetchCustomers.upsert(formData)
+      .then(async (response) => {
+        const { data: customerData } = response
 
-    if (!customers.some((c) => c.id === customerData.id)) {
-      setCustomers((prev) => [...prev, customerData])
-    }
+        if (!customers.some((c) => c.id === customerData.id)) {
+          setCustomers((prev) => [...prev, customerData])
+        }
 
-    const { data: quoteData } = await fetchQuotes.create({
-      quote: {
-        customer_id: customerData.id,
-        total_price: 0,
-        step: STEPS.ITEM_PRICING,
-      },
+        const { data: quoteData } = await fetchQuotes.create({
+          quote: {
+            customer_id: customerData.id,
+            total_price: 0,
+            step: STEPS.ITEM_PRICING,
+          },
+        })
+
+        navigate(`${ROUTES.ITEM_PRICING}?quote_id=${quoteData.id}`)
+      }).catch((error) => {
+      setErrors(prev => ({ ...prev, logo: error.response.data.errors }))
     })
-
-    navigate(`${ROUTES.ITEM_PRICING}?quote_id=${quoteData.id}`)
   }
 
   if (!customers) return null
@@ -139,7 +153,8 @@ export const CustomerForm = () => {
               <PcCompanyLogoUploader
                 id="company_logo"
                 onChange={handleChangeLogo}
-                logo={customer.logo_url} />
+                logo={customer.logo_url}
+                error={errors.logo} />
             </Col>
             <Col>
               <Row className="mb-6">
@@ -171,14 +186,7 @@ export const CustomerForm = () => {
                       label="Client"
                       height="42px"
                       value={customer.full_name}
-                      onChange={(e) => {
-                        const { value } = e.target
-                        setCustomer({
-                          ...customer,
-                          ...extractNames(value),
-                          full_name: value,
-                        })
-                      }}
+                      onChange={handleChangeFullName}
                     />
                   </Col>
                   <Col className="title-input">
