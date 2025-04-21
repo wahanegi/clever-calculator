@@ -14,6 +14,19 @@ $rbt-color-white: #fff !default;
   border-radius: 4px;
 }
 
+/* Set color to transparent to prevent duplicated text rendering
+ * when the customer deletes characters after selecting an option
+ * from the select list in the rbt-input.
+ *
+ * This issue occurs specifically when the selected value is longer
+ * than the visible input width — causing the hint to visually overlap.
+ *
+ * This is a known issue with the Typeahead component in version 6.4.1.
+ */
+.rbt-input-hint {
+  color: transparent !important;
+}
+
 /**
  *** Menu ***
  **/
