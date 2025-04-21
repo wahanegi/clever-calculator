@@ -60,3 +60,13 @@ textarea {
   color: $primary;
   padding: 0;
 }
+
+/**
+ *** TYPEAHEAD CUSTOM STYLES for "Customer info" Page ***
+ **/
+.pc-typeahead-customer-info {
+  .pc-icon-reserve-place {
+    padding-right: 26px;
+    background-color: $white;
+  }
+}

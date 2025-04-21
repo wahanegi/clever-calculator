@@ -4,18 +4,18 @@ import { Typeahead } from 'react-bootstrap-typeahead'
 import { PcIcon } from './PcIcon'
 
 export const PcDropdownSelect = ({
-  id,
-  options,
-  placeholder,
-  onChange,
-  onInputChange,
-  height,
-  value,
-  label,
-  error,
-  maxResults = 5,
-  hasIcon = false,
-}) => {
+                                   id,
+                                   options,
+                                   placeholder,
+                                   onChange,
+                                   onInputChange,
+                                   height,
+                                   value,
+                                   label,
+                                   error,
+                                   maxResults = 5,
+                                   hasIcon = false,
+                                 }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [inputValue, setInputValue] = useState('')
 
@@ -30,7 +30,7 @@ export const PcDropdownSelect = ({
   }
 
   return (
-    <Form.Group controlId={id} className="position-relative">
+    <Form.Group controlId={id} className="pc-typeahead-customer-info position-relative">
       <Typeahead
         id={id}
         options={options}
@@ -54,7 +54,7 @@ export const PcDropdownSelect = ({
         }}
         allowNew={!hasMatchingOption()}
         newSelectionPrefix="Add new customer: "
-        className="border border-primary rounded-1"
+        className="pc-icon-reserve-place border border-primary rounded-1"
         style={{ height }}
         selected={selectedOption ? [selectedOption] : []}
         maxResults={maxResults}
