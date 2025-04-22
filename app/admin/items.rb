@@ -14,7 +14,7 @@ ActiveAdmin.register Item do
     id_column
     column :name
     column :category, sortable: :category_id
-    column("Disabled") { |item| status_tag item.is_disabled, label: item.is_disabled? ? "True" : "False" }
+    column("Enabled") { |item| status_tag !item.is_disabled, label: item.is_disabled? ? "False" : "True" }
     column :created_at
     column :updated_at
     actions defaults: false do |resource|

@@ -30,6 +30,6 @@ class Category < ApplicationRecord
   def disable_related_items_if_disabled
     return unless saved_change_to_is_disabled? && is_disabled?
 
-    items.update_all(is_disabled: true) # rubocop:disable Rails/SkipsModelValidations
+    items.find_each { |item| item.update(is_disabled: true) }
   end
 end

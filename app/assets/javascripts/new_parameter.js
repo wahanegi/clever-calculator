@@ -22,6 +22,17 @@ document.addEventListener("DOMContentLoaded", () => {
     const wrapper = document.getElementById("select-options-wrapper");
     const addBtn = document.getElementById("add-option-button");
 
+    const addDeleteListener = (row) => {
+        const deleteBtn = row.querySelector(".delete-option-button");
+        deleteBtn.addEventListener("click", () => {
+            if (wrapper.querySelectorAll(".select-option-row").length > 2) {
+                row.remove();
+            } else {
+                alert("At least 2 options are required.");
+            }
+        });
+    };
+
     const createOptionRow = () => {
         const row = document.createElement("div");
         row.className = "select-option-row";
@@ -38,13 +49,7 @@ document.addEventListener("DOMContentLoaded", () => {
         <button type="button" class="delete-option-button button light">Delete</button>
       `;
 
-        row.querySelector(".delete-option-button").addEventListener("click", () => {
-            if (wrapper.querySelectorAll(".select-option-row").length > 2) {
-                row.remove();
-            } else {
-                alert("At least 2 options are required.");
-            }
-        });
+        addDeleteListener(row);
 
         return row;
     };
@@ -54,17 +59,7 @@ document.addEventListener("DOMContentLoaded", () => {
         wrapper.appendChild(newRow);
     });
 
-
-    wrapper.querySelectorAll(".select-option-row").forEach((row) => {
-        const delBtn = row.querySelector(".delete-option-button");
-        delBtn.addEventListener("click", () => {
-            if (wrapper.querySelectorAll(".select-option-row").length > 2) {
-                row.remove();
-            } else {
-                alert("At least 2 options are required.");
-            }
-        });
-    });
+    wrapper.querySelectorAll(".select-option-row").forEach(addDeleteListener);
 });
 
 // --- Save meta info (name, desc, category_id) before transition ---
@@ -106,4 +101,3 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
 });
-
