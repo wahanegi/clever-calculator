@@ -62,11 +62,27 @@ textarea {
 }
 
 /**
- *** TYPEAHEAD CUSTOM STYLES for "Customer info" Page ***
+ *** TYPEAHEAD CUSTOM STYLES ***
  **/
-.pc-typeahead-customer-info {
-  .pc-icon-reserve-place {
-    padding-right: 26px;
-    background-color: $white;
+.pc-typeahead {
+  &-arrow-down {
+    & input.rbt-input-main {
+      background-image: url('./icons/arrow-down.svg');
+    }
+  }
+
+  &-arrow-up {
+    & input.rbt-input-main {
+      background-image: url('./icons/arrow-up.svg');
+    }
+  }
+
+  &-arrow-down, &-arrow-up {
+    & input.rbt-input-main {
+      padding-right: 35px;
+      background-repeat: no-repeat;
+      background-position: calc(100% - 19px);
+      background-size: 10px 5px;
+    }
   }
 }
