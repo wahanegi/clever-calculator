@@ -4,7 +4,6 @@ ActiveAdmin.register Quote do
                                          :_destroy,
                                          :quote_id,
                                          :item_id,
-                                         :item_pricing_id,
                                          :open_parameters,
                                          :price,
                                          :discount,
@@ -40,7 +39,6 @@ ActiveAdmin.register Quote do
     f.inputs "Quote Items" do
       f.has_many :quote_items, allow_destroy: true, new_record: true do |qi|
         qi.input :item, as: :select, collection: Item.pluck(:name, :id)
-        qi.input :item_pricing, as: :select, collection: ItemPricing.pluck(:default_fixed_price, :id)
         qi.input :open_parameters
         qi.input :price
         qi.input :discount
@@ -63,7 +61,6 @@ ActiveAdmin.register Quote do
     panel 'Quote Items' do
       table_for quote.quote_items do
         column :item
-        column :item_pricing
         column :open_parameters
         column :price
         column :discount

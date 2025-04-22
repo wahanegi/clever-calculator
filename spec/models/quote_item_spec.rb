@@ -4,7 +4,6 @@ RSpec.describe QuoteItem, type: :model do
   describe 'associations' do
     it { is_expected.to belong_to(:quote).required }
     it { is_expected.to belong_to(:item).required }
-    it { is_expected.to belong_to(:item_pricing).required }
   end
 
   describe 'validations' do
@@ -21,14 +20,13 @@ RSpec.describe QuoteItem, type: :model do
 
   describe 'before_save callbacks' do
     let(:quote) { create(:quote) }
-    let(:item) { create(:item, pricing_type: :open) }
-    let(:item_pricing) { create(:item_pricing, item: item) }
+    let(:item) { create(:item) }
     let(:price) { 1000 }
     let(:discount) { 10 }
 
     context 'when quote_item is created' do
       let(:quote_item) do
-        QuoteItem.new(quote: quote, item_pricing: item_pricing, item: item, price: price, discount: discount)
+        QuoteItem.new(quote: quote, item: item, price: price, discount: discount)
       end
 
       it 'calculates final_price before saving' do
@@ -39,7 +37,7 @@ RSpec.describe QuoteItem, type: :model do
 
     context 'when quote_item is updated' do
       let(:quote_item) do
-        create(:quote_item, quote: quote, item_pricing: item_pricing, item: item, price: price, discount: discount)
+        create(:quote_item, quote: quote, item: item, price: price, discount: discount)
       end
 
       context 'when price changes' do
@@ -90,9 +88,8 @@ RSpec.describe QuoteItem, type: :model do
 
   describe 'after_save callbacks' do
     let(:quote) { create(:quote) }
-    let(:item) { create(:item, pricing_type: :open) }
-    let(:item_pricing) { create(:item_pricing, item: item) }
-    let(:quote_item) { build(:quote_item, quote: quote, item_pricing: item_pricing, item: item) }
+    let(:item) { create(:item, :with_pricing_options) }
+    let(:quote_item) { build(:quote_item, quote: quote, item: item) }
 
     it 'recalculates quote total_price after saving' do
       expect(quote).to receive(:recalculate_total_price)

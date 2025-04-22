@@ -105,7 +105,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_01_102711) do
   create_table "quote_items", force: :cascade do |t|
     t.bigint "quote_id", null: false
     t.bigint "item_id", null: false
-    t.bigint "item_pricing_id", null: false
     t.jsonb "open_parameters", default: {}
     t.decimal "price", precision: 10, scale: 2, null: false
     t.decimal "discount", precision: 5, scale: 2, default: "0.0", null: false
@@ -113,7 +112,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_01_102711) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["item_id"], name: "index_quote_items_on_item_id"
-    t.index ["item_pricing_id"], name: "index_quote_items_on_item_pricing_id"
     t.index ["quote_id"], name: "index_quote_items_on_quote_id"
   end
 
@@ -144,7 +142,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_01_102711) do
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "items", "categories"
-  add_foreign_key "quote_items", "item_pricings"
   add_foreign_key "quote_items", "items"
   add_foreign_key "quote_items", "quotes"
   add_foreign_key "quotes", "customers"

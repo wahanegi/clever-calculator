@@ -1,7 +1,6 @@
 class QuoteItem < ApplicationRecord
   belongs_to :quote
   belongs_to :item
-  belongs_to :item_pricing
 
   validates :price, presence: true, numericality: { greater_than_or_equal_to: 0 }
   validates :discount, numericality: { greater_than_or_equal_to: 0, less_than_or_equal_to: 100 }
@@ -23,7 +22,6 @@ class QuoteItem < ApplicationRecord
   end
 
   def recalculate_quote_total_price
-    # quote.update(total_price: quote.quote_items.sum(:final_price))
     quote.recalculate_total_price
   end
 end
