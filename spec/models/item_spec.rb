@@ -95,6 +95,36 @@ RSpec.describe Item, type: :model do
           expect(item).to be_valid
         end
       end
+
+      context 'when calculation_formula is present' do
+        let(:item) do
+          build(:item,
+                is_fixed: true,
+                formula_parameters: %w[param1 param2],
+                calculation_formula: 'param1 + param2 * 123')
+        end
+
+        it 'is valid with correct formula' do
+          expect(item).to be_valid
+        end
+
+        it 'is invalid if all formula_parameters are missing in formula' do
+          item.calculation_formula = 'param1 + 123'
+          expect(item).not_to be_valid
+          expect(item.errors[:calculation_formula]).to include('is missing parameters: param2')
+        end
+
+        it 'is invalid with unrecognized parameters' do
+          item.calculation_formula = 'param1 + abc * 123'
+          expect(item).not_to be_valid
+          expect(item.errors[:calculation_formula]).to include('contains invalid parameters: abc')
+        end
+
+        it 'is valid with numbers, operators, and formula_parameters' do
+          item.calculation_formula = 'param1 + ( 2 * param2 )'
+          expect(item).to be_valid
+        end
+      end
     end
 
     describe 'fixed_parameters' do
