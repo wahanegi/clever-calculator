@@ -1,48 +1,46 @@
 import React from 'react'
-import { Container, Row } from 'react-bootstrap'
+import { Container, Row, Button } from 'react-bootstrap'
 import { useAppHooks } from '../hooks'
 import { fetchQuotes } from '../services'
-import { ROUTES, STEPS } from '../shared'
-import { PcButton } from '../ui'
+import { QuoteCreation, ROUTES, STEPS } from '../shared'
+import { getCurrentStepId } from '../utils';
 
 export const CustomerInfo = () => {
-  const { navigate } = useAppHooks()
-  const handleNext = async () => {
-    //TODO Hardcode customer_id for now (replace with real logic later)
-    const customerId = 3
-    const { data } = await fetchQuotes.create({
-      quote: {
-        customer_id: customerId,
-        total_price: 0,
-        step: STEPS.ITEM_PRICING,
-      },
-    })
+  const { navigate, location } = useAppHooks()
+  const currentStepId = getCurrentStepId(location.pathname)
 
-    navigate(`${ROUTES.ITEM_PRICING}?quote_id=${data.id}`)
+  // const handleNext = async () => {
+  //   //TODO Hardcode customer_id for now (replace with real logic later)
+  //   const customerId = 3
+  //   const { data } = await fetchQuotes.create({
+  //     quote: {
+  //       customer_id: customerId,
+  //       total_price: 0,
+  //       step: STEPS.ITEM_PRICING,
+  //     },
+  //   })
+  //
+  //   navigate(`${ROUTES.ITEM_PRICING}?quote_id=${data.id}`)
+  // }
+
+  // Remove it when you need to create a quote
+  const handleNext = () => {
+    navigate(ROUTES.ITEM_PRICING)
   }
 
   return (
     <Container className={'wrapper'}>
-      {/* Title & progress bar */}
-      <section className={'px-6 mb-2'}>
-        <div className={'d-flex justify-content-between mb-6'}>
-          <h1>Quote Creation</h1>
-        </div>
-        <div style={{ height: '79px', border: '2px solid red' }}>
-          <span>Progress bar</span>
-        </div>
-      </section>
+      <QuoteCreation currentStepId={currentStepId} isBtnShow={false} />
 
       {/* Customer Information dashboard*/}
       <section className={'mb-8'}>
-        <h2 className={'text-center mb-7'}>Customer Information</h2>
         <Row>
           <div style={{ height: '387px', border: '2px solid red' }}></div>
         </Row>
       </section>
 
       <section className={'d-flex justify-content-center align-items-center gap-4 mb-5'}>
-        <PcButton variant={'primary'} children={'Next'} onClick={handleNext} />
+        <Button onClick={handleNext} className={'pc-btn-next'}>Next</Button>
       </section>
     </Container>
   )
