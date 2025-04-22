@@ -6,7 +6,7 @@ export const PcCompanyLogoUploader = ({ id, logo, error, ...props }) => {
   const logoDisplay = logo ?
     <img src={logo}
          alt="Company Logo"
-         className={'img-fluid'} />
+         className={'object-fit-contain w-100 h-100'} />
     : <PcIcon name="placeholder" alt="Placeholder Logo" />
 
   return <Form.Group className="d-flex flex-column w-100 h-100">
@@ -19,7 +19,6 @@ export const PcCompanyLogoUploader = ({ id, logo, error, ...props }) => {
       id={id}
       className={'d-none'}
       type={'file'}
-      accept={'image/jpeg,image/png'}
       {...props}
     />
     {error && <div className="text-danger fs-12">{error}</div>}

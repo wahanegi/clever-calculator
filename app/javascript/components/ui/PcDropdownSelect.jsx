@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { Form } from 'react-bootstrap'
 import { Typeahead } from 'react-bootstrap-typeahead'
 import { PcIcon } from './PcIcon'
+import { normalizeName } from '../utils'
 
 export const PcDropdownSelect = ({
                                    id,
@@ -21,8 +22,6 @@ export const PcDropdownSelect = ({
 
   const selectedOption =
     options.find((opt) => opt.value === value) || (value ? { value, label: value, customOption: true } : null)
-
-  const normalizeName = (name) => name?.replace(/\s+/g, ' ').trim().toLowerCase() || ''
 
   const hasMatchingOption = () => {
     const normalizedInput = normalizeName(inputValue)

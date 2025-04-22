@@ -43,3 +43,24 @@ export const IMAGE_ASSETS = {
   },
   // future asset files can be added here
 }
+
+export const EMPTY_ENTITIES = {
+  customer: {
+    company_name: '',
+    full_name: '',
+    email: '',
+    position: '',
+    address: '',
+    notes: '',
+    logo_file: null,
+    logo_url: null,
+  }
+  // future empty entities can be added here
+}
+
+export const INPUT_VALIDATORS = {
+  email:/^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+  maxSizeFile: 2 * 1024 * 1024,
+  fileType: ['image/jpeg', 'image/png'],
+  // future validation messages can be added here
+}
