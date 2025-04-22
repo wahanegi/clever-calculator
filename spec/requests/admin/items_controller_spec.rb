@@ -18,7 +18,7 @@ RSpec.describe 'Admin::Items', type: :request do
       items.each do |item|
         expect(response.body).to include(item.name)
         expect(response.body).to include(item.category.name)
-        expect(response.body).to include(item.is_disabled ? 'True' : 'False')
+        expect(response.body).to include(item.is_disabled ? 'False' : 'True')
       end
     end
   end
