@@ -109,7 +109,7 @@ RSpec.describe Item, type: :model do
         end
 
         it 'is invalid if all formula_parameters are missing in formula' do
-          item.calculation_formula = 'param1 + 123'
+          item.calculation_formula = 'param1 + 123 + param212'
           expect(item).not_to be_valid
           expect(item.errors[:calculation_formula]).to include('is missing parameters: param2')
         end

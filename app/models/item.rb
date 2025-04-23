@@ -83,7 +83,7 @@ class Item < ApplicationRecord
 
   def check_all_formula_parameters_present
     missing_parameters = formula_parameters.reject do |param|
-      calculation_formula.include?(param)
+      calculation_formula.match?(/\b#{Regexp.escape(param)}\b/)
     end
 
     return unless missing_parameters.any?
