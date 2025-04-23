@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Row, Col, Form, Button } from 'react-bootstrap'
-import { PcDropdownSelect, PcCompanyLogoUploader, PcInput } from '../ui'
+import { PcDropdownSelect, PcLogoUploader, PcInput } from '../ui'
 import { EMPTY_ENTITIES, INPUT_VALIDATORS, ROUTES, STEPS } from './constants'
 import { fetchCustomers, fetchQuotes } from '../services'
 import { useAppHooks } from '../hooks'
@@ -29,32 +29,35 @@ export const CustomerForm = () => {
     customers.find((c) => c.attributes.company_name.toLowerCase() === customer.company_name.toLowerCase())?.id ||
     customer.company_name
 
-  const handleCompanyChange = (e) => {
-    const { value } = e.target
+  const handleCompanyChange = (selected) => {
+    console.info('handleCompanyChange', selected)
+    if(selected.length === 0) return
+
+    const { value, label } = selected[0]
     const selectedCustomer = customers.find((customer) => customer.id === value)
 
     if (selectedCustomer) {
       setCustomer(selectedCustomer.attributes)
     } else {
-      setCustomer({
-        ...EMPTY_ENTITIES.customer,
-        company_name: value,
-      })
+      setCustomer(prev => ({ ...prev, company_name: label }))
     }
 
+    setIsNextDisabled(false)
     setErrors((prev) => ({ ...prev, company_name: '' }))
   }
 
-  const handleCompanyInputChange = (e) => {
-    const { value } = e.target
+  const handleCompanyInputChange = (text, event) => {
+    console.info('handleCompanyInputChange', text, event)
 
-    if (value) {
+    if (text) {
       setIsNextDisabled(false)
       setErrors((prev) => ({ ...prev, company_name: '' }))
     } else {
       setIsNextDisabled(true)
       setErrors((prev) => ({ ...prev, company_name: 'Company name is required' }))
     }
+
+    setCustomer((prev) => ({ ...prev, company_name: text }))
   }
 
   const handleInputChange = (e) => {
@@ -70,7 +73,7 @@ export const CustomerForm = () => {
   const handleEmailChange = (e) => {
     const { value } = e.target
 
-    if (value && !INPUT_VALIDATORS.email.test(value)) {
+    if (value && !INPUT_VALIDATORS.emailFormat.test(value)) {
       setIsNextDisabled(true)
       setErrors((prev) => ({ ...prev, email: 'Invalid email format' }))
     } else {
@@ -95,6 +98,7 @@ export const CustomerForm = () => {
     const file = e.target.files[0]
 
     if (!file) {
+      setIsNextDisabled(false)
       setErrors((prev) => ({ ...prev, logo: '' }))
       return
     }
@@ -105,7 +109,7 @@ export const CustomerForm = () => {
       logoErrors.push('Logo must be less than 2MB')
     }
 
-    if (!INPUT_VALIDATORS.fileType.includes(file.type)) {
+    if (!INPUT_VALIDATORS.allowedFileTypes.includes(file.type)) {
       logoErrors.push('Logo must be a JPEG or PNG file')
     }
 
@@ -114,12 +118,7 @@ export const CustomerForm = () => {
       setErrors((prev) => ({ ...prev, logo: logoErrors.join('\n') }))
     } else {
       setIsNextDisabled(false)
-      setCustomer((prev) => ({
-        ...prev,
-        logo_file: file,
-        logo_url: URL.createObjectURL(file),
-      }))
-
+      setCustomer((prev) => ({ ...prev, logo_url: URL.createObjectURL(file), }))
       setErrors((prev) => ({ ...prev, logo: '' }))
     }
   }
@@ -159,11 +158,11 @@ export const CustomerForm = () => {
       <div className="border rounded border-primary customer-form bg-light w-100 mb-7">
         <Row className="mb-6">
           <div className="d-flex flex-column flex-sm-row gap-6">
-            <Col className={'image-placeholder'}>
-              <PcCompanyLogoUploader
+            <Col className={'image-placeholder mx-auto'}>
+              <PcLogoUploader
                 id="company_logo"
                 onChange={handleLogoChange}
-                accept={INPUT_VALIDATORS.fileType.join(',')}
+                accept={INPUT_VALIDATORS.allowedFileTypes.join(',')}
                 logo={customer.logo_url}
                 error={errors.logo} />
             </Col>
@@ -255,7 +254,9 @@ export const CustomerForm = () => {
           </Col>
         </Row>
       </div>
-      <Button type={'submit'} className="pc-btn-next" disabled={isNextDisabled}>
+      <Button type={'submit'}
+              className="pc-btn-next mb-3"
+              disabled={isNextDisabled}>
         Next
       </Button>
     </Form>

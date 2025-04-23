@@ -52,15 +52,14 @@ export const EMPTY_ENTITIES = {
     position: '',
     address: '',
     notes: '',
-    logo_file: null,
     logo_url: null,
   }
   // future empty entities can be added here
 }
 
 export const INPUT_VALIDATORS = {
-  email:/^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+  emailFormat:/^[^\s@]+@[^\s@]+\.[^\s@]+$/,
   maxSizeFile: 2 * 1024 * 1024,
-  fileType: ['image/jpeg', 'image/png'],
-  // future validation messages can be added here
+  allowedFileTypes: ['image/jpeg', 'image/png'],
+  // future validation rules can be added here
 }

@@ -14,11 +14,20 @@ export const fetchAuthentication = {
 export const fetchCustomers = {
   index: () => get(ENDPOINTS.CUSTOMERS),
   upsert: (data) => post(ENDPOINTS.CUSTOMERS_UPSERT, data),
-  upsertUseFormData: (customer) => {
+  upsertUseFormData: async (customer) => {
     const formData = new FormData()
     const { first_name, last_name } = extractNames(customer.full_name)
 
-    if (customer.logo_file) formData.append('customer[logo]', customer.logo_file)
+    if (customer.logo_url) {
+      const response = await fetch(customer.logo_url)
+
+      if (response.ok) {
+        const blob = await response.blob()
+        formData.append('customer[logo]', blob)
+      } else {
+        throw new Error('Failed to fetch logo')
+      }
+    }
     formData.append('customer[company_name]', customer.company_name)
     formData.append('customer[first_name]', first_name)
     formData.append('customer[last_name]', last_name)

@@ -5,7 +5,7 @@
 
 .image-placeholder {
   max-width: 136px;
-  max-height: 117px;
+  width: 136px;
 
   label:hover {
     cursor: pointer;
@@ -18,4 +18,10 @@
 
 .title-input {
   max-width: 241px;
+}
+
+@media (max-width: 575px) {
+  .title-input {
+    max-width: 100%;
+  }
 }
