@@ -121,6 +121,7 @@ ActiveAdmin.register Quote do
 
     render json: items.map { |item|
       {
+        category_id: item.category_id,
         item_id: item.id,
         item_name: item.name,
         open_parameters: '',
