@@ -2,6 +2,7 @@ class Category < ApplicationRecord
   ASCII_CHARACTERS = /\A[[:ascii:]]*\z/
 
   has_many :items, dependent: :nullify
+  has_and_belongs_to_many :quotes
 
   normalizes :name, with: ->(name) { name.gsub(/\s+/, ' ').strip }
 

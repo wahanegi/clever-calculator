@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_04_01_102711) do
+ActiveRecord::Schema[8.0].define(version: 2025_04_23_145035) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -68,6 +68,13 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_01_102711) do
     t.datetime "updated_at", null: false
     t.index ["is_disabled"], name: "index_categories_on_is_disabled"
     t.index ["name"], name: "index_categories_on_name", unique: true, where: "(is_disabled = false)"
+  end
+
+  create_table "categories_quotes", id: false, force: :cascade do |t|
+    t.bigint "quote_id", null: false
+    t.bigint "category_id", null: false
+    t.index ["category_id", "quote_id"], name: "index_categories_quotes_on_category_id_and_quote_id"
+    t.index ["quote_id", "category_id"], name: "index_categories_quotes_on_quote_id_and_category_id"
   end
 
   create_table "customers", force: :cascade do |t|
