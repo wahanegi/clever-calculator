@@ -6,27 +6,40 @@ import { PcCategoryAccordion, PcItemAccordion, PcItemFormGroup, PcItemTextareaCo
 import { getCurrentStepId } from '../utils'
 
 export const ItemsPricing = () => {
-  const { navigate, queryParams, location } = useAppHooks()
+  const {navigate, queryParams, location} = useAppHooks()
 
   const [selectedCategories, setSelectedCategories] = useState([])
   const [expandedAccordions, setExpandedAccordions] = useState([]) // array of IDs
   const [isNotesShow, setIsNotesShow] = useState(false)
   const [notesValue, setNotesValue] = useState('')
   const [includeNotes, setIncludeNotes] = useState(false)
-
+  const [categoryIdToDelete, setCategoryIdToDelete] = useState(null)
+  const [isShowDeleteModal, setIsShowDeleteModal] = useState(false)
+  console.log({categoryToDelete: categoryIdToDelete})
   const quoteId = queryParams.get('quote_id')
   const currentStepId = getCurrentStepId(location.pathname)
   const totalPrice = 123 // TODO: get total price from BE
   const notesIcon = notesValue.trim() ? 'noted' : 'note'
 
+  const showDeleteModal = (categoryId) => {
+    setCategoryIdToDelete(categoryId)
+    setIsShowDeleteModal(true)
+  }
   const handleToggle = (id) => {
     setExpandedAccordions((prev) =>
       prev.includes(id) ? prev.filter(item => item !== id) : [...prev, id],
     )
   }
-  const handleDeleteCategory = (categoryId) => {
-    setSelectedCategories((prev) => prev.filter((category) => category.id !== categoryId))
-    setExpandedAccordions((prev) => prev.filter((id) => id !== categoryId))
+  const handleConfirmDeleteCategory = () => {
+    setSelectedCategories(prev => prev.filter(category => category.id !== categoryIdToDelete))
+    setExpandedAccordions((prev) => prev.filter(id => id !== categoryIdToDelete))
+    setCategoryIdToDelete(null)
+    setIsShowDeleteModal(false)
+  }
+
+  const handleCancelDeleteCategory = () => {
+    setCategoryIdToDelete(null)
+    setIsShowDeleteModal(false)
   }
 
   const expandAll = () => setExpandedAccordions(selectedCategories.map(category => category.id))
@@ -53,6 +66,7 @@ export const ItemsPricing = () => {
           expandAll={expandAll}
           collapseAll={collapseAll}
           expandedAccordions={expandedAccordions}
+          showDeleteModal={showDeleteModal}
         />
 
         {selectedCategories.length === 0 &&
@@ -69,7 +83,7 @@ export const ItemsPricing = () => {
             categoryName={category.name}
             isOpen={expandedAccordions.includes(category.id)}
             onToggle={() => handleToggle(category.id)}
-            onDelete={() => handleDeleteCategory(category.id)}
+            onDelete={() => showDeleteModal(category.id)}
           >
             {/*TODO: Skeleton for displaying item inside accordion */}
             <div className={'d-flex flex-column gap-6'}>
@@ -115,7 +129,10 @@ export const ItemsPricing = () => {
       </section>
 
       {/*Modal for confirm delete/cancel category*/}
-      <DeleteItemModal />
+      <DeleteItemModal
+        show={isShowDeleteModal}
+        onHide={handleCancelDeleteCategory}
+        onConfirmDelete={handleConfirmDeleteCategory} />
     </Container>
   )
 }

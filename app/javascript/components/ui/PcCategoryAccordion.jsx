@@ -1,10 +1,8 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { Accordion, Button } from 'react-bootstrap'
-import { DeleteItemModal } from '../shared'
 import { PcIcon } from './PcIcon'
 
 export const PcCategoryAccordion = ({
-  categoryId,
   children,
   categoryName = 'Category Name',
   categoryPrice = '0',
@@ -12,19 +10,9 @@ export const PcCategoryAccordion = ({
   onToggle,
   onDelete,
 }) => {
-  const [isModalShow, setIsModalShow] = useState(false)
-
   const handleOpenModal = (e) => {
     e.stopPropagation()
-    setIsModalShow(true)
-  }
-
-  const handleCloseModal = () => {
-    setIsModalShow(false)
-  }
-  const handleConfirmDelete = () => {
-    onDelete?.(categoryId)
-    handleCloseModal()
+    onDelete()
   }
 
   return (
@@ -62,9 +50,6 @@ export const PcCategoryAccordion = ({
           </Accordion.Body>
         </Accordion.Item>
       </Accordion>
-
-      <DeleteItemModal show={isModalShow} onHide={handleCloseModal}
-                       onConfirmDelete={handleConfirmDelete} />
     </>
   )
 }

@@ -10,6 +10,7 @@ export const ItemsPricingTopBar = ({
   expandedAccordions,
   selectedCategories,
   setSelectedCategories,
+  showDeleteModal
 }) => {
   const {
     shouldDisableExpandBtn,
@@ -22,6 +23,7 @@ export const ItemsPricingTopBar = ({
       <MultiSelectDropdown
         selected={selectedCategories}
         setSelected={setSelectedCategories}
+        showDeleteModal={showDeleteModal}
       />
 
       <div className={'d-flex justify-content-between w-100'}>

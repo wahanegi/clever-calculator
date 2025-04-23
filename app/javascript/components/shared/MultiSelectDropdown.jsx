@@ -3,7 +3,7 @@ import { Form } from 'react-bootstrap'
 import { Typeahead } from 'react-bootstrap-typeahead'
 import { fetchCategories } from '../services'
 import { PcCheckboxOption, PcIcon } from '../ui'
-import { normalizeApiCategories } from '../utils'
+import { getRemovedCategory, normalizeApiCategories } from '../utils'
 
 export const MultiSelectDropdown = ({
   id,
@@ -11,6 +11,7 @@ export const MultiSelectDropdown = ({
   hasIcon = true,
   selected,
   setSelected,
+  showDeleteModal,
 }) => {
   const typeaheadRef = useRef()
   const [categories, setCategories] = useState([])
@@ -25,11 +26,22 @@ export const MultiSelectDropdown = ({
   const toggleSelection = (option) => {
     // Remove the option from selected array
     if (isSelected(option)) {
-      setSelected(selected.filter(item => item.id !== option.id))
+      showDeleteModal(option.id)
     } else {
       // Add the option to selected array
       setSelected([...selected, option])
     }
+  }
+
+  const handleTypeaheadOnChange = (newSelected) => {
+    if (newSelected.length < selected.length) {
+      const removedCategory = getRemovedCategory(selected, newSelected)
+
+      if (removedCategory) {
+        return showDeleteModal(removedCategory.id)
+      }
+    }
+    setSelected(newSelected)
   }
 
   useEffect(() => {
@@ -50,7 +62,7 @@ export const MultiSelectDropdown = ({
           selected={selected}
           options={categories} // use with filterBy
           filterBy={() => true} // set array of options with no changes
-          onChange={setSelected}
+          onChange={handleTypeaheadOnChange}
           onFocus={handleFocus}
           onBlur={handleBlur}
           onMenuToggle={handleMenuOpen}
