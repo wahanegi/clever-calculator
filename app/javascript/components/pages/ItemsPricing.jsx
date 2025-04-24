@@ -69,7 +69,7 @@ export const ItemsPricing = () => {
         />
 
         {selectedCategories.length === 0 &&
-          (<div className="text-center text-muted py-6">
+          (<div className="text-center text-primary fst-italic py-6">
             Select one or more items to start your quote.
           </div>)
         }
