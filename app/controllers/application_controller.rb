@@ -1,7 +1,8 @@
 class ApplicationController < ActionController::Base
   allow_browser versions: :modern
+
   before_action :authenticate_user!, unless: :active_admin_controller?
-  before_action :set_current_url
+  before_action :set_active_storage_url_options
 
   private
 
@@ -9,7 +10,7 @@ class ApplicationController < ActionController::Base
     is_a?(ActiveAdmin::BaseController)
   end
 
-  def set_current_url
-    ActiveStorage::Current.url_options = { host: request.host_with_port }
+  def set_active_storage_url_options
+    ActiveStorage::Current.url_options = { protocol: request.protocol, host: request.host, port: request.port }
   end
 end
