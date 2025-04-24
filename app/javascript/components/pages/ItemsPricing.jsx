@@ -15,10 +15,9 @@ export const ItemsPricing = () => {
   const [includeNotes, setIncludeNotes] = useState(false)
   const [categoryIdToDelete, setCategoryIdToDelete] = useState(null)
   const [isShowDeleteModal, setIsShowDeleteModal] = useState(false)
-  console.log({categoryToDelete: categoryIdToDelete})
   const quoteId = queryParams.get('quote_id')
   const currentStepId = getCurrentStepId(location.pathname)
-  const totalPrice = 123 // TODO: get total price from BE
+  const totalPrice = 0 // TODO: get total price from BE
   const notesIcon = notesValue.trim() ? 'noted' : 'note'
 
   const showDeleteModal = (categoryId) => {
