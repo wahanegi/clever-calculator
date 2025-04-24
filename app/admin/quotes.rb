@@ -1,5 +1,5 @@
 ActiveAdmin.register Quote do
-  permit_params :customer_id, :user_id, category_ids: [],
+  permit_params :customer_id, :user_id, category_ids: [], item_ids: [],
                                         quote_items_attributes: [:id,
                                                                  :_destroy,
                                                                  :quote_id,
@@ -35,11 +35,13 @@ ActiveAdmin.register Quote do
       f.input :customer, as: :select, collection: Customer.pluck(:company_name, :id)
       f.input :user, as: :select, collection: User.order(:email).map { |u| ["#{u.email} (#{u.name})", u.id] }
       f.input :categories, as: :check_boxes,
-                           collection: Category.order(:name).pluck(:name, :id) + [['Items without category', 'other']],
+                           collection: Category.order(:name).pluck(:name, :id),
                            wrapper_html: { class: 'categories-wrapper' }
+      f.input :item_ids, label: 'Items Without Category', as: :check_boxes, collection: Item.where(category_id: nil).order(:name),
+                         wrapper_html: { class: 'categories-wrapper' }
     end
     div do
-      button_tag 'Load Items from Category', type: 'button', id: 'load-items-button', class: 'button'
+      button_tag 'Load Items', type: 'button', id: 'load-items-button', class: 'button'
     end
     f.has_many :quote_items, allow_destroy: true, new_record: true, heading: 'Quote Items' do |qf|
       qf.input :item_id, as: :hidden, input_html: { class: 'item-id-field' }
@@ -81,9 +83,11 @@ ActiveAdmin.register Quote do
 
   collection_action :load_items_from_categories, method: :post do
     category_ids = params[:category_ids] || []
+    item_ids = params[:item_ids] || []
 
-    items = Item.where(category_id: category_ids.reject { |id| id == 'other' })
-    items += Item.where(category_id: nil) if category_ids.include?('other')
+    items = Item.none
+    items = items.or(Item.where(category_id: category_ids)) if category_ids.any?
+    items = items.or(Item.where(id: item_ids)) if item_ids.any?
 
     render json: items.map { |item|
       {

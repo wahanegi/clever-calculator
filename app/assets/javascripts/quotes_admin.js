@@ -7,8 +7,12 @@ document.addEventListener('DOMContentLoaded', function () {
       (cb) => cb.value,
     )
 
-    if (selectedCategories.length === 0) {
-      alert('Please select at least one category.')
+    const selectedItems = Array.from(document.querySelectorAll("input[name='quote[item_ids][]']:checked")).map(
+      (cb) => cb.value,
+    )
+
+    if (selectedCategories.length === 0 && selectedItems.length === 0) {
+      alert('Please select at least one category or item.')
       return
     }
 
@@ -18,7 +22,10 @@ document.addEventListener('DOMContentLoaded', function () {
         'Content-Type': 'application/json',
         'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
       },
-      body: JSON.stringify({ category_ids: selectedCategories }),
+      body: JSON.stringify({
+        category_ids: selectedCategories,
+        item_ids: selectedItems,
+      }),
     })
       .then((response) => response.json())
       .then((items) => {
@@ -49,6 +56,10 @@ document.addEventListener('DOMContentLoaded', function () {
           if (pricingParamsInput) pricingParamsInput.value = ''
           if (discountInput) discountInput.value = item.discount
         })
+
+        // Clear selected checkboxes after loading items
+        document.querySelectorAll("input[name='quote[category_ids][]']:checked").forEach((cb) => (cb.checked = false))
+        document.querySelectorAll("input[name='quote[item_ids][]']:checked").forEach((cb) => (cb.checked = false))
       })
       .catch((error) => {
         console.error('Error loading items:', error)
