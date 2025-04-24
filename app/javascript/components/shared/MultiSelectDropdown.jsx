@@ -86,7 +86,7 @@ export const MultiSelectDropdown = ({
         {hasIcon && (
           <div className="position-absolute end-0 top-50 translate-middle-y pe-3">
             <PcIcon
-              name={isMenuOpen ? 'arrowUp' : 'arrowDown'}
+              name={isMenuOpen ? 'arrowUpLight' : 'arrowDownLight'}
               alt={isMenuOpen ? 'Arrow pointing up' : 'Arrow pointing down'}
             />
           </div>

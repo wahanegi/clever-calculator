@@ -42,7 +42,7 @@
 .pc-item-input.price {
   .form-control {
     padding-left: 24px;
-    border-top: 1px solid $primary;
+    border-top: 1.3px solid $primary;
     color: $secondary;
   }
 
@@ -58,7 +58,7 @@
 .pc-item-input.original-cost {
   .form-control {
     padding-left: 24px;
-    border-top: 1px solid $primary;
+    border-top: 1.3px solid $primary;
     color: $dark;
   }
 
@@ -74,7 +74,7 @@
 .pc-item-input.open-cost {
   .form-control {
     padding-left: 24px;
-    border: 1px solid $secondary;
+    border: 1.3px solid $secondary;
     color: $dark
   }
 
@@ -92,7 +92,7 @@
 .pc-item-input.notes {
   .form-control {
     padding-right: 24px;
-    border: 1px solid $primary;
+    border: 1.3px solid $primary;
     color: $dark
   }
 
@@ -147,7 +147,7 @@
 .pc-item-input.discounted-price {
   .form-control {
     padding-left: 24px;
-    border-top: 1px solid $primary;
+    border-top: 1.3px solid $primary;
     font-weight: 600;
   }
 

@@ -23,15 +23,17 @@ export const STEPS = {
 // STEPS_DATA is for PcProgressBar component
 export const STEPS_DATA = [
   // step_id must be a number
-  { step_id: 1, step: ROUTES.CUSTOMER_INFO, title: 'Customer Information' },
-  { step_id: 2, step: ROUTES.ITEM_PRICING, title: 'Items & Pricing' },
+  {step_id: 1, step: ROUTES.CUSTOMER_INFO, title: 'Customer Information'},
+  {step_id: 2, step: ROUTES.ITEM_PRICING, title: 'Items & Pricing'},
 ]
 
 // Centralized storage for image assets
 import accordionArrowDownUrl from '../../../assets/images/icons/accordion-arrow-down.svg'
 import accordionArrowUpUrl from '../../../assets/images/icons/accordion-arrow-up.svg'
 import arrowDownUrl from '../../../assets/images/icons/arrow-down.svg'
+import arrowDownLightUrl from '../../../assets/images/icons/arrow-down-light.svg'
 import arrowUpUrl from '../../../assets/images/icons/arrow-up.svg'
+import arrowUpLightUrl from '../../../assets/images/icons/arrow-up-light.svg'
 import disableCollapseUrl from '../../../assets/images/icons/collapse-disable.svg'
 import collapseUrl from '../../../assets/images/icons/collapse.svg'
 import disableExpandUrl from '../../../assets/images/icons/expand-disable.svg'
@@ -65,6 +67,8 @@ export const IMAGE_ASSETS = {
     trashTwo: trashTwoUrl,
     trashDefault: trashDefaultUrl,
     trashDanger: trashDangerUrl,
+    arrowDownLight: arrowDownLightUrl,
+    arrowUpLight: arrowUpLightUrl
   },
   // future asset files can be added here
 }

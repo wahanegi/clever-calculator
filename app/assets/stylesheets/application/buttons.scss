@@ -1,5 +1,6 @@
 // Base styles
 .btn {
+  border-width: 1.3px;
   // styles for variant="primary"
   &-primary {
     color: white !important;
@@ -40,8 +41,8 @@
 
     &:active {
       border-color: $coral-dark !important;
-      background: $coral-dark !important;
       color: $white !important;
+      background: $coral-dark !important;
     }
 
     &:disabled {

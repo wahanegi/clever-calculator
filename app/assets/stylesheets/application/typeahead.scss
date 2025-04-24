@@ -58,7 +58,7 @@ $rbt-color-white: #fff !default;
   &.dropdown-menu {
     &.show {
       margin-top: 4px;
-      border: 1px solid $primary;
+      border: 1.3px solid $primary;
     }
   }
 }
@@ -148,19 +148,20 @@ $rbt-token-active-color: $rbt-color-white !default;
   display: inline-flex;
   justify-content: center;
   align-items: center;
-  padding: 3px 12px 3px 16px;
-  border: 0;
-  border-radius: 1rem;
+  padding: 2px 12px 2px 16px;
+  border: 1.3px solid $primary;
+  border-radius: 18px;
   font-family: $font-family-lato;
   font-size: 12px;
   font-weight: 500;
   line-height: 1;
   color: $rbt-token-color;
   background-color: $rbt-token-background-color;
+  transform: scale(1) !important;
 
   .rbt-token-label {
     &:not(:last-child) {
-      padding-right: 0.25rem;
+      padding-right: 9px;
     }
   }
 
@@ -288,6 +289,8 @@ $rbt-token-active-color: $rbt-color-white !default;
   }
 
   .rbt-input-multi {
+    border-width: 1.3px;
+
     .rbt-input-main {
       font-size: 14px;
       line-height: 1.7;
@@ -295,6 +298,8 @@ $rbt-token-active-color: $rbt-color-white !default;
   }
 
   .rbt-token-remove-button {
+    align-items: center;
+
     .rbt-close-content {
       position: relative;
       visibility: hidden;
