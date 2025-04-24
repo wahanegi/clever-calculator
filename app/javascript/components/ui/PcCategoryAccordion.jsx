@@ -22,7 +22,7 @@ export const PcCategoryAccordion = ({
           <div className={'position-relative'}>
             <Accordion.Header onClick={onToggle} className="position-relative z-0">
               <div className="d-flex justify-content-between align-items-center w-100">
-                <div className="fw-bold fs-9 lh-base text-dark ps-2">{categoryName}</div>
+                <div className="fw-bold fs-9 lh-base text-dark ps-2 text-truncate pe-17">{categoryName}</div>
                 <PcIcon
                   name={isOpen ? 'accordionArrowUp' : 'accordionArrowDown'}
                   alt={isOpen ? 'Arrow pointing up' : 'Arrow pointing down'}

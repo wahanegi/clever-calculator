@@ -2,7 +2,7 @@ import React from 'react'
 import { Button, Modal } from 'react-bootstrap'
 import { PcIcon } from '../ui'
 
-export const DeleteItemModal = ({ show, onHide, onConfirmDelete, props }) => {
+export const DeleteItemModal = ({show, onHide, onConfirmDelete, props}) => {
 
   return (
     <Modal
@@ -21,10 +21,10 @@ export const DeleteItemModal = ({ show, onHide, onConfirmDelete, props }) => {
         <p className={'text-center'}>Do you really want to delete this item from your pricing list?</p>
         <p className={'text-center'}>This process <span className={'fw-bold text-dark-700'}>cannot be undone.</span></p>
         <div className={'d-flex justify-content-center align-content-center gap-8 mt-10'}>
-          <Button variant="danger" className={'text-lato'} onClick={onConfirmDelete}>
+          <Button variant="danger" className={'pc-btn text-lato'} onClick={onConfirmDelete}>
             Delete
           </Button>
-          <Button variant="outline-primary" className={'border-1 text-lato'} onClick={onHide}>
+          <Button variant="outline-primary" className={'pc-btn border-1 text-lato'} onClick={onHide}>
             Cancel
           </Button>
         </div>

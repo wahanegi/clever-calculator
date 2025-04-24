@@ -58,7 +58,7 @@ $rbt-color-white: #fff !default;
   &.dropdown-menu {
     &.show {
       margin-top: 4px;
-      border: 1.3px solid $primary;
+      border: 1px solid $primary !important;
     }
   }
 }
@@ -82,18 +82,18 @@ $rbt-placeholder-color: $secondary !default;
 
 .rbt-input-multi {
   position: relative;
-  border: 1px solid $primary;
+  padding: 12px 16px 6px 10px;
+  border: 1px solid $primary !important;
   border-radius: 4px;
   overflow: hidden;
 
   // Apply Bootstrap focus styles
   &.focus {
-    border: 1px solid $primary;
+    border: 1px solid $primary !important;
     outline: 0;
   }
 
   &.form-control {
-    padding: 6px 12px;
     height: auto;
   }
 
@@ -127,7 +127,7 @@ $rbt-placeholder-color: $secondary !default;
     flex-wrap: wrap;
     justify-content: start;
     align-items: center;
-    gap: 5px;
+    gap: 4px;
     overflow: hidden;
   }
 }
@@ -149,7 +149,8 @@ $rbt-token-active-color: $rbt-color-white !default;
   justify-content: center;
   align-items: center;
   padding: 2px 12px 2px 16px;
-  border: 1.3px solid $primary;
+  max-width: 180px;
+  border: 1px solid $primary !important;
   border-radius: 18px;
   font-family: $font-family-lato;
   font-size: 12px;
@@ -160,6 +161,10 @@ $rbt-token-active-color: $rbt-color-white !default;
   transform: scale(1) !important;
 
   .rbt-token-label {
+    overflow: hidden; /* Hides any content that overflows the element's width */
+    white-space: nowrap; /* Prevents text from wrapping to a new line */
+    text-overflow: ellipsis; /* Displays "..." when the text is cut off */
+
     &:not(:last-child) {
       padding-right: 9px;
     }
@@ -289,7 +294,7 @@ $rbt-token-active-color: $rbt-color-white !default;
   }
 
   .rbt-input-multi {
-    border-width: 1.3px;
+    //border-width: 1px !important;
 
     .rbt-input-main {
       font-size: 14px;
