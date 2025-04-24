@@ -2,7 +2,8 @@ class Quote < ApplicationRecord
   belongs_to :customer
   belongs_to :user
   has_many :quote_items, dependent: :destroy
-  has_and_belongs_to_many :categories
+  has_many :categorizations, dependent: :destroy
+  has_many :categories, through: :categorizations
 
   validates :total_price, presence: true, numericality: { greater_than_or_equal_to: 0 }
 

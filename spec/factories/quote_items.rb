@@ -4,6 +4,6 @@ FactoryBot.define do
     association :item, factory: :item
     price { 100.00 }
     discount { 10 }
-    open_parameters { {} }
+    pricing_parameters { {} }
   end
 end

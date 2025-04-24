@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_04_23_145035) do
+ActiveRecord::Schema[8.0].define(version: 2025_04_24_093006) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -70,11 +70,13 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_23_145035) do
     t.index ["name"], name: "index_categories_on_name", unique: true, where: "(is_disabled = false)"
   end
 
-  create_table "categories_quotes", id: false, force: :cascade do |t|
+  create_table "categorizations", force: :cascade do |t|
     t.bigint "quote_id", null: false
     t.bigint "category_id", null: false
-    t.index ["category_id", "quote_id"], name: "index_categories_quotes_on_category_id_and_quote_id"
-    t.index ["quote_id", "category_id"], name: "index_categories_quotes_on_quote_id_and_category_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["category_id"], name: "index_categorizations_on_category_id"
+    t.index ["quote_id"], name: "index_categorizations_on_quote_id"
   end
 
   create_table "customers", force: :cascade do |t|
@@ -148,6 +150,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_23_145035) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "categorizations", "categories"
+  add_foreign_key "categorizations", "quotes"
   add_foreign_key "items", "categories"
   add_foreign_key "quote_items", "items"
   add_foreign_key "quote_items", "quotes"
