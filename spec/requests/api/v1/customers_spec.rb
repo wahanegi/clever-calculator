@@ -76,13 +76,13 @@ RSpec.describe "Api::V1::Customers", type: :request do
       it "rejects empty company_name" do
         post "/api/v1/customers/upsert", params: empty_params.to_json, headers: headers
         expect(response).to have_http_status(:unprocessable_entity)
-        expect(json_response["errors"]).to include("Company name can't be blank")
+        expect(json_response["errors"]).to include({ "company_name" => ["Company name can't be blank"] })
       end
 
       it "rejects whitespace-only company_name" do
         post "/api/v1/customers/upsert", params: whitespace_params.to_json, headers: headers
         expect(response).to have_http_status(:unprocessable_entity)
-        expect(json_response["errors"]).to include("Company name can't be blank")
+        expect(json_response["errors"]).to include({ "company_name" => ["Company name can't be blank"] })
       end
     end
 

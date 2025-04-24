@@ -1,29 +1,18 @@
 import React, { useEffect, useState } from 'react'
 import { Button, Col, Form, Row } from 'react-bootstrap'
-import { useAppHooks } from '../hooks'
+import { PcDropdownSelect, PcInput, PcLogoUploader } from '../ui'
+import { EMPTY_ENTITIES, INPUT_VALIDATORS, ROUTES, STEPS } from './constants'
 import { fetchCustomers, fetchQuotes } from '../services'
-import { PcCompanyLogoUploader, PcDropdownSelect, PcInput } from '../ui'
+import { useAppHooks } from '../hooks'
 import { extractNames } from '../utils'
-import { ROUTES, STEPS } from './constants'
 
 export const CustomerForm = () => {
-  const defaultCustomer = {
-    company_name: '',
-    full_name: '',
-    email: '',
-    position: '',
-    address: '',
-    notes: '',
-    logo_file: null,
-    logo_url: null,
-  }
-
   const [customers, setCustomers] = useState([])
-  const [customer, setCustomer] = useState(defaultCustomer)
-
+  const [customer, setCustomer] = useState(EMPTY_ENTITIES.customer)
+  const [isNextDisabled, setIsNextDisabled] = useState(true)
   const [errors, setErrors] = useState({})
 
-  const { navigate } = useAppHooks()
+  const {navigate} = useAppHooks()
 
   useEffect(() => {
     fetchCustomers.index().then((customersResponse) => {
@@ -36,113 +25,149 @@ export const CustomerForm = () => {
     label: customer.attributes.company_name,
   }))
 
-  const validateForm = () => {
-    const newErrors = {}
+  const selectedCompany =
+    customers.find((c) => c.attributes.company_name.toLowerCase() === customer.company_name.toLowerCase())?.id ||
+    customer.company_name
 
-    if (!customer.company_name.trim()) {
-      newErrors.company_name = 'Company name is required'
-    }
+  const handleCompanyChange = (selected) => {
+    console.info('handleCompanyChange', selected)
+    if (selected.length === 0) return
 
-    if (!!customer.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(customer.email)) {
-      newErrors.email = 'Invalid email format'
-    }
-
-    setErrors(newErrors)
-
-    return Object.keys(newErrors).length === 0
-  }
-
-  const handleCompanyChange = (e) => {
-    const value = e.target.value
+    const {value, label} = selected[0]
     const selectedCustomer = customers.find((customer) => customer.id === value)
 
     if (selectedCustomer) {
       setCustomer(selectedCustomer.attributes)
     } else {
-      setCustomer({
-        ...defaultCustomer,
-        company_name: value,
-      })
+      setCustomer(prev => ({...prev, company_name: label}))
     }
+
+    setIsNextDisabled(false)
+    setErrors((prev) => ({...prev, company_name: ''}))
+  }
+
+  const handleCompanyInputChange = (text, event) => {
+    console.info('handleCompanyInputChange', text, event)
+
+    if (text) {
+      setIsNextDisabled(false)
+      setErrors((prev) => ({...prev, company_name: ''}))
+    } else {
+      setIsNextDisabled(true)
+      setErrors((prev) => ({...prev, company_name: 'Company name is required'}))
+    }
+
+    setCustomer((prev) => ({...prev, company_name: text}))
   }
 
   const handleInputChange = (e) => {
-    const { id, value } = e.target
+    const {id, value} = e.target
 
     setCustomer({
       ...customer,
       [id]: value,
     })
-    setErrors((prev) => ({ ...prev, [id]: '' }))
+    setErrors((prev) => ({...prev, [id]: ''}))
   }
 
-  const handleChangeLogo = (e) => {
+  const handleEmailChange = (e) => {
+    const {value} = e.target
+
+    if (value && !INPUT_VALIDATORS.emailFormat.test(value)) {
+      setIsNextDisabled(true)
+      setErrors((prev) => ({...prev, email: 'Invalid email format'}))
+    } else {
+      setIsNextDisabled(false)
+      setErrors((prev) => ({...prev, email: ''}))
+    }
+
+    setCustomer((prev) => ({...prev, email: value}))
+  }
+
+  const handleFullNameChange = (e) => {
+    const {value} = e.target
+
+    setCustomer((prev) => ({
+      ...prev,
+      ...extractNames(value),
+      full_name: value,
+    }))
+  }
+
+  const handleLogoChange = (e) => {
     const file = e.target.files[0]
 
-    setCustomer((prev) => {
-      return {
-        ...prev,
-        logo_file: file || null,
-        logo_url: file ? URL.createObjectURL(file) : null,
-      }
-    })
+    if (!file) {
+      setIsNextDisabled(false)
+      setErrors((prev) => ({...prev, logo: ''}))
+      return
+    }
+
+    const logoErrors = []
+
+    if (file.size > INPUT_VALIDATORS.maxSizeFile) {
+      logoErrors.push('Logo must be less than 2MB')
+    }
+
+    if (!INPUT_VALIDATORS.allowedFileTypes.includes(file.type)) {
+      logoErrors.push('Logo must be a JPEG or PNG file')
+    }
+
+    if (logoErrors.length > 0) {
+      setIsNextDisabled(true)
+      setErrors((prev) => ({...prev, logo: logoErrors.join('\n')}))
+    } else {
+      setIsNextDisabled(false)
+      setCustomer((prev) => ({...prev, logo_url: URL.createObjectURL(file),}))
+      setErrors((prev) => ({...prev, logo: ''}))
+    }
   }
 
   const handleNext = async (e) => {
     e.preventDefault()
 
-    if (!validateForm()) {
-      return
+    setIsNextDisabled(true) // disable next button while form is being submitted
+
+    try {
+      const {data: customerData} = await fetchCustomers.upsertUseFormData(customer)
+
+      if (!customers.some((c) => c.id === customerData.id)) {
+        setCustomers((prev) => [...prev, customerData])
+      }
+
+      const {data: quoteData} = await fetchQuotes.create({
+        quote: {
+          customer_id: customerData.id,
+          total_price: 0,
+          step: STEPS.ITEM_PRICING,
+        },
+      })
+
+      navigate(`${ROUTES.ITEM_PRICING}?quote_id=${quoteData.id}`)
+    } catch (error) {
+      const logoErrors = error?.response?.data?.errors || {errors: []}
+
+      setErrors(prev => ({...prev, ...logoErrors}))
+    } finally {
+      setIsNextDisabled(false) // enable next button
     }
-
-    const formData = new FormData()
-    const { first_name, last_name } = extractNames(customer.full_name)
-
-    if (customer.logo_file) formData.append('customer[logo]', customer.logo_file)
-    formData.append('customer[company_name]', customer.company_name)
-    formData.append('customer[first_name]', first_name)
-    formData.append('customer[last_name]', last_name)
-    formData.append('customer[position]', customer.position)
-    formData.append('customer[email]', customer.email)
-    formData.append('customer[address]', customer.address)
-    formData.append('customer[notes]', customer.notes)
-
-    const { data: customerData } = await fetchCustomers.upsert(formData)
-
-    if (!customers.some((c) => c.id === customerData.id)) {
-      setCustomers((prev) => [...prev, customerData])
-    }
-
-    const { data: quoteData } = await fetchQuotes.create({
-      quote: {
-        customer_id: customerData.id,
-        total_price: 0,
-        step: STEPS.ITEM_PRICING,
-      },
-    })
-
-    navigate(`${ROUTES.ITEM_PRICING}?quote_id=${quoteData.id}`)
   }
-
-  if (!customers) return null
-
-  const selectedCompany =
-    customers.find((c) => c.attributes.company_name.toLowerCase() === customer.company_name.toLowerCase())?.id ||
-    customer.company_name
 
   return (
     <Form onSubmit={handleNext} className={'d-flex flex-column w-100 align-items-center'}>
-      <div className="border rounded border-primary customer-form bg-light w-100 mb-10">
-        <Row className="mb-8">
-          <div className="d-flex flex-column flex-sm-row gap-8">
-            <Col className={'image-placeholder'}>
-              <PcCompanyLogoUploader
+      <div className="border rounded border-primary customer-form bg-light w-100 mb-7">
+        <Row className="mb-6">
+          <div className="d-flex flex-column flex-sm-row gap-6">
+            <Col className={'image-placeholder mx-auto'}>
+              <PcLogoUploader
                 id="company_logo"
-                onChange={handleChangeLogo}
-                logo={customer.logo_url} />
+                onChange={handleLogoChange}
+                accept={INPUT_VALIDATORS.allowedFileTypes.join(',')}
+                logo={customer.logo_url}
+                error={errors.logo} />
             </Col>
             <Col>
-              <Row className="mb-8">
+              <Row className="mb-6">
                 <Col>
                   <PcDropdownSelect
                     id="company_name"
@@ -157,13 +182,13 @@ export const CustomerForm = () => {
                     value={selectedCompany}
                     error={errors.company_name}
                     onChange={handleCompanyChange}
-                    onInputChange={handleInputChange}
+                    onInputChange={handleCompanyInputChange}
                     hasIcon={true}
                   />
                 </Col>
               </Row>
               <Row>
-                <div className="d-flex flex-column flex-sm-row gap-8">
+                <div className="d-flex flex-column flex-sm-row gap-6">
                   <Col className="client-input">
                     <PcInput
                       id="full_name"
@@ -171,14 +196,7 @@ export const CustomerForm = () => {
                       label="Client"
                       height="42px"
                       value={customer.full_name}
-                      onChange={(e) => {
-                        const { value } = e.target
-                        setCustomer({
-                          ...customer,
-                          ...extractNames(value),
-                          full_name: value,
-                        })
-                      }}
+                      onChange={handleFullNameChange}
                     />
                   </Col>
                   <Col className="title-input">
@@ -196,8 +214,8 @@ export const CustomerForm = () => {
             </Col>
           </div>
         </Row>
-        <Row className="mb-8">
-          <div className="d-flex flex-column flex-sm-row gap-8">
+        <Row className="mb-6">
+          <div className="d-flex flex-column flex-sm-row gap-6">
             <Col>
               <PcInput
                 id="email"
@@ -207,7 +225,7 @@ export const CustomerForm = () => {
                 height="42px"
                 value={customer.email}
                 error={errors.email}
-                onChange={handleInputChange}
+                onChange={handleEmailChange}
               />
             </Col>
             <Col>
@@ -236,7 +254,9 @@ export const CustomerForm = () => {
           </Col>
         </Row>
       </div>
-      <Button type={'submit'} className="pc-btn" disabled={!customer.company_name}>
+      <Button type={'submit'}
+              className="pc-btn mb-4"
+              disabled={isNextDisabled}>
         Next
       </Button>
     </Form>

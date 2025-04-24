@@ -31,3 +31,62 @@ textarea {
 .form-select:-webkit-autofill:focus {
   background-color: white !important;
 }
+
+.rbt-input-main {
+  border: none !important;
+  border-radius: 4px;
+}
+
+.rbt-menu .dropdown-item:hover,
+.rbt-menu .dropdown-item:focus {
+  background-color: $light;
+  color: $primary;
+}
+
+.rbt-menu .dropdown-item {
+  padding: 6px 12px;
+  color: $gray-700;
+}
+
+.rbt-menu.dropdown-menu.show {
+  margin-top: 5px;
+  border: 1px solid $primary;
+  width: calc(100% + 2px) !important;
+  margin-left: -1px;
+}
+
+.rbt-highlight-text {
+  background-color: $light;
+  color: $primary;
+  padding: 0;
+}
+
+.rbt-input-hint {
+  color: transparent;
+}
+
+/**
+ *** TYPEAHEAD CUSTOM STYLES ***
+ **/
+.pc-typeahead {
+  &-arrow-down {
+    & input.rbt-input-main {
+      background-image: url('./icons/arrow-down.svg');
+    }
+  }
+
+  &-arrow-up {
+    & input.rbt-input-main {
+      background-image: url('./icons/arrow-up.svg');
+    }
+  }
+
+  &-arrow-down, &-arrow-up {
+    & input.rbt-input-main {
+      padding-right: 35px;
+      background-repeat: no-repeat;
+      background-position: calc(100% - 19px);
+      background-size: 10px 5px;
+    }
+  }
+}
