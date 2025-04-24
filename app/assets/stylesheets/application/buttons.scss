@@ -2,7 +2,7 @@
 .btn {
   // styles for variant="primary"
   &-primary {
-    color: white !important;
+    color: $white !important;
 
     &:hover,
     &:focus {

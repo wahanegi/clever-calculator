@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_04_16_111645) do
+ActiveRecord::Schema[8.0].define(version: 2025_04_24_083627) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -83,6 +83,25 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_16_111645) do
     t.index ["company_name"], name: "index_customers_on_company_name", unique: true
   end
 
+  create_table "items", force: :cascade do |t|
+    t.string "name", null: false
+    t.text "description"
+    t.bigint "category_id"
+    t.jsonb "fixed_parameters", default: {}
+    t.jsonb "pricing_options", default: {}
+    t.boolean "is_disabled", default: false, null: false
+    t.boolean "is_fixed", default: false
+    t.boolean "is_open", default: false
+    t.boolean "is_selectable_options", default: false
+    t.text "open_parameters_label", default: [], array: true
+    t.text "formula_parameters", default: [], array: true
+    t.string "calculation_formula"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["category_id"], name: "index_items_on_category_id"
+    t.index ["name", "category_id"], name: "index_items_on_name_and_category_id", unique: true
+  end
+
   create_table "quotes", force: :cascade do |t|
     t.bigint "customer_id", null: false
     t.bigint "user_id", null: false
@@ -92,6 +111,12 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_16_111645) do
     t.string "step", default: "customer_info", null: false
     t.index ["customer_id"], name: "index_quotes_on_customer_id"
     t.index ["user_id"], name: "index_quotes_on_user_id"
+  end
+
+  create_table "settings", force: :cascade do |t|
+    t.text "style"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "solid_cable_messages", force: :cascade do |t|
@@ -251,6 +276,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_16_111645) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "items", "categories"
   add_foreign_key "quotes", "customers"
   add_foreign_key "quotes", "users"
   add_foreign_key "solid_queue_blocked_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade

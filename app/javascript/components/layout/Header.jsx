@@ -1,14 +1,27 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Nav, Navbar } from 'react-bootstrap'
 import { ROUTES } from '../shared'
-import { fetchAuthentication } from '../services'
+import { fetchAuthentication, fetchSetting } from '../services'
 import { PcIcon } from '../ui'
 
 export const Header = () => {
+  const [setting, setSetting] = useState(null)
+
+  useEffect(() => {
+    fetchSetting.show()
+      .then((response) => {
+        const { data: { attributes } } = response
+
+        setSetting(attributes)
+      })
+  }, [])
+
   const Logo = () =>
     <Navbar.Brand className={'ms-1 ms-xxl-22 ms-xl-22 ms-lg-10 ms-md-2'}>
       <div className={'pc-header-logo d-flex'}>
-        <PcIcon name={'logo'} className={'pc-icon-logo header-logo-separator'} alt={'Logo'} />
+        {setting?.logo ?
+          <img src={setting.logo} className={'pc-icon-logo header-logo-separator'} alt={'Logo'} /> :
+          <PcIcon name={'logo'} className={'pc-icon-logo header-logo-separator'} alt={'Logo'} />}
         <div className={'header-logo-text d-flex flex-column'}>
           <span className={'fw-bold text-uppercase text-black'}>This is</span>
           <span className={'fw-bolder text-uppercase text-black'}>My logo</span>
