@@ -1,6 +1,7 @@
 //= require active_admin/base
 //= require formula_builder
 //= require new_parameter
+//= require quotes_admin
 
 
 

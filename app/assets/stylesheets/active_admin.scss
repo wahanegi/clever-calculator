@@ -233,4 +233,14 @@
   color: #222 !important;
 }
 
+.categories-wrapper .choices-group {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 0.5rem 1rem;
+  margin: auto;
+  list-style: none;
+  width: 100%;
+}
+
+
 @import "active_admin/forms/select";
