@@ -1,5 +1,5 @@
 FactoryBot.define do
   factory :setting do
-    style { "MyText" }
+    style { ":root { color: red; }" }
   end
 end

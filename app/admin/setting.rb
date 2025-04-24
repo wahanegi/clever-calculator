@@ -5,7 +5,7 @@ ActiveAdmin.register_page "Setting" do
     setting = Setting.current
 
     active_admin_form_for setting, url: admin_setting_update_path,
-                                   method: :patch,
+                                   method: :put,
                                    html: { multipart: true } do |f|
       f.inputs do
         f.input :logo, as: :file
@@ -17,10 +17,10 @@ ActiveAdmin.register_page "Setting" do
     end
   end
 
-  page_action :update, method: :patch do
+  page_action :update, method: :put do
     setting = Setting.current
 
-    if setting.update(permitted_params[:setting])
+    if setting.update(permitted_params)
       redirect_to admin_setting_path, notice: "Setting was successfully updated."
     else
       redirect_to admin_setting_path, alert: setting.errors.full_messages.to_sentence
@@ -29,7 +29,7 @@ ActiveAdmin.register_page "Setting" do
 
   controller do
     def permitted_params
-      params.permit(setting: [:style, :logo])
+      params.require(:setting).permit(:style, :logo)
     end
   end
 end
