@@ -4,7 +4,7 @@ ActiveAdmin.register Quote do
                                                                  :_destroy,
                                                                  :quote_id,
                                                                  :item_id,
-                                                                 :open_parameters,
+                                                                 :pricing_parameters,
                                                                  :price,
                                                                  :discount,
                                                                  :final_price]
@@ -72,14 +72,14 @@ ActiveAdmin.register Quote do
             setTimeout(() => {
               const lastItemGroup = container.querySelectorAll(".has_many_fields").item(-1);
               const itemSelect = lastItemGroup.querySelector("select[id$='_item_id']");
-              const openParams = lastItemGroup.querySelector("input[id$='_open_parameters']");
+              const pricingParams = lastItemGroup.querySelector("input[id$='_pricing_parameters']");
               const discount = lastItemGroup.querySelector("input[id$='_discount']");
 
               if (itemSelect) {
                 itemSelect.value = item.item_id;
               }
-              if (openParams) {
-                openParams.value = item.open_parameters;
+              if (pricingParams) {
+                pricingParams.value = item.pricing_parameters;
               }
               if (discount) {
                 discount.value = item.discount;
@@ -107,7 +107,7 @@ ActiveAdmin.register Quote do
     panel 'Quote Items' do
       table_for quote.quote_items do
         column :item
-        column :open_parameters
+        column :pricing_parameters
         column :price
         column :discount
         column :final_price
@@ -124,7 +124,7 @@ ActiveAdmin.register Quote do
         category_id: item.category_id,
         item_id: item.id,
         item_name: item.name,
-        open_parameters: '',
+        _pricing_parameters: '',
         discount: 0
       }
     }

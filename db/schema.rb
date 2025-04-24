@@ -112,7 +112,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_23_145035) do
   create_table "quote_items", force: :cascade do |t|
     t.bigint "quote_id", null: false
     t.bigint "item_id", null: false
-    t.jsonb "open_parameters", default: {}
+    t.jsonb "pricing_parameters", default: {}, null: false
     t.decimal "price", precision: 10, scale: 2, null: false
     t.decimal "discount", precision: 5, scale: 2, default: "0.0", null: false
     t.decimal "final_price", precision: 10, scale: 2, null: false
