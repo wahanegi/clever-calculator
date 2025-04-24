@@ -41,6 +41,19 @@ ActiveAdmin.register Quote do
     div do
       button_tag 'Load Items from Category', type: 'button', id: 'load-items-button', class: 'button'
     end
+    f.has_many :quote_items, allow_destroy: true, new_record: true, heading: 'Quote Items' do |qf|
+      qf.input :item_id, as: :hidden, input_html: { class: 'item-id-field' }
+
+      qf.template.concat(
+        qf.template.content_tag(:div, class: 'input string optional') do
+          qf.template.content_tag(:label, 'Item Name', class: 'item-name-label') +
+          qf.template.content_tag(:span, qf.object.item&.name || '', class: 'item-name-field', data: { item_name: qf.object.item&.name })
+        end
+      )
+
+      qf.input :pricing_parameters, as: :string, input_html: { value: '' }
+      qf.input :discount, as: :number, input_html: { min: 0 }
+    end
     f.actions
   end
 

@@ -26,20 +26,32 @@ document.addEventListener('DOMContentLoaded', function () {
         if (!container) return
 
         items.forEach((item) => {
+          // Trigger the "Add" button to create a new quote item
           const addButton = container.querySelector('.has_many_add')
           addButton?.click()
 
-          setTimeout(() => {
-            const lastItemGroup = container.querySelectorAll('.has_many_fields').item(-1)
-            const itemSelect = lastItemGroup?.querySelector("select[id$='_item_id']")
-            const pricingParams = lastItemGroup?.querySelector("input[id$='_pricing_parameters']")
-            const discount = lastItemGroup?.querySelector("input[id$='_discount']")
+          // Find the newly added quote item fields
+          const itemGroups = container.querySelectorAll('.has_many_fields')
+          const lastItemGroup = itemGroups[itemGroups.length - 1]
+          if (!lastItemGroup) return
 
-            if (itemSelect) itemSelect.value = item.item_id
-            if (pricingParams) pricingParams.value = item.pricing_parameters
-            if (discount) discount.value = item.discount
-          }, 100)
+          // Populate the fields
+          const itemIdInput = lastItemGroup.querySelector('input.item-id-field')
+          const itemNameSpan = lastItemGroup.querySelector('span.item-name-field')
+          const pricingParamsInput = lastItemGroup.querySelector("input[id$='_pricing_parameters']")
+          const discountInput = lastItemGroup.querySelector("input[id$='_discount']")
+
+          if (itemIdInput) itemIdInput.value = item.item_id
+          if (itemNameSpan) {
+            itemNameSpan.textContent = item.item_name
+            itemNameSpan.dataset.item_name = item.item_name
+          }
+          if (pricingParamsInput) pricingParamsInput.value = ''
+          if (discountInput) discountInput.value = item.discount
         })
+      })
+      .catch((error) => {
+        console.error('Error loading items:', error)
       })
   })
 })
