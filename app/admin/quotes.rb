@@ -51,6 +51,9 @@ ActiveAdmin.register Quote do
 
       qf.template.concat(
         qf.template.content_tag(:div) do
+          qf.template.content_tag(:label, 'Category', class: 'category-name-label') +
+          qf.template.content_tag(:span, qf.object.item&.category&.name || 'Other', class: 'category-name-field') +
+          qf.template.tag(:br) +
           qf.template.content_tag(:label, 'Item Name', class: 'item-name-label') +
           qf.template.content_tag(:span, qf.object.item&.name || '', class: 'item-name-field', data: { item_name: qf.object.item&.name })
         end
@@ -103,6 +106,7 @@ ActiveAdmin.register Quote do
     render json: items.map { |item|
       {
         category_id: item.category_id,
+        category_name: item.category&.name || 'Other',
         item_id: item.id,
         item_name: item.name,
         pricing_parameters: {

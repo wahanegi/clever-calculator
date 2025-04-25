@@ -32,6 +32,12 @@ document.addEventListener('DOMContentLoaded', function () {
         const container = document.querySelector('.has_many_container.quote_items')
         if (!container) return
 
+        items.sort((a, b) => {
+          const catA = a.category_name?.toLowerCase() || 'other'
+          const catB = b.category_name?.toLowerCase() || 'other'
+          return catA.localeCompare(catB)
+        })
+
         items.forEach((item) => {
           const addButton = container.querySelector('.has_many_add')
           addButton?.click()
@@ -42,6 +48,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
           const itemIdInput = lastItemGroup.querySelector('input.item-id-field')
           const itemNameSpan = lastItemGroup.querySelector('span.item-name-field')
+          let categorySpan = lastItemGroup.querySelector('span.category-name-field')
+          if (categorySpan) {
+            categorySpan.textContent = item.category_name || 'Other'
+          }
           const discountInput = lastItemGroup.querySelector("input[id$='_discount']")
           const previewContainer = lastItemGroup.querySelector('.quote-parameters-preview')
 
