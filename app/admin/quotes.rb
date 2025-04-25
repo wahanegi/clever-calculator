@@ -1,13 +1,15 @@
 ActiveAdmin.register Quote do
-  permit_params :customer_id, :user_id, category_ids: [], item_ids: [],
-                                        quote_items_attributes: [:id,
-                                                                 :_destroy,
-                                                                 :quote_id,
-                                                                 :item_id,
-                                                                 :pricing_parameters,
-                                                                 :price,
-                                                                 :discount,
-                                                                 :final_price]
+  permit_params :customer_id, :user_id, :total_price,  category_ids: [], item_ids: [],
+                                                       quote_items_attributes: [:id,
+                                                                                :_destroy,
+                                                                                :quote_id,
+                                                                                :item_id,
+                                                                                :pricing_parameters,
+                                                                                { open_param_values: {} },
+                                                                                { select_param_values: {} },
+                                                                                :price,
+                                                                                :discount,
+                                                                                :final_price]
 
   filter :customer_name, as: :string, label: 'Customer Name'
   filter :user, as: :select, collection: proc {
@@ -90,7 +92,7 @@ ActiveAdmin.register Quote do
     end
   end
 
-  collection_action :load_items_from_categories, method: :post do
+  collection_action :load_items, method: :post do
     category_ids = params[:category_ids] || []
     item_ids = params[:item_ids] || []
 
