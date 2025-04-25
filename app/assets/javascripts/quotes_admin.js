@@ -1,19 +1,19 @@
 document.addEventListener('DOMContentLoaded', function () {
-  const button = document.getElementById('load-items-button')
-  if (!button) return
+  const button = document.getElementById('load-items-button');
+  if (!button) return;
 
   button.addEventListener('click', function () {
-    const selectedCategories = Array.from(document.querySelectorAll("input[name='quote[category_ids][]']:checked")).map(
-      (cb) => cb.value,
-    )
+    const selectedCategories = Array.from(
+      document.querySelectorAll("input[name='quote[category_ids][]']:checked")
+    ).map((cb) => cb.value);
 
-    const selectedItems = Array.from(document.querySelectorAll("input[name='quote[item_ids][]']:checked")).map(
-      (cb) => cb.value,
-    )
+    const selectedItems = Array.from(
+      document.querySelectorAll("input[name='quote[item_ids][]']:checked")
+    ).map((cb) => cb.value);
 
     if (selectedCategories.length === 0 && selectedItems.length === 0) {
-      alert('Please select at least one category or item.')
-      return
+      alert('Please select at least one category or item.');
+      return;
     }
 
     fetch('/admin/quotes/load_items_from_categories', {
@@ -29,40 +29,52 @@ document.addEventListener('DOMContentLoaded', function () {
     })
       .then((response) => response.json())
       .then((items) => {
-        const container = document.querySelector('.has_many_container.quote_items')
-        if (!container) return
+        const container = document.querySelector('.has_many_container.quote_items');
+        if (!container) return;
 
         items.forEach((item) => {
-          // Trigger the "Add" button to create a new quote item
-          const addButton = container.querySelector('.has_many_add')
-          addButton?.click()
+          const addButton = container.querySelector('.has_many_add');
+          addButton?.click();
 
-          // Find the newly added quote item fields
-          const itemGroups = container.querySelectorAll('.has_many_fields')
-          const lastItemGroup = itemGroups[itemGroups.length - 1]
-          if (!lastItemGroup) return
+          const itemGroups = container.querySelectorAll('.has_many_fields');
+          const lastItemGroup = itemGroups[itemGroups.length - 1];
+          if (!lastItemGroup) return;
 
-          // Populate the fields
-          const itemIdInput = lastItemGroup.querySelector('input.item-id-field')
-          const itemNameSpan = lastItemGroup.querySelector('span.item-name-field')
-          const pricingParamsInput = lastItemGroup.querySelector("input[id$='_pricing_parameters']")
-          const discountInput = lastItemGroup.querySelector("input[id$='_discount']")
+          const itemIdInput = lastItemGroup.querySelector('input.item-id-field');
+          const itemNameSpan = lastItemGroup.querySelector('span.item-name-field');
+          const discountInput = lastItemGroup.querySelector("input[id$='_discount']");
+          const previewContainer = lastItemGroup.querySelector('.quote-parameters-preview');
 
-          if (itemIdInput) itemIdInput.value = item.item_id
+          if (itemIdInput) itemIdInput.value = item.item_id;
           if (itemNameSpan) {
-            itemNameSpan.textContent = item.item_name
-            itemNameSpan.dataset.item_name = item.item_name
+            itemNameSpan.textContent = item.item_name;
+            itemNameSpan.dataset.item_name = item.item_name;
           }
-          if (pricingParamsInput) pricingParamsInput.value = ''
-          if (discountInput) discountInput.value = item.discount
-        })
+          if (discountInput) discountInput.value = item.discount;
 
-        // Clear selected checkboxes after loading items
-        document.querySelectorAll("input[name='quote[category_ids][]']:checked").forEach((cb) => (cb.checked = false))
-        document.querySelectorAll("input[name='quote[item_ids][]']:checked").forEach((cb) => (cb.checked = false))
+          fetch('/admin/quotes/render_quote_item_parameters', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+            },
+            body: JSON.stringify({ item_id: item.item_id }),
+          })
+            .then((response) => response.text())
+            .then((html) => {
+              if (previewContainer) previewContainer.innerHTML = html;
+            });
+        });
+
+        document
+          .querySelectorAll("input[name='quote[category_ids][]']:checked")
+          .forEach((cb) => (cb.checked = false));
+        document
+          .querySelectorAll("input[name='quote[item_ids][]']:checked")
+          .forEach((cb) => (cb.checked = false));
       })
       .catch((error) => {
-        console.error('Error loading items:', error)
-      })
-  })
-})
+        console.error('Error loading items:', error);
+      });
+  });
+});

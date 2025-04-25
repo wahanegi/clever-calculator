@@ -70,6 +70,13 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_24_093006) do
     t.index ["name"], name: "index_categories_on_name", unique: true, where: "(is_disabled = false)"
   end
 
+  create_table "categories_quotes", id: false, force: :cascade do |t|
+    t.bigint "quote_id", null: false
+    t.bigint "category_id", null: false
+    t.index ["category_id", "quote_id"], name: "index_categories_quotes_on_category_id_and_quote_id"
+    t.index ["quote_id", "category_id"], name: "index_categories_quotes_on_quote_id_and_category_id"
+  end
+
   create_table "categorizations", force: :cascade do |t|
     t.bigint "quote_id", null: false
     t.bigint "category_id", null: false

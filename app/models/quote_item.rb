@@ -2,6 +2,8 @@ class QuoteItem < ApplicationRecord
   belongs_to :quote
   belongs_to :item
 
+  store_accessor :pricing_parameters, :fixed_parameters, :open_parameters_label, :pricing_options
+
   validates :price, presence: true, numericality: { greater_than_or_equal_to: 0 }
   validates :discount, numericality: { greater_than_or_equal_to: 0, less_than_or_equal_to: 100 }
   validates :final_price, presence: true, numericality: { greater_than_or_equal_to: 0 }
