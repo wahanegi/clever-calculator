@@ -26,9 +26,9 @@ export const PcItemAccordion = ({
       {/*<Accordion.Item eventKey="0" className={'pc-accordion-quote'}>*/}
       <Accordion.Item eventKey="0">
         <div className={'position-relative'}>
-          <Accordion.Header onClick={onToggle} className={'position-relative z-0 mb-3'}>
+          <Accordion.Header onClick={onToggle} className={'position-relative z-0 mb-3 pb-8 pb-sm-0'}>
             <div className={'d-flex align-items-center justify-content-between w-100'}>
-              <span className="fs-10 fw-medium lh-lg text-gray-750 p-0">{itemName}</span>
+              <span className="pc-item-name fs-10 fw-medium lh-lg text-gray-750 p-0 text-truncate ">{itemName}</span>
               <div className="d-flex gap-4 align-items-center">
                 <PcIcon
                   name={isOpen ? 'accordionArrowUp' : 'accordionArrowDown'}
@@ -42,7 +42,7 @@ export const PcItemAccordion = ({
 
           {/*Extra Accordion.Header elements. For involve button hydration error*/}
           <div
-            className="pc-extra-actions position-absolute top-50 translate-middle-y d-flex align-items-center gap-5 z-1">
+            className="pc-extra-actions position-absolute top-50 translate-middle-y d-flex align-items-center gap-2 gap-sm-5 z-1">
             {!isOpen && <div className="fs-10 text-secondary">{`$ ${quotePrice}`}</div>}
             {isOpen && (
               <>

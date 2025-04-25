@@ -50,5 +50,11 @@
 
   .pc-extra-actions {
     right: 44px;
+    @media (max-width: 575px) {
+      bottom: 0;
+      left: 0;
+      width: max-content;
+      transform: translateY(0) !important;
+    }
   }
 }

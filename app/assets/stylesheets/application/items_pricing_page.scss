@@ -27,3 +27,15 @@
 .pc-grid-bar {
   grid-template-columns: minmax(0, 512px) auto;
 }
+
+.pc-item-name {
+  @media (min-width: 576px) {
+    max-width: 200px;
+  }
+  @media (min-width: 768px) {
+    max-width: 350px;
+  }
+  @media (min-width: 1024px) {
+    max-width: 600px;
+  }
+}
