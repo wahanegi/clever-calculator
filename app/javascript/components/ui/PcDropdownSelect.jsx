@@ -32,7 +32,7 @@ export const PcDropdownSelect = ({
         options={options}
         placeholder={placeholder}
         filterBy={handleFilterBy}
-        allowNew={false}
+        allowNew
         newSelectionPrefix="Add new customer: "
         className={`${hasIcon ? isMenuOpen ? 'pc-typeahead-arrow-up' : 'pc-typeahead-arrow-down' : ''} border border-primary rounded-1`}
         style={{ height }}

@@ -22,8 +22,11 @@ export const fetchCustomers = {
       const response = await fetch(customer.logo_url)
 
       if (response.ok) {
+        const contentType = response.headers.get("Content-Type")
         const blob = await response.blob()
-        formData.append('customer[logo]', blob)
+        const fileName = `logo.${contentType.split("/")[1] || "png"}`
+
+        formData.append('customer[logo]', blob, fileName)
       } else {
         throw new Error('Failed to fetch logo')
       }
