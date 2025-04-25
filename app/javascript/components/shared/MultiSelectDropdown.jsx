@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { Form } from 'react-bootstrap'
+import { Button, Form } from 'react-bootstrap'
 import { Typeahead } from 'react-bootstrap-typeahead'
 import { fetchCategories } from '../services'
 import { PcCheckboxOption, PcIcon } from '../ui'
@@ -15,11 +15,14 @@ export const MultiSelectDropdown = ({
 }) => {
   const typeaheadRef = useRef()
   const [categories, setCategories] = useState([])
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false)
   const [isMenuOpen, setIsMenuOpen] = useState(false)
 
-  const handleFocus = () => setIsDropdownOpen(true)
-  const handleBlur = () => setIsDropdownOpen(false)
+  const toggleMenu = (e) => {
+    e.stopPropagation()
+    setIsMenuOpen(prev => !prev)
+  }
+  const handleFocus = () => setIsMenuOpen(true)
+  const handleBlur = () => setIsMenuOpen(false)
 
   const handleMenuOpen = (isOpen) => setIsMenuOpen(isOpen)
   const isSelected = (option) => selected.some(item => item.id === option.id)
@@ -66,7 +69,7 @@ export const MultiSelectDropdown = ({
           onFocus={handleFocus}
           onBlur={handleBlur}
           onMenuToggle={handleMenuOpen}
-          open={isDropdownOpen}
+          open={isMenuOpen}
           multiple
           className={'pc-typeahead-items-pricing'}
           renderMenuItemChildren={(option) => (
@@ -84,11 +87,15 @@ export const MultiSelectDropdown = ({
         </Form.Label>
 
         {hasIcon && (
-          <div className="position-absolute end-0 top-50 translate-middle-y pe-4">
-            <PcIcon
-              name={isMenuOpen ? 'arrowUpLight' : 'arrowDownLight'}
-              alt={isMenuOpen ? 'Arrow pointing up' : 'Arrow pointing down'}
-            />
+          <div
+            className={"position-absolute end-0 top-50 translate-middle-y z-2 me-4"}>
+            <Button
+              variant={'outline'}
+              className={'p-0 border-0'}
+              onClick={toggleMenu}
+            >
+              <PcIcon name={`${isMenuOpen ? 'arrowUpLight' : 'arrowDownLight'}`} />
+            </Button>
           </div>
         )}
       </Form.Group>
