@@ -7,6 +7,7 @@ gem "activeadmin", "~> 3.3.0"                                       # A framewor
 gem "bootsnap", '~> 1.18.4', require: false                         # Reduces boot times through caching; required in config/boot.rb
 gem "cssbundling-rails", '~> 1.4.3'                                 # Bundle and process CSS [https://github.com/rails/cssbundling-rails]
 # gem "image_processing", "~> 1.2"                                  # Use Active Storage variants [https://guides.rubyonrails.org/active_storage_overview.html#transforming-images]
+gem 'dentaku', "~> 3.5.4"                                           # Evaluator for a mathematical and logical formulas
 gem "devise", "~> 4.9.4"                                            # Authentication
 gem "jbuilder", '~> 2.13.0'                                         # Build JSON APIs with ease [https://github.com/rails/jbuilder]
 gem "jsbundling-rails", '~> 1.3.1'                                  # Bundle and transpile JavaScript [https://github.com/rails/jsbundling-rails]

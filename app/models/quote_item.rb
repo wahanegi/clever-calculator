@@ -10,8 +10,9 @@ class QuoteItem < ApplicationRecord
   validates :discount, numericality: { greater_than_or_equal_to: 0, less_than_or_equal_to: 100 }
   validates :final_price, presence: true, numericality: { greater_than_or_equal_to: 0 }
 
-  before_validation :calculate_final_price, if: -> { should_recalculate_final_price? }
   before_validation :compile_pricing_parameters
+  before_validation :calculate_price_from_formula, if: -> { item_requires_formula? }
+  before_validation :calculate_final_price, if: -> { price.present? && discount.present? }
 
   def compile_pricing_parameters
     return unless item
@@ -30,6 +31,18 @@ class QuoteItem < ApplicationRecord
     self.pricing_parameters = combined
   end
 
+  def calculate_price_from_formula
+    return unless item_requires_formula?
+
+    calculator = Dentaku::Calculator.new
+    formula = item.calculation_formula
+    self.price = calculator.evaluate(formula, pricing_parameters)
+  rescue Dentaku::UnboundVariableError => e
+    errors.add(:price, "missing variable(s): #{e.unbound_variables.join(', ')}")
+  rescue StandardError => e
+    errors.add(:price, "could not calculate price: #{e.message}")
+  end
+
   after_save :recalculate_quote_total_price
   after_destroy :recalculate_quote_total_price
 
@@ -39,11 +52,11 @@ class QuoteItem < ApplicationRecord
     self.final_price = price - (price * (discount / 100))
   end
 
-  def should_recalculate_final_price?
-    price.present? && discount.present? && (price_changed? || discount_changed?)
-  end
-
   def recalculate_quote_total_price
     quote.recalculate_total_price
+  end
+
+  def item_requires_formula?
+    item&.calculation_formula.present?
   end
 end
