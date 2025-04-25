@@ -258,4 +258,8 @@ label.item-name-label {
   color: #5e6469;
 }
 
+.quote-form a.has_many_add {
+  display: none !important;
+}
+
 @import 'active_admin/forms/select';

@@ -30,7 +30,7 @@ ActiveAdmin.register Quote do
     actions
   end
 
-  form do |f|
+  form html: { class: 'quote-form' } do |f|
     f.inputs do
       f.input :customer, as: :select, collection: Customer.pluck(:company_name, :id)
       f.input :user, as: :select, collection: User.order(:email).map { |u| ["#{u.email} (#{u.name})", u.id] }
@@ -39,6 +39,7 @@ ActiveAdmin.register Quote do
                            wrapper_html: { class: 'categories-wrapper' }
       f.input :item_ids, label: 'Items Without Category', as: :check_boxes, collection: Item.where(category_id: nil).order(:name),
                          wrapper_html: { class: 'categories-wrapper' }
+      f.input :total_price, as: :number, input_html: { min: 0, readonly: true }, hint: 'Total price will be calculated automatically based on quote items.'
     end
     div do
       button_tag 'Load Items', type: 'button', id: 'load-items-button', class: 'button'
@@ -60,7 +61,9 @@ ActiveAdmin.register Quote do
         end
       )
 
+      qf.input :price, as: :number, input_html: { min: 0, readonly: true, value: qf.object.price || 0 }, hint: 'Price will be calculated automatically based on Pricing parameters'
       qf.input :discount, as: :number, input_html: { min: 0 }
+      qf.input :final_price, as: :number, input_html: { min: 0, readonly: true, value: qf.object.final_price || 0 }, hint: 'Final price will be calculated automatically based on Discount'
     end
     f.actions
   end
