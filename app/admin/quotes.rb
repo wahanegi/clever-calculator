@@ -44,25 +44,24 @@ ActiveAdmin.register Quote do
       button_tag 'Load Items', type: 'button', id: 'load-items-button', class: 'button'
     end
     f.has_many :quote_items, allow_destroy: true, new_record: true, heading: 'Quote Items' do |qf|
-        qf.input :item_id, as: :hidden, input_html: { class: 'item-id-field' }
-      
-        qf.template.concat(
-          qf.template.content_tag(:div) do
-            qf.template.content_tag(:label, 'Item Name', class: 'item-name-label') +
-            qf.template.content_tag(:span, qf.object.item&.name || '', class: 'item-name-field', data: { item_name: qf.object.item&.name })
-          end
-        )
-      
-        qf.template.concat(
-            qf.template.content_tag(:div, class: 'quote-parameters-container') do
-                qf.template.content_tag(:label, 'Pricing parameters', class: 'item-name-label') +
-                qf.template.content_tag(:div, '', class: 'quote-parameters-preview')
-            end
-            )
+      qf.input :item_id, as: :hidden, input_html: { class: 'item-id-field' }
 
-      
-        qf.input :discount, as: :number, input_html: { min: 0 }
-      end      
+      qf.template.concat(
+        qf.template.content_tag(:div) do
+          qf.template.content_tag(:label, 'Item Name', class: 'item-name-label') +
+          qf.template.content_tag(:span, qf.object.item&.name || '', class: 'item-name-field', data: { item_name: qf.object.item&.name })
+        end
+      )
+
+      qf.template.concat(
+        qf.template.content_tag(:div, class: 'quote-parameters-container') do
+          qf.template.content_tag(:label, 'Pricing parameters', class: 'item-name-label') +
+            qf.template.content_tag(:div, '', class: 'quote-parameters-preview')
+        end
+      )
+
+      qf.input :discount, as: :number, input_html: { min: 0 }
+    end
     f.actions
   end
 
@@ -102,9 +101,9 @@ ActiveAdmin.register Quote do
         item_id: item.id,
         item_name: item.name,
         pricing_parameters: {
-            fixed_parameters: item.fixed_parameters || {},
-            open_parameters_label: item.open_parameters_label || [],
-            pricing_options: item.pricing_options || {}
+          fixed_parameters: item.fixed_parameters || {},
+          open_parameters_label: item.open_parameters_label || [],
+          pricing_options: item.pricing_options || {}
         },
         discount: 0
       }
