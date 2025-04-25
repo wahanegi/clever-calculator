@@ -30,7 +30,6 @@ export const CustomerForm = () => {
     customer.company_name
 
   const handleCompanyChange = (selected) => {
-    console.info('handleCompanyChange', selected)
     if (selected.length === 0) return
 
     const {value, label} = selected[0]
@@ -46,9 +45,7 @@ export const CustomerForm = () => {
     setErrors((prev) => ({...prev, company_name: ''}))
   }
 
-  const handleCompanyInputChange = (text, event) => {
-    console.info('handleCompanyInputChange', text, event)
-
+  const handleCompanyInputChange = (text) => {
     if (text) {
       setIsNextDisabled(false)
       setErrors((prev) => ({...prev, company_name: ''}))
@@ -118,8 +115,8 @@ export const CustomerForm = () => {
       setErrors((prev) => ({...prev, logo: logoErrors.join('\n')}))
     } else {
       setIsNextDisabled(false)
-      setCustomer((prev) => ({...prev, logo_url: URL.createObjectURL(file),}))
-      setErrors((prev) => ({...prev, logo: ''}))
+      setCustomer((prev) => ({ ...prev, logo_url: URL.createObjectURL(file) }))
+      setErrors((prev) => ({ ...prev, logo: '' }))
     }
   }
 
