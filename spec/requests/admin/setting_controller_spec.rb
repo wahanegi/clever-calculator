@@ -20,12 +20,20 @@ RSpec.describe "Admin::SettingController", type: :request do
     end
   end
 
-  describe "PUT /admin/setting" do
+  describe "PUT /admin/setting/update" do
     let(:logo) { fixture_file_upload(Rails.root.join("spec/fixtures/files/logo.png"), "image/png") }
-    let(:style) { ':root { color: green; }' }
+    let(:style) { BrandColorBuilder.new('#FFFFFF', '#FFFFFF', '#FFFFFF', '#FFFFFF').build_css }
 
     it "updates the current setting" do
-      put admin_setting_update_path, params: { setting: { logo: logo, style: style } }
+      put admin_setting_update_path, params: {
+        setting: {
+          logo: logo,
+          primary_color: '#FFFFFF',
+          secondary_color: '#FFFFFF',
+          blue_light_color: '#FFFFFF',
+          blue_sky_color: '#FFFFFF'
+        }
+      }
 
       expect(response).to redirect_to(admin_setting_path)
 
