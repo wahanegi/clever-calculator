@@ -1,113 +1,201 @@
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', () => {
+  // Main container for quote items
   const container = document.querySelector('.has_many_container.quote_items')
-  const heading = container?.querySelector('h3')
+  if (!container) return
 
-  // If there are quote items already on page load (like after validation error), show the heading
-  if (container && container.querySelectorAll('.has_many_fields').length > 0 && heading) {
-    heading.style.display = 'block'
+  // DOM selectors for commonly used elements
+  const selectors = {
+    heading: 'h3',
+    addButton: '.has_many_add',
+    itemGroups: '.has_many_fields',
+    itemId: 'input.item-id-field',
+    itemName: 'span.item-name-field',
+    category: 'span.category-name-field',
+    discount: "input[id$='_discount']",
+    price: "input[id$='_price']",
+    finalPrice: "input[id$='_final_price']",
+    preview: '.quote-parameters-preview',
+    categoryCheckboxes: "input[name='quote[category_ids][]']",
+    itemCheckboxes: "input[name='quote[item_ids][]']",
+    loadButton: '#load-items-button',
   }
 
-  const button = document.getElementById('load-items-button')
-  if (!button) return
+  // Utility Functions
+  /**
+   * Retrieves the CSRF token from the meta tag
+   * @returns {string|null} The CSRF token or null if not found
+   */
+  const getCsrfToken = () => document.querySelector('meta[name="csrf-token"]')?.getAttribute('content')
 
-  button.addEventListener('click', function () {
-    const selectedCategories = Array.from(document.querySelectorAll("input[name='quote[category_ids][]']:checked")).map(
-      (cb) => cb.value,
-    )
-
-    const selectedItems = Array.from(document.querySelectorAll("input[name='quote[item_ids][]']:checked")).map(
-      (cb) => cb.value,
-    )
-
-    if (selectedCategories.length === 0 && selectedItems.length === 0) {
-      alert('Please select at least one category or item.')
-      return
-    }
-
-    fetch('/admin/quotes/load_items', {
+  /**
+   * Performs a POST request with CSRF token and JSON body
+   * @param {string} url - The endpoint URL
+   * @param {Object} body - The request payload
+   * @returns {Promise<Response>} The fetch response
+   * @throws {Error} If the response is not OK
+   */
+  const fetchWithConfig = async (url, body) => {
+    const response = await fetch(url, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+        'X-CSRF-Token': getCsrfToken(),
       },
-      body: JSON.stringify({
-        category_ids: selectedCategories,
-        item_ids: selectedItems,
-      }),
+      body: JSON.stringify(body),
     })
-      .then((response) => response.json())
-      .then((items) => {
-        const container = document.querySelector('.has_many_container.quote_items')
-        if (!container) return
+    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`)
+    return response
+  }
 
+  /**
+   * Extracts the quote item index from the form input name
+   * Used to replace NEW_RECORD placeholder in rendered HTML
+   * @param {HTMLElement} group - The quote item group element
+   * @returns {string|undefined} The quote item index or undefined if not found
+   */
+  const getQuoteItemIndex = (group) => {
+    return group
+      .querySelector('input[name^="quote[quote_items_attributes]"]')
+      ?.name.match(/quote_items_attributes\]\[(\d+)\]/)?.[1]
+  }
+
+  /**
+   * Updates form fields for a quote item group
+   * @param {HTMLElement} group - The quote item group element
+   * @param {Object} itemData - Item data containing id, name, category, and discount
+   * @param {boolean} [isNewItem=false] - Whether this is a new item (resets price fields)
+   */
+  const updateItemFields = (group, itemData, isNewItem = false) => {
+    const fields = {
+      itemId: group.querySelector(selectors.itemId),
+      itemName: group.querySelector(selectors.itemName),
+      category: group.querySelector(selectors.category),
+      discount: group.querySelector(selectors.discount),
+      price: isNewItem ? group.querySelector(selectors.price) : null,
+      finalPrice: isNewItem ? group.querySelector(selectors.finalPrice) : null,
+    }
+
+    if (fields.itemId) fields.itemId.value = itemData.item_id
+    if (fields.itemName) {
+      fields.itemName.textContent = itemData.item_name
+      fields.itemName.dataset.item_name = itemData.item_name
+    }
+    if (fields.category) fields.category.textContent = itemData.category_name || 'Other'
+    if (fields.discount) fields.discount.value = itemData.discount || '0'
+    if (fields.price) fields.price.value = '0'
+    if (fields.finalPrice) fields.finalPrice.value = '0'
+  }
+
+  /**
+   * Fetches and renders quote item parameters
+   * @param {HTMLElement} group - The quote item group element
+   * @param {string} itemId - The ID of the item
+   */
+  const renderQuoteParameters = async (group, itemId) => {
+    const previewContainer = group.querySelector(selectors.preview)
+    if (!previewContainer) return
+
+    const quoteItemIndex = getQuoteItemIndex(group)
+    if (!quoteItemIndex) return
+
+    try {
+      const response = await fetchWithConfig('/admin/quotes/render_quote_item_parameters', { item_id: itemId })
+      const html = await response.text()
+      previewContainer.innerHTML = html.replace(/NEW_RECORD/g, quoteItemIndex)
+    } catch (error) {
+      console.error('Error rendering quote parameters:', error)
+    }
+  }
+
+  /**
+   * Adds a new quote item to the form
+   * @param {Object} itemData - Item data containing id, name, category, and discount
+   * @param {boolean} [isDuplicate=false] - Whether this is a duplicate item
+   */
+  const addNewQuoteItem = async (itemData, isDuplicate = false) => {
+    const addButton = container.querySelector(selectors.addButton)
+    addButton?.click()
+
+    // Wait for DOM update
+    await new Promise((resolve) => setTimeout(resolve, 0))
+
+    const itemGroups = container.querySelectorAll(selectors.itemGroups)
+    const lastItemGroup = itemGroups[itemGroups.length - 1]
+    if (!lastItemGroup) return
+
+    updateItemFields(lastItemGroup, itemData, isDuplicate)
+    await renderQuoteParameters(lastItemGroup, itemData.item_id)
+  }
+
+  // Initialization
+  // Show heading if quote items exist on page load
+  const heading = container.querySelector(selectors.heading)
+  if (container.querySelectorAll(selectors.itemGroups).length > 0 && heading) {
+    heading.style.display = 'block'
+  }
+
+  // Event Handlers
+  // Handle clicking the "Load Items" button
+  const loadItemsButton = document.querySelector(selectors.loadButton)
+  if (loadItemsButton) {
+    loadItemsButton.addEventListener('click', async () => {
+      const selectedCategories = Array.from(document.querySelectorAll(`${selectors.categoryCheckboxes}:checked`)).map(
+        (cb) => cb.value,
+      )
+      const selectedItems = Array.from(document.querySelectorAll(`${selectors.itemCheckboxes}:checked`)).map(
+        (cb) => cb.value,
+      )
+
+      if (!selectedCategories.length && !selectedItems.length) {
+        alert('Please select at least one category or item.')
+        return
+      }
+
+      try {
+        const response = await fetchWithConfig('/admin/quotes/load_items', {
+          category_ids: selectedCategories,
+          item_ids: selectedItems,
+        })
+        const items = await response.json()
+
+        // Sort items by category name for consistent display
         items.sort((a, b) => {
           const catA = a.category_name?.toLowerCase() || 'other'
           const catB = b.category_name?.toLowerCase() || 'other'
           return catA.localeCompare(catB)
         })
 
-        // show the heading on items load
-        const heading = container.querySelector('h3')
         if (heading) heading.style.display = 'block'
 
-        items.forEach((item) => {
-          const addButton = container.querySelector('.has_many_add')
-          addButton?.click()
+        for (const item of items) {
+          await addNewQuoteItem(item)
+        }
 
-          const itemGroups = container.querySelectorAll('.has_many_fields')
-          const lastItemGroup = itemGroups[itemGroups.length - 1]
-          if (!lastItemGroup) return
-
-          const itemIdInput = lastItemGroup.querySelector('input.item-id-field')
-          const itemNameSpan = lastItemGroup.querySelector('span.item-name-field')
-          let categorySpan = lastItemGroup.querySelector('span.category-name-field')
-          if (categorySpan) {
-            categorySpan.textContent = item.category_name || 'Other'
-          }
-          const discountInput = lastItemGroup.querySelector("input[id$='_discount']")
-          const previewContainer = lastItemGroup.querySelector('.quote-parameters-preview')
-
-          if (itemIdInput) itemIdInput.value = item.item_id
-          if (itemNameSpan) {
-            itemNameSpan.textContent = item.item_name
-            itemNameSpan.dataset.item_name = item.item_name
-          }
-          if (discountInput) discountInput.value = item.discount
-
-          setTimeout(() => {
-            const itemGroups = container.querySelectorAll('.has_many_fields')
-            const lastItemGroup = itemGroups[itemGroups.length - 1]
-            if (!lastItemGroup) return
-
-            const quoteItemIndex = lastItemGroup
-              .querySelector('input[name^="quote[quote_items_attributes]"]')
-              ?.name.match(/quote_items_attributes\]\[(\d+)\]/)?.[1]
-
-            if (!quoteItemIndex) return
-
-            fetch('/admin/quotes/render_quote_item_parameters', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-              },
-              body: JSON.stringify({ item_id: item.item_id }),
-            })
-              .then((response) => response.text())
-              .then((html) => {
-                if (previewContainer) {
-                  const rendered = html.replace(/NEW_RECORD/g, quoteItemIndex)
-                  previewContainer.innerHTML = rendered
-                }
-              })
-          }, 0)
-        })
-
-        document.querySelectorAll("input[name='quote[category_ids][]']:checked").forEach((cb) => (cb.checked = false))
-        document.querySelectorAll("input[name='quote[item_ids][]']:checked").forEach((cb) => (cb.checked = false))
-      })
-      .catch((error) => {
+        // Clear all checkboxes after loading items
+        document
+          .querySelectorAll(`${selectors.categoryCheckboxes}:checked, ${selectors.itemCheckboxes}:checked`)
+          .forEach((cb) => (cb.checked = false))
+      } catch (error) {
         console.error('Error loading items:', error)
-      })
+      }
+    })
+  }
+
+  // Handle clicking the "Add Same Item" button
+  document.addEventListener('click', async (event) => {
+    if (!event.target.classList.contains('add-same-item')) return
+
+    const currentGroup = event.target.closest(selectors.itemGroups)
+    const itemId = currentGroup.querySelector(selectors.itemId)?.value
+    if (!itemId) return
+
+    const itemData = {
+      item_id: itemId,
+      item_name: currentGroup.querySelector(selectors.itemName)?.textContent,
+      category_name: currentGroup.querySelector(selectors.category)?.textContent,
+      discount: '0',
+    }
+
+    await addNewQuoteItem(itemData, true)
   })
 })

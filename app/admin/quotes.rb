@@ -69,6 +69,13 @@ ActiveAdmin.register Quote do
       qf.input :price, as: :number, input_html: { min: 0, readonly: true, value: qf.object.price || 0, class: 'read-only-price' }, hint: 'Price will be calculated automatically based on Pricing parameters'
       qf.input :discount, as: :number, input_html: { min: 0 }
       qf.input :final_price, as: :number, input_html: { min: 0, readonly: true, value: qf.object.final_price || 0, class: 'read-only-price' }, hint: 'Final price will be calculated automatically based on Discount'
+
+      qf.template.concat(
+        qf.template.content_tag(:div, class: 'has_many_buttons') do
+          qf.template.button_tag('Add Same Item', type: 'button', class: 'button add-same-item') +
+          qf.template.link_to('Remove', '#', class: 'button has_many_remove')
+        end
+      )
     end
     f.actions
   end

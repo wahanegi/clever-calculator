@@ -274,4 +274,15 @@ label.item-name-label {
   width: 30% !important;
 }
 
+.has_many_buttons {
+  display: flex;
+  gap: 10px;
+  padding: 10px;
+  align-items: center;
+}
+
+ol li:last-child a.has_many_remove {
+  display: none;
+}
+
 @import 'active_admin/forms/select';
