@@ -13,13 +13,13 @@ export const PcExtraActionBtn = ({
 }) => {
   return (
     <div
-      className={`d-flex align-items-center gap-2 p-0 fs-10 fw-bold lh-lg ${className}`}
+      onClick={onClick}
+      className={`d-flex align-items-center gap-2 p-0 fs-10 fw-bold lh-lg pc-pointer ${className}`}
     >
       <Button
         type={type}
         variant={variant}
         disabled={disabled}
-        onClick={onClick}
         className={`border-0 p-0 fs-10 fw-bold lh-lg bg-transparent text-primary ${className}`}
       >
         {children}
