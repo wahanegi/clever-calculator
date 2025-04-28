@@ -10,7 +10,11 @@ export const PcItemFormGroup = ({
   className = '',
 }) => {
   const isSuffixLeft =
-    itemType === 'price' || itemType === 'discounted-price' || itemType === 'original-cost' || itemType === 'open-cost'
+    itemType === 'price' ||
+    itemType === 'discounted-price' ||
+    itemType === 'original-cost' ||
+    itemType === 'open-cost' ||
+    itemType === 'additional-fees'
   const isSuffixRight = itemType === 'discount'
 
   return (
@@ -19,19 +23,14 @@ export const PcItemFormGroup = ({
         {label}
       </Form.Label>
 
-
       {children}
 
       {isSuffixLeft && (
-        <span className="pc-suffix pc-suffix-left position-absolute top-50 translate-middle-y">
-          {suffixLeft}
-        </span>
+        <span className="pc-suffix pc-suffix-left position-absolute top-50 translate-middle-y">{suffixLeft}</span>
       )}
 
       {isSuffixRight && (
-        <span className="pc-suffix pc-suffix-right position-absolute top-50 translate-middle-y">
-          {suffixRight}
-        </span>
+        <span className="pc-suffix pc-suffix-right position-absolute top-50 translate-middle-y">{suffixRight}</span>
       )}
     </Form.Group>
   )

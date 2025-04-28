@@ -36,7 +36,6 @@
       right: 12px;
     }
   }
-
 }
 
 .pc-item-input.price {
@@ -75,7 +74,7 @@
   .form-control {
     padding-left: 24px;
     border: 1.3px solid $secondary;
-    color: $dark
+    color: $dark;
   }
 
   .pc-suffix-right {
@@ -84,7 +83,16 @@
   }
 
   ::placeholder {
-    color: $dark
+    color: $dark;
+  }
+}
+
+.pc-item-input.tier {
+  .form-select {
+    padding: 7px 12px;
+    width: 200px;
+    border: 1px solid $primary;
+    border-radius: 4px;
   }
 }
 
@@ -93,7 +101,7 @@
   .form-control {
     padding-right: 24px;
     border: 1.3px solid $primary;
-    color: $dark
+    color: $dark;
   }
 
   .pc-suffix-right {
@@ -102,7 +110,7 @@
   }
 
   ::placeholder {
-    color: $dark
+    color: $dark;
   }
 }
 
@@ -153,6 +161,23 @@
 
   .pc-suffix-left {
     font-weight: 600;
+    color: $dark;
+  }
+
+  ::placeholder {
+    color: $dark;
+  }
+}
+
+.pc-item-input.additional-fees {
+  .form-control {
+    padding-left: 24px;
+    border: 1px solid $primary;
+    //font-weight: 600;
+  }
+
+  .pc-suffix-left {
+    //font-weight: 600;
     color: $dark;
   }
 
