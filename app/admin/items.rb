@@ -14,7 +14,7 @@ ActiveAdmin.register Item do
     id_column
     column :name
     column :category, sortable: :category_id
-    column("Disabled") { |item| status_tag item.is_disabled, label: item.is_disabled? ? "True" : "False" }
+    column("Enabled") { |item| status_tag !item.is_disabled, label: item.is_disabled? ? "False" : "True" }
     column :created_at
     column :updated_at
     actions defaults: false do |resource|
@@ -173,7 +173,13 @@ ActiveAdmin.register Item do
       @item = Item.find(params[:id])
       session_service.update_with_tmp_to_item(@item)
 
-      if @item.update(permitted_params[:item])
+      # If form submission has a blank formula_parameters, restore from session or model
+      if permitted_params[:item][:formula_parameters].blank?
+        fallback_formula_params = session_service.get(:formula_parameters) || @item.formula_parameters
+        @item.formula_parameters = fallback_formula_params
+      end
+
+      if @item.update(permitted_params[:item].except(:formula_parameters))
         session_service.delete
         redirect_to admin_item_path(@item), notice: "Item was successfully updated."
       else
