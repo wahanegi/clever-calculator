@@ -28,7 +28,7 @@ class QuoteItem < ApplicationRecord
       combined[k] = v
     end
 
-     Rails.logger.debug "[QUOTE_ITEM] Compiled parameters: #{combined.inspect}"
+    Rails.logger.debug "[QUOTE_ITEM] Compiled parameters: #{combined.inspect}"
 
     self.pricing_parameters = combined
   end
@@ -40,7 +40,7 @@ class QuoteItem < ApplicationRecord
     formula = item.calculation_formula
     Rails.logger.debug "[QUOTE_ITEM] Trying to calculate price with formula: #{formula} and parameters: #{pricing_parameters.inspect}"
     self.price = calculator.evaluate(formula, pricing_parameters)
-    Rails.logger.debug "[QUOTE_ITEM] Price after calculation: #{self.price.inspect}"
+    Rails.logger.debug "[QUOTE_ITEM] Price after calculation: #{price.inspect}"
   rescue Dentaku::UnboundVariableError => e
     Rails.logger.error "[QUOTE_ITEM] Dentaku missing variables: #{e.unbound_variables}"
     errors.add(:price, "missing variable(s): #{e.unbound_variables.join(', ')}")
@@ -54,14 +54,14 @@ class QuoteItem < ApplicationRecord
 
   def restore_temp_fields
     return unless pricing_parameters.present? && item.present?
-  
+
     self.open_param_values ||= {}
     self.select_param_values ||= {}
-  
+
     Rails.logger.debug "[RESTORE] Item ID=#{item.id}"
     Rails.logger.debug "[RESTORE] Item open_parameters_label: #{item.open_parameters_label.inspect}"
     Rails.logger.debug "[RESTORE] Item pricing_options.keys: #{item.pricing_options&.keys.inspect}"
-  
+
     pricing_parameters.each do |key, value|
       if item.open_parameters_label&.include?(key)
         open_param_values[key] = value
@@ -69,7 +69,7 @@ class QuoteItem < ApplicationRecord
         select_param_values[key] = value
       end
     end
-  end  
+  end
 
   private
 

@@ -47,58 +47,49 @@ ActiveAdmin.register Quote do
       button_tag 'Load Items', type: 'button', id: 'load-items-button', class: 'button'
     end
     f.has_many :quote_items, allow_destroy: true, new_record: true, heading: 'Quote Items' do |qf|
-        qf.object.restore_temp_fields if qf.object.respond_to?(:restore_temp_fields)
+      qf.object.restore_temp_fields if qf.object.respond_to?(:restore_temp_fields)
 
-        qf.input :item_id, as: :hidden, input_html: { class: 'item-id-field' }
-
-        qf.object.item ||= Item.find_by(id: qf.object.item_id)
-      
-        qf.template.concat(
-          qf.template.content_tag(:div) do
-            qf.template.content_tag(:label, 'Item Name', class: 'item-name-label') +
-            qf.template.content_tag(:span, qf.object.item&.name || '', class: 'item-name-field', data: { item_name: qf.object.item&.name }) +
-            qf.template.tag(:br) +
-            qf.template.content_tag(:label, 'Category', class: 'item-name-label') +
-            qf.template.content_tag(:span, qf.object.item&.category&.name || 'Other', class: 'category-name-field') +
-            qf.template.tag(:br) 
-          end
-        )
-      
-        if qf.object.item.present?
-          fixed_parameters = qf.object.item.fixed_parameters || {}
-          open_parameters_label = qf.object.item.open_parameters_label || []
-          select_parameters = qf.object.item.pricing_options || {}
-      
-          qf.template.concat(
-            qf.template.content_tag(:div, class: 'quote-parameters-container') do
-              qf.template.content_tag(:label, 'Pricing parameters', class: 'item-name-label') +
-              qf.template.render(
-                partial: "admin/quotes/quote_item_parameters",
-                locals: {
-                  fixed_parameters: fixed_parameters,
-                  open_parameters_label: open_parameters_label,
-                  select_parameters: select_parameters,
-                  quote_item: qf.object
-                }
-              )
-            end
-          )
-        else
-          qf.template.concat(
-            qf.template.content_tag(:div, '', class: 'quote-parameters-container') do
-              qf.template.content_tag(:label, 'Pricing parameters', class: 'item-name-label') +
-              qf.template.content_tag(:div, '', class: 'quote-parameters-preview')
-            end
-          )
-        end
-      )
+      qf.input :item_id, as: :hidden, input_html: { class: 'item-id-field' }
+      qf.object.item ||= Item.find_by(id: qf.object.item_id)
 
       qf.template.concat(
-        qf.template.content_tag(:div, class: 'quote-parameters-container') do
-          qf.template.content_tag(:label, 'Pricing parameters', class: 'item-name-label') +
-            qf.template.content_tag(:div, '', class: 'quote-parameters-preview')
+        qf.template.content_tag(:div) do
+          qf.template.content_tag(:label, 'Item Name', class: 'item-name-label') +
+          qf.template.content_tag(:span, qf.object.item&.name || '', class: 'item-name-field', data: { item_name: qf.object.item&.name }) +
+          qf.template.tag(:br) +
+          qf.template.content_tag(:label, 'Category', class: 'item-name-label') +
+          qf.template.content_tag(:span, qf.object.item&.category&.name || 'Other', class: 'category-name-field') +
+          qf.template.tag(:br)
         end
       )
+
+      if qf.object.item.present?
+        fixed_parameters = qf.object.item.fixed_parameters || {}
+        open_parameters_label = qf.object.item.open_parameters_label || []
+        select_parameters = qf.object.item.pricing_options || {}
+
+        qf.template.concat(
+          qf.template.content_tag(:div, class: 'quote-parameters-container') do
+            qf.template.content_tag(:label, 'Pricing parameters', class: 'item-name-label') +
+            qf.template.render(
+              partial: "admin/quotes/quote_item_parameters",
+              locals: {
+                fixed_parameters: fixed_parameters,
+                open_parameters_label: open_parameters_label,
+                select_parameters: select_parameters,
+                quote_item: qf.object
+              }
+            )
+          end
+        )
+      else
+        qf.template.concat(
+          qf.template.content_tag(:div, class: 'quote-parameters-container') do
+            qf.template.content_tag(:label, 'Pricing parameters', class: 'item-name-label') +
+            qf.template.content_tag(:div, '', class: 'quote-parameters-preview')
+          end
+        )
+      end
 
       qf.input :price, as: :number, input_html: { min: 0, readonly: true, value: qf.object.price || 0, class: 'read-only-price' }, hint: 'Price will be calculated automatically based on Pricing parameters'
       qf.input :discount, as: :number, input_html: { min: 0 }
@@ -148,23 +139,31 @@ ActiveAdmin.register Quote do
     def new
       if params[:quote] && params[:quote][:quote_items_attributes]
         params[:quote][:quote_items_attributes].each do |key, quote_item_params|
-          if resource.quote_items[key.to_i]
-            resource.quote_items[key.to_i].open_param_values = quote_item_params[:open_param_values] if quote_item_params[:open_param_values]
-            resource.quote_items[key.to_i].select_param_values = quote_item_params[:select_param_values] if quote_item_params[:select_param_values]
+          next unless resource.quote_items[key.to_i]
+
+          if quote_item_params[:open_param_values]
+            resource.quote_items[key.to_i].open_param_values = quote_item_params[:open_param_values]
+          end
+          if quote_item_params[:select_param_values]
+            resource.quote_items[key.to_i].select_param_values = quote_item_params[:select_param_values]
           end
         end
       end
       super
     end
-  
+
     def create
       super
     rescue ActiveRecord::RecordInvalid
       if params[:quote] && params[:quote][:quote_items_attributes]
         params[:quote][:quote_items_attributes].each do |key, quote_item_params|
-          if resource.quote_items[key.to_i]
-            resource.quote_items[key.to_i].open_param_values = quote_item_params[:open_param_values] if quote_item_params[:open_param_values]
-            resource.quote_items[key.to_i].select_param_values = quote_item_params[:select_param_values] if quote_item_params[:select_param_values]
+          next unless resource.quote_items[key.to_i]
+
+          if quote_item_params[:open_param_values]
+            resource.quote_items[key.to_i].open_param_values = quote_item_params[:open_param_values]
+          end
+          if quote_item_params[:select_param_values]
+            resource.quote_items[key.to_i].select_param_values = quote_item_params[:select_param_values]
           end
         end
       end
@@ -172,28 +171,27 @@ ActiveAdmin.register Quote do
     end
 
     def edit
-        Rails.logger.debug "[EDIT] Starting edit for Quote ##{resource.id}"
-      
-        resource.quote_items.each_with_index do |quote_item, idx|
-            Rails.logger.debug "[EDIT] QuoteItem ##{idx} ID=#{quote_item.id} item_id=#{quote_item.item_id}"
-          
-            quote_item.item ||= Item.find_by(id: quote_item.item_id)
-          
-            if quote_item.item
-              Rails.logger.debug "[EDIT] Loaded Item: #{quote_item.item.name}"
-              quote_item.restore_temp_fields
-            else
-              Rails.logger.warn "[EDIT] No Item found for QuoteItem ##{idx}"
-            end
-          
-            Rails.logger.debug "[EDIT] open_param_values after restore: #{quote_item.open_param_values.inspect}"
-            Rails.logger.debug "[EDIT] select_param_values after restore: #{quote_item.select_param_values.inspect}"
-          end          
-      
-        super
-      end      
+      Rails.logger.debug "[EDIT] Starting edit for Quote ##{resource.id}"
+
+      resource.quote_items.each_with_index do |quote_item, idx|
+        Rails.logger.debug "[EDIT] QuoteItem ##{idx} ID=#{quote_item.id} item_id=#{quote_item.item_id}"
+
+        quote_item.item ||= Item.find_by(id: quote_item.item_id)
+
+        if quote_item.item
+          Rails.logger.debug "[EDIT] Loaded Item: #{quote_item.item.name}"
+          quote_item.restore_temp_fields
+        else
+          Rails.logger.warn "[EDIT] No Item found for QuoteItem ##{idx}"
+        end
+
+        Rails.logger.debug "[EDIT] open_param_values after restore: #{quote_item.open_param_values.inspect}"
+        Rails.logger.debug "[EDIT] select_param_values after restore: #{quote_item.select_param_values.inspect}"
+      end
+
+      super
+    end
   end
-  
 
   collection_action :load_items, method: :post do
     category_ids = params[:category_ids] || []
