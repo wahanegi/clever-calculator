@@ -262,4 +262,16 @@ label.item-name-label {
   display: none !important;
 }
 
+.has_many_container.quote_items h3 {
+  display: none;
+}
+
+#quote_total_price,
+.read-only-price {
+  background-color: #d7d7d7 !important;
+  border: none !important;
+  box-shadow: none !important;
+  width: 30% !important;
+}
+
 @import 'active_admin/forms/select';

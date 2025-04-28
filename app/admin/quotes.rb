@@ -35,7 +35,7 @@ ActiveAdmin.register Quote do
   form html: { class: 'quote-form' } do |f|
     f.inputs do
       f.input :customer, as: :select, collection: Customer.pluck(:company_name, :id)
-      f.input :user, as: :select, collection: User.order(:email).map { |u| ["#{u.email} (#{u.name})", u.id] }
+      f.input :user, as: :select, collection: User.order(:name).pluck(:name, :id)
       f.input :categories, as: :check_boxes,
                            collection: Category.order(:name).pluck(:name, :id),
                            wrapper_html: { class: 'categories-wrapper' }
@@ -66,9 +66,9 @@ ActiveAdmin.register Quote do
         end
       )
 
-      qf.input :price, as: :number, input_html: { min: 0, readonly: true, value: qf.object.price || 0 }, hint: 'Price will be calculated automatically based on Pricing parameters'
+      qf.input :price, as: :number, input_html: { min: 0, readonly: true, value: qf.object.price || 0, class: 'read-only-price' }, hint: 'Price will be calculated automatically based on Pricing parameters'
       qf.input :discount, as: :number, input_html: { min: 0 }
-      qf.input :final_price, as: :number, input_html: { min: 0, readonly: true, value: qf.object.final_price || 0 }, hint: 'Final price will be calculated automatically based on Discount'
+      qf.input :final_price, as: :number, input_html: { min: 0, readonly: true, value: qf.object.final_price || 0, class: 'read-only-price' }, hint: 'Final price will be calculated automatically based on Discount'
     end
     f.actions
   end
@@ -87,7 +87,15 @@ ActiveAdmin.register Quote do
     panel 'Quote Items' do
       table_for quote.quote_items do
         column :item
-        column :pricing_parameters
+        column 'Pricing Parameters' do |quote_item|
+          if quote_item.pricing_parameters.present?
+            quote_item.pricing_parameters.map do |key, value|
+              "#{key}: #{value}"
+            end.join(" | ")
+          else
+            "-"
+          end
+        end
         column :price
         column :discount
         column :final_price
@@ -118,6 +126,7 @@ ActiveAdmin.register Quote do
       }
     }
   end
+
   collection_action :render_quote_item_parameters, method: :post do
     item = Item.find(params[:item_id])
     render partial: "admin/quotes/quote_item_parameters", locals: {

@@ -1,4 +1,12 @@
 document.addEventListener('DOMContentLoaded', function () {
+  const container = document.querySelector('.has_many_container.quote_items')
+  const heading = container?.querySelector('h3')
+
+  // If there are quote items already on page load (like after validation error), show the heading
+  if (container && container.querySelectorAll('.has_many_fields').length > 0 && heading) {
+    heading.style.display = 'block'
+  }
+
   const button = document.getElementById('load-items-button')
   if (!button) return
 
@@ -37,6 +45,10 @@ document.addEventListener('DOMContentLoaded', function () {
           const catB = b.category_name?.toLowerCase() || 'other'
           return catA.localeCompare(catB)
         })
+
+        // show the heading on items load
+        const heading = container.querySelector('h3')
+        if (heading) heading.style.display = 'block'
 
         items.forEach((item) => {
           const addButton = container.querySelector('.has_many_add')
