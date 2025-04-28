@@ -1,23 +1,23 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useState } from 'react'
 import { Form } from 'react-bootstrap'
 import { Typeahead } from 'react-bootstrap-typeahead'
 import { normalizeName } from '../utils'
 import { PcIcon } from './PcIcon'
 
 export const PcDropdownSelect = ({
-                                   id,
-                                   options,
-                                   placeholder,
-                                   height,
-                                   value,
-                                   label,
-                                   error,
-                                   maxResults = 5,
-                                   hasIcon = false,
-                                   onChange,
-                                   onInputChange,
-                                   ...props
-                                 }) => {
+  id,
+  options,
+  placeholder,
+  height,
+  value,
+  label,
+  error,
+  maxResults = 5,
+  hasIcon = false,
+  onChange,
+  onInputChange,
+  ...props
+}) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
 
   const selectedOption =
@@ -29,7 +29,7 @@ export const PcDropdownSelect = ({
   }
 
   const handleOpenMenu = (e) => {
-    setIsMenuOpen(prev => !prev)
+    setIsMenuOpen((prev) => !prev)
   }
 
   const handleFocus = (e) => {
@@ -51,16 +51,16 @@ export const PcDropdownSelect = ({
     if (t) setIsMenuOpen(true)
   }
 
-  const DropdownToggleIcon = () =>
-    <div className="pc-typeahead-toggle position-absolute end-0 top-0 h-100"
-         onClick={handleOpenMenu}>
+  const DropdownToggleIcon = () => (
+    <div className="pc-typeahead-toggle position-absolute end-0 top-0 h-100" onClick={handleOpenMenu}>
       <div className={'d-flex justify-content-start align-items-center h-100'}>
         <PcIcon
-          name={isMenuOpen ? 'dropdownArrowUp' : 'dropdownArrowDown'}
+          name={isMenuOpen ? 'arrowUp' : 'arrowDown'}
           alt={isMenuOpen ? 'Arrow pointing up' : 'Arrow pointing down'}
         />
       </div>
     </div>
+  )
 
   return (
     <Form.Group controlId={id}>
