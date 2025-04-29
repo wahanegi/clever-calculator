@@ -2,6 +2,7 @@ class Quote < ApplicationRecord
   belongs_to :customer
   belongs_to :user
   has_many :quote_items, dependent: :destroy
+  accepts_nested_attributes_for :quote_items, allow_destroy: true
   has_many :items, through: :quote_items
   has_many :categorizations, dependent: :destroy
   has_many :categories, through: :categorizations
@@ -25,8 +26,6 @@ class Quote < ApplicationRecord
     search = "%#{sanitize_sql_like(search.to_s.downcase)}%"
     joins(:customer).where(CUSTOMER_NAME_SQL, search: "%#{search}%")
   }
-
-  accepts_nested_attributes_for :quote_items, allow_destroy: true
 
   def self.last_unfinished
     unfinished.order(created_at: :desc).first

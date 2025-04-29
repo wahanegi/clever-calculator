@@ -87,19 +87,58 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   /**
-   * Fetches and renders quote item parameters
+   * Fetches and renders quote item parameters with existing values
    * @param {HTMLElement} group - The quote item group element
    * @param {string} itemId - The ID of the item
    */
   const renderQuoteParameters = async (group, itemId) => {
     const previewContainer = group.querySelector(selectors.preview)
-    if (!previewContainer) return
+    if (!previewContainer) {
+      console.error('Preview container not found for group:', group)
+      return
+    }
 
     const quoteItemIndex = getQuoteItemIndex(group)
-    if (!quoteItemIndex) return
+    if (!quoteItemIndex) {
+      console.error('Quote item index not found for group:', group)
+      return
+    }
+
+    // Gather existing values from hidden fields
+    const openParamInputs = group.querySelectorAll(
+      `input[name^="quote[quote_items_attributes][${quoteItemIndex}][open_param_values]"]`,
+    )
+    const selectParamInputs = group.querySelectorAll(
+      `input[name^="quote[quote_items_attributes][${quoteItemIndex}][select_param_values]"]`,
+    )
+
+    const open_param_values = {}
+    const select_param_values = {}
+
+    openParamInputs.forEach((input) => {
+      const paramName = input.dataset.paramName || input.name.match(/\[open_param_values\]\[(.+)\]/)?.[1]
+      if (paramName) {
+        open_param_values[paramName] = input.value
+      } else {
+        console.warn('No param name found for open param input:', input)
+      }
+    })
+
+    selectParamInputs.forEach((input) => {
+      const paramName = input.dataset.paramName || input.name.match(/\[select_param_values\]\[(.+)\]/)?.[1]
+      if (paramName) {
+        select_param_values[paramName] = input.value
+      } else {
+        console.warn('No param name found for select param input:', input)
+      }
+    })
 
     try {
-      const response = await fetchWithConfig('/admin/quotes/render_quote_item_parameters', { item_id: itemId })
+      const response = await fetchWithConfig('/admin/quotes/render_quote_item_parameters', {
+        item_id: itemId,
+        open_param_values,
+        select_param_values,
+      })
       const html = await response.text()
       previewContainer.innerHTML = html.replace(/NEW_RECORD/g, quoteItemIndex)
     } catch (error) {
@@ -197,5 +236,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     await addNewQuoteItem(itemData, true)
+  })
+
+  document.querySelectorAll(selectors.itemGroups).forEach(async (group) => {
+    const itemId = group.querySelector(selectors.itemId)?.value
+    if (itemId) await renderQuoteParameters(group, itemId)
   })
 })

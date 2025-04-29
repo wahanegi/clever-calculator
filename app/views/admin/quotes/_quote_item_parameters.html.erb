@@ -16,11 +16,12 @@
         <% open_parameters_label.each do |label| %>
           <li><%= label %>
             <input type="number"
-              name="quote[quote_items_attributes][NEW_RECORD][open_param_values][<%= label %>]"
-              class="quote-open-param-input"
-              step="any"
-              min="0"
-              style="margin-left: 5px;" />
+            name="quote[quote_items_attributes][NEW_RECORD][open_param_values][<%= label %>]"
+            class="quote-open-param-input"
+            step="any"
+            min="0"
+            value="<%= open_param_values[label].presence || '' %>"
+            style="margin-left: 5px;" />
           </li>
         <% end %>
       </ul>
@@ -34,16 +35,18 @@
           <li>
             <label><%= sel_name %>:</label>
             <select name="quote[quote_items_attributes][NEW_RECORD][select_param_values][<%= sel_name %>]" 
-            class="quote-select-param-input"
-            style="margin-left: 5px;">
+                  class="quote-select-param-input"
+                  style="margin-left: 5px;">
               <option value="">— Select —</option>
               <% data['options'].each do |label, val| %>
-                <option value="<%= val %>"><%= label %> (<%= val %>)</option>
-              <% end %>
-            </select>
-          </li>
-        <% end %>
-      </ul>
-    </div>
-  <% end %>
-</div>
+                <option value="<%= val %>" <%= 'selected' if select_param_values[sel_name].to_s == val.to_s %>>
+                <%= label %> (<%= val %>)
+              </option>
+                <% end %>
+              </select>
+            </li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+  </div>
