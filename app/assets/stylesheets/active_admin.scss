@@ -243,14 +243,21 @@
 
 span.item-name-field {
   display: inline-block;
-  padding: 5px;
+  padding-left: 5px;
   font-weight: bold;
   font-size: 18px;
   text-align: center;
 }
 
+span.category-name-field {
+  display: inline-block;
+  padding: 5px;
+  text-align: center;
+  margin-bottom: 0.5rem;
+}
+
 label.item-name-label {
-  padding: 10px;
+  padding-left: 10px;
   width: 20%;
   float: left;
   font-size: 1em;
