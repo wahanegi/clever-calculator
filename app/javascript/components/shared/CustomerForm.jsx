@@ -116,7 +116,6 @@ export const CustomerForm = () => {
       setIsNextDisabled(true)
       setErrors((prev) => ({ ...prev, logo: logoErrors.join('\n') }))
     } else {
-      setIsNextDisabled(false)
       setCustomer((prev) => ({ ...prev, logo_url: URL.createObjectURL(file) }))
       setErrors((prev) => ({ ...prev, logo: '' }))
     }
