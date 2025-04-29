@@ -46,6 +46,8 @@ export const CustomerForm = () => {
   }
 
   const handleCompanyInputChange = (text) => {
+    text = text.trimStart()
+
     if (text) {
       setIsNextDisabled(false)
       setErrors((prev) => ({ ...prev, company_name: '' }))

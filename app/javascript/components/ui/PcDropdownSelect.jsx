@@ -51,6 +51,10 @@ export const PcDropdownSelect = ({
     if (t) setIsMenuOpen(true)
   }
 
+  const handleClick = (e) => {
+    setIsMenuOpen(true)
+  }
+
   const DropdownToggleIcon = () =>
     <div className="pc-typeahead-toggle position-absolute end-0 top-0 h-100"
          onClick={handleOpenMenu}>
@@ -83,6 +87,7 @@ export const PcDropdownSelect = ({
           onBlur={handleBlur}
           onChange={handleChenge}
           onInputChange={handleInputChange}
+          inputProps={{onClick: handleClick}}
           {...props}
         />
         <Form.Label className="border-label fw-bold fs-11 lh-sm px-1">{label}</Form.Label>
