@@ -207,10 +207,10 @@ ActiveAdmin.register Item do
         toggle_admin_item_path(resource),
         method: :put,
         data: { confirm: "Are you sure?" }
-        )
-      end
+      )
     end
-    
+  end
+
   action_item :back, only: :show do
     link_to "Back to Items", admin_items_path
   end
