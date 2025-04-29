@@ -200,10 +200,6 @@ ActiveAdmin.register Item do
 
   actions :all, except: [:destroy]
 
-  action_item :back, only: :show do
-    link_to "Back to Items", admin_items_path
-  end
-
   action_item :toggle, only: :show do
     unless resource.category&.is_disabled?
       link_to(
@@ -211,8 +207,12 @@ ActiveAdmin.register Item do
         toggle_admin_item_path(resource),
         method: :put,
         data: { confirm: "Are you sure?" }
-      )
+        )
+      end
     end
+    
+  action_item :back, only: :show do
+    link_to "Back to Items", admin_items_path
   end
 
   member_action :toggle, method: :put do
