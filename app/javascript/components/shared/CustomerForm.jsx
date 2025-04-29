@@ -151,6 +151,11 @@ export const CustomerForm = () => {
     }
   }
 
+  const handleClearInput = () => {
+    setCustomer(prev => ({ ...prev, company_name: '' }))
+    setIsNextDisabled(true)
+  }
+
   return (
     <Form onSubmit={handleNext} className={'d-flex flex-column w-100 align-items-center'}>
       <div className="border rounded border-primary customer-form bg-light w-100 mb-7">
@@ -181,6 +186,7 @@ export const CustomerForm = () => {
                     error={errors.company_name}
                     onChange={handleCompanyChange}
                     onInputChange={handleCompanyInputChange}
+                    onClearInput={handleClearInput}
                     hasIcon={true}
                   />
                 </Col>

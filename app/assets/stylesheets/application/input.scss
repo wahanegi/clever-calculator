@@ -70,16 +70,21 @@ textarea {
  **/
 .pc-typeahead-customer-info {
   .pc-icon-reserve-place {
-    padding-right: 26px;
-    background-color: $white;
+    padding-right: 60px;
   }
 
-  .pc-typeahead-toggle {
-    width: 26px;
-    cursor: pointer;
+  .pc-typeahead-controls {
+    width: 60px;
+  }
+
+  .pc-typeahead-button {
+    width: 24px;
   }
 }
 
+/**
+ *** LOGO UPLOADER ***
+ **/
 .pc-logo-uploader {
   width: 136px;
   height: 117px;
