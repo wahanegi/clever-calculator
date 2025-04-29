@@ -50,9 +50,11 @@ textarea {
 
 .rbt-menu.dropdown-menu.show {
   margin-top: 5px;
-  border: 1px solid $primary;
+  outline: 1px solid $primary;
+  border-inline: 5px solid $white;
   width: calc(100% + 2px) !important;
-  margin-left: -1px;
+  margin-left: -2px;
+  max-height: 185px !important;
 }
 
 .rbt-highlight-text {

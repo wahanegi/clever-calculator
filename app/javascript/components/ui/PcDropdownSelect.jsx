@@ -12,7 +12,6 @@ export const PcDropdownSelect = ({
                                    value,
                                    label,
                                    error,
-                                   maxResults = 5,
                                    hasIcon = false,
                                    onChange,
                                    onInputChange,
@@ -88,7 +87,6 @@ export const PcDropdownSelect = ({
           className="pc-icon-reserve-place border border-primary rounded-1 bg-white"
           style={{ height }}
           selected={selectedOption ? [selectedOption] : []}
-          maxResults={maxResults}
           paginate={false}
           open={isMenuOpen}
           onMenuToggle={(isOpen) => setIsMenuOpen(isOpen)}
