@@ -1,27 +1,25 @@
 <div class="quote-parameter-wrapper">
   <% if fixed_parameters.present? %>
     <div class="quote-params-block">
-      <strong>Fixed Parameters:</strong>
       <ul>
         <% fixed_parameters.each do |name, value| %>
-          <li><strong><%= name %></strong>: <%= value %></li>
+          <li><%= name %>: <%= value %></li>
         <% end %>
       </ul>
     </div>
   <% end %>
   <% if open_parameters_label.present? %>
     <div class="quote-params-block">
-      <strong>Open Parameters:</strong>
       <ul>
         <% open_parameters_label.each do |label| %>
-          <li><%= label %>
-            <input type="number"
-            name="quote[quote_items_attributes][NEW_RECORD][open_param_values][<%= label %>]"
-            class="quote-open-param-input"
-            step="any"
-            min="0"
-            value="<%= open_param_values[label].presence || '' %>"
-            style="margin-left: 5px;" />
+          <li>
+            <label>
+              <%= label %>
+              <input type="number"
+                     name="quote[quote_items_attributes][NEW_RECORD][open_param_values][<%= label %>]"
+                     class="quote-open-param-input param-input"
+                     value="<%= open_param_values[label].presence || '' %>" />
+            </label>
           </li>
         <% end %>
       </ul>
@@ -29,21 +27,21 @@
   <% end %>
   <% if select_parameters.present? %>
     <div class="quote-params-block">
-      <strong>Select Options:</strong>
       <ul>
         <% select_parameters.each do |sel_name, data| %>
           <li>
-            <label><%= sel_name %>:</label>
-            <select name="quote[quote_items_attributes][NEW_RECORD][select_param_values][<%= sel_name %>]" 
-                  class="quote-select-param-input"
-                  style="margin-left: 5px;">
-              <option value="">— Select —</option>
-              <% data['options'].each do |label, val| %>
-                <option value="<%= val %>" <%= 'selected' if select_param_values[sel_name].to_s == val.to_s %>>
-                <%= label %> (<%= val %>)
-              </option>
-                <% end %>
-              </select>
+            <label>
+              <%= sel_name %>
+              <select name="quote[quote_items_attributes][NEW_RECORD][select_param_values][<%= sel_name %>]"
+                      class="quote-select-param-input param-input">
+                <option value="">— Select —</option>
+                <% data['options'].each do |label, val| %>
+                  <option value="<%= val %>" <%= 'selected' if select_param_values[sel_name].to_s == val.to_s %>>
+                    <%= label %> (<%= val %>)
+                  </option>
+                  <% end %>
+                </select>
+              </label>
             </li>
           <% end %>
         </ul>

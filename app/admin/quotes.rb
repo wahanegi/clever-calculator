@@ -34,8 +34,8 @@ ActiveAdmin.register Quote do
 
   form html: { class: 'quote-form' } do |f|
     f.inputs do
-      f.input :customer, as: :select, collection: Customer.pluck(:company_name, :id)
-      f.input :user, as: :select, collection: User.order(:name).pluck(:name, :id)
+      f.input :customer, as: :select, collection: Customer.pluck(:company_name, :id), input_html: { class: 'custom-select' }
+      f.input :user, as: :select, collection: User.order(:name).pluck(:name, :id), input_html: { class: 'custom-select' }
       f.input :categories, as: :check_boxes,
                            collection: Category.enabled.order(:name).pluck(:name, :id),
                            wrapper_html: { class: 'categories-wrapper' }
@@ -90,7 +90,7 @@ ActiveAdmin.register Quote do
       )
 
       qf.input :price, as: :number, input_html: { min: 0, readonly: true, value: qf.object.price || 0, class: 'read-only-price' }, hint: 'Price will be calculated automatically based on Pricing parameters'
-      qf.input :discount, as: :number, input_html: { min: 0 }
+      qf.input :discount, as: :number, input_html: { min: 0, class: 'discount-input' }
       qf.input :final_price, as: :number, input_html: { min: 0, readonly: true, value: qf.object.final_price || 0, class: 'read-only-price' }, hint: 'Final price will be calculated automatically based on Discount'
 
       qf.template.concat(

@@ -1,6 +1,6 @@
 $select-image-arrow-dark-url: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBzdHlsZT0iZmlsbDogcmdiYSgwLCAwLCAwLCAxKTt0cmFuc2Zvcm06IDttc0ZpbHRlcjo7Ij48cGF0aCBkPSJNMTYuMjkzIDkuMjkzIDEyIDEzLjU4NiA3LjcwNyA5LjI5M2wtMS40MTQgMS40MTRMMTIgMTYuNDE0bDUuNzA3LTUuNzA3eiI+PC9wYXRoPjwvc3ZnPg==';
 $select-border-color: #c9d0d6;
-$select-background-color: #FFF;
+$select-background-color: #fff;
 $select-focus-border-color: #99a2aa;
 
 form.filter_form {
@@ -68,10 +68,16 @@ form.filter_form {
   background: #e6e6e6 !important;
 }
 
-
-// qoute items
+// quote items
 .quote-parameters-container {
   display: flex;
+}
+
+.quote-parameter-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 10px;
 }
 
 .quote-item-header-wrapper {
@@ -95,4 +101,9 @@ form.filter_form {
 
 .quote-parameters-preview {
   padding-left: 0.4rem;
+}
+
+.custom-select {
+  padding: 4px;
+  width: 30%;
 }

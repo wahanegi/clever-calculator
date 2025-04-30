@@ -256,7 +256,8 @@ span.category-name-field {
   margin-bottom: 0.5rem;
 }
 
-label.item-name-label {
+label.item-name-label,
+label.category-name-label {
   padding-left: 10px;
   width: 20%;
   float: left;
@@ -290,6 +291,16 @@ label.item-name-label {
 
 ol li:last-child a.has_many_remove {
   display: none;
+}
+
+.param-input {
+  margin-left: 8px;
+  padding: 5.8px;
+  border: 1px solid #c9d0d6 !important;
+}
+
+.discount-input {
+  width: 30% !important;
 }
 
 @import 'active_admin/forms/select';
