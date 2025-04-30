@@ -4,18 +4,7 @@ import { ROUTES } from '../shared'
 import { fetchAuthentication, fetchSetting } from '../services'
 import { PcIcon } from '../ui'
 
-export const Header = () => {
-  const [setting, setSetting] = useState(null)
-
-  useEffect(() => {
-    fetchSetting.show()
-      .then((response) => {
-        const { data: { attributes } } = response
-
-        setSetting(attributes)
-      })
-  }, [])
-
+export const Header = ({ setting }) => {
   const Logo = () =>
     <Navbar.Brand className={'ms-1 ms-xxl-22 ms-xl-22 ms-lg-10 ms-md-2'}>
       {setting?.logo ?

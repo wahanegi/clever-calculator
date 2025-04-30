@@ -1,8 +1,12 @@
 class Setting < ApplicationRecord
   has_one_attached :logo
+  has_one_attached :login_background
+  has_one_attached :app_background
 
   validate :only_one_setting_allowed
-  validate :logo_size_and_type
+  validate :logo_size_and_type, if: -> { logo.attached? }
+  validate :login_background_size_and_type, if: -> { login_background.attached? }
+  validate :app_background_size_and_type, if: -> { app_background.attached? }
 
   MAX_LOGO_SIZE = 1.megabyte
   ALLOWED_LOGO_TYPES = %w[image/jpeg image/png image/svg+xml].freeze
@@ -29,12 +33,32 @@ class Setting < ApplicationRecord
   end
 
   def logo_size_and_type
-    return unless logo.attached?
-
     errors.add(:logo, "must be less than #{MAX_LOGO_SIZE / 1.megabyte}MB") if logo.byte_size > MAX_LOGO_SIZE
 
     return if ALLOWED_LOGO_TYPES.include?(logo.content_type)
 
     errors.add(:logo, 'must be a JPEG, SVG or PNG file')
+  end
+
+  def login_background_size_and_type
+    if login_background.byte_size > MAX_LOGO_SIZE
+      errors.add(:login_background,
+                 "must be less than #{MAX_LOGO_SIZE / 1.megabyte}MB")
+    end
+
+    return if ALLOWED_LOGO_TYPES.include?(login_background.content_type)
+
+    errors.add(:login_background, 'must be a JPEG, SVG or PNG file')
+  end
+
+  def app_background_size_and_type
+    if app_background.byte_size > MAX_LOGO_SIZE
+      errors.add(:app_background,
+                 "must be less than #{MAX_LOGO_SIZE / 1.megabyte}MB")
+    end
+
+    return if ALLOWED_LOGO_TYPES.include?(app_background.content_type)
+
+    errors.add(:app_background, 'must be a JPEG, SVG or PNG file')
   end
 end

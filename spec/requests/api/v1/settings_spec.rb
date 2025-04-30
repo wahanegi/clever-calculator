@@ -6,7 +6,7 @@ RSpec.describe "Api::V1::Settings", type: :request do
     let(:expected_current_setting_hash) do
       {
         "data" => {
-          "attributes" => { "logo" => current_setting.logo.url },
+          "attributes" => { "logo" => current_setting.logo.url, "app_background" => current_setting.app_background.url },
           "id" => current_setting.id.to_s,
           "type" => "setting"
         }

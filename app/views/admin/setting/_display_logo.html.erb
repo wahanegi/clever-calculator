@@ -1,12 +1,36 @@
 <div class="panel">
-  <h3>Current logo</h3>
+  <h3>Display & Control Images</h3>
   <div class="panel_contents">
-    <% if setting.logo.attached? %>
-      <%= image_tag setting.logo, style: 'margin-bottom: 10px; object-fit: contain; width: 200px; max-height: 200px;' %>
+    <div class="columns">
 
-      <%= button_to 'Remove logo', admin_setting_remove_logo_path, method: :delete %>
-    <% else %>
-      Logo not uploaded
-    <% end %>
+      <div class="column" style="width: 32.0%; margin-right: 2%;">
+        <% if setting.logo.attached? %>
+          <%= image_tag setting.logo, style: 'margin-bottom: 10px; object-fit: contain; width: 200px; max-height: 200px;' %>
+          <%= button_to 'Remove logo', admin_setting_remove_image_path(image: 'logo'), method: :delete %>
+        <% else %>
+          Logo not uploaded
+        <% end %>
+      </div>
+
+      <div class="column" style="width: 32.0%; margin-right: 2%;">
+        <% if setting.login_background.attached? %>
+          <%= image_tag setting.login_background, style: 'margin-bottom: 10px; object-fit: contain; width: 200px; max-height: 200px;' %>
+          <%= button_to 'Remove login background', admin_setting_remove_image_path(image: 'login_background'), method: :delete %>
+        <% else %>
+          Login background not uploaded
+        <% end %>
+      </div>
+
+      <div class="column" style="width: 32.0%;">
+        <% if setting.app_background.attached? %>
+          <%= image_tag setting.app_background, style: 'margin-bottom: 10px; object-fit: contain; width: 200px; max-height: 200px;' %>
+          <%= button_to 'Remove app background', admin_setting_remove_image_path(image: 'app_background'), method: :delete %>
+        <% else %>
+          App background not uploaded
+        <% end %>
+      </div>
+
+      <div style="clear:both;"></div>
+    </div>
   </div>
 </div>

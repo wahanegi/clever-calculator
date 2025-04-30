@@ -15,16 +15,29 @@ ActiveAdmin.register_page "Setting" do
     end
   end
 
-  page_action :remove_logo, method: :delete do
-    @setting.logo.purge
+  page_action :remove_image, method: :delete do
+    case params[:image]
+    when 'logo'
+      @setting.logo.purge
+    when 'login_background'
+      @setting.login_background.purge
+    when 'app_background'
+      @setting.app_background.purge
+    else
+      redirect_to admin_setting_path, alert: 'Unknown image type.'
+      return
+    end
 
-    redirect_to admin_setting_path, notice: 'Logo was successfully removed.'
+    redirect_to admin_setting_path, notice: "#{params[:image].humanize} was successfully removed."
   end
 
   page_action :reset, method: :patch do
     primary, secondary, blue_light, blue_sky = BrandColorParser.default_colors
 
-    @setting.update(logo: nil, style: BrandColorBuilder.new(primary, secondary, blue_light, blue_sky).build_css)
+    @setting.update(logo: nil,
+                    app_background: nil,
+                    login_background: nil,
+                    style: BrandColorBuilder.new(primary, secondary, blue_light, blue_sky).build_css)
 
     redirect_to admin_setting_path, notice: 'Settings reset successfully.'
   end
@@ -34,6 +47,8 @@ ActiveAdmin.register_page "Setting" do
 
     def permitted_params
       params.require(:setting).permit(:logo,
+                                      :login_background,
+                                      :app_background,
                                       :primary_color,
                                       :secondary_color,
                                       :blue_light_color,
@@ -46,6 +61,8 @@ ActiveAdmin.register_page "Setting" do
                                             permitted_params[:blue_light_color],
                                             permitted_params[:blue_sky_color]).build_css }
       hash[:logo] = permitted_params[:logo] if permitted_params[:logo]
+      hash[:app_background] = permitted_params[:app_background] if permitted_params[:app_background]
+      hash[:login_background] = permitted_params[:login_background] if permitted_params[:login_background]
       hash
     end
 

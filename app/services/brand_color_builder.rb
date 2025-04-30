@@ -7,10 +7,14 @@ class BrandColorBuilder
   end
 
   def build_css
-    [append_primary_color,
-     append_secondary_color,
-     append_blue_light_color,
-     append_blue_sky_color].join("\n")
+    styles = []
+
+    styles << append_primary_color if @primary_color
+    styles << append_secondary_color if @secondary_color
+    styles << append_blue_light_color if @blue_light
+    styles << append_blue_sky_color if @blue_sky
+
+    styles.join("\n")
   end
 
   private

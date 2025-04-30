@@ -50,4 +50,46 @@ RSpec.describe "Admin::SettingController", type: :request do
       expect(response.body).to include(style)
     end
   end
+
+  describe "PUT /admin/setting/reset" do
+    # let(:logo) { fixture_file_upload(Rails.root.join("spec/fixtures/files/logo.png"), "image/png") }
+    # let(:default_colors) { BrandColorParser.default_colors }
+    # let(:default_style) { BrandColorBuilder.new(default_colors[0], default_colors[1], default_colors[2], default_colors[3]).build_css }
+    # let(:style) { BrandColorBuilder.new('#FFFFFF', '#FFFFFF', '#FFFFFF', '#FFFFFF').build_css }
+    #
+    # it "resets the current setting" do
+    #   current_setting.update!(style: style) # set custom style
+    #
+    #   expect(current_setting.style).to include(style)
+    #
+    #   put admin_setting_reset_path
+    #
+    #   expect(response).to redirect_to(admin_setting_path)
+    #
+    #   follow_redirect!
+    #
+    #   expect(response.body).to include('Setting was successfully reset')
+    #
+    #   follow_redirect!
+    #
+    #   expect(current_setting.style).to be_eql default_style
+    # end
+  end
+
+  describe "DELETE /admin/setting/remove_image" do
+    let(:image) { fixture_file_upload(Rails.root.join("spec/fixtures/files/logo.png"), "image/png") }
+
+    it 'removes image from setting' do
+      delete admin_setting_remove_image_path(image: 'logo')
+
+      expect(response).to redirect_to(admin_setting_path)
+
+      follow_redirect!
+
+      current_setting.reload
+
+      expect(response.body).to include('Logo was successfully removed.')
+      expect(current_setting.logo).not_to be_attached
+    end
+  end
 end
