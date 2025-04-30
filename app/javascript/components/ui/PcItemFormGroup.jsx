@@ -3,22 +3,22 @@ import { Form } from 'react-bootstrap'
 
 export const PcItemFormGroup = ({
   children,
-  itemType = 'price',
+  paramType = 'price',
   label = 'Price',
   suffixLeft = '$',
   suffixRight = '%',
   className = '',
 }) => {
   const isSuffixLeft =
-    itemType === 'price' ||
-    itemType === 'discounted-price' ||
-    itemType === 'original-cost' ||
-    itemType === 'open-cost' ||
-    itemType === 'additional-fees'
-  const isSuffixRight = itemType === 'discount'
+    paramType === 'price' ||
+    paramType === 'discounted-price' ||
+    paramType === 'original-cost' ||
+    paramType === 'open-param-secondary' ||
+    paramType === 'additional-fees'
+  const isSuffixRight = paramType === 'discount'
 
   return (
-    <Form.Group className={`position-relative pc-item-input ${itemType} ${className}`}>
+    <Form.Group className={`position-relative pc-item-input ${paramType} ${className}`}>
       <Form.Label className="pc-label position-absolute top-0 translate-middle-y px-1 py-0 bg-white text-gray-750">
         {label}
       </Form.Label>

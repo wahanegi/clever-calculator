@@ -1,7 +1,7 @@
 .pc-item-input {
   flex: 1 1 auto;
   margin-top: 7px; // reserve place for 1/2 height of label with position-absolute
-  max-width: 200px;
+  width: 200px;
 
   .form-control {
     padding: 7px 12px;
@@ -70,7 +70,7 @@
   }
 }
 
-.pc-item-input.open-cost {
+.pc-item-input.open-param-secondary {
   .form-control {
     padding-left: 24px;
     border: 1.3px solid $secondary;
@@ -87,11 +87,20 @@
   }
 }
 
-.pc-item-input.tier {
+.pc-item-input.selectable-param {
   .form-select {
     padding: 7px 12px;
-    width: 200px;
+    //width: 200px;
     border: 1px solid $primary;
+    border-radius: 4px;
+  }
+}
+
+.pc-item-input.selectable-param-secondary {
+  .form-select {
+    padding: 7px 12px;
+    //width: 194.4px;
+    border: 1px solid $secondary;
     border-radius: 4px;
   }
 }
@@ -115,7 +124,7 @@
 }
 
 .pc-item-input.notes {
-  max-width: 100%;
+  width: 100%;
 
   // Form.Check component styles for notes
   .form-check {

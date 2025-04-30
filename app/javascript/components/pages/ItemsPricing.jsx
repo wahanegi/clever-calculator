@@ -10,7 +10,7 @@ const initItemsData = [
     id: '1',
     type: 'item',
     attributes: {
-      name: 'Fixed price',
+      name: 'Fixed param',
       description: '',
       category_id: 16,
       fixed_parameters: { Price: '2500' },
@@ -28,16 +28,16 @@ const initItemsData = [
     id: '2',
     type: 'item',
     attributes: {
-      name: 'Open parameter',
+      name: 'Open param',
       description: '',
       category_id: 16,
-      fixed_parameters: { Price: '2500' },
+      fixed_parameters: {},
       pricing_options: {},
       is_disabled: false,
       is_fixed: false,
       is_open: true,
       is_selectable_options: false,
-      open_parameters_label: [],
+      open_parameters_label: ['Label-OpPm'],
       formula_parameters: ['Price'],
       calculation_formula: 'Price',
     },
@@ -46,7 +46,7 @@ const initItemsData = [
     id: '3',
     type: 'item',
     attributes: {
-      name: 'Selectable',
+      name: 'Selectable param',
       description: '',
       category_id: 16,
       fixed_parameters: {},
@@ -66,66 +66,87 @@ const initItemsData = [
       calculation_formula: 'Price',
     },
   },
-  // {
-  //   "id": "4",
-  //   "type": "item",
-  //   "attributes": {
-  //     "name": "Licences",
-  //     "description": "yuyuy",
-  //     "category_id": 16,
-  //     "fixed_parameters": {},
-  //     "pricing_options": {
-  //       "Tier": {
-  //         "1-5": "100",
-  //         "6-15": "200",
-  //         "16+": "350",
-  //       },
-  //     },
-  //     "is_disabled": false,
-  //     "is_fixed": false,
-  //     "is_open": true,
-  //     "is_selectable_options": true,
-  //     "open_parameters_label": ["Users"],
-  //     "formula_parameters": [],
-  //     "calculation_formula": "Tier * Users",
-  //   },
-  // },
-  // {
-  //   "id": "5",
-  //   "type": "item",
-  //   "attributes": {
-  //     "name": "Decision Success",
-  //     "description": "",
-  //     "category_id": 16,
-  //     "fixed_parameters": {
-  //       "Rate per hours": "100",
-  //     },
-  //     "pricing_options": {},
-  //     "is_disabled": false,
-  //     "is_fixed": true,
-  //     "is_open": true,
-  //     "is_selectable_options": false,
-  //     "open_parameters_label": ["Hours"],
-  //     "formula_parameters": ["Rate per hours", "Hours"],
-  //     "calculation_formula": "Rate per hours * Hours",
-  //   },
-  // },
+  {
+    id: '4',
+    type: 'item',
+    attributes: {
+      name: 'Fixed + Open params',
+      description: '',
+      category_id: 16,
+      fixed_parameters: { Price: '2500' },
+      pricing_options: {},
+      is_disabled: false,
+      is_fixed: true,
+      is_open: true,
+      is_selectable_options: false,
+      open_parameters_label: ['Label-OpPm'],
+      formula_parameters: ['Price'],
+      calculation_formula: 'Price',
+    },
+  },
+  {
+    id: '5',
+    type: 'item',
+    attributes: {
+      name: 'Open + Selectable params',
+      description: '',
+      category_id: 16,
+      fixed_parameters: {},
+      pricing_options: {
+        Tier: {
+          '1-5': '100',
+          '6-15': '200',
+          '16+': '350',
+        },
+      },
+      is_disabled: false,
+      is_fixed: false,
+      is_open: true,
+      is_selectable_options: true,
+      open_parameters_label: ['Label-OpPm'],
+      formula_parameters: ['Price'],
+      calculation_formula: 'Price',
+    },
+  },
+  {
+    id: '6',
+    type: 'item',
+    attributes: {
+      name: 'Fixed + Selectable params',
+      description: '',
+      category_id: 16,
+      fixed_parameters: { Price: '2500' },
+      pricing_options: {
+        Tier: {
+          '1-5': '100',
+          '6-15': '200',
+          '16+': '350',
+        },
+      },
+      is_disabled: false,
+      is_fixed: true,
+      is_open: false,
+      is_selectable_options: true,
+      open_parameters_label: [],
+      formula_parameters: ['Price'],
+      calculation_formula: 'Price',
+    },
+  },
 ]
 
 export const ItemsPricing = () => {
   const { navigate, queryParams, location } = useAppHooks()
 
   const [selectedCategories, setSelectedCategories] = useState([])
-  const [expandedAccordions, setExpandedAccordions] = useState([]) // array of IDs
-  const [isNotesShow, setIsNotesShow] = useState(false)
-  const [notesValue, setNotesValue] = useState('')
-  const [includeNotes, setIncludeNotes] = useState(false)
-  const [categoryIdToDelete, setCategoryIdToDelete] = useState(null)
+  const [expandedAccordions, setExpandedAccordions] = useState([])
   const [isShowDeleteModal, setIsShowDeleteModal] = useState(false)
+  const [categoryIdToDelete, setCategoryIdToDelete] = useState(null)
+
+  const [notesStates, setNotesStates] = useState({})
+
   const quoteId = queryParams.get('quote_id')
   const currentStepId = getCurrentStepId(location.pathname)
-  const totalPrice = 0 // TODO: get total price from BE
-  const notesIcon = notesValue.trim() ? 'noted' : 'note'
+  const totalPrice = 0
 
   const showDeleteModal = (categoryId) => {
     setCategoryIdToDelete(categoryId)
@@ -148,21 +169,46 @@ export const ItemsPricing = () => {
 
   const expandAll = () => setExpandedAccordions(selectedCategories.map((category) => category.id))
   const collapseAll = () => setExpandedAccordions([])
-  const handleDownload = () => {
-    // await fetchQuotes.update(quoteId, {
-    //   quote: { step: STEPS.COMPLETED },
-    // })
+
+  const handleNotesChange = (itemId, value) => {
+    setNotesStates((prev) => ({
+      ...prev,
+      [itemId]: { ...(prev[itemId] || {}), note: value },
+    }))
   }
+
+  const handleIncludeNotesChange = (itemId, checked) => {
+    setNotesStates((prev) => ({
+      ...prev,
+      [itemId]: { ...(prev[itemId] || {}), include: checked },
+    }))
+  }
+
+  const toggleItemNotes = (itemId) => {
+    setNotesStates((prev) => ({
+      ...prev,
+      [itemId]: { ...(prev[itemId] || {}), isNotesOpen: !prev[itemId]?.isNotesOpen },
+    }))
+  }
+
+  const handleDownload = async () => {
+    const notesToSend = Object.entries(notesStates).reduce((acc, [itemId, { note, include }]) => {
+      if (include && note?.trim()) {
+        acc.push({ item_id: itemId, note })
+      }
+      return acc
+    }, [])
+
+    console.log({ notesToSend })
+  }
+
   const handleBack = () => navigate(ROUTES.CUSTOMER_INFO)
-  const handleIncludeNotes = (e) => setIncludeNotes(e.target.checked)
-  const handleNotesValue = (e) => setNotesValue(e.target.value)
 
   return (
     <Container className={'wrapper pt-10 pb-8'}>
       <section className={'mb-12 px-8'}>
         <QuoteCreation currentStepId={currentStepId} />
 
-        {/* Items & Pricing dashboard*/}
         <ItemsPricingTopBar
           totalPrice={totalPrice}
           selectedCategories={selectedCategories}
@@ -192,42 +238,46 @@ export const ItemsPricing = () => {
                 onDelete={() => showDeleteModal(category.id)}
               >
                 <div className={'d-flex flex-column gap-6'}>
-                  {categoryItems.map((item) => (
-                    <PcItemAccordion
-                      key={`item-${item.id}`}
-                      itemName={item.attributes.name}
-                      isNotesShow={isNotesShow}
-                      setIsNotesShow={setIsNotesShow}
-                      notesIcon={notesIcon}
-                    >
-                      <ItemTotalPrice itemData={item.attributes} className={''} />
+                  {categoryItems.map((item) => {
+                    const notesState = notesStates[item.id] || {}
+                    const notesIcon = notesState.note?.trim() ? 'noted' : 'note'
 
-                      {isNotesShow && (
-                        <PcItemFormGroup label={'Notes'} itemType={'notes'}>
-                          <PcItemTextareaControl
-                            placeholder={''}
-                            className={'mb-3'}
-                            value={notesValue}
-                            onChange={handleNotesValue}
-                          />
-                          <Form.Check
-                            type={'checkbox'}
-                            label={`Include notes with quote`}
-                            className={'fs-10'}
-                            checked={includeNotes}
-                            onChange={handleIncludeNotes}
-                          />
-                        </PcItemFormGroup>
-                      )}
-                    </PcItemAccordion>
-                  ))}
+                    return (
+                      <PcItemAccordion
+                        key={`item-${item.id}`}
+                        itemName={item.attributes.name}
+                        isNotesShow={notesState.isNotesOpen}
+                        onToggleNotes={() => toggleItemNotes(item.id)}
+                        notesIcon={notesIcon}
+                      >
+                        <ItemTotalPrice itemData={item.attributes} />
+
+                        {notesState.isNotesOpen && (
+                          <PcItemFormGroup label={'Notes'} paramType={'notes'}>
+                            <PcItemTextareaControl
+                              placeholder={''}
+                              className={'mb-3 mt-9'}
+                              value={notesState.note || ''}
+                              onChange={(e) => handleNotesChange(item.id, e.target.value)}
+                            />
+                            <Form.Check
+                              type={'checkbox'}
+                              label={'Include notes with quote'}
+                              className={'fs-10'}
+                              checked={notesState.include || false}
+                              onChange={(e) => handleIncludeNotesChange(item.id, e.target.checked)}
+                            />
+                          </PcItemFormGroup>
+                        )}
+                      </PcItemAccordion>
+                    )
+                  })}
                 </div>
               </PcCategoryAccordion>
             )
           })}
       </section>
 
-      {/* Buttons section */}
       <section className={'d-flex justify-content-center align-items-center gap-4'}>
         <Button variant={'outline-primary'} className={'fw-bold pc-btn'} onClick={handleBack}>
           Back
@@ -236,13 +286,12 @@ export const ItemsPricing = () => {
           variant={'outline-primary'}
           className={'fw-bold pc-btn pc-btn-download'}
           onClick={handleDownload}
-          disabled={true}
+          disabled={selectedCategories.length === 0}
         >
           Download
         </Button>
       </section>
 
-      {/*Modal for confirm delete/cancel category*/}
       <DeleteItemModal
         show={isShowDeleteModal}
         onHide={handleCancelDeleteCategory}
