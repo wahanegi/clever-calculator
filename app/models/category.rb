@@ -19,6 +19,8 @@ class Category < ApplicationRecord
                              message: "must contain only ASCII characters" },
                    if: -> { name.present? }
 
+  scope :enabled, -> { where(is_disabled: false) }
+
   def self.ransackable_attributes(_auth_object = nil)
     %w[created_at description id id_value is_disabled name updated_at]
   end

@@ -19,10 +19,11 @@ RSpec.describe "Admin::Quotes", type: :request do
     it "renders the index page successfully" do
       get admin_quotes_path
       expect(response).to be_successful
-      expect(response.body).to include("Quotes")
-      expect(response.body).to include(customer.company_name)
-      expect(response.body).to include(user.name)
-      expect(response.body).to include(quote.total_price.to_s)
+      unescaped_body = CGI.unescapeHTML(response.body)
+      expect(unescaped_body).to include("Quotes")
+      expect(unescaped_body).to include(customer.company_name)
+      expect(unescaped_body).to include(user.name)
+      expect(unescaped_body).to include(quote.total_price.to_s)
     end
   end
 

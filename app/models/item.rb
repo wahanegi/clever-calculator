@@ -10,6 +10,8 @@ class Item < ApplicationRecord
   validates :calculation_formula, presence: true, if: :requires_calculation_formula?
   validates_with ItemFormulaSyntaxValidator
 
+  scope :enabled, -> { where(is_disabled: false) }
+
   def self.ransackable_attributes(_auth_object = nil)
     %w[category_id created_at id is_disabled name updated_at]
   end
