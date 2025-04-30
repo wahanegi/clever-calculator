@@ -11,7 +11,7 @@ ActiveAdmin.register Quote do
                                                                                 :discount,
                                                                                 :final_price]
 
-  filter :customer_name, as: :string, label: 'Customer Name'
+  filter :customer_company_name, as: :string, label: 'Customer Name'
   filter :user, as: :select, collection: proc {
     User.joins(:quotes).distinct.order(:email).map do |u|
       ["#{u.email} (#{u.name})", u.id]

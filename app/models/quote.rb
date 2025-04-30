@@ -14,19 +14,6 @@ class Quote < ApplicationRecord
   scope :unfinished, -> { where.not(step: 'completed') }
   scope :completed, -> { where(step: 'completed') }
 
-  CUSTOMER_NAME_SQL = <<~SQL.freeze
-    LOWER(customers.first_name) LIKE :search OR
-    LOWER(customers.last_name) LIKE :search OR
-    LOWER(customers.company_name) LIKE :search
-  SQL
-
-  scope :customer_name, lambda { |search = nil|
-    return all if search.blank?
-
-    search = "%#{sanitize_sql_like(search.to_s.downcase)}%"
-    joins(:customer).where(CUSTOMER_NAME_SQL, search: "%#{search}%")
-  }
-
   def self.last_unfinished
     unfinished.order(created_at: :desc).first
   end
@@ -37,10 +24,6 @@ class Quote < ApplicationRecord
 
   def self.ransackable_associations(_auth_object = nil)
     %w[customer user]
-  end
-
-  def self.ransackable_scopes(_auth_object = nil)
-    [:customer_name]
   end
 
   def recalculate_total_price
