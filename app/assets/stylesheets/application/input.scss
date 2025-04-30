@@ -50,9 +50,12 @@ textarea {
 
 .rbt-menu.dropdown-menu.show {
   margin-top: 5px;
-  border: 1px solid $primary;
+  outline: 1px solid $primary;
+  border-inline: 5px solid $white !important;
+  border-block: none !important;
   width: calc(100% + 2px) !important;
-  margin-left: -1px;
+  margin-left: -2px;
+  max-height: 185px !important;
 }
 
 .rbt-highlight-text {
@@ -70,16 +73,21 @@ textarea {
  **/
 .pc-typeahead-customer-info {
   .pc-icon-reserve-place {
-    padding-right: 26px;
-    background-color: $white;
+    padding-right: 60px;
   }
 
-  .pc-typeahead-toggle {
-    width: 26px;
-    cursor: pointer;
+  .pc-typeahead-controls {
+    width: 60px;
+  }
+
+  .pc-typeahead-button {
+    width: 24px;
   }
 }
 
+/**
+ *** LOGO UPLOADER ***
+ **/
 .pc-logo-uploader {
   width: 136px;
   height: 117px;

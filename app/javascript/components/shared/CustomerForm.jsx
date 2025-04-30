@@ -46,6 +46,8 @@ export const CustomerForm = () => {
   }
 
   const handleCompanyInputChange = (text) => {
+    text = text.trimStart()
+
     if (text) {
       setIsNextDisabled(false)
       setErrors((prev) => ({...prev, company_name: ''}))
@@ -114,7 +116,6 @@ export const CustomerForm = () => {
       setIsNextDisabled(true)
       setErrors((prev) => ({...prev, logo: logoErrors.join('\n')}))
     } else {
-      setIsNextDisabled(false)
       setCustomer((prev) => ({ ...prev, logo_url: URL.createObjectURL(file) }))
       setErrors((prev) => ({ ...prev, logo: '' }))
     }
@@ -150,6 +151,11 @@ export const CustomerForm = () => {
     }
   }
 
+  const handleClearInput = () => {
+    setCustomer(prev => ({ ...prev, company_name: '' }))
+    setIsNextDisabled(true)
+  }
+
   return (
     <Form onSubmit={handleNext} className={'d-flex flex-column w-100 align-items-center'}>
       <div className="border rounded border-primary customer-form bg-light w-100 mb-7">
@@ -180,6 +186,7 @@ export const CustomerForm = () => {
                     error={errors.company_name}
                     onChange={handleCompanyChange}
                     onInputChange={handleCompanyInputChange}
+                    onClearInput={handleClearInput}
                     hasIcon={true}
                   />
                 </Col>
