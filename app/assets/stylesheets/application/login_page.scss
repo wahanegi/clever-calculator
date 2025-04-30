@@ -26,36 +26,6 @@
   height: 24px;
 }
 
-.border-label {
-  position: absolute;
-  top: -0.4rem;
-  left: 0.8rem;
-  background: linear-gradient(to bottom, $light 50%, $white 50%);
-}
-
-.form-control {
-  height: 42px;
-}
-
-.form-control::placeholder {
-  color: $gray;
-}
-
-.form-control:focus,
-.form-control:active {
-  box-shadow: none !important;
-  background-color: $white !important;
-}
-
-.form-control:-webkit-autofill {
-  background-color: white !important;
-  transition: background-color 5000s ease-in-out 0s;
-}
-
-.form-control:-webkit-autofill:focus {
-  background-color: white !important;
-}
-
 .or-divider {
   display: flex;
   align-items: center;
