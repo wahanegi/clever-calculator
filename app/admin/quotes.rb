@@ -1,15 +1,9 @@
 ActiveAdmin.register Quote do
-  permit_params :customer_id, :user_id, :total_price,  category_ids: [], item_ids: [],
-                                                       quote_items_attributes: [:id,
-                                                                                :_destroy,
-                                                                                :quote_id,
-                                                                                :item_id,
-                                                                                :pricing_parameters,
-                                                                                { open_param_values: {} },
-                                                                                { select_param_values: {} },
-                                                                                :price,
-                                                                                :discount,
-                                                                                :final_price]
+  permit_params :customer_id, :user_id, :total_price, category_ids: [], item_ids: [],
+                                                      quote_items_attributes: [
+                                                        :id, :item_id, :price, :discount, :final_price, :_destroy,
+                                                        { open_param_values: {}, select_param_values: {} }
+                                                      ]
 
   filter :customer_company_name, as: :string, label: 'Customer Name'
   filter :user, as: :select, collection: proc {
@@ -33,6 +27,10 @@ ActiveAdmin.register Quote do
   end
 
   form html: { class: 'quote-form' } do |f|
+    unless f.object.new_record?
+      f.object.category_ids = f.object.quote_items.joins(:item).pluck('items.category_id').uniq.compact
+    end
+
     f.inputs do
       f.input :customer, as: :select, collection: Customer.pluck(:company_name, :id), input_html: { class: 'custom-select' }
       f.input :user, as: :select, collection: User.order(:name).pluck(:name, :id), input_html: { class: 'custom-select' }
@@ -48,7 +46,8 @@ ActiveAdmin.register Quote do
     end
     f.has_many :quote_items, allow_destroy: true, new_record: true, heading: 'Quote Items' do |qf|
       qf.input :item_id, as: :hidden, input_html: { class: 'item-id-field' }
-      qf.input :id, as: :hidden
+      qf.input :id, as: :hidden if qf.object.persisted?
+      qf.input :_destroy, as: :hidden, input_html: { value: '0', class: 'destroy-field' }
 
       if qf.object.pricing_parameters.present? && qf.object.item&.open_parameters_label.present?
         qf.object.item.open_parameters_label.each do |label|
@@ -169,11 +168,12 @@ ActiveAdmin.register Quote do
   end
 
   controller do
-    before_action :sanitize_blank_arrays, only: [:update]
+    before_action :sanitize_blank_arrays, only: [:create, :update]
 
     def update
       @quote = Quote.find(params[:id])
-      process_quote_items(permitted_quote_items_attrs)
+      permitted_attrs = permitted_quote_items_attrs
+      process_quote_items(permitted_attrs)
 
       quote_params = prepare_quote_params
       @quote.quote_items.reload
@@ -203,9 +203,11 @@ ActiveAdmin.register Quote do
     end
 
     def prepare_quote_params
-      params[:quote].delete(:quote_items_attributes)
       permitted_params[:quote].except(:quote_items_attributes).tap do |params|
-        params.delete(:item_ids) if params[:item_ids].blank?
+        existing_category_ids = @quote.quote_items.joins(:item).pluck('items.category_id').uniq.compact
+        params[:category_ids] = (params[:category_ids] || []) | existing_category_ids.map(&:to_s)
+        params.delete(:item_ids) if action_name == 'update'
+
         params.delete(:category_ids) if params[:category_ids].blank?
       end
     end
@@ -223,7 +225,9 @@ ActiveAdmin.register Quote do
     end
 
     def destroy_quote_item(id)
-      @quote.quote_items.find_by(id:)&.destroy
+      if (quote_item = @quote.quote_items.find_by(id:))
+        quote_item.delete
+      end
     end
 
     def update_quote_item(attrs)

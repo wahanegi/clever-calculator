@@ -4,9 +4,9 @@ class QuoteItem < ApplicationRecord
   belongs_to :quote
   belongs_to :item
 
-  validates :price, presence: true, numericality: { greater_than_or_equal_to: 0 }
+  validates :price, presence: true, numericality: { greater_than_or_equal_to: 0 }, unless: :destroyed?
   validates :discount, numericality: { greater_than_or_equal_to: 0, less_than_or_equal_to: 100 }
-  validates :final_price, presence: true, numericality: { greater_than_or_equal_to: 0 }
+  validates :final_price, presence: true, numericality: { greater_than_or_equal_to: 0 }, unless: :destroyed?
 
   before_validation :compile_pricing_parameters
   before_validation :calculate_price_from_formula, if: -> { item_requires_formula? }
