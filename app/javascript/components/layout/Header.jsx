@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import { Nav, Navbar } from 'react-bootstrap'
 import { ROUTES } from '../shared'
-import { fetchAuthentication, fetchSetting } from '../services'
+import { fetchAuthentication } from '../services'
 import { PcIcon } from '../ui'
 
 export const Header = ({ setting }) => {

@@ -15,7 +15,10 @@ export const Layout = () => {
       })
   }, [])
 
-  const backgroundImageStyle = setting?.app_background ? { backgroundImage: `url(${setting?.app_background})` } : {}
+  const backgroundImageStyle = setting?.app_background ? {
+    backgroundImage: `url(${setting?.app_background})`,
+    backgroundSize: '333px',
+  } : {}
 
   return (
     <div className={'layout d-flex flex-column min-vh-100'} style={backgroundImageStyle}>

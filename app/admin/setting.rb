@@ -2,7 +2,7 @@ ActiveAdmin.register_page "Setting" do
   menu priority: 1
 
   content do
-    render partial: 'admin/setting/display_logo', locals: { setting: setting }
+    render partial: 'admin/setting/display_images', locals: { setting: setting }
     render partial: 'admin/setting/form', locals: { setting: setting,
                                                     style: BrandColorParser.new(setting.style) }
   end
@@ -16,7 +16,7 @@ ActiveAdmin.register_page "Setting" do
   end
 
   page_action :remove_image, method: :delete do
-    case params[:image]
+    case params[:type]
     when 'logo'
       @setting.logo.purge
     when 'login_background'
@@ -24,11 +24,11 @@ ActiveAdmin.register_page "Setting" do
     when 'app_background'
       @setting.app_background.purge
     else
-      redirect_to admin_setting_path, alert: 'Unknown image type.'
+      redirect_to admin_setting_path, alert: 'Unknown or missing image type'
       return
     end
 
-    redirect_to admin_setting_path, notice: "#{params[:image].humanize} was successfully removed."
+    redirect_to admin_setting_path, notice: "#{params[:type].humanize} was successfully removed."
   end
 
   page_action :reset, method: :patch do

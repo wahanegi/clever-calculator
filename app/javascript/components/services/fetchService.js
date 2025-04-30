@@ -43,3 +43,7 @@ export const fetchCustomers = {
     return post(ENDPOINTS.CUSTOMERS_UPSERT, formData)
   },
 }
+
+export const fetchSetting = {
+  show: () => get(ENDPOINTS.SETTING),
+}

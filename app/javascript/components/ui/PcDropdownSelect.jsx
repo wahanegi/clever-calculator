@@ -32,10 +32,6 @@ export const PcDropdownSelect = ({
     setIsMenuOpen(prev => !prev)
   }
 
-  const handleFocus = (e) => {
-    setIsMenuOpen(true)
-  }
-
   const handleBlur = (e) => {
     setIsMenuOpen(false)
   }
@@ -53,7 +49,7 @@ export const PcDropdownSelect = ({
   }
 
   const handleClick = (e) => {
-    setIsMenuOpen(true)
+    setIsMenuOpen(prev => !prev)
   }
 
   const TransparentButton = ({ children, className, ...props }) =>
@@ -90,7 +86,6 @@ export const PcDropdownSelect = ({
           paginate={false}
           open={isMenuOpen}
           onMenuToggle={(isOpen) => setIsMenuOpen(isOpen)}
-          onFocus={handleFocus}
           onBlur={handleBlur}
           onChange={handleChange}
           onInputChange={handleInputChange}
