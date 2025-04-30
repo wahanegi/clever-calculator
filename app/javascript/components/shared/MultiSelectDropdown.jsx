@@ -6,13 +6,13 @@ import { PcCheckboxOption, PcIcon } from '../ui'
 import { getRemovedCategory, normalizeApiCategories } from '../utils'
 
 export const MultiSelectDropdown = ({
-  id,
-  label = 'Select items',
-  hasIcon = true,
-  selected,
-  setSelected,
-  showDeleteModal,
-}) => {
+                                      id,
+                                      label = 'Select items',
+                                      hasIcon = true,
+                                      selected,
+                                      setSelected,
+                                      showDeleteModal,
+                                    }) => {
   const typeaheadRef = useRef()
   const [categories, setCategories] = useState([])
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -21,7 +21,6 @@ export const MultiSelectDropdown = ({
     e.stopPropagation()
     setIsMenuOpen(prev => !prev)
   }
-  const handleFocus = () => setIsMenuOpen(true)
   const handleBlur = () => setIsMenuOpen(false)
 
   const handleMenuOpen = (isOpen) => setIsMenuOpen(isOpen)
@@ -47,6 +46,10 @@ export const MultiSelectDropdown = ({
     setSelected(newSelected)
   }
 
+  const handleClick = () => {
+    setIsMenuOpen(!isMenuOpen)
+  }
+
   useEffect(() => {
     fetchCategories.index().then(res => {
       const categories = normalizeApiCategories(res.data)
@@ -66,7 +69,6 @@ export const MultiSelectDropdown = ({
           options={categories} // use with filterBy
           filterBy={() => true} // set array of options with no changes
           onChange={handleTypeaheadOnChange}
-          onFocus={handleFocus}
           onBlur={handleBlur}
           onMenuToggle={handleMenuOpen}
           open={isMenuOpen}
@@ -80,6 +82,9 @@ export const MultiSelectDropdown = ({
               className={'pc-checkbox-items-pricing'}
             />
           )}
+          inputProps={
+            { onClick: handleClick }
+          }
         />
 
         <Form.Label className="pc-label position-absolute fw-bold fs-10 lh-lg m-0 py-0 px-1" column={true}>
@@ -88,7 +93,7 @@ export const MultiSelectDropdown = ({
 
         {hasIcon && (
           <div
-            className={"position-absolute end-0 top-50 translate-middle-y z-2 me-4"}>
+            className={'position-absolute end-0 top-50 translate-middle-y z-2 me-4'}>
             <Button
               variant={'outline'}
               className={'p-0 border-0'}

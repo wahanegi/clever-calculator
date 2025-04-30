@@ -53,9 +53,9 @@ textarea {
   outline: 1px solid $primary;
   border-inline: 5px solid $white !important;
   border-block: none !important;
-  width: calc(100% + 2px) !important;
-  margin-left: -2px;
+  width: 100%!important;
   max-height: 185px !important;
+  box-sizing: border-box !important;
 }
 
 .rbt-highlight-text {
