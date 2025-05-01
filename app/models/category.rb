@@ -9,8 +9,6 @@ class Category < ApplicationRecord
 
   after_update :disable_related_items_if_disabled
 
-  has_many :notes, dependent: :destroy
-
   validates :name, presence: true
   validates :name, uniqueness: { scope: :is_disabled,
                                  case_sensitive: false,

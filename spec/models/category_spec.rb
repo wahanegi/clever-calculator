@@ -45,7 +45,4 @@ RSpec.describe Category, type: :model do
       it { is_expected.to have_attributes(is_disabled: false) }
     end
   end
-  context 'associations' do
-    it { is_expected.to have_many(:notes).dependent(:destroy) }
-  end
 end
