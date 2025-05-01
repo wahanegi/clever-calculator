@@ -1,6 +1,6 @@
-class CreateCategorizations < ActiveRecord::Migration[8.0]
+class CreateQuoteCategories < ActiveRecord::Migration[8.0]
   def change
-    create_table :categorizations do |t|
+    create_table :quote_categories do |t|
       t.references :quote, null: false, foreign_key: true
       t.references :category, null: false, foreign_key: true
 

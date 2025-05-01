@@ -4,8 +4,8 @@ class Quote < ApplicationRecord
   has_many :quote_items, dependent: :destroy
   accepts_nested_attributes_for :quote_items, allow_destroy: true
   has_many :items, through: :quote_items
-  has_many :categorizations, dependent: :destroy
-  has_many :categories, through: :categorizations
+  has_many :quote_categories, dependent: :destroy
+  has_many :categories, through: :quote_categories
 
   validates :total_price, presence: true, numericality: { greater_than_or_equal_to: 0 }
 

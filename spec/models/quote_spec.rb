@@ -14,8 +14,8 @@ RSpec.describe Quote, type: :model do
     it { is_expected.to belong_to(:user).required }
     it { is_expected.to have_many(:quote_items).dependent(:destroy) }
     it { is_expected.to have_many(:items).through(:quote_items) }
-    it { is_expected.to have_many(:categorizations).dependent(:destroy) }
-    it { is_expected.to have_many(:categories).through(:categorizations) }
+    it { is_expected.to have_many(:quote_categories).dependent(:destroy) }
+    it { is_expected.to have_many(:categories).through(:quote_categories) }
   end
 
   describe 'validations' do
