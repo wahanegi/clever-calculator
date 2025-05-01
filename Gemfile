@@ -6,8 +6,8 @@ gem "activeadmin", "~> 3.3.0"                                       # A framewor
 # gem "bcrypt", "~> 3.1"                                            # Use Active Model has_secure_password [https://guides.rubyonrails.org/active_model_basics.html#securepassword]
 gem "bootsnap", '~> 1.18.4', require: false                         # Reduces boot times through caching; required in config/boot.rb
 gem "cssbundling-rails", '~> 1.4.3'                                 # Bundle and process CSS [https://github.com/rails/cssbundling-rails]
-# gem "image_processing", "~> 1.2"                                  # Use Active Storage variants [https://guides.rubyonrails.org/active_storage_overview.html#transforming-images]
 gem "devise", "~> 4.9.4"                                            # Authentication
+gem "image_processing", "~> 1.2"                                    # Use Active Storage variants [https://guides.rubyonrails.org/active_storage_overview.html#transforming-images]
 gem "jbuilder", '~> 2.13.0'                                         # Build JSON APIs with ease [https://github.com/rails/jbuilder]
 gem "jsbundling-rails", '~> 1.3.1'                                  # Bundle and transpile JavaScript [https://github.com/rails/jsbundling-rails]
 gem "jsonapi-serializer", "~> 2.2.0"                                # Fast, simple and easy to use JSON:API serialization library (also known as fast_jsonapi).
@@ -15,6 +15,7 @@ gem "kamal", '~> 2.5.3', require: false                             # Deploy thi
 gem "pg", "~> 1.5.9"                                                # Use postgresql as the database for Active Record
 gem "puma", "~> 6.6.0"                                              # Use the Puma web server [https://github.com/puma/puma]
 gem "rails", "~> 8.0.2"                                             # Bundle edge Rails instead: gem "rails", github: "rails/rails", branch: "main"
+gem "ruby-vips", "~> 2.2"                                           # Ruby extension for the libvips image processing library.
 gem 'sass-rails', '~> 6.0.0'                                        # Ruby on Rails stylesheet engine for Sass
 gem "solid_cable", '~> 3.0.7'                                       # Use the database-backed adapters for Action Cable
 gem "solid_cache", '~> 1.0.7'                                       # Use the database-backed adapters for Rails.cache
