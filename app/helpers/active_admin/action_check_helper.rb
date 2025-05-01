@@ -1,5 +1,5 @@
 module ActiveAdmin
-  module ResourceHelper
+  module ActionCheckHelper
     def edit_action?
       params[:action] == 'edit'
     end

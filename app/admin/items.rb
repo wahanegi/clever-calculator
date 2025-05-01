@@ -44,9 +44,9 @@ ActiveAdmin.register Item do
       f.input :name, required: true, input_html: { value: f.object.name.presence || meta_data["name"] }
       f.input :description, as: :string, input_html: { value: f.object.description.presence || meta_data["description"] }
       f.input :category_id, as: :select,
-                            collection: Category.pluck(:name, :id),
-                            include_blank: "No Category",
-                            selected: f.object.category_id.presence || meta_data["category_id"]
+              collection: Category.pluck(:name, :id),
+              include_blank: "No Category",
+              selected: f.object.category_id.presence || meta_data["category_id"] || params[:category_id]
     end
 
     div class: "add-param-link-wrapper" do
@@ -55,14 +55,14 @@ ActiveAdmin.register Item do
 
       para do
         concat(link_to("Add Parameter", "#", class: "button store-and-navigate", data: {
-                         redirect: new_parameter_admin_item_path(id: item_id),
-                         item_id: item_id
-                       }))
+          redirect: new_parameter_admin_item_path(id: item_id),
+          item_id: item_id
+        }))
 
         concat(link_to(formula_label, "#", class: "button store-and-navigate", data: {
-                         redirect: new_formula_admin_item_path(id: item_id),
-                         item_id: item_id
-                       }))
+          redirect: new_formula_admin_item_path(id: item_id),
+          item_id: item_id
+        }))
       end
     end
 
@@ -81,8 +81,8 @@ ActiveAdmin.register Item do
         end
       end
 
-      tmp_fixed  = session_service.get(:fixed) || {}
-      tmp_open   = session_service.get(:open) || []
+      tmp_fixed = session_service.get(:fixed) || {}
+      tmp_open = session_service.get(:open) || []
       tmp_select = session_service.get(:select) || {}
 
       panel "Pricing Parameters" do
@@ -149,7 +149,12 @@ ActiveAdmin.register Item do
 
       if @item.save
         session_service.delete
-        redirect_to admin_item_path(@item), notice: "Item was successfully created."
+
+        if @item.category.present?
+          redirect_to edit_admin_category_path(@item.category), notice: "Item was successfully created."
+        else
+          redirect_to new_admin_category_path, notice: "Item was successfully created."
+        end
       else
         flash.now[:error] = "Failed to create item: #{@item.errors.full_messages.to_sentence}"
         render :new, status: :unprocessable_entity
@@ -181,7 +186,12 @@ ActiveAdmin.register Item do
 
       if @item.update(permitted_params[:item].except(:formula_parameters))
         session_service.delete
-        redirect_to admin_item_path(@item), notice: "Item was successfully updated."
+
+        if @item.category.present?
+          redirect_to edit_admin_category_path(@item.category), notice: "Item was successfully updated."
+        else
+          redirect_to admin_item_path(@item), notice: "Item was successfully updated."
+        end
       else
         flash[:error] = "Failed to update item: #{@item.errors.full_messages.to_sentence}"
         render :edit
@@ -192,9 +202,9 @@ ActiveAdmin.register Item do
 
     def session_service
       @session_service ||= begin
-        item_key = params[:id].presence || "new"
-        TmpParamsSessionService.new(session, item_key.to_s)
-      end
+                             item_key = params[:id].presence || "new"
+                             TmpParamsSessionService.new(session, item_key.to_s)
+                           end
     end
   end
 
@@ -212,7 +222,11 @@ ActiveAdmin.register Item do
   end
 
   action_item :back, only: :show do
-    link_to "Back to Items", admin_items_path
+    if resource.category.present?
+      link_to "Back to Category", admin_category_path(resource.category)
+    else
+      link_to "Back to Items", admin_items_path
+    end
   end
 
   member_action :toggle, method: :put do
@@ -229,8 +243,8 @@ ActiveAdmin.register Item do
 
     param_type = params[:parameter_type]
     param_name = case param_type
-                 when "Fixed"  then params[:fixed_parameter_name].to_s.strip
-                 when "Open"   then params[:open_parameter_name].to_s.strip
+                 when "Fixed" then params[:fixed_parameter_name].to_s.strip
+                 when "Open" then params[:open_parameter_name].to_s.strip
                  when "Select" then params[:select_parameter_name].to_s.strip
                  end
 
@@ -269,7 +283,7 @@ ActiveAdmin.register Item do
       valid_options = false
       (params[:select_options] || []).each do |pair|
         desc = pair["description"].to_s.strip
-        val  = pair["value"].to_s.strip
+        val = pair["value"].to_s.strip
         next if desc.blank? || val.blank?
 
         sub_hash[desc] = val
