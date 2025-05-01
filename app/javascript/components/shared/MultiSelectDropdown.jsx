@@ -13,12 +13,13 @@ export const MultiSelectDropdown = ({
                                       setSelected,
                                       showDeleteModal,
                                     }) => {
-  const typeaheadRef = useRef()
+  const typeaheadRef = useRef(null)
   const [categories, setCategories] = useState([])
   const [isMenuOpen, setIsMenuOpen] = useState(false)
 
   const toggleMenu = (e) => {
     e.stopPropagation()
+    if(!isMenuOpen) typeaheadRef.current.focus()
     setIsMenuOpen(prev => !prev)
   }
   const handleBlur = () => setIsMenuOpen(false)

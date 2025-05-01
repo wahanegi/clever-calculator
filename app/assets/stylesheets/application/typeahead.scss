@@ -35,8 +35,6 @@ $rbt-color-white: #fff !default;
 
   & > .dropdown-item {
     padding: 6px 12px;
-    overflow: hidden;
-    text-overflow: ellipsis;
     color: $gray-700;
 
     &:focus {

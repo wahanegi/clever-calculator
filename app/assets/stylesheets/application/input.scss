@@ -55,7 +55,7 @@ textarea {
   border-block: none !important;
   width: 100%!important;
   max-height: 185px !important;
-  box-sizing: border-box !important;
+  overflow: auto !important;
 }
 
 .rbt-highlight-text {
