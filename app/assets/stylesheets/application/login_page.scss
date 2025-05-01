@@ -17,7 +17,7 @@
   max-width: 307px;
 
   &-image {
-    height: 25px;
+    height: 70px;
     max-width: 150px;
   }
 }
@@ -37,7 +37,7 @@
   content: '';
   flex: 1;
   height: 1px;
-  background-color: $secondary;
+  background-color: var(--bs-secondary);
 }
 
 .or-divider::before {

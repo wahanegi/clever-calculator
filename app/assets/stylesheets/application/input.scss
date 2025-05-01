@@ -2,7 +2,7 @@
   position: absolute;
   top: -0.4rem;
   left: 0.8rem;
-  background: linear-gradient(to bottom, $light 50%, $white 50%);
+  background: linear-gradient(to bottom, var(--bs-light) 50%, $white 50%);
 }
 
 .form-control::placeholder {
@@ -39,8 +39,8 @@ textarea {
 
 .rbt-menu .dropdown-item:hover,
 .rbt-menu .dropdown-item:focus {
-  background-color: $light;
-  color: $primary;
+  background-color: var(--bs-light);
+  color: var(--bs-primary);
 }
 
 .rbt-menu .dropdown-item {
@@ -57,8 +57,8 @@ textarea {
 }
 
 .rbt-highlight-text {
-  background-color: $light;
-  color: $primary;
+  background-color: var(--bs-light);
+  color: var(--bs-primary);
   padding: 0;
 }
 

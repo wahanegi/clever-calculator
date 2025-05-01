@@ -6,7 +6,7 @@
 
     &:hover,
     &:focus {
-      background: $primary;
+      background: var(--bs-primary);
     }
 
     &:active {
@@ -15,8 +15,8 @@
     }
 
     &:disabled {
-      border-color: $secondary!important;
-      color: $secondary!important;
+      border-color: var(--bs-secondary) !important;
+      color: var(--bs-secondary) !important;
       background: $white !important;
     }
   }
@@ -52,7 +52,7 @@
 
   // styles for variant="outline-primary"
   &-outline-primary {
-    color: $primary !important;
+    color: var(--bs-primary) !important;
     background-color: $white;
 
     &:hover,
@@ -84,7 +84,7 @@
     font-family: $font-family-lato !important;
   }
 
-  &-back,  &-next {
+  &-back, &-next {
     width: 96px;
   }
 
