@@ -207,10 +207,10 @@ ActiveAdmin.register Item do
         toggle_admin_item_path(resource),
         method: :put,
         data: { confirm: "Are you sure?" }
-        )
-      end
+      )
     end
-    
+  end
+
   action_item :back, only: :show do
     link_to "Back to Items", admin_items_path
   end
@@ -243,7 +243,12 @@ ActiveAdmin.register Item do
 
     case param_type
     when "Fixed"
-      param_value = params[:fixed_parameter_value]
+      param_value = params[:fixed_parameter_value].to_s.strip
+      # Validate parameter value
+      if param_value.blank?
+        flash[:error] = "Parameter value can't be blank for Fixed parameter"
+        return redirect_back(fallback_location: @item&.id ? edit_admin_item_path(@item) : new_admin_item_path)
+      end
       fixed = session_service.get(:fixed) || {}
       fixed[param_name] = param_value
       session_service.set(:fixed, fixed)
@@ -254,18 +259,25 @@ ActiveAdmin.register Item do
       session_service.set(:open, open_params)
 
     when "Select"
+      value_label = params[:value_label].to_s.strip
+      if value_label.blank?
+        flash[:error] = "Value Label is required for Select parameter"
+        return redirect_back(fallback_location: @item&.id ? edit_admin_item_path(@item) : new_admin_item_path)
+      end
+
       sub_hash = {}
+      valid_options = false
       (params[:select_options] || []).each do |pair|
-        desc = pair["description"]
-        val  = pair["value"]
+        desc = pair["description"].to_s.strip
+        val  = pair["value"].to_s.strip
         next if desc.blank? || val.blank?
 
         sub_hash[desc] = val
+        valid_options = true
       end
-
-      value_label = params[:value_label]
-      if value_label.blank?
-        flash[:error] = "Value Label is required for Select parameter"
+      # Validate parameter value
+      unless valid_options
+        flash[:error] = "At least one valid option (with non-empty description and value) is required for Select parameter"
         return redirect_back(fallback_location: @item&.id ? edit_admin_item_path(@item) : new_admin_item_path)
       end
 
