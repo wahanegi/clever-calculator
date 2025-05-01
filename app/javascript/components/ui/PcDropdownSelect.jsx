@@ -1,8 +1,9 @@
 import React, { useRef, useState } from 'react'
-import { Form } from 'react-bootstrap'
-import { Typeahead } from 'react-bootstrap-typeahead'
 import { normalizeName } from '../utils'
 import { PcIcon } from './PcIcon'
+import { Form } from 'react-bootstrap'
+import { Typeahead } from 'react-bootstrap-typeahead'
+import { PcTransparentButton } from './PcTransparentButton'
 
 export const PcDropdownSelect = ({
                                    id,
@@ -55,22 +56,17 @@ export const PcDropdownSelect = ({
     setIsMenuOpen(!isMenuOpen)
   }
 
-  const TransparentButton = ({ children, className, ...props }) =>
-    (<button className={`bg-transparent rounded-0 border-0 p-0 m-0 ${className}`} {...props}>
-      {children}
-    </button>)
-
   const TypeaheadControls = () =>
     (<div className="pc-typeahead-controls position-absolute end-0 top-0 h-100 d-flex flex-row">
-      <TransparentButton onClick={onClearInput} className={'pc-typeahead-button'}>
+      <PcTransparentButton onClick={onClearInput} className={'pc-typeahead-button'}>
         <PcIcon name={'cross'} alt={'Cross'} className={'pc-icon-cross'} />
-      </TransparentButton>
-      <TransparentButton onClick={handleOpenMenu} className={'pc-typeahead-button'}>
+      </PcTransparentButton>
+      <PcTransparentButton onClick={handleOpenMenu} className={'pc-typeahead-button'}>
         <PcIcon
           name={isMenuOpen ? 'arrowUp' : 'arrowDown'}
           alt={isMenuOpen ? 'Arrow pointing up' : 'Arrow pointing down'}
         />
-      </TransparentButton>
+      </PcTransparentButton>
     </div>)
 
   return (
@@ -96,7 +92,9 @@ export const PcDropdownSelect = ({
           ref={typeaheadRef}
           {...props}
         />
+
         <Form.Label className="border-label fw-bold fs-11 lh-sm px-1">{label}</Form.Label>
+
         {hasIcon && <TypeaheadControls />}
       </div>
       {error && <div className="text-danger fs-12">{error}</div>}

@@ -53,7 +53,7 @@ export const ItemsPricing = () => {
   const handleNotesValue = (e) => setNotesValue(e.target.value)
 
   return (
-    <Container className={'wrapper pt-10 pb-8'}>
+    <Container className={'wrapper pt-16 pb-8'}>
       <section className={'mb-12 px-8'}>
         <QuoteCreation currentStepId={currentStepId} />
 
