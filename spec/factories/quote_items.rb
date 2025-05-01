@@ -1,10 +1,10 @@
 FactoryBot.define do
   factory :quote_item do
-    association :quote, factory: :quote
-    association :item, factory: :item
-    association :item_pricing, factory: :item_pricing
-    price { 100.00 }
-    discount { 10 }
-    open_parameters { {} }
+    association :quote
+    association :item
+    price { 0 }
+    discount { 0 }
+    final_price { price }
+    pricing_parameters { {} }
   end
 end

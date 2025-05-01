@@ -1,0 +1,95 @@
+// Base styles
+.btn {
+  // styles for variant="primary"
+  &-primary {
+    color: white !important;
+
+    &:hover,
+    &:focus {
+      background: $primary;
+    }
+
+    &:active {
+      border-color: $dark !important;
+      background: $dark !important;
+    }
+
+    &:disabled {
+      border-color: $gray-disable !important;
+      color: $text-gray-disable !important;
+      background: $white !important;
+    }
+  }
+
+  // styles for variant="warning"
+  &-warning {
+    color: $white;
+    border-color: $coral-primary !important;
+    background: $coral-primary !important;
+
+    &:hover,
+    &:focus {
+      color: $white;
+      border-color: $coral-primary !important;
+      background: $coral-primary !important;
+    }
+
+    &:focus-visible {
+      box-shadow: $coral-light 0px 0px 0px 4px;
+    }
+
+    &:active {
+      border-color: $coral-dark !important;
+      background: $coral-dark !important;
+    }
+
+    &:disabled {
+      border-color: $coral-light !important;
+      color: $text-coral !important;
+      background-color: $coral-light !important;
+    }
+  }
+
+  // styles for variant="outline-primary"
+  &-outline-primary {
+    color: $primary !important;
+    background-color: $white;
+
+    &:hover,
+    &:focus {
+      background: inherit;
+    }
+
+    &:active {
+      border-color: $dark !important;
+      color: $dark !important;
+      background: inherit !important;
+    }
+
+    &:disabled {
+      border-color: $gray-light !important;
+      color: $text-gray-disable !important;
+    }
+  }
+}
+
+// Additional styles for buttons
+.pc-btn {
+  &-reset, &-back, &-download, &-next {
+    height: 38px;
+  }
+
+  &-reset {
+    width: 103.71px;
+    font-family: $font-family-lato !important;
+  }
+
+  &-back,  &-next {
+    width: 96px;
+  }
+
+  &-download {
+    width: 106px;
+  }
+}
+

@@ -1,19 +1,41 @@
 class QuoteItem < ApplicationRecord
+  attr_accessor :open_param_values, :select_param_values
+
   belongs_to :quote
   belongs_to :item
-  belongs_to :item_pricing
   has_one :note, dependent: :destroy
   accepts_nested_attributes_for :note, allow_destroy: true
 
-  validates :price, presence: true, numericality: { greater_than_or_equal_to: 0 }
+  validates :price, presence: true, numericality: { greater_than_or_equal_to: 0 }, unless: :destroyed?
   validates :discount, numericality: { greater_than_or_equal_to: 0, less_than_or_equal_to: 100 }
-  validates :final_price, presence: true, numericality: { greater_than_or_equal_to: 0 }
+  validates :final_price, presence: true, numericality: { greater_than_or_equal_to: 0 }, unless: :destroyed?
 
-  before_validation :calculate_final_price, if: -> { should_recalculate_final_price? }
+  before_validation :compile_pricing_parameters
+  before_validation :calculate_price_from_formula, if: -> { item_requires_formula? }
+  before_validation :calculate_final_price, if: -> { price.present? && discount.present? }
   before_validation :assign_quote_to_note
 
   after_save :recalculate_quote_total_price
   after_destroy :recalculate_quote_total_price
+
+  def compile_pricing_parameters
+    return unless item
+
+    self.pricing_parameters = (item.fixed_parameters || {})
+                              .merge(open_param_values || {})
+                              .merge(select_param_values || {})
+  end
+
+  def calculate_price_from_formula
+    return unless item_requires_formula?
+
+    calculator = Dentaku::Calculator.new
+    self.price = calculator.evaluate(item.calculation_formula, pricing_parameters)
+  rescue Dentaku::UnboundVariableError => e
+    errors.add(:price, "missing variable(s): #{e.unbound_variables.join(', ')}")
+  rescue StandardError => e
+    errors.add(:price, "could not calculate price: #{e.message}")
+  end
 
   private
 
@@ -21,13 +43,12 @@ class QuoteItem < ApplicationRecord
     self.final_price = price - (price * (discount / 100))
   end
 
-  def should_recalculate_final_price?
-    price.present? && discount.present? && (price_changed? || discount_changed?)
+  def recalculate_quote_total_price
+    quote.recalculate_total_price
   end
 
-  def recalculate_quote_total_price
-    # quote.update(total_price: quote.quote_items.sum(:final_price))
-    quote.recalculate_total_price
+  def item_requires_formula?
+    item&.calculation_formula.present?
   end
 
   def assign_quote_to_note
