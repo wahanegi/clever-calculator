@@ -19,7 +19,7 @@ gem 'sass-rails', '~> 6.0.0'                                        # Ruby on Ra
 gem "solid_cable", '~> 3.0.7'                                       # Use the database-backed adapters for Action Cable
 gem "solid_cache", '~> 1.0.7'                                       # Use the database-backed adapters for Rails.cache
 gem "solid_queue", '~> 1.1.4'                                       # Use the database-backed adapters for Active Job
-gem "sprockets", '~> 4.2.2'                                         # Rack-based asset packaging system
+gem "sprockets", '~> 3.7.5', '< 4.0'                                # Rack-based asset packaging system
 gem "sprockets-rails", '~> 3.5.2'                                   # The asset pipeline for Rails
 gem "stimulus-rails", '~> 1.3.4'                                    # Hotwire's modest JavaScript framework [https://stimulus.hotwired.dev]
 gem "thruster", '~> 0.1.12', require: false                         # Add HTTP asset caching/compression and X-Sendfile acceleration to Puma [https://github.com/basecamp/thruster/]
