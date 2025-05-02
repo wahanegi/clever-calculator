@@ -1,0 +1,40 @@
+.multi-select-dropdown {
+  max-width: 512px;
+
+  .pc-label {
+    top: -0.7rem;
+    left: 0.8rem;
+    background-color: $white;
+  }
+
+  &-controls {
+    width: 42px;
+  }
+}
+
+.pc-hr-divider {
+  width: 60px;
+  height: 1px;
+  border: none;
+  background-color: $teal-light;
+}
+
+.pc-w-fit-content {
+  width: fit-content;
+}
+
+.pc-grid-bar {
+  grid-template-columns: minmax(0, 512px) auto;
+}
+
+.pc-item-name {
+  @media (min-width: 576px) {
+    max-width: 200px;
+  }
+  @media (min-width: 768px) {
+    max-width: 350px;
+  }
+  @media (min-width: 1024px) {
+    max-width: 600px;
+  }
+}
