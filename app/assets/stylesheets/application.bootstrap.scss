@@ -17,7 +17,11 @@ $utilities: map-merge(
   )
 );
 
+// Libs styles
+@import "application/typeahead";
+
 // Component styles
+@import 'application/common';
 @import 'application/icons';
 @import 'application/buttons';
 @import 'application/customer_info';
@@ -26,3 +30,7 @@ $utilities: map-merge(
 @import 'application/customer_form.scss';
 @import 'application/input.scss';
 @import 'application/header';
+@import "application/items_pricing_page";
+@import 'application/accordion.scss';
+@import 'application/checkbox.scss';
+@import 'application/form_group.scss';

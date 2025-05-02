@@ -1,5 +1,5 @@
 import { ENDPOINTS } from '../shared'
-import { get, del, post, put } from './api/httpRequests'
+import { del, get, post, put } from './api/httpRequests'
 import { extractNames } from '../utils'
 
 export const fetchQuotes = {
@@ -46,4 +46,8 @@ export const fetchCustomers = {
 
 export const fetchSetting = {
   show: () => get(ENDPOINTS.SETTING),
+}
+
+export const fetchCategories = {
+  index: async () => await get(ENDPOINTS.CATEGORIES),
 }

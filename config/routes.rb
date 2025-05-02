@@ -10,6 +10,7 @@ Rails.application.routes.draw do
       resources :customers, only: [:index] do
         post :upsert, on: :collection
       end
+      resources :categories, only: [ :index ]
     end
   end
 

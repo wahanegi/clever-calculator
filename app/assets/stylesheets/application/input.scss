@@ -51,9 +51,11 @@ textarea {
 .rbt-menu.dropdown-menu.show {
   margin-top: 5px;
   outline: 1px solid var(--bs-primary);
-  border-inline: 5px solid $white;
-  width: 100% !important;
+  border-inline: 5px solid $white !important;
+  border-block: none !important;
+  width: 100%!important;
   max-height: 185px !important;
+  overflow: auto !important;
 }
 
 .rbt-highlight-text {

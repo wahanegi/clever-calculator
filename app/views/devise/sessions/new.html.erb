@@ -1,19 +1,19 @@
 <div class="login d-flex justify-content-center align-items-center bg-blue-sky vh-100 px-4"
      style="<%= current_setting.login_background.attached? ? "background-image: url('#{current_setting.login_background.url}') !important; background-size: 473px;" : '' %>">
   <div class="bg-light d-flex flex-column flex-sm-row justify-content-around align-items-center gap-2 w-100 login-card rounded-4 shadow-lg">
-    <div class="login-logo w-100 pb-10">
+    <div class="login-logo w-100 pb-15">
       <% if current_setting.logo.attached? %>
         <%= image_tag current_setting.logo, alt: "Company Logo", class: "login-logo-image object-fit-contain" %>
       <% else %>
         <%= image_tag "logo.png", alt: "Company Logo", class: "img-fluid" %>
       <% end %>
-      <div class="fs-3 mt-8">
+      <div class="fs-3 mt-12">
         <span class="fw-lighter">Login to</span>
         <span class="fw-bold d-block">Sales Calculator</span>
       </div>
     </div>
     <div class="d-flex flex-column w-100 login-form">
-      <div class="text-center d-flex flex-column gap-2 w-100 mb-6">
+      <div class="text-center d-flex flex-column gap-2 w-100 mb-8">
         <h2 class="text-primary fw-bold lh-lg">Welcome!</h2>
         <p class="fs-9 lh-sm">Sign in to your account</p>
       </div>
@@ -25,15 +25,15 @@
         <% end %>
       </div>
       <%= form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
-        <div class="field w-100 mb-5 position-relative">
-          <%= f.email_field :email, autofocus: true, autocomplete: "email", class: "form-control py-2 border border-primary rounded-1 lh-lg pe-7", placeholder: "Enter your e-mail" %>
+        <div class="field w-100 mb-6 position-relative">
+          <%= f.email_field :email, autofocus: true, autocomplete: "email", class: "form-control py-2 border border-primary rounded-1 lh-lg pe-10", placeholder: "Enter your e-mail" %>
           <%= f.label :email, "User", class: "border-label fs-11 fw-bold lh-sm px-1" %>
           <div class="position-absolute end-0 top-50 translate-middle-y pe-3">
             <%= image_tag "person.svg", alt: "Person Icon", class: "icon", width: "24" %>
           </div>
         </div>
         <div class="field w-100 position-relative">
-          <%= f.password_field :password, autocomplete: "current-password", class: "form-control py-2 border border-primary rounded-1 lh-lg pe-7", placeholder: "Enter your password", id: "password-field" %>
+          <%= f.password_field :password, autocomplete: "current-password", class: "form-control py-2 border border-primary rounded-1 lh-lg pe-10", placeholder: "Enter your password", id: "password-field" %>
           <%= f.label :password, class: "border-label fs-11 fw-bold lh-sm px-1" %>
           <div class="position-absolute end-0 top-50 translate-middle-y pe-3" role="button" id="toggle-password">
             <%= image_tag "eye_show_icon.svg", alt: "Show Password", class: "icon toggle-password", id: "eye-icon", width: "20" %>
@@ -48,7 +48,7 @@
                         "Thank you!",
                       class: "fs-10 text-end w-100 #{ENV['SUPPORT_EMAIL'].present? ? '' : 'd-none'}" %>
         </div>
-        <div class="actions w-100 mt-6 mb-5">
+        <div class="actions w-100 mt-8 mb-6">
           <%= f.submit "LOGIN", class: "btn btn-primary text-white w-100 fw-medium lh-sm rounded-2 py-4 border-0" %>
         </div>
         <div class="w-100 text-center <%= ENV['SUPPORT_EMAIL'].present? ? '' : 'd-none' %>">
