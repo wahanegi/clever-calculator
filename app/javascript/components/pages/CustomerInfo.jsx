@@ -9,7 +9,7 @@ export const CustomerInfo = () => {
   const currentStepId = getCurrentStepId(location.pathname)
 
   return (
-    <Container className={'wrapper pt-16 pb-8'}>
+    <Container className={'wrapper pt-16'}>
       <section className={'mx-8'}>
         <QuoteCreation currentStepId={currentStepId} isBtnShow={false} />
       </section>

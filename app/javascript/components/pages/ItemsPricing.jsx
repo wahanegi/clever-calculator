@@ -53,7 +53,7 @@ export const ItemsPricing = () => {
   const handleNotesValue = (e) => setNotesValue(e.target.value)
 
   return (
-    <Container className={'wrapper pt-16 pb-8'}>
+    <Container className={'wrapper pt-16'}>
       <section className={'mb-12 px-8'}>
         <QuoteCreation currentStepId={currentStepId} />
 
@@ -121,7 +121,7 @@ export const ItemsPricing = () => {
       </section>
 
       {/* Buttons section */}
-      <section className={'d-flex justify-content-center align-items-center gap-4'}>
+      <section className={'d-flex justify-content-center align-items-center gap-4 mb-4'}>
         <Button variant={'outline-primary'} className={'fw-bold pc-btn'} onClick={handleBack}>Back</Button>
         <Button variant={'outline-primary'} className={'fw-bold pc-btn pc-btn-download'} onClick={handleDownload}
                 disabled={true}>Download</Button>
