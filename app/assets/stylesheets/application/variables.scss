@@ -11,12 +11,16 @@ $danger: #f12711;
 $gray: #9e9e9e;
 $gray-light: #d9d9d9;
 $gray-700: #616161;
+$gray-750: #666666;
 $blue-light: #e2e6f9;
 $blue-sky: #3f84bd;
 $red-light: #f5b8b8;
 $green-light: #f3fbeb;
 $teal: #a0c9c8;
 $teal-dark: #115d5b;
+$teal-light: #dce8f3;
+$teal-blue: #90bddb;
+$dark-700: rgba($dark, 0.7);
 
 // Button Colors
 $coral-primary: #fe6d75;
@@ -25,7 +29,7 @@ $coral-dark: #e35c67;
 $coral-light: #ffdbdd;
 $text-coral: #fe6d754d;
 $gray-disable: #ececec;
-$text-gray-disable: #999999;
+$text-gray-disable: #999;
 
 // Font Families
 $font-family-base: 'Roboto', sans-serif;
@@ -66,24 +70,29 @@ $spacers: (
         2: $spacer * 0.5, // 8px
         3: $spacer * 0.75, // 12px
         4: $spacer * 1, // 16px
-        5: $spacer * 1.5, // 24px
-        6: $spacer * 2, // 32px
-        7: $spacer * 2.5, // 40px
-        8: $spacer * 3, // 48px
-        9: $spacer * 3.5, // 56px
-        10: $spacer * 4, // 64px
-        11: $spacer * 4.5, // 72px
-        12: $spacer * 5, // 80px
-        13: $spacer * 5.5, // 88px
-        14: $spacer * 6, // 96px
-        15: $spacer * 6.5, // 104px
-        16: $spacer * 7, // 112px
-        17: $spacer * 7.5, // 120px
-        18: $spacer * 8, // 128px
-        19: $spacer * 8.5, // 136px
-        20: $spacer * 9, // 144px
-        21: $spacer * 9.5, // 152px
-        22: $spacer * 10, // 160px
+        5: $spacer * 1.25, // 20px
+        6: $spacer * 1.5, // 24px
+        7: $spacer * 1.75, // 28px
+        8: $spacer * 2, // 32px
+        9: $spacer * 2.25, // 36px
+        10: $spacer * 2.5, // 40px
+        11: $spacer * 2.75, // 44px
+        12: $spacer * 3, // 48px
+        13: $spacer * 3.25, // 52px
+        14: $spacer * 3.5, // 56px
+        15: $spacer * 4, // 64px
+        16: $spacer * 4.375, // 70px
+        17: $spacer * 5, // 80px
+        18: $spacer * 5.5, // 88px
+        19: $spacer * 6, // 96px
+        20: $spacer * 6.5, // 104px
+        21: $spacer * 7, // 112px
+        22: $spacer * 7.5, // 120px
+        23: $spacer * 8, // 128px
+        24: $spacer * 8.5, // 136px
+        25: $spacer * 9, // 144px
+        26: $spacer * 9.5, // 152px
+        27: $spacer * 10, // 160px
 );
 $enable-negative-margins: true;
 

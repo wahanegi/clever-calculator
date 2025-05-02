@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
-import { Row, Col, Form, Button } from 'react-bootstrap'
-import { PcDropdownSelect, PcLogoUploader, PcInput } from '../ui'
+import { Button, Col, Form, Row } from 'react-bootstrap'
+import { PcDropdownSelect, PcInput, PcLogoUploader } from '../ui'
 import { EMPTY_ENTITIES, INPUT_VALIDATORS, ROUTES, STEPS } from './constants'
 import { fetchCustomers, fetchQuotes } from '../services'
 import { useAppHooks } from '../hooks'
@@ -158,9 +158,9 @@ export const CustomerForm = () => {
 
   return (
     <Form onSubmit={handleNext} className={'d-flex flex-column w-100 align-items-center'}>
-      <div className="border rounded border-primary customer-form bg-light w-100 mb-7">
-        <Row className="mb-6">
-          <div className="d-flex flex-column flex-sm-row gap-6">
+      <div className="border rounded border-primary customer-form bg-light w-100 mb-10">
+        <Row className="mb-8">
+          <div className="d-flex flex-column flex-sm-row gap-8">
             <Col className={'image-placeholder mx-auto'}>
               <PcLogoUploader
                 id="company_logo"
@@ -170,7 +170,7 @@ export const CustomerForm = () => {
                 error={errors.logo} />
             </Col>
             <Col>
-              <Row className="mb-6">
+              <Row className="mb-8">
                 <Col>
                   <PcDropdownSelect
                     id="company_name"
@@ -192,7 +192,7 @@ export const CustomerForm = () => {
                 </Col>
               </Row>
               <Row>
-                <div className="d-flex flex-column flex-sm-row gap-6">
+                <div className="d-flex flex-column flex-sm-row gap-8">
                   <Col className="client-input">
                     <PcInput
                       id="full_name"
@@ -203,7 +203,7 @@ export const CustomerForm = () => {
                       onChange={handleFullNameChange}
                     />
                   </Col>
-                  <Col className="title-input">
+                  <Col className="title-input col">
                     <PcInput
                       id="position"
                       placeholder="Position"
@@ -218,8 +218,8 @@ export const CustomerForm = () => {
             </Col>
           </div>
         </Row>
-        <Row className="mb-6">
-          <div className="d-flex flex-column flex-sm-row gap-6">
+        <Row className="mb-8">
+          <div className="d-flex flex-column flex-sm-row gap-8">
             <Col>
               <PcInput
                 id="email"
@@ -258,9 +258,8 @@ export const CustomerForm = () => {
           </Col>
         </Row>
       </div>
-      <Button type={'submit'}
-              className="pc-btn-next mb-4"
-              disabled={isNextDisabled}>
+
+      <Button type={'submit'} className="pc-btn mb-4" disabled={isNextDisabled}>
         Next
       </Button>
     </Form>

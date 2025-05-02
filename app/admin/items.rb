@@ -55,14 +55,14 @@ ActiveAdmin.register Item do
 
       para do
         concat(link_to("Add Parameter", "#", class: "button store-and-navigate", data: {
-          redirect: new_parameter_admin_item_path(id: item_id),
-          item_id: item_id
-        }))
+                         redirect: new_parameter_admin_item_path(id: item_id),
+                         item_id: item_id
+                       }))
 
         concat(link_to(formula_label, "#", class: "button store-and-navigate", data: {
-          redirect: new_formula_admin_item_path(id: item_id),
-          item_id: item_id
-        }))
+                         redirect: new_formula_admin_item_path(id: item_id),
+                         item_id: item_id
+                       }))
       end
     end
 
@@ -81,8 +81,8 @@ ActiveAdmin.register Item do
         end
       end
 
-      tmp_fixed = session_service.get(:fixed) || {}
-      tmp_open = session_service.get(:open) || []
+      tmp_fixed  = session_service.get(:fixed) || {}
+      tmp_open   = session_service.get(:open) || []
       tmp_select = session_service.get(:select) || {}
 
       panel "Pricing Parameters" do
@@ -202,9 +202,10 @@ ActiveAdmin.register Item do
 
     def session_service
       @session_service ||= begin
-                             item_key = params[:id].presence || "new"
-                             TmpParamsSessionService.new(session, item_key.to_s)
-                           end
+        item_key = params[:id].presence || "new"
+        TmpParamsSessionService.new(session, item_key.to_s)
+      end
+
     end
   end
 
@@ -243,8 +244,8 @@ ActiveAdmin.register Item do
 
     param_type = params[:parameter_type]
     param_name = case param_type
-                 when "Fixed" then params[:fixed_parameter_name].to_s.strip
-                 when "Open" then params[:open_parameter_name].to_s.strip
+                 when "Fixed"  then params[:fixed_parameter_name].to_s.strip
+                 when "Open"   then params[:open_parameter_name].to_s.strip
                  when "Select" then params[:select_parameter_name].to_s.strip
                  end
 
