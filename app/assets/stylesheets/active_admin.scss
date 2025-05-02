@@ -266,7 +266,7 @@ label.category-name-label {
   color: #5e6469;
 }
 
-.quote-form a.has_many_add {
+.quote-form > .has_many_container.quote_items > a.has_many_add {
   display: none !important;
 }
 
@@ -289,7 +289,7 @@ label.category-name-label {
   align-items: center;
 }
 
-ol li:last-child a.has_many_remove {
+.has_many_container.quote_items > .has_many_fields > ol > li:last-child a.has_many_remove {
   display: none;
 }
 

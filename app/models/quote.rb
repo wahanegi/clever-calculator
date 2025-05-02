@@ -7,7 +7,6 @@ class Quote < ApplicationRecord
   has_many :quote_categories, dependent: :destroy
   has_many :categories, through: :quote_categories
   has_many :notes, dependent: :destroy
-  after_save :assign_quote_to_nested_notes
 
   validates :total_price, presence: true, numericality: { greater_than_or_equal_to: 0 }
 
@@ -30,11 +29,5 @@ class Quote < ApplicationRecord
 
   def recalculate_total_price
     update(total_price: quote_items.sum(:final_price))
-  end
-
-  def assign_quote_to_nested_notes
-    quote_items.each do |item|
-      item.note.update(quote: self) if item.note.present? && item.note.quote_id.nil?
-    end
   end
 end
