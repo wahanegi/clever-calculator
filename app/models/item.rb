@@ -1,5 +1,5 @@
 class Item < ApplicationRecord
-  belongs_to :category, optional: true
+  belongs_to :category, optional: true, counter_cache: true
 
   validates :name, presence: true
   validates :name, uniqueness: { scope: :category_id, message: "Item name must be unique within category" }
@@ -8,6 +8,8 @@ class Item < ApplicationRecord
   validate :pricing_options_values_must_be_numeric
   validates :calculation_formula, presence: true, if: :requires_calculation_formula?
   validate :calculation_formula_must_be_valid, if: :requires_calculation_formula?
+
+  scope :without_category, -> { where(category_id: nil) }
 
   def self.ransackable_attributes(_auth_object = nil)
     %w[category_id created_at id is_disabled name updated_at]

@@ -10,6 +10,7 @@ ActiveAdmin.register Category do
     id_column
     column :name
     column('Disabled') { |item| status_tag item.is_disabled, label: item.is_disabled? ? 'True' : 'False' }
+    column :items_count
     column :created_at
     column :updated_at
     actions defaults: false do |category|
@@ -34,6 +35,25 @@ ActiveAdmin.register Category do
       f.input :description
     end
     f.actions
+
+    panel edit_action? ? "Items" : "Items without category" do
+      div do
+        link_to 'Add Item', edit_action? ? new_admin_item_path(category_id: resource.id) : new_admin_item_path, class: 'button'
+      end
+
+      items = edit_action? ? resource.items : Item.without_category
+
+      if items.any?
+        table_for items do
+          column 'Item name' do |item|
+            link_to item.name, edit_admin_item_path(item)
+          end
+          column 'Item description', :description
+        end
+      else
+        "Items not found"
+      end
+    end
   end
 
   show do
@@ -43,6 +63,19 @@ ActiveAdmin.register Category do
       row('Disabled') { |item| status_tag item.is_disabled, label: item.is_disabled? ? 'True' : 'False' }
       row :created_at
       row :updated_at
+    end
+
+    panel "Items" do
+      if resource.items.any?
+        table_for resource.items do
+          column 'Item name' do |item|
+            link_to item.name, admin_item_path(item)
+          end
+          column 'Item description', :description
+        end
+      else
+        "Items not found"
+      end
     end
   end
 
@@ -64,6 +97,10 @@ ActiveAdmin.register Category do
     resource.toggle(:is_disabled)
 
     if resource.save
+      # rubocop:disable Rails/SkipsModelValidations
+      resource.items.update_all(is_disabled: true) if resource.is_disabled?
+      # rubocop:enable Rails/SkipsModelValidations
+
       redirect_to admin_categories_path, notice: "Category was successfully #{resource.is_disabled? ? 'disabled' : 'enabled'}."
     else
       redirect_to admin_categories_path, alert: resource.errors.messages_for(:name)
@@ -71,6 +108,8 @@ ActiveAdmin.register Category do
   end
 
   controller do
+    helper ActiveAdmin::ActionCheckHelper
+
     def create
       @category = Category.new(permitted_params[:category])
 
