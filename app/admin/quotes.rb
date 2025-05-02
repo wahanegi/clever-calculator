@@ -163,17 +163,8 @@ ActiveAdmin.register Quote do
     allowed_open_keys = item.open_parameters_label || []
     allowed_select_keys = item.pricing_options&.keys || []
 
-    open_param_values = if params[:open_param_values].is_a?(ActionController::Parameters)
-                          params[:open_param_values].permit(*allowed_open_keys).to_h
-                        else
-                          params[:open_param_values].to_h.slice(*allowed_open_keys)
-                        end
-
-    select_param_values = if params[:select_param_values].is_a?(ActionController::Parameters)
-                            params[:select_param_values].permit(*allowed_select_keys).to_h
-                          else
-                            params[:select_param_values].to_h.slice(*allowed_select_keys)
-                          end
+    open_param_values = extract_safe_params(params[:open_param_values], allowed_open_keys)
+    select_param_values = extract_safe_params(params[:select_param_values], allowed_select_keys)
 
     render partial: "admin/quotes/quote_item_parameters", locals: {
       fixed_parameters: item.fixed_parameters || {},
@@ -258,6 +249,16 @@ ActiveAdmin.register Quote do
       return if quote_item.save
 
       @quote.errors.add(:base, "Quote item could not be saved: #{quote_item.errors.full_messages.to_sentence}")
+    end
+
+    def extract_safe_params(param_set, allowed_keys)
+      return {} if param_set.blank?
+
+      if param_set.is_a?(ActionController::Parameters)
+        param_set.permit(*allowed_keys).to_h
+      else
+        param_set.to_h.slice(*allowed_keys)
+      end
     end
   end
 end
