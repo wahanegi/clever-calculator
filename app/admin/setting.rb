@@ -32,12 +32,12 @@ ActiveAdmin.register_page "Setting" do
   end
 
   page_action :reset, method: :patch do
-    primary, secondary, blue_light, blue_sky = BrandColorParser.default_colors
+    primary, secondary, blue_light, blue_sky, light = BrandColorParser.default_colors
 
     @setting.update(logo: nil,
                     app_background: nil,
                     login_background: nil,
-                    style: BrandColorBuilder.new(primary, secondary, blue_light, blue_sky).build_css)
+                    style: BrandColorBuilder.new(primary, secondary, blue_light, blue_sky, light).build_css)
 
     redirect_to admin_setting_path, notice: 'Settings reset successfully.'
   end
@@ -52,14 +52,16 @@ ActiveAdmin.register_page "Setting" do
                                       :primary_color,
                                       :secondary_color,
                                       :blue_light_color,
-                                      :blue_sky_color)
+                                      :blue_sky_color,
+                                      :light_color)
     end
 
     def setting_params
       hash = { style: BrandColorBuilder.new(permitted_params[:primary_color],
                                             permitted_params[:secondary_color],
                                             permitted_params[:blue_light_color],
-                                            permitted_params[:blue_sky_color]).build_css }
+                                            permitted_params[:blue_sky_color],
+                                            permitted_params[:light_color]).build_css }
       hash[:logo] = permitted_params[:logo] if permitted_params[:logo]
       hash[:app_background] = permitted_params[:app_background] if permitted_params[:app_background]
       hash[:login_background] = permitted_params[:login_background] if permitted_params[:login_background]

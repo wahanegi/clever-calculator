@@ -1,6 +1,7 @@
 class BrandColorParser
-  HEX_REGEX = /(#[0-9A-Fa-f]{3,6})/
-  COLORS_COUNT = 4
+  HEX_REGEX = /\s*(?<color>#[0-9A-Fa-f]{3,6})/
+  COLORS_COUNT = 5
+  PATH_TO_SCSS = "app/assets/stylesheets/application/variables.scss".freeze
 
   def initialize(style)
     @style = style
@@ -26,21 +27,34 @@ class BrandColorParser
 }/)
   end
 
-  def self.default_colors
-    style = File.read(Rails.root.join("app/assets/stylesheets/application/variables.scss"))
+  def light_color
+    get_color(/--bs-light: #{HEX_REGEX};/)
+  end
 
-    primary = style.scan(/\$primary: #{HEX_REGEX};/)
-    secondary = style.scan(/\$secondary: #{HEX_REGEX};/)
-    blue_light = style.scan(/\$blue-light: #{HEX_REGEX};/)
-    blue_sky = style.scan(/\$blue-sky: #{HEX_REGEX};/)
+  class << self
+    def default_colors
+      variables = fetch_variables
 
-    colors = [primary, secondary, blue_light, blue_sky].flatten.compact
+      colors = %w[primary secondary blue-light blue-sky light].map do |color_name|
+        match_color = variables.match(/\$#{Regexp.escape(color_name)}:#{HEX_REGEX};/)
 
-    unless colors.empty? || colors.size == COLORS_COUNT
-      raise "Colors not found in app/assets/stylesheets/application/variables.scss"
+        match_color ? match_color[:color] : nil
+      end.compact_blank
+
+      raise_if_colors_not_found colors
+
+      colors
     end
 
-    colors
+    def fetch_variables
+      File.read(Rails.root.join(PATH_TO_SCSS))
+    end
+
+    def raise_if_colors_not_found(colors)
+      return if colors.size == COLORS_COUNT
+
+      raise "Colors not found in #{PATH_TO_SCSS}"
+    end
   end
 
   private
@@ -48,6 +62,6 @@ class BrandColorParser
   def get_color(regex)
     color = @style.match(regex)
 
-    color ? color[1] : '#000000'
+    color ? color[:color] : '#000000'
   end
 end

@@ -2,9 +2,9 @@
 .pc-category-accordion {
   .accordion-button {
     padding: 22.4px;
-    border: 1.3px solid $primary;
+    border: 1.3px solid var(--bs-primary);
     border-radius: 8px !important;
-    background-color: $light !important;
+    background-color: var(--bs-light) !important;
     transition: border-radius 0.8s ease-out;
 
     &:not(.collapsed) {

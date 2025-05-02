@@ -6,9 +6,9 @@ RSpec.describe "Admin::SettingController", type: :request do
   let(:logo) { fixture_file_upload(Rails.root.join("spec/fixtures/files/logo.png"), "image/png") }
   let(:app_background) { fixture_file_upload(Rails.root.join("spec/fixtures/files/logo.png"), "image/png") }
   let(:login_background) { fixture_file_upload(Rails.root.join("spec/fixtures/files/logo.png"), "image/png") }
-  let(:sample_style) { BrandColorBuilder.new('#FFFFFF', '#FFFFFF', '#FFFFFF', '#FFFFFF').build_css }
+  let(:sample_style) { BrandColorBuilder.new('#FFFFFF', '#FFFFFF', '#FFFFFF', '#FFFFFF', '#FFFFFF').build_css }
   let(:default_colors) { BrandColorParser.default_colors }
-  let(:default_style) { BrandColorBuilder.new(default_colors[0], default_colors[1], default_colors[2], default_colors[3]).build_css }
+  let(:default_style) { BrandColorBuilder.new(default_colors[0], default_colors[1], default_colors[2], default_colors[3], default_colors[4]).build_css }
 
   before do
     sign_in create(:admin_user), scope: :admin_user
@@ -36,7 +36,8 @@ RSpec.describe "Admin::SettingController", type: :request do
           primary_color: '#FFFFFF',
           secondary_color: '#FFFFFF',
           blue_light_color: '#FFFFFF',
-          blue_sky_color: '#FFFFFF'
+          blue_sky_color: '#FFFFFF',
+          light_color: '#FFFFFF'
         }
       }
 

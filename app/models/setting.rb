@@ -25,10 +25,10 @@ class Setting < ApplicationRecord
     return first if exists?
 
     # fetch colors from SCSS file
-    primary, secondary, blue_light, blue_sky = BrandColorParser.default_colors
+    primary, secondary, blue_light, blue_sky, light = BrandColorParser.default_colors
 
     # build style
-    style = BrandColorBuilder.new(primary, secondary, blue_light, blue_sky).build_css
+    style = BrandColorBuilder.new(primary, secondary, blue_light, blue_sky, light).build_css
 
     create!(style: style)
   end

@@ -68,8 +68,8 @@
     }
 
     &:disabled {
-      border-color: $secondary !important;
-      color: $secondary !important;
+      border-color: var(--bs-secondary) !important;
+      color: var(--bs-secondary) !important;
     }
   }
 }
