@@ -101,7 +101,7 @@ ActiveAdmin.register Quote do
       qf.template.concat(
         qf.template.content_tag(:div, class: 'has_many_buttons') do
           qf.template.button_tag('Add Same Item', type: 'button', class: 'button add-same-item') +
-          qf.template.link_to('Remove', '#', class: 'button has_many_remove')
+          qf.template.link_to('Remove Item', '#', class: 'button has_many_remove')
         end
       )
     end

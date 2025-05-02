@@ -289,7 +289,7 @@ label.category-name-label {
   align-items: center;
 }
 
-.has_many_container.quote_items > .has_many_fields > ol > li:last-child a.has_many_remove {
+.has_many_container.quote_items > ol > fieldset > ol > li > a.has_many_remove {
   display: none;
 }
 

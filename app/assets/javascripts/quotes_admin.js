@@ -60,6 +60,22 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   /**
+   * Cleans note fields in a note container, removing empty notes and showing the add button.
+   * @param {HTMLElement} noteContainer - The note container element.
+   */
+  const cleanNoteFields = (noteContainer) => {
+    const noteFields = noteContainer.querySelectorAll('.has_many_fields')
+    noteFields.forEach((field) => {
+      const textarea = field.querySelector('textarea.note-textarea')
+      if (!textarea || !textarea.value.trim()) {
+        field.remove()
+      }
+    })
+    const noteAddButton = noteContainer.querySelector('.has_many_add')
+    if (noteAddButton) noteAddButton.style.display = 'inline-block'
+  }
+
+  /**
    * Updates form fields for a quote item group
    * @param {HTMLElement} group - The quote item group element
    * @param {Object} itemData - Item data containing id, name, category, and discount
@@ -104,7 +120,6 @@ document.addEventListener('DOMContentLoaded', () => {
       return
     }
 
-    // Gather existing values from hidden fields
     const openParamInputs = group.querySelectorAll(
       `input[name^="quote[quote_items_attributes][${quoteItemIndex}][open_param_values]"]`,
     )
@@ -117,20 +132,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     openParamInputs.forEach((input) => {
       const paramName = input.dataset.paramName || input.name.match(/\[open_param_values\]\[(.+)\]/)?.[1]
-      if (paramName) {
-        open_param_values[paramName] = input.value
-      } else {
-        console.warn('No param name found for open param input:', input)
-      }
+      if (paramName) open_param_values[paramName] = input.value
     })
 
     selectParamInputs.forEach((input) => {
       const paramName = input.dataset.paramName || input.name.match(/\[select_param_values\]\[(.+)\]/)?.[1]
-      if (paramName) {
-        select_param_values[paramName] = input.value
-      } else {
-        console.warn('No param name found for select param input:', input)
-      }
+      if (paramName) select_param_values[paramName] = input.value
     })
 
     try {
@@ -140,9 +147,12 @@ document.addEventListener('DOMContentLoaded', () => {
         select_param_values,
       })
       const html = await response.text()
+      if (!html.trim()) {
+        console.warn('Empty response from render_quote_item_parameters for item_id:', itemId)
+      }
       previewContainer.innerHTML = html.replace(/NEW_RECORD/g, quoteItemIndex)
     } catch (error) {
-      console.error('Error rendering quote parameters:', error)
+      console.error('Error rendering quote parameters for item_id:', itemId, error)
     }
   }
 
@@ -153,16 +163,21 @@ document.addEventListener('DOMContentLoaded', () => {
    */
   const addNewQuoteItem = async (itemData, isDuplicate = false) => {
     const addButton = container.querySelector(selectors.addButton)
-    const template = addButton.dataset.html
+    if (!addButton || !addButton.dataset.html) {
+      console.error('Quote item add button or template not found')
+      return
+    }
+
     const existingIndices = Array.from(container.querySelectorAll('input[name^="quote[quote_items_attributes]"]'))
       .map((input) => parseInt(input.name.match(/quote_items_attributes\]\[(\d+)\]/)?.[1]))
       .filter((index) => !isNaN(index))
     const newIndex = existingIndices.length ? Math.max(...existingIndices) + 1 : 0
 
-    const newItemHtml = template.replace(/NEW_QUOTE_ITEM_RECORD/g, newIndex)
+    const newItemHtml = addButton.dataset.html.replace(/NEW_QUOTE_ITEM_RECORD/g, newIndex)
     const tempDiv = document.createElement('div')
     tempDiv.innerHTML = newItemHtml
     const newItemGroup = tempDiv.firstElementChild
+
     let itemsContainer = container.querySelector('ol')
     if (!itemsContainer) {
       itemsContainer = document.createElement('ol')
@@ -172,19 +187,16 @@ document.addEventListener('DOMContentLoaded', () => {
     itemsContainer.appendChild(newItemGroup)
 
     const noteContainer = newItemGroup.querySelector('.has_many_container.note')
-    if (noteContainer) {
-      const noteFields = noteContainer.querySelectorAll('.has_many_fields')
-      noteFields.forEach((field) => field.remove())
-      const noteAddButton = noteContainer.querySelector('.has_many_add')
-      if (noteAddButton) noteAddButton.style.display = 'inline-block'
-    }
+    if (noteContainer) cleanNoteFields(noteContainer)
+
     updateItemFields(newItemGroup, itemData, isDuplicate)
-    if (itemData.item_id) {
-      await renderQuoteParameters(newItemGroup, itemData.item_id)
-    }
+    if (itemData.item_id) await renderQuoteParameters(newItemGroup, itemData.item_id)
   }
 
-  // Initialize existing quote items
+  /**
+   * Initializes existing quote items, cleaning notes and rendering parameters.
+   * @param {number} [retryCount=0] - Number of retry attempts.
+   */
   const initializeQuoteItems = (retryCount = 0) => {
     const maxRetries = 3
     const itemGroups = document.querySelectorAll(selectors.itemGroups)
@@ -193,22 +205,12 @@ document.addEventListener('DOMContentLoaded', () => {
       setTimeout(() => initializeQuoteItems(retryCount + 1), 500)
       return
     }
+
     itemGroups.forEach(async (group, index) => {
       const itemId = group.querySelector(selectors.itemId)?.value
       if (itemId) {
-        // Clean notes for existing items
         const noteContainer = group.querySelector('.has_many_container.note')
-        if (noteContainer) {
-          const noteFields = noteContainer.querySelectorAll('.has_many_fields')
-          noteFields.forEach((field) => {
-            const textarea = field.querySelector('textarea.note-textarea')
-            if (!textarea || !textarea.value.trim()) {
-              field.remove()
-            }
-          })
-          const noteAddButton = noteContainer.querySelector('.has_many_add')
-          if (noteAddButton) noteAddButton.style.display = 'inline-block'
-        }
+        if (noteContainer) cleanNoteFields(noteContainer)
         await renderQuoteParameters(group, itemId)
       } else {
         console.warn(
@@ -221,20 +223,76 @@ document.addEventListener('DOMContentLoaded', () => {
     })
   }
 
-  // Ensure DOM is ready
-  setTimeout(() => initializeQuoteItems(), 500)
-
-  // Initialization
-  // Show heading if quote items exist on page load
-  const heading = container.querySelector(selectors.heading)
-  if (container.querySelectorAll(selectors.itemGroups).length > 0 && heading) {
-    heading.style.display = 'block'
+  /**
+   * Toggles the visibility of the "Add New Note" button based on note presence.
+   * @param {HTMLElement} addButton - The "Add New Note" button.
+   * @param {HTMLElement} noteContainer - The note container element.
+   */
+  const toggleAddNoteButton = (addButton, noteContainer) => {
+    const noteFields = noteContainer.querySelectorAll('.has_many_fields')
+    addButton.style.display = noteFields.length >= 1 ? 'none' : 'inline-block'
   }
 
+  /**
+   * Sets up event listeners for note add/remove buttons in a note container.
+   * @param {HTMLElement} noteContainer - The note container element.
+   */
+  const setupNoteContainer = (noteContainer) => {
+    const addNoteButton = noteContainer.querySelector('.has_many_add')
+    if (!addNoteButton) {
+      console.warn('Add New Note button not found in note container')
+      return
+    }
+
+    addNoteButton.addEventListener('click', () => {
+      addNoteButton.style.display = 'none'
+      setTimeout(() => toggleAddNoteButton(addNoteButton, noteContainer), 0)
+    })
+
+    noteContainer.addEventListener('click', (event) => {
+      if (event.target.classList.contains('has_many_remove')) {
+        setTimeout(() => toggleAddNoteButton(addNoteButton, noteContainer), 0)
+      }
+    })
+  }
+
+  // Initialize existing note containers
+  document.querySelectorAll('.has_many_container.note').forEach(setupNoteContainer)
+
+  // Watch for dynamically added QuoteItems
+  const observer = new MutationObserver((mutations) => {
+    mutations.forEach((mutation) => {
+      if (mutation.addedNodes.length) {
+        mutation.addedNodes.forEach((node) => {
+          if (node.nodeType === 1) {
+            node.querySelectorAll('.has_many_container.note').forEach(setupNoteContainer)
+          }
+        })
+      }
+    })
+  })
+  observer.observe(container, { childList: true, subtree: true })
+
   // Event Handlers
-  // Handle clicking the "Load Items" button
-  const loadItemsButton = document.querySelector(selectors.loadButton)
-  if (loadItemsButton) {
+
+  /**
+   * Initializes the form, showing the heading if quote items exist.
+   */
+  const initializeForm = () => {
+    const heading = container.querySelector(selectors.heading)
+    if (container.querySelectorAll(selectors.itemGroups).length > 0 && heading) {
+      heading.style.display = 'block'
+    }
+    setTimeout(() => initializeQuoteItems(), 500)
+  }
+
+  /**
+   * Handles the "Load Items" button click, fetching and adding selected items.
+   */
+  const handleLoadItems = async () => {
+    const loadItemsButton = document.querySelector(selectors.loadButton)
+    if (!loadItemsButton) return
+
     loadItemsButton.addEventListener('click', async () => {
       const selectedCategories = Array.from(document.querySelectorAll(`${selectors.categoryCheckboxes}:checked`)).map(
         (cb) => cb.value,
@@ -255,20 +313,19 @@ document.addEventListener('DOMContentLoaded', () => {
         })
         const items = await response.json()
 
-        // Sort items by category name for consistent display
         items.sort((a, b) => {
           const catA = a.category_name?.toLowerCase() || 'other'
           const catB = b.category_name?.toLowerCase() || 'other'
           return catA.localeCompare(catB)
         })
 
+        const heading = container.querySelector(selectors.heading)
         if (heading) heading.style.display = 'block'
 
         for (const item of items) {
           await addNewQuoteItem(item)
         }
 
-        // Clear all checkboxes after loading items
         document
           .querySelectorAll(`${selectors.categoryCheckboxes}:checked, ${selectors.itemCheckboxes}:checked`)
           .forEach((cb) => (cb.checked = false))
@@ -278,19 +335,29 @@ document.addEventListener('DOMContentLoaded', () => {
     })
   }
 
-  // Handle clicking the "Add Same Item" button
-  document.addEventListener('click', async (event) => {
-    if (!event.target.classList.contains('add-same-item')) return
-    const currentGroup = event.target.closest('.has_many_container.quote_items fieldset.has_many_fields')
-    const itemId = currentGroup.querySelector(selectors.itemId)?.value
-    if (!itemId) return
-    const itemData = {
-      item_id: itemId,
-      item_name: currentGroup.querySelector(selectors.itemName)?.textContent,
-      category_name: currentGroup.querySelector(selectors.category)?.textContent,
-      discount: '0',
-    }
+  /**
+   * Handles the "Add Same Item" button click, duplicating the current item.
+   */
+  const handleAddSameItem = () => {
+    document.addEventListener('click', async (event) => {
+      if (!event.target.classList.contains('add-same-item')) return
+      const currentGroup = event.target.closest('.has_many_container.quote_items fieldset.has_many_fields')
+      const itemId = currentGroup.querySelector(selectors.itemId)?.value
+      if (!itemId) return
 
-    await addNewQuoteItem(itemData, true)
-  })
+      const itemData = {
+        item_id: itemId,
+        item_name: currentGroup.querySelector(selectors.itemName)?.textContent,
+        category_name: currentGroup.querySelector(selectors.category)?.textContent,
+        discount: '0',
+      }
+
+      await addNewQuoteItem(itemData, true)
+    })
+  }
+
+  // Initialize the form and event handlers
+  initializeForm()
+  handleLoadItems()
+  handleAddSameItem()
 })
