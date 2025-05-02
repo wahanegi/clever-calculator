@@ -44,9 +44,9 @@ ActiveAdmin.register Item do
       f.input :name, required: true, input_html: { value: f.object.name.presence || meta_data["name"] }
       f.input :description, as: :string, input_html: { value: f.object.description.presence || meta_data["description"] }
       f.input :category_id, as: :select,
-                            collection: Category.pluck(:name, :id),
-                            include_blank: "No Category",
-                            selected: f.object.category_id.presence || meta_data["category_id"] || params[:category_id]
+              collection: Category.pluck(:name, :id),
+              include_blank: "No Category",
+              selected: f.object.category_id.presence || meta_data["category_id"] || params[:category_id]
     end
 
     div class: "add-param-link-wrapper" do
@@ -81,8 +81,8 @@ ActiveAdmin.register Item do
         end
       end
 
-      tmp_fixed = session_service.get(:fixed) || {}
-      tmp_open = session_service.get(:open) || []
+      tmp_fixed  = session_service.get(:fixed) || {}
+      tmp_open   = session_service.get(:open) || []
       tmp_select = session_service.get(:select) || {}
 
       panel "Pricing Parameters" do
@@ -205,6 +205,7 @@ ActiveAdmin.register Item do
         item_key = params[:id].presence || "new"
         TmpParamsSessionService.new(session, item_key.to_s)
       end
+
     end
   end
 
@@ -243,8 +244,8 @@ ActiveAdmin.register Item do
 
     param_type = params[:parameter_type]
     param_name = case param_type
-                 when "Fixed" then params[:fixed_parameter_name].to_s.strip
-                 when "Open" then params[:open_parameter_name].to_s.strip
+                 when "Fixed"  then params[:fixed_parameter_name].to_s.strip
+                 when "Open"   then params[:open_parameter_name].to_s.strip
                  when "Select" then params[:select_parameter_name].to_s.strip
                  end
 

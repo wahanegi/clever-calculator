@@ -114,12 +114,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_01_143252) do
     t.index ["user_id"], name: "index_quotes_on_user_id"
   end
 
-  create_table "settings", force: :cascade do |t|
-    t.text "style"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
   create_table "solid_cable_messages", force: :cascade do |t|
     t.binary "channel", null: false
     t.binary "payload", null: false

@@ -15,22 +15,22 @@
     }
 
     &:disabled {
-      border-color: $gray-disable !important;
-      color: $text-gray-disable !important;
+      border-color: $secondary !important;
+      color: $secondary !important;
       background: $white !important;
     }
   }
 
-  // styles for variant="warning"
-  &-warning {
+  // styles for variant="danger"
+  &-danger {
+    border-color: $danger !important;
     color: $white;
-    border-color: $coral-primary !important;
-    background: $coral-primary !important;
+    background: $danger !important;
 
     &:hover,
     &:focus {
-      color: $white;
       border-color: $coral-primary !important;
+      color: $white;
       background: $coral-primary !important;
     }
 
@@ -40,6 +40,7 @@
 
     &:active {
       border-color: $coral-dark !important;
+      color: $white !important;
       background: $coral-dark !important;
     }
 
@@ -67,29 +68,29 @@
     }
 
     &:disabled {
-      border-color: $gray-light !important;
-      color: $text-gray-disable !important;
+      border-color: $secondary !important;
+      color: $secondary !important;
     }
+  }
+}
+
+// Styles for btn close "x"
+.btn-close {
+  &:focus {
+    box-shadow: none;
   }
 }
 
 // Additional styles for buttons
 .pc-btn {
-  &-reset, &-back, &-download, &-next {
-    height: 38px;
-  }
+  width: 96px;
+  height: 38px;
 
   &-reset {
     width: 103.71px;
-    font-family: $font-family-lato !important;
-  }
-
-  &-back,  &-next {
-    width: 96px;
   }
 
   &-download {
     width: 106px;
   }
 }
-

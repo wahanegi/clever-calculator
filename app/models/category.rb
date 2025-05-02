@@ -3,6 +3,8 @@ class Category < ApplicationRecord
 
   ASCII_CHARACTERS = /\A[[:ascii:]]*\z/
 
+  has_many :items, dependent: :nullify
+
   normalizes :name, with: ->(name) { name.gsub(/\s+/, ' ').strip }
 
   after_update :disable_related_items_if_disabled

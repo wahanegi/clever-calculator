@@ -31,16 +31,37 @@ h2,
   @include rfs($font-size-sm); // 14px
 }
 
+.pc-fw-900 {
+  font-weight: 900;
+}
+
+.pc-lh-xl {
+  line-height: 1.7;
+}
+
+.text-lato {
+  font-family: $font-family-lato;
+  font-weight: $font-weight-medium;
+  line-height: 1.5;
+  text-align: center;
+
+}
+
 // Utility Classes
 $custom-colors: (
   'gray': $gray,
   'gray-light': $gray-light,
+  'gray-700': $gray-700,
+  'gray-750': $gray-750,
   'blue-light': $blue-light,
   'blue-sky': $blue-sky,
   'red-light': $red-light,
   'green-light': $green-light,
   'teal': $teal,
   'teal-dark': $teal-dark,
+  'teal-light': $teal-light,
+  'teal-blue': $teal-blue,
+  'dark-700': $dark-700,
 );
 
 @each $name, $color in $custom-colors {
