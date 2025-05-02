@@ -157,13 +157,30 @@ ActiveAdmin.register Quote do
   end
 
   collection_action :render_quote_item_parameters, method: :post do
-    item = Item.find(params[:item_id])
+    item = Item.find_by(id: params[:item_id])
+    return head :not_found unless item
+
+    allowed_open_keys = item.open_parameters_label || []
+    allowed_select_keys = item.pricing_options&.keys || []
+
+    open_param_values = if params[:open_param_values].is_a?(ActionController::Parameters)
+                          params[:open_param_values].permit(*allowed_open_keys).to_h
+                        else
+                          params[:open_param_values].to_h.slice(*allowed_open_keys)
+                        end
+
+    select_param_values = if params[:select_param_values].is_a?(ActionController::Parameters)
+                            params[:select_param_values].permit(*allowed_select_keys).to_h
+                          else
+                            params[:select_param_values].to_h.slice(*allowed_select_keys)
+                          end
+
     render partial: "admin/quotes/quote_item_parameters", locals: {
       fixed_parameters: item.fixed_parameters || {},
-      open_parameters_label: item.open_parameters_label || [],
+      open_parameters_label: allowed_open_keys,
       select_parameters: item.pricing_options || {},
-      open_param_values: params[:open_param_values]&.to_unsafe_h || {},
-      select_param_values: params[:select_param_values]&.to_unsafe_h || {}
+      open_param_values: open_param_values,
+      select_param_values: select_param_values
     }
   end
 
