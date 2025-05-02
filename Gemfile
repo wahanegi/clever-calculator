@@ -19,7 +19,7 @@ gem "ruby-vips", "~> 2.2"                                           # Ruby exten
 gem 'sass-rails', '~> 6.0.0'                                        # Ruby on Rails stylesheet engine for Sass
 gem "solid_cable", '~> 3.0.7'                                       # Use the database-backed adapters for Action Cable
 gem "solid_cache", '~> 1.0.7'                                       # Use the database-backed adapters for Rails.cache
-gem "solid_queue", '~> 1.1.4'                                       # Use the database-backed adapters for Active Job
+gem "solid_queue", '~> 1.1.5'                                       # Use the database-backed adapters for Active Job
 gem "sprockets", '~> 3.7.5'                                         # Rack-based asset packaging system
 gem "sprockets-rails", '~> 3.5.2'                                   # The asset pipeline for Rails
 gem "stimulus-rails", '~> 1.3.4'                                    # Hotwire's modest JavaScript framework [https://stimulus.hotwired.dev]
