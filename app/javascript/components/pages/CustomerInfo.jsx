@@ -9,9 +9,11 @@ export const CustomerInfo = () => {
   const currentStepId = getCurrentStepId(location.pathname)
 
   return (
-    <Container className={'wrapper'}>
-      <QuoteCreation currentStepId={currentStepId} isBtnShow={false} />
-      <section className={'mt-7 d-flex flex-column align-items-center'}>
+    <Container className={'wrapper pt-16'}>
+      <section className={'mx-8'}>
+        <QuoteCreation currentStepId={currentStepId} isBtnShow={false} />
+      </section>
+      <section className={'mt-10 d-flex flex-column align-items-center'}>
         <CustomerForm />
       </section>
     </Container>

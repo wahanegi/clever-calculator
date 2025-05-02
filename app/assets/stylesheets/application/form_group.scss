@@ -1,0 +1,173 @@
+.pc-item-input {
+  flex: 1 1 auto;
+  margin-top: 7px; // reserve place for 1/2 height of label with position-absolute
+  max-width: 200px;
+
+  .form-control {
+    padding: 7px 12px;
+    width: 100%;
+    border: none;
+    border-radius: 4px;
+    color: $dark;
+
+    &:disabled {
+      background-color: $white;
+    }
+  }
+
+  .pc-label {
+    left: 12px;
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1;
+  }
+
+  .pc-suffix {
+    position: absolute;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.7;
+
+    &-left {
+      left: 12px;
+    }
+
+    &-right {
+      right: 12px;
+    }
+  }
+
+}
+
+.pc-item-input.price {
+  .form-control {
+    padding-left: 24px;
+    border-top: 1.3px solid $primary;
+    color: $secondary;
+  }
+
+  .pc-suffix-left {
+    color: $secondary;
+  }
+
+  ::placeholder {
+    color: $secondary;
+  }
+}
+
+.pc-item-input.original-cost {
+  .form-control {
+    padding-left: 24px;
+    border-top: 1.3px solid $primary;
+    color: $dark;
+  }
+
+  .pc-suffix-left {
+    color: $dark;
+  }
+
+  ::placeholder {
+    color: $dark;
+  }
+}
+
+.pc-item-input.open-cost {
+  .form-control {
+    padding-left: 24px;
+    border: 1.3px solid $secondary;
+    color: $dark
+  }
+
+  .pc-suffix-right {
+    font-weight: 600;
+    color: $dark;
+  }
+
+  ::placeholder {
+    color: $dark
+  }
+}
+
+.pc-item-input.discount,
+.pc-item-input.notes {
+  .form-control {
+    padding-right: 24px;
+    border: 1.3px solid $primary;
+    color: $dark
+  }
+
+  .pc-suffix-right {
+    font-weight: 600;
+    color: $secondary;
+  }
+
+  ::placeholder {
+    color: $dark
+  }
+}
+
+.pc-item-input.notes {
+  max-width: 100%;
+
+  // Form.Check component styles for notes
+  .form-check {
+    display: flex;
+    align-items: center;
+
+    .form-check-label {
+      font-size: 14px;
+      line-height: 1.6;
+      color: $gray-light;
+    }
+
+    .form-check-input {
+      margin-top: 0;
+      margin-right: 5px;
+      width: 20px;
+      height: 20px;
+      border-color: $primary;
+      cursor: pointer;
+
+      &:focus {
+        box-shadow: none;
+      }
+
+      &:checked {
+        border-color: $primary;
+        background-color: $primary;
+      }
+    }
+
+    .form-check-input:checked + .form-check-label {
+      color: $dark;
+    }
+  }
+}
+
+.pc-item-input.discounted-price {
+  .form-control {
+    padding-left: 24px;
+    border-top: 1.3px solid $primary;
+    font-weight: 600;
+  }
+
+  .pc-suffix-left {
+    font-weight: 600;
+    color: $dark;
+  }
+
+  ::placeholder {
+    color: $dark;
+  }
+}
+
+// Hide spin for input with type = 'number'
+.nospin::-webkit-outer-spin-button,
+.nospin::-webkit-inner-spin-button {
+  margin: 0;
+  -webkit-appearance: none;
+}
+
+.nospin {
+  -moz-appearance: textfield;
+}

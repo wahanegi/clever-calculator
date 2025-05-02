@@ -1,0 +1,60 @@
+// Accordion styles for bsPrefix={'pc-category-accordion'}
+.pc-category-accordion {
+  .accordion-button {
+    padding: 22.4px;
+    border: 1.3px solid $primary;
+    border-radius: 8px !important;
+    background-color: $light !important;
+    transition: border-radius 0.8s ease-out;
+
+    &:not(.collapsed) {
+      border-bottom: 1.3px solid $teal-blue;
+      border-radius: 8px 8px 0 0 !important;
+    }
+  }
+
+  .accordion-button:not(.collapsed):focus,
+  .accordion-button.collapsed:focus {
+    outline-offset: none;
+    box-shadow: none;
+  }
+
+  .accordion-button::after {
+    display: none !important;
+  }
+
+  .pc-accordion-body {
+    padding: 20px 32px;
+  }
+
+  .accordion-bottom-filling {
+    height: 24px;
+  }
+
+  .pc-extra-actions {
+    right: 60px;
+  }
+}
+
+// Accordion styles for bsPrefix={'pc-item-accordion'}
+.pc-item-accordion {
+  .accordion-button {
+    padding: 0;
+    border: transparent;
+    background-color: $white !important;
+
+    &:not(.collapsed) {
+      border: transparent;
+    }
+  }
+
+  .pc-extra-actions {
+    right: 44px;
+    @media (max-width: 575px) {
+      bottom: 0;
+      left: 0;
+      width: max-content;
+      transform: translateY(0) !important;
+    }
+  }
+}

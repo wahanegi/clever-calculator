@@ -1,5 +1,5 @@
 import { ENDPOINTS } from '../shared'
-import { get, del, post, put } from './api/httpRequests'
+import { del, get, post, put } from './api/httpRequests'
 import { extractNames } from '../utils'
 
 export const fetchQuotes = {
@@ -41,4 +41,8 @@ export const fetchCustomers = {
 
     return post(ENDPOINTS.CUSTOMERS_UPSERT, formData)
   },
+}
+
+export const fetchCategories = {
+  index: async () => await get(ENDPOINTS.CATEGORIES),
 }
