@@ -254,7 +254,10 @@ ActiveAdmin.register Quote do
     end
 
     def create_quote_item(attrs)
-      @quote.quote_items.build(attrs.except(:_destroy, :id, :quote_id)).save
+      quote_item = @quote.quote_items.build(attrs.except(:_destroy, :id, :quote_id))
+      return if quote_item.save
+
+      @quote.errors.add(:base, "Quote item could not be saved: #{quote_item.errors.full_messages.to_sentence}")
     end
   end
 end
