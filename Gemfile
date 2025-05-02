@@ -6,9 +6,9 @@ gem "activeadmin", "~> 3.3.0"                                       # A framewor
 # gem "bcrypt", "~> 3.1"                                            # Use Active Model has_secure_password [https://guides.rubyonrails.org/active_model_basics.html#securepassword]
 gem "bootsnap", '~> 1.18.4', require: false                         # Reduces boot times through caching; required in config/boot.rb
 gem "cssbundling-rails", '~> 1.4.3'                                 # Bundle and process CSS [https://github.com/rails/cssbundling-rails]
-# gem "image_processing", "~> 1.2"                                  # Use Active Storage variants [https://guides.rubyonrails.org/active_storage_overview.html#transforming-images]
 gem 'dentaku', "~> 3.5.4"                                           # Evaluator for a mathematical and logical formulas
 gem "devise", "~> 4.9.4"                                            # Authentication
+gem "image_processing", "~> 1.2"                                    # Use Active Storage variants [https://guides.rubyonrails.org/active_storage_overview.html#transforming-images]
 gem "jbuilder", '~> 2.13.0'                                         # Build JSON APIs with ease [https://github.com/rails/jbuilder]
 gem "jsbundling-rails", '~> 1.3.1'                                  # Bundle and transpile JavaScript [https://github.com/rails/jsbundling-rails]
 gem "jsonapi-serializer", "~> 2.2.0"                                # Fast, simple and easy to use JSON:API serialization library (also known as fast_jsonapi).
@@ -16,14 +16,15 @@ gem "kamal", '~> 2.5.3', require: false                             # Deploy thi
 gem "pg", "~> 1.5.9"                                                # Use postgresql as the database for Active Record
 gem "puma", "~> 6.6.0"                                              # Use the Puma web server [https://github.com/puma/puma]
 gem "rails", "~> 8.0.2"                                             # Bundle edge Rails instead: gem "rails", github: "rails/rails", branch: "main"
+gem "ruby-vips", "~> 2.2"                                           # Ruby extension for the libvips image processing library.
 gem 'sass-rails', '~> 6.0.0'                                        # Ruby on Rails stylesheet engine for Sass
 gem "solid_cable", '~> 3.0.7'                                       # Use the database-backed adapters for Action Cable
 gem "solid_cache", '~> 1.0.7'                                       # Use the database-backed adapters for Rails.cache
-gem "solid_queue", '~> 1.1.4'                                       # Use the database-backed adapters for Active Job
-gem "sprockets", '= 3.7.5'                                          # Rack-based asset packaging system
+gem "solid_queue", '~> 1.1.5'                                       # Use the database-backed adapters for Active Job
+gem "sprockets", '~> 3.7.5', '< 4.0'                                # Rack-based asset packaging system
 gem "sprockets-rails", '~> 3.5.2'                                   # The asset pipeline for Rails
 gem "stimulus-rails", '~> 1.3.4'                                    # Hotwire's modest JavaScript framework [https://stimulus.hotwired.dev]
-gem "thruster", '~> 0.1.12', require: false                         # Add HTTP asset caching/compression and X-Sendfile acceleration to Puma [https://github.com/basecamp/thruster/]
+gem "thruster", '~> 0.1.13', require: false                         # Add HTTP asset caching/compression and X-Sendfile acceleration to Puma [https://github.com/basecamp/thruster/]
 gem "turbo-rails", '~> 2.0.13'                                      # Hotwire's SPA-like page accelerator [https://turbo.hotwired.dev]
 gem "tzinfo-data", '~> 1.2025.2', platforms: %i[ windows jruby ]    # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 
@@ -47,5 +48,5 @@ group :development do
 end
 
 group :production do
-  gem "aws-sdk-s3", '~> 1.183.0'                   # AWS SDK for Ruby
+  gem "aws-sdk-s3", '~> 1.184.0'                   # AWS SDK for Ruby
 end

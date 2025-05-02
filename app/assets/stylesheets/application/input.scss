@@ -1,0 +1,99 @@
+.border-label {
+  position: absolute;
+  top: -0.4rem;
+  left: 0.8rem;
+  background: linear-gradient(to bottom, $light 50%, $white 50%);
+}
+
+.form-control::placeholder {
+  color: $gray;
+}
+
+textarea {
+  resize: none;
+}
+
+.form-control:focus,
+.form-control:active,
+.form-select:focus,
+.form-select:active {
+  box-shadow: none !important;
+  background-color: $white !important;
+}
+
+.form-control:-webkit-autofill,
+.form-select:-webkit-autofill {
+  background-color: white !important;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+.form-control:-webkit-autofill:focus,
+.form-select:-webkit-autofill:focus {
+  background-color: white !important;
+}
+
+.rbt-input-main {
+  border: none !important;
+  border-radius: 4px;
+}
+
+.rbt-menu .dropdown-item:hover,
+.rbt-menu .dropdown-item:focus {
+  background-color: $light;
+  color: $primary;
+}
+
+.rbt-menu .dropdown-item {
+  padding: 6px 12px;
+  color: $gray-700;
+}
+
+.rbt-menu.dropdown-menu.show {
+  margin-top: 5px;
+  outline: 1px solid $primary;
+  border-inline: 5px solid $white !important;
+  border-block: none !important;
+  width: 100%!important;
+  max-height: 185px !important;
+  overflow: auto !important;
+}
+
+.rbt-highlight-text {
+  background-color: $light;
+  color: $primary;
+  padding: 0;
+}
+
+.rbt-input-hint {
+  color: transparent;
+}
+
+/**
+ *** TYPEAHEAD CUSTOM STYLES for "Customer info" Page ***
+ **/
+.pc-typeahead-customer-info {
+  .pc-icon-reserve-place {
+    padding-right: 60px;
+  }
+
+  .pc-typeahead-controls {
+    width: 60px;
+  }
+
+  .pc-typeahead-button {
+    width: 24px;
+  }
+}
+
+/**
+ *** LOGO UPLOADER ***
+ **/
+.pc-logo-uploader {
+  width: 136px;
+  height: 117px;
+
+  &-display {
+    width: 130px;
+    height: 110px;
+  }
+}
