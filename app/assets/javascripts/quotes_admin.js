@@ -178,13 +178,7 @@ document.addEventListener('DOMContentLoaded', () => {
     tempDiv.innerHTML = newItemHtml
     const newItemGroup = tempDiv.firstElementChild
 
-    let itemsContainer = container.querySelector('ol')
-    if (!itemsContainer) {
-      itemsContainer = document.createElement('ol')
-      container.insertBefore(itemsContainer, addButton)
-    }
-
-    itemsContainer.appendChild(newItemGroup)
+    container.insertBefore(newItemGroup, addButton)
 
     const noteContainer = newItemGroup.querySelector('.has_many_container.note')
     if (noteContainer) cleanNoteFields(noteContainer)
@@ -202,7 +196,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const itemGroups = document.querySelectorAll(selectors.itemGroups)
 
     if (itemGroups.length === 0 && retryCount < maxRetries) {
-      setTimeout(() => initializeQuoteItems(retryCount + 1), 500)
+      setTimeout(() => initializeQuoteItems(retryCount + 1), 0)
       return
     }
 
@@ -283,7 +277,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (container.querySelectorAll(selectors.itemGroups).length > 0 && heading) {
       heading.style.display = 'block'
     }
-    setTimeout(() => initializeQuoteItems(), 500)
+    setTimeout(() => initializeQuoteItems(), 0)
   }
 
   /**
