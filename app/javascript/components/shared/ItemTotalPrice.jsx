@@ -1,25 +1,28 @@
 import React, { useState } from 'react'
 import { Col, Row } from 'react-bootstrap'
 import { PcItemFormGroup, PcItemInputControl, PcItemSelectControl } from '../ui'
-import { formatPrice, getItemTypeConditions, getOptionsFromPricingOptions } from '../utils'
+import { discountedPrice, getItemTypeConditions, getOptionsFromPricingOptions } from '../utils'
 import { useItemPriceCalculation } from '../hooks'
 
+// TODO: will be replaced with value fetch from backend
+const DUMMY_PRICE = 7777
+
 export const ItemTotalPrice = ({ itemData, className }) => {
-  const fixedValue = Number(itemData.fixed_parameters.Price)
+  const fixedValue = parseFloat(Object.values(itemData.fixed_parameters)[0])
   const options = getOptionsFromPricingOptions(itemData.pricing_options)
 
   const [openParamValue, setOpenParamValue] = useState('')
   const [selectableValue, setSelectableValue] = useState('')
   const [discount, setDiscount] = useState('')
-  const selectableNumericValue = Number(selectableValue?.value || selectableValue || 0)
 
-  const { basePrice, discounted } = useItemPriceCalculation({
-    fixedValue,
-    openParamValue,
-    selectableValue: selectableNumericValue,
-    discount,
-    itemData,
-  })
+  // TODO: delete comment, most probably we do not need that hook, price should be calculated from the formula on the backend
+  // const { basePrice, discounted } = useItemPriceCalculation({
+  //   fixedValue,
+  //   openParamValue,
+  //   selectableValue: selectableNumericValue,
+  //   discount,
+  //   itemData,
+  // })
 
   const {
     isItemFixed,
@@ -32,7 +35,6 @@ export const ItemTotalPrice = ({ itemData, className }) => {
     isShowCombinedParams,
   } = getItemTypeConditions(itemData)
 
-  // TODO: not all labels exist in data => should add it
   const selectableParamLabel = Object.keys(itemData.pricing_options || {})[0] || ''
 
   return (
@@ -49,7 +51,7 @@ export const ItemTotalPrice = ({ itemData, className }) => {
             )}
             <Col sm={'auto'}>
               <PcItemFormGroup paramType="discounted-price" label="Discounted price">
-                <PcItemInputControl paramType="discounted-price" value={formatPrice(discounted)} />
+                <PcItemInputControl paramType="discounted-price" value={discountedPrice(DUMMY_PRICE, discount)} />
               </PcItemFormGroup>
             </Col>
           </Row>
@@ -57,9 +59,9 @@ export const ItemTotalPrice = ({ itemData, className }) => {
           <Row className={'g-3 justify-content-end'}>
             {isItemOpen && (
               <Col sm={'auto'}>
-                <PcItemFormGroup paramType="additional-fees" label="Additional fees">
+                <PcItemFormGroup paramType="open-price-input" label={itemData.open_parameters_label[0]}>
                   <PcItemInputControl
-                    paramType="additional-fees"
+                    paramType="open-price-input"
                     value={openParamValue}
                     onChange={(e) => setOpenParamValue(e.target.value)}
                   />
@@ -109,7 +111,7 @@ export const ItemTotalPrice = ({ itemData, className }) => {
                 <Col sm={'auto'}>
                   <PcItemFormGroup paramType="open-param-secondary" label="Setup">
                     <PcItemInputControl
-                      paramType="additional-fees"
+                      paramType="open-price-input"
                       value={openParamValue}
                       onChange={(e) => setOpenParamValue(e.target.value)}
                     />
@@ -134,7 +136,7 @@ export const ItemTotalPrice = ({ itemData, className }) => {
                   <PcItemFormGroup paramType="open-param-secondary" label="Users">
                     {/*Field user */}
                     <PcItemInputControl
-                      paramType="additional-fees"
+                      paramType="open-price-input"
                       value={openParamValue}
                       onChange={(e) => setOpenParamValue(e.target.value)}
                     />
@@ -159,7 +161,7 @@ export const ItemTotalPrice = ({ itemData, className }) => {
                   <PcItemFormGroup paramType="open-param-secondary" label="Setup">
                     {/*Field Setup */}
                     <PcItemInputControl
-                      paramType="additional-fees"
+                      paramType="open-price-input"
                       value={selectableValue}
                       onChange={(e) => setOpenParamValue(e.target.value)}
                       disabled={true}

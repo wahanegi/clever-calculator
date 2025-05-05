@@ -10,12 +10,13 @@ export const ItemsPricingTopBar = ({
   expandedAccordions,
   selectedCategories,
   setSelectedCategories,
-  showDeleteModal
+  showDeleteModal,
+  categories,
 }) => {
-  const {
-    shouldDisableExpandBtn,
-    shouldDisableCollapseBtn,
-  } = getExpandCollapseStates(selectedCategories, expandedAccordions)
+  const { shouldDisableExpandBtn, shouldDisableCollapseBtn } = getExpandCollapseStates(
+    selectedCategories,
+    expandedAccordions,
+  )
 
   return (
     <div className="pc-grid-bar d-flex flex-column-reverse d-sm-grid align-items-center gap-8 mb-8">
@@ -24,6 +25,7 @@ export const ItemsPricingTopBar = ({
         selected={selectedCategories}
         setSelected={setSelectedCategories}
         showDeleteModal={showDeleteModal}
+        categories={categories}
       />
 
       <div className={'d-flex justify-content-between w-100'}>

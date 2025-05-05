@@ -1,138 +1,10 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Button, Container, Form } from 'react-bootstrap'
 import { useAppHooks } from '../hooks'
 import { DeleteItemModal, ItemsPricingTopBar, ItemTotalPrice, QuoteCreation, ROUTES } from '../shared'
 import { PcCategoryAccordion, PcItemAccordion, PcItemFormGroup, PcItemTextareaControl } from '../ui'
-import { getCurrentStepId } from '../utils'
-
-const initItemsData = [
-  {
-    id: '1',
-    type: 'item',
-    attributes: {
-      name: 'Fixed param',
-      description: '',
-      category_id: 16,
-      fixed_parameters: { Price: '2500' },
-      pricing_options: {},
-      is_disabled: false,
-      is_fixed: true,
-      is_open: false,
-      is_selectable_options: false,
-      open_parameters_label: [],
-      formula_parameters: ['Price'],
-      calculation_formula: 'Price',
-    },
-  },
-  {
-    id: '2',
-    type: 'item',
-    attributes: {
-      name: 'Open param',
-      description: '',
-      category_id: 16,
-      fixed_parameters: {},
-      pricing_options: {},
-      is_disabled: false,
-      is_fixed: false,
-      is_open: true,
-      is_selectable_options: false,
-      open_parameters_label: ['Label-OpPm'],
-      formula_parameters: ['Price'],
-      calculation_formula: 'Price',
-    },
-  },
-  {
-    id: '3',
-    type: 'item',
-    attributes: {
-      name: 'Selectable param',
-      description: '',
-      category_id: 16,
-      fixed_parameters: {},
-      pricing_options: {
-        Tier: {
-          '1-5': '100',
-          '6-15': '200',
-          '16+': '350',
-        },
-      },
-      is_disabled: false,
-      is_fixed: false,
-      is_open: false,
-      is_selectable_options: true,
-      open_parameters_label: [],
-      formula_parameters: ['Price'],
-      calculation_formula: 'Price',
-    },
-  },
-  {
-    id: '4',
-    type: 'item',
-    attributes: {
-      name: 'Fixed + Open params',
-      description: '',
-      category_id: 16,
-      fixed_parameters: { Price: '2500' },
-      pricing_options: {},
-      is_disabled: false,
-      is_fixed: true,
-      is_open: true,
-      is_selectable_options: false,
-      open_parameters_label: ['Label-OpPm'],
-      formula_parameters: ['Price'],
-      calculation_formula: 'Price',
-    },
-  },
-  {
-    id: '5',
-    type: 'item',
-    attributes: {
-      name: 'Open + Selectable params',
-      description: '',
-      category_id: 16,
-      fixed_parameters: {},
-      pricing_options: {
-        Tier: {
-          '1-5': '100',
-          '6-15': '200',
-          '16+': '350',
-        },
-      },
-      is_disabled: false,
-      is_fixed: false,
-      is_open: true,
-      is_selectable_options: true,
-      open_parameters_label: ['Label-OpPm'],
-      formula_parameters: ['Price'],
-      calculation_formula: 'Price',
-    },
-  },
-  {
-    id: '6',
-    type: 'item',
-    attributes: {
-      name: 'Fixed + Selectable params',
-      description: '',
-      category_id: 16,
-      fixed_parameters: { Price: '2500' },
-      pricing_options: {
-        Tier: {
-          '1-5': '100',
-          '6-15': '200',
-          '16+': '350',
-        },
-      },
-      is_disabled: false,
-      is_fixed: true,
-      is_open: false,
-      is_selectable_options: true,
-      open_parameters_label: [],
-      formula_parameters: ['Price'],
-      calculation_formula: 'Price',
-    },
-  },
-]
+import { getCurrentStepId, normalizeApiCategories, normalizeApiItems } from '../utils'
+import { fetchCategories } from '../services'
 
 export const ItemsPricing = () => {
   const { navigate, queryParams, location } = useAppHooks()
@@ -141,12 +13,23 @@ export const ItemsPricing = () => {
   const [expandedAccordions, setExpandedAccordions] = useState([])
   const [isShowDeleteModal, setIsShowDeleteModal] = useState(false)
   const [categoryIdToDelete, setCategoryIdToDelete] = useState(null)
+  const [categories, setCategories] = useState([])
+  const [items, setItems] = useState([])
 
   const [notesStates, setNotesStates] = useState({})
 
   const quoteId = queryParams.get('quote_id')
   const currentStepId = getCurrentStepId(location.pathname)
   const totalPrice = 0
+
+  useEffect(() => {
+    fetchCategories.index().then((res) => {
+      const categories = normalizeApiCategories(res.data)
+      const itemsData = normalizeApiItems(res.included)
+      setCategories(categories)
+      setItems(itemsData)
+    })
+  }, [])
 
   const showDeleteModal = (categoryId) => {
     setCategoryIdToDelete(categoryId)
@@ -217,6 +100,7 @@ export const ItemsPricing = () => {
           collapseAll={collapseAll}
           expandedAccordions={expandedAccordions}
           showDeleteModal={showDeleteModal}
+          categories={categories}
         />
 
         {selectedCategories.length === 0 && (
@@ -227,8 +111,7 @@ export const ItemsPricing = () => {
       <section className={'d-flex flex-column gap-4 mb-12'}>
         {selectedCategories.length > 0 &&
           selectedCategories.map((category) => {
-            const categoryItems = initItemsData.filter((item) => item.attributes.category_id === category.id)
-
+            const categoryItems = items?.filter((item) => item.category_id === category.id)
             return (
               <PcCategoryAccordion
                 key={`category-${category.id}`}
@@ -245,12 +128,12 @@ export const ItemsPricing = () => {
                     return (
                       <PcItemAccordion
                         key={`item-${item.id}`}
-                        itemName={item.attributes.name}
+                        itemName={item.name}
                         isNotesShow={notesState.isNotesOpen}
                         onToggleNotes={() => toggleItemNotes(item.id)}
                         notesIcon={notesIcon}
                       >
-                        <ItemTotalPrice itemData={item.attributes} />
+                        <ItemTotalPrice itemData={item} />
 
                         {notesState.isNotesOpen && (
                           <PcItemFormGroup label={'Notes'} paramType={'notes'}>
