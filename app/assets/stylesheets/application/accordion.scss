@@ -8,7 +8,6 @@
     transition: border-radius 0.8s ease-out;
 
     &:not(.collapsed) {
-      border-bottom: 1.3px solid $teal-blue;
       border-radius: 8px 8px 0 0 !important;
     }
   }
