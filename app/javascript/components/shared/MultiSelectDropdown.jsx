@@ -1,31 +1,32 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { Button, Form } from 'react-bootstrap'
+import { Form } from 'react-bootstrap'
 import { Typeahead } from 'react-bootstrap-typeahead'
 import { fetchCategories } from '../services'
-import { PcCheckboxOption, PcIcon } from '../ui'
+import { PcCheckboxOption, PcIcon, PcTransparentButton } from '../ui'
 import { getRemovedCategory, normalizeApiCategories } from '../utils'
 
 export const MultiSelectDropdown = ({
-  id,
-  label = 'Select items',
-  hasIcon = true,
-  selected,
-  setSelected,
-  showDeleteModal,
-}) => {
-  const typeaheadRef = useRef()
+                                      id,
+                                      label = 'Select items',
+                                      hasIcon = true,
+                                      selected,
+                                      setSelected,
+                                      showDeleteModal,
+                                    }) => {
   const [categories, setCategories] = useState([])
   const [isMenuOpen, setIsMenuOpen] = useState(false)
 
-  const toggleMenu = (e) => {
-    e.stopPropagation()
-    setIsMenuOpen(prev => !prev)
-  }
-  const handleFocus = () => setIsMenuOpen(true)
-  const handleBlur = () => setIsMenuOpen(false)
+  const typeaheadRef = useRef(null)
 
-  const handleMenuOpen = (isOpen) => setIsMenuOpen(isOpen)
+  useEffect(() => {
+    fetchCategories.index().then(res => {
+      const categories = normalizeApiCategories(res.data)
+      setCategories(categories)
+    })
+  }, [])
+
   const isSelected = (option) => selected.some(item => item.id === option.id)
+
   const toggleSelection = (option) => {
     // Remove the option from selected array
     if (isSelected(option)) {
@@ -34,6 +35,13 @@ export const MultiSelectDropdown = ({
       // Add the option to selected array
       setSelected([...selected, option])
     }
+  }
+
+  const handleBlur = () => setIsMenuOpen(false)
+
+  const handleMenuOpen = (e) => {
+    if (!isMenuOpen) typeaheadRef.current.focus()
+    setIsMenuOpen(prev => !prev)
   }
 
   const handleTypeaheadOnChange = (newSelected) => {
@@ -47,58 +55,48 @@ export const MultiSelectDropdown = ({
     setSelected(newSelected)
   }
 
-  useEffect(() => {
-    fetchCategories.index().then(res => {
-      const categories = normalizeApiCategories(res.data)
-      setCategories(categories)
-    })
-  }, [])
+  const handleClick = () => {
+    setIsMenuOpen(!isMenuOpen)
+  }
 
-  return (
-    <div className={'multi-select-dropdown'}>
-      <Form.Group controlId={id} className="position-relative">
-        <Typeahead
-          id={'items-pricing-typeahead'}
-          labelKey={'name'}
-          placeholder={'Make a selection'}
-          ref={typeaheadRef}
-          selected={selected}
-          options={categories} // use with filterBy
-          filterBy={() => true} // set array of options with no changes
-          onChange={handleTypeaheadOnChange}
-          onFocus={handleFocus}
-          onBlur={handleBlur}
-          onMenuToggle={handleMenuOpen}
-          open={isMenuOpen}
-          multiple
-          className={'pc-typeahead-items-pricing'}
-          renderMenuItemChildren={(option) => (
-            <PcCheckboxOption
-              option={option}
-              isSelected={isSelected}
-              toggleSelection={toggleSelection}
-              className={'pc-checkbox-items-pricing'}
-            />
-          )}
-        />
+  const TypeaheadControls = () =>
+    (<div className={'multi-select-dropdown-controls position-absolute end-0 top-0 h-100'}>
+      <PcTransparentButton onClick={handleMenuOpen} className={'h-100 w-100'}>
+        <PcIcon name={`${isMenuOpen ? 'arrowUpLight' : 'arrowDownLight'}`} />
+      </PcTransparentButton>
+    </div>)
 
-        <Form.Label className="pc-label position-absolute fw-bold fs-10 lh-lg m-0 py-0 px-1" column={true}>
-          {label}
-        </Form.Label>
-
-        {hasIcon && (
-          <div
-            className={"position-absolute end-0 top-50 translate-middle-y z-2 me-4"}>
-            <Button
-              variant={'outline'}
-              className={'p-0 border-0'}
-              onClick={toggleMenu}
-            >
-              <PcIcon name={`${isMenuOpen ? 'arrowUpLight' : 'arrowDownLight'}`} />
-            </Button>
-          </div>
+  return (<Form.Group controlId={id} className="multi-select-dropdown w-100 position-relative">
+      <Typeahead
+        id={'items-pricing-typeahead'}
+        labelKey={'name'}
+        placeholder={'Make a selection'}
+        ref={typeaheadRef}
+        selected={selected}
+        options={categories} // use with filterBy
+        filterBy={() => true} // set array of options with no changes
+        onChange={handleTypeaheadOnChange}
+        onBlur={handleBlur}
+        open={isMenuOpen}
+        multiple
+        className={'pc-typeahead-items-pricing'}
+        renderMenuItemChildren={(option) => (
+          <PcCheckboxOption
+            option={option}
+            isSelected={isSelected}
+            toggleSelection={toggleSelection}
+            className={'pc-checkbox-items-pricing'}
+          />
         )}
-      </Form.Group>
-    </div>
-  )
+        inputProps={
+          { onClick: handleClick }
+        }
+      />
+
+      <Form.Label className="pc-label position-absolute fw-bold fs-10 lh-lg m-0 py-0 px-1" column={true}>
+        {label}
+      </Form.Label>
+
+      {hasIcon && <TypeaheadControls />}
+    </Form.Group>)
 }

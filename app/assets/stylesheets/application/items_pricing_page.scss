@@ -1,5 +1,4 @@
 .multi-select-dropdown {
-  width: 100%;
   max-width: 512px;
 
   .pc-label {
@@ -8,8 +7,8 @@
     background-color: $white;
   }
 
-  .btn-close {
-    padding: 0;
+  &-controls {
+    width: 42px;
   }
 }
 

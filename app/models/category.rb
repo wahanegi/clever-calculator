@@ -1,7 +1,11 @@
 class Category < ApplicationRecord
   ASCII_CHARACTERS = /\A[[:ascii:]]*\z/
 
+  has_many :items, dependent: :nullify
+
   normalizes :name, with: ->(name) { name.gsub(/\s+/, ' ').strip }
+
+  after_update :disable_related_items_if_disabled
 
   validates :name, presence: true
   validates :name, uniqueness: { scope: :is_disabled,
@@ -19,5 +23,13 @@ class Category < ApplicationRecord
 
   def self.ransackable_associations(_auth_object = nil)
     []
+  end
+
+  private
+
+  def disable_related_items_if_disabled
+    return unless saved_change_to_is_disabled? && is_disabled?
+
+    items.find_each { |item| item.update(is_disabled: true) }
   end
 end
