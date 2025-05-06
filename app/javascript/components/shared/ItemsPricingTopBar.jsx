@@ -8,22 +8,24 @@ export const ItemsPricingTopBar = ({
   expandAll,
   collapseAll,
   expandedAccordions,
-  selectedCategories,
-  setSelectedCategories,
-  showDeleteModal
+  selectedOptions,
+  setSelectedOptions,
+  showDeleteModal,
+  selectableOptions,
 }) => {
-  const {
-    shouldDisableExpandBtn,
-    shouldDisableCollapseBtn,
-  } = getExpandCollapseStates(selectedCategories, expandedAccordions)
+  const { shouldDisableExpandBtn, shouldDisableCollapseBtn } = getExpandCollapseStates(
+    selectedOptions,
+    expandedAccordions,
+  )
 
   return (
     <div className="pc-grid-bar d-flex flex-column-reverse d-sm-grid align-items-center gap-8 mb-8">
-      {/* Dropdown for selecting categories */}
+      {/* Dropdown for selecting categories and items without category */}
       <MultiSelectDropdown
-        selected={selectedCategories}
-        setSelected={setSelectedCategories}
+        selected={selectedOptions}
+        setSelected={setSelectedOptions}
         showDeleteModal={showDeleteModal}
+        selectableOptions={selectableOptions}
       />
 
       <div className={'d-flex justify-content-between w-100'}>

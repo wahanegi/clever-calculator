@@ -3,15 +3,14 @@ import { Form } from 'react-bootstrap'
 
 export const PcItemInputControl = ({
   type = 'number',
-  itemType = 'price',
+  paramType = 'price',
   value,
   onChange,
   placeholder = '0',
   disabled = false,
   ...props
 }) => {
-  const isDisabled =
-    itemType === 'price' || itemType === 'discounted-price' || itemType === 'original-cost'
+  const isDisabled = paramType === 'price' || paramType === 'discounted-price' || paramType === 'original-cost'
 
   return (
     <Form.Control

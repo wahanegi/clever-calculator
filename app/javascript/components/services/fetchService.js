@@ -22,9 +22,9 @@ export const fetchCustomers = {
       const response = await fetch(customer.logo_url)
 
       if (response.ok) {
-        const contentType = response.headers.get("Content-Type")
+        const contentType = response.headers.get('Content-Type')
         const blob = await response.blob()
-        const fileName = `logo.${contentType.split("/")[1] || "png"}`
+        const fileName = `logo.${contentType.split('/')[1] || 'png'}`
 
         formData.append('customer[logo]', blob, fileName)
       } else {
@@ -45,4 +45,8 @@ export const fetchCustomers = {
 
 export const fetchCategories = {
   index: async () => await get(ENDPOINTS.CATEGORIES),
+}
+
+export const fetchItems = {
+  uncategorized: async () => await get(ENDPOINTS.UNCATEGORIZED_ITEMS),
 }

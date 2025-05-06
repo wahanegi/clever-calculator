@@ -1,7 +1,7 @@
 .pc-item-input {
   flex: 1 1 auto;
   margin-top: 7px; // reserve place for 1/2 height of label with position-absolute
-  max-width: 200px;
+  width: 200px;
 
   .form-control {
     padding: 7px 12px;
@@ -36,7 +36,6 @@
       right: 12px;
     }
   }
-
 }
 
 .pc-item-input.price {
@@ -71,11 +70,10 @@
   }
 }
 
-.pc-item-input.open-cost {
+.pc-item-input.open-param {
   .form-control {
-    padding-left: 24px;
-    border: 1.3px solid $secondary;
-    color: $dark
+    border: 1.3px solid $primary;
+    color: $dark;
   }
 
   .pc-suffix-right {
@@ -84,7 +82,16 @@
   }
 
   ::placeholder {
-    color: $dark
+    color: $dark;
+  }
+}
+
+.pc-item-input.selectable-param {
+  .form-select {
+    padding: 7px 12px;
+    //width: 200px;
+    border: 1px solid $primary;
+    border-radius: 4px;
   }
 }
 
@@ -93,7 +100,7 @@
   .form-control {
     padding-right: 24px;
     border: 1.3px solid $primary;
-    color: $dark
+    color: $dark;
   }
 
   .pc-suffix-right {
@@ -102,12 +109,12 @@
   }
 
   ::placeholder {
-    color: $dark
+    color: $dark;
   }
 }
 
 .pc-item-input.notes {
-  max-width: 100%;
+  width: 100%;
 
   // Form.Check component styles for notes
   .form-check {
@@ -153,6 +160,23 @@
 
   .pc-suffix-left {
     font-weight: 600;
+    color: $dark;
+  }
+
+  ::placeholder {
+    color: $dark;
+  }
+}
+
+.pc-item-input.open-price-input {
+  .form-control {
+    padding-left: 24px;
+    border: 1px solid $primary;
+    //font-weight: 600;
+  }
+
+  .pc-suffix-left {
+    //font-weight: 600;
     color: $dark;
   }
 
