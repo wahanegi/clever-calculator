@@ -6,7 +6,7 @@ import { discountedPrice, getItemTypeConditions, getOptionsFromPricingOptions } 
 // TODO: will be replaced with value fetch from backend
 const DUMMY_PRICE = 7777
 
-export const Item = ({ itemData, className }) => {
+export const Item = ({ itemData, className = '' }) => {
   const fixedValue = parseFloat(Object.values(itemData.fixed_parameters)[0])
   const fixedValueLabel = Object.keys(itemData.fixed_parameters)[0]
   const { options, valueLabel } = getOptionsFromPricingOptions(itemData.pricing_options)
@@ -22,36 +22,68 @@ export const Item = ({ itemData, className }) => {
   return (
     <div>
       {isShowSimpleParams && (
-        <div className={`d-flex flex-column gap-3 px-0 ${className}`}>
-          <Row className={'g-3 justify-content-end'}>
+        <div className={`d-flex flex-column gap-3 px-0 align-items-end ${className}`}>
+          <div className="d-flex flex-wrap align-items-end gap-3">
             {isItemFixed && (
-              <Col sm={'auto'}>
-                <PcItemFormGroup paramType="price" label="Price">
-                  <PcItemInputControl paramType="price" value={fixedValue} />
-                </PcItemFormGroup>
-              </Col>
-            )}
-            <Col sm={'auto'}>
-              <PcItemFormGroup paramType="discounted-price" label="Discounted price">
-                <PcItemInputControl paramType="discounted-price" value={discountedPrice(DUMMY_PRICE, discount)} />
+              <PcItemFormGroup paramType="price" label="Price">
+                <PcItemInputControl paramType="price" value={fixedValue} />
               </PcItemFormGroup>
-            </Col>
-          </Row>
+            )}
+            <PcItemFormGroup paramType="discounted-price" label="Discounted price">
+              <PcItemInputControl paramType="discounted-price" value={discountedPrice(DUMMY_PRICE, discount)} />
+            </PcItemFormGroup>
+          </div>
 
-          <Row className={'g-3 justify-content-end'}>
+          <div className="d-flex flex-wrap align-items-end gap-3">
             {isItemOpen && (
-              <Col sm={'auto'}>
-                <PcItemFormGroup paramType="open-price-input" label={itemData.open_parameters_label[0]}>
-                  <PcItemInputControl
-                    paramType="open-price-input"
-                    value={openParamValue}
-                    onChange={(e) => setOpenParamValue(e.target.value)}
-                  />
-                </PcItemFormGroup>
-              </Col>
+              <PcItemFormGroup paramType="open-price-input" label={itemData.open_parameters_label[0]}>
+                <PcItemInputControl
+                  paramType="open-price-input"
+                  value={openParamValue}
+                  onChange={(e) => setOpenParamValue(e.target.value)}
+                />
+              </PcItemFormGroup>
             )}
             {isItemSelectableOptions && (
-              <Col sm={'auto'}>
+              <PcItemFormGroup paramType="selectable-param" label={selectableParamLabel}>
+                <PcItemSelectControl
+                  value={selectableValue}
+                  options={options}
+                  onChange={(val) => setSelectableValue(val)}
+                />
+              </PcItemFormGroup>
+            )}
+            <PcItemFormGroup paramType="discount" label="Discount">
+              <PcItemInputControl paramType="discount" value={discount} onChange={(e) => setDiscount(e.target.value)} />
+            </PcItemFormGroup>
+          </div>
+        </div>
+      )}
+
+      {isShowCombinedParams && (
+        <div className="d-flex flex-column flex-md-row gap-5 pt-2 align-items-start justify-content-between">
+          {/* Left Side */}
+          <div className={`d-flex flex-column gap-3 px-0 pc-item-price-param ${className}`}>
+            <div className="d-flex flex-wrap gap-3">
+              {itemData.is_selectable_options && (
+                <PcItemFormGroup label={valueLabel}>
+                  <PcItemInputControl
+                    paramType="select-price-value"
+                    value={selectableValue}
+                    onChange={(e) => setOpenParamValue(e.target.value)}
+                    disabled
+                  />
+                </PcItemFormGroup>
+              )}
+              {itemData.is_fixed && (
+                <PcItemFormGroup label={fixedValueLabel}>
+                  <PcItemInputControl paramType="price" value={fixedValue} disabled />
+                </PcItemFormGroup>
+              )}
+            </div>
+
+            <div className="d-flex flex-wrap gap-3">
+              {itemData.is_selectable_options && (
                 <PcItemFormGroup paramType="selectable-param" label={selectableParamLabel}>
                   <PcItemSelectControl
                     value={selectableValue}
@@ -59,9 +91,32 @@ export const Item = ({ itemData, className }) => {
                     onChange={(val) => setSelectableValue(val)}
                   />
                 </PcItemFormGroup>
-              </Col>
-            )}
-            <Col sm={'auto'}>
+              )}
+              {itemData.is_open && (
+                <PcItemFormGroup paramType="open-param" label={itemData.open_parameters_label[0]}>
+                  <PcItemInputControl
+                    paramType="open-price-input"
+                    value={openParamValue}
+                    onChange={(e) => setOpenParamValue(e.target.value)}
+                  />
+                </PcItemFormGroup>
+              )}
+            </div>
+          </div>
+
+          {/* Right Side */}
+          <div className={`d-flex flex-column gap-3 px-0 align-items-end pc-item-price-param ${className}`}>
+            <div className="d-flex flex-wrap justify-content-end gap-3">
+              <PcItemFormGroup paramType="price" label="Price">
+                <PcItemInputControl paramType="price" value={DUMMY_PRICE} />
+              </PcItemFormGroup>
+
+              <PcItemFormGroup paramType="discounted-price" label="Discounted price">
+                <PcItemInputControl paramType="discounted-price" value={DUMMY_PRICE} />
+              </PcItemFormGroup>
+            </div>
+
+            <div className="d-flex flex-wrap justify-content-end gap-3">
               <PcItemFormGroup paramType="discount" label="Discount">
                 <PcItemInputControl
                   paramType="discount"
@@ -69,91 +124,7 @@ export const Item = ({ itemData, className }) => {
                   onChange={(e) => setDiscount(e.target.value)}
                 />
               </PcItemFormGroup>
-            </Col>
-          </Row>
-        </div>
-      )}
-
-      {isShowCombinedParams && (
-        <div className={`d-flex justify-content-between`}>
-          {/* Left Side */}
-          <div className={`d-flex flex-column gap-3 px-0 ${className}`}>
-            <Row className={'g-3'}>
-              {itemData.is_selectable_options && (
-                <Col sm={'auto'}>
-                  <PcItemFormGroup label={valueLabel}>
-                    <PcItemInputControl
-                      paramType="open-price-input"
-                      value={selectableValue}
-                      onChange={(e) => setOpenParamValue(e.target.value)}
-                      disabled={true}
-                    />
-                  </PcItemFormGroup>
-                </Col>
-              )}
-              {itemData.is_fixed && (
-                <Col sm={'auto'}>
-                  <PcItemFormGroup label={fixedValueLabel}>
-                    <PcItemInputControl paramType="price" value={fixedValue} disabled={true} />
-                  </PcItemFormGroup>
-                </Col>
-              )}
-            </Row>
-            <Row className={'g-3'}>
-              {itemData.is_selectable_options && (
-                <Col sm={'auto'}>
-                  <PcItemFormGroup paramType="selectable-param" label={selectableParamLabel}>
-                    <PcItemSelectControl
-                      value={selectableValue}
-                      options={options}
-                      onChange={(val) => setSelectableValue(val)}
-                    />
-                  </PcItemFormGroup>
-                </Col>
-              )}
-              {itemData.is_open && (
-                <Col sm={'auto'}>
-                  <PcItemFormGroup paramType="open-param" label={itemData.open_parameters_label[0]}>
-                    <PcItemInputControl
-                      paramType="open-price-input"
-                      value={openParamValue}
-                      onChange={(e) => setOpenParamValue(e.target.value)}
-                    />
-                  </PcItemFormGroup>
-                </Col>
-              )}
-            </Row>
-          </div>
-
-          {/* Right Side */}
-          <div className={`d-flex flex-column gap-3 px-0 ${className}`}>
-            <Row className={'g-3 justify-content-end'}>
-              <Col sm={'auto'}>
-                <PcItemFormGroup paramType="price" label="Price">
-                  {/*Field price*/}
-                  <PcItemInputControl paramType="price" value={DUMMY_PRICE} />
-                </PcItemFormGroup>
-              </Col>
-              <Col sm={'auto'}>
-                <PcItemFormGroup paramType="discounted-price" label="Discounted price">
-                  {/*Field discounted-price */}
-                  <PcItemInputControl paramType="discounted-price" value={DUMMY_PRICE} />
-                </PcItemFormGroup>
-              </Col>
-            </Row>
-
-            <Row className={'g-3 justify-content-end'}>
-              <Col sm={'auto'}>
-                <PcItemFormGroup paramType="discount" label="Discount">
-                  {/*Field discount */}
-                  <PcItemInputControl
-                    paramType="discount"
-                    value={discount}
-                    onChange={(e) => setDiscount(e.target.value)}
-                  />
-                </PcItemFormGroup>
-              </Col>
-            </Row>
+            </div>
           </div>
         </div>
       )}

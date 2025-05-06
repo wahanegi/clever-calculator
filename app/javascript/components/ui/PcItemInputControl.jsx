@@ -10,7 +10,11 @@ export const PcItemInputControl = ({
   disabled = false,
   ...props
 }) => {
-  const isDisabled = paramType === 'price' || paramType === 'discounted-price' || paramType === 'original-cost'
+  const isDisabled =
+    paramType === 'price' ||
+    paramType === 'discounted-price' ||
+    paramType === 'original-cost' ||
+    paramType === 'select-price-value'
 
   return (
     <Form.Control

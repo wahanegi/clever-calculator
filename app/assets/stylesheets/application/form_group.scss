@@ -38,6 +38,24 @@
   }
 }
 
+@media (max-width: 935px) {
+  .pc-item-input {
+    width: 180px;
+  }
+}
+
+@media (max-width: 855px) {
+  .pc-item-input {
+    width: 150px;
+  }
+}
+
+@media (max-width: 371px) {
+  .pc-item-input {
+    width: 130px;
+  }
+}
+
 .pc-item-input.price {
   .form-control {
     padding-left: 24px;
@@ -168,7 +186,8 @@
   }
 }
 
-.pc-item-input.open-price-input {
+.pc-item-input.open-price-input,
+.pc-item-input.select-price-value {
   .form-control {
     padding-left: 24px;
     border: 1px solid $primary;
@@ -194,4 +213,5 @@
 
 .nospin {
   -moz-appearance: textfield;
+  appearance: textfield;
 }
