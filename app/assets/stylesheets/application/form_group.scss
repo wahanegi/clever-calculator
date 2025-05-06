@@ -70,10 +70,9 @@
   }
 }
 
-.pc-item-input.open-param-secondary {
+.pc-item-input.open-param {
   .form-control {
-    padding-left: 24px;
-    border: 1.3px solid $secondary;
+    border: 1.3px solid $primary;
     color: $dark;
   }
 
@@ -92,15 +91,6 @@
     padding: 7px 12px;
     //width: 200px;
     border: 1px solid $primary;
-    border-radius: 4px;
-  }
-}
-
-.pc-item-input.selectable-param-secondary {
-  .form-select {
-    padding: 7px 12px;
-    //width: 194.4px;
-    border: 1px solid $secondary;
     border-radius: 4px;
   }
 }

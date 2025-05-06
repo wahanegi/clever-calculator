@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Button, Container, Form } from 'react-bootstrap'
 import { useAppHooks } from '../hooks'
-import { DeleteItemModal, ItemsPricingTopBar, ItemTotalPrice, QuoteCreation, ROUTES } from '../shared'
+import { DeleteItemModal, ItemsPricingTopBar, Item, QuoteCreation, ROUTES } from '../shared'
 import { PcCategoryAccordion, PcItemAccordion, PcItemFormGroup, PcItemTextareaControl } from '../ui'
 import { getCurrentStepId, normalizeApiCategories, normalizeApiItems } from '../utils'
 import { fetchCategories } from '../services'
@@ -133,7 +133,7 @@ export const ItemsPricing = () => {
                         onToggleNotes={() => toggleItemNotes(item.id)}
                         notesIcon={notesIcon}
                       >
-                        <ItemTotalPrice itemData={item} />
+                        <Item itemData={item} />
 
                         {notesState.isNotesOpen && (
                           <PcItemFormGroup label={'Notes'} paramType={'notes'}>

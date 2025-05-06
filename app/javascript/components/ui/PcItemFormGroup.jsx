@@ -13,7 +13,6 @@ export const PcItemFormGroup = ({
     paramType === 'price' ||
     paramType === 'discounted-price' ||
     paramType === 'original-cost' ||
-    paramType === 'open-param-secondary' ||
     paramType === 'open-price-input'
   const isSuffixRight = paramType === 'discount'
 
