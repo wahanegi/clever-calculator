@@ -10,6 +10,7 @@ Rails.application.routes.draw do
         post :upsert, on: :collection
       end
       resources :categories, only: [ :index ]
+      get 'items/uncategorized', to: 'items#uncategorized'
     end
   end
 

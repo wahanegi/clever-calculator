@@ -19,7 +19,6 @@ export const Item = ({ itemData, className }) => {
   const { isItemFixed, isItemOpen, isItemSelectableOptions, isShowSimpleParams, isShowCombinedParams } =
     getItemTypeConditions(itemData)
 
-  console.log(itemData)
   return (
     <div>
       {isShowSimpleParams && (

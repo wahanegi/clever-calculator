@@ -11,7 +11,7 @@ export const MultiSelectDropdown = ({
   selected,
   setSelected,
   showDeleteModal,
-  categories,
+  selectableOptions,
 }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
 
@@ -67,7 +67,7 @@ export const MultiSelectDropdown = ({
         placeholder={'Make a selection'}
         ref={typeaheadRef}
         selected={selected}
-        options={categories}
+        options={selectableOptions}
         filterBy={() => true} // set array of options with no changes
         onChange={handleTypeaheadOnChange}
         onBlur={handleBlur}

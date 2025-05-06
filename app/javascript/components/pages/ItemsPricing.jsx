@@ -4,16 +4,16 @@ import { useAppHooks } from '../hooks'
 import { DeleteItemModal, ItemsPricingTopBar, Item, QuoteCreation, ROUTES } from '../shared'
 import { PcCategoryAccordion, PcItemAccordion, PcItemFormGroup, PcItemTextareaControl } from '../ui'
 import { getCurrentStepId, normalizeApiCategories, normalizeApiItems } from '../utils'
-import { fetchCategories } from '../services'
+import { fetchCategories, fetchItems } from '../services'
 
 export const ItemsPricing = () => {
   const { navigate, queryParams, location } = useAppHooks()
 
-  const [selectedCategories, setSelectedCategories] = useState([])
+  const [selectedOptions, setSelectedOptions] = useState([])
   const [expandedAccordions, setExpandedAccordions] = useState([])
   const [isShowDeleteModal, setIsShowDeleteModal] = useState(false)
   const [categoryIdToDelete, setCategoryIdToDelete] = useState(null)
-  const [categories, setCategories] = useState([])
+  const [selectableOptions, setSelectableOptions] = useState([])
   const [items, setItems] = useState([])
 
   const [notesStates, setNotesStates] = useState({})
@@ -23,11 +23,20 @@ export const ItemsPricing = () => {
   const totalPrice = 0
 
   useEffect(() => {
-    fetchCategories.index().then((res) => {
-      const categories = normalizeApiCategories(res.data)
-      const itemsData = normalizeApiItems(res.included)
-      setCategories(categories)
-      setItems(itemsData)
+    Promise.all([fetchCategories.index(), fetchItems.uncategorized()]).then(([categoryRes, uncategorizedRes]) => {
+      const categories = normalizeApiCategories(categoryRes.data)
+      const itemsData = normalizeApiItems(categoryRes.included)
+      const uncategorizedItems = normalizeApiItems(uncategorizedRes.data)
+
+      const categoryOptions = categories.map((category) => ({ ...category, type: 'category' }))
+      const itemOptions = uncategorizedItems.map((item) => ({
+        id: item.id,
+        name: item.name,
+        type: 'item',
+      }))
+
+      setSelectableOptions([...categoryOptions, ...itemOptions])
+      setItems([...itemsData, ...uncategorizedItems])
     })
   }, [])
 
@@ -39,7 +48,7 @@ export const ItemsPricing = () => {
     setExpandedAccordions((prev) => (prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]))
   }
   const handleConfirmDeleteCategory = () => {
-    setSelectedCategories((prev) => prev.filter((category) => category.id !== categoryIdToDelete))
+    setSelectedOptions((prev) => prev.filter((category) => category.id !== categoryIdToDelete))
     setExpandedAccordions((prev) => prev.filter((id) => id !== categoryIdToDelete))
     setCategoryIdToDelete(null)
     setIsShowDeleteModal(false)
@@ -50,7 +59,7 @@ export const ItemsPricing = () => {
     setIsShowDeleteModal(false)
   }
 
-  const expandAll = () => setExpandedAccordions(selectedCategories.map((category) => category.id))
+  const expandAll = () => setExpandedAccordions(selectedOptions.map((category) => category.id))
   const collapseAll = () => setExpandedAccordions([])
 
   const handleNotesChange = (itemId, value) => {
@@ -94,28 +103,35 @@ export const ItemsPricing = () => {
 
         <ItemsPricingTopBar
           totalPrice={totalPrice}
-          selectedCategories={selectedCategories}
-          setSelectedCategories={setSelectedCategories}
+          selectedOptions={selectedOptions}
+          setSelectedOptions={setSelectedOptions}
           expandAll={expandAll}
           collapseAll={collapseAll}
           expandedAccordions={expandedAccordions}
           showDeleteModal={showDeleteModal}
-          categories={categories}
+          selectableOptions={selectableOptions}
         />
 
-        {selectedCategories.length === 0 && (
+        {selectedOptions.length === 0 && (
           <div className="text-center text-primary fst-italic py-6">Select one or more items to start your quote.</div>
         )}
       </section>
 
       <section className={'d-flex flex-column gap-4 mb-12'}>
-        {selectedCategories.length > 0 &&
-          selectedCategories.map((category) => {
-            const categoryItems = items?.filter((item) => item.category_id === category.id)
+        {selectedOptions.length > 0 &&
+          selectedOptions.map((category) => {
+            const isItem = category.type === 'item'
+
+            const categoryItems = isItem
+              ? [items.find((item) => item.id === category.id)].filter(Boolean)
+              : items.filter((item) => item.category_id === category.id)
+
+            const accordionTitle = isItem ? 'Item without category' : category.name
+
             return (
               <PcCategoryAccordion
                 key={`category-${category.id}`}
-                categoryName={category.name}
+                categoryName={accordionTitle}
                 isOpen={expandedAccordions.includes(category.id)}
                 onToggle={() => handleToggle(category.id)}
                 onDelete={() => showDeleteModal(category.id)}
@@ -169,7 +185,7 @@ export const ItemsPricing = () => {
           variant={'outline-primary'}
           className={'fw-bold pc-btn pc-btn-download'}
           onClick={handleDownload}
-          disabled={selectedCategories.length === 0}
+          disabled={selectedOptions.length === 0}
         >
           Download
         </Button>
