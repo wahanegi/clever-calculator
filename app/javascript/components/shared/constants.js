@@ -99,3 +99,8 @@ export const INPUT_VALIDATORS = {
   allowedFileTypes: ['image/jpeg', 'image/png'],
   // future validation rules can be added here
 }
+
+export const LOCAL_STORAGE_KES = {
+  setting: 'setting',
+  // future localStorage keys can be added here
+}
