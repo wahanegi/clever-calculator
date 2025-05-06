@@ -2,11 +2,11 @@ import React, { useEffect, useState } from 'react'
 import { Header } from './Header'
 import { Outlet } from 'react-router-dom'
 import { fetchSetting } from '../services'
-import { LOCAL_STORAGE_KES } from '../shared'
+import { LOCAL_STORAGE_KEYS } from '../shared'
 
 export const Layout = () => {
   const [setting, setSetting] = useState(() => {
-    const cashedSetting = localStorage.getItem(LOCAL_STORAGE_KES.setting)
+    const cashedSetting = localStorage.getItem(LOCAL_STORAGE_KEYS.setting)
     return cashedSetting ? JSON.parse(cashedSetting) : {}
   })
 
@@ -18,7 +18,7 @@ export const Layout = () => {
 
         if (isSettingUpdated) {
           setSetting(attributes)
-          localStorage.setItem(LOCAL_STORAGE_KES.setting, JSON.stringify(attributes))
+          localStorage.setItem(LOCAL_STORAGE_KEYS.setting, JSON.stringify(attributes))
         }
       })
   }, [])

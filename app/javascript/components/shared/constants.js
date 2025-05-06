@@ -100,7 +100,7 @@ export const INPUT_VALIDATORS = {
   // future validation rules can be added here
 }
 
-export const LOCAL_STORAGE_KES = {
+export const LOCAL_STORAGE_KEYS = {
   setting: 'setting',
   // future localStorage keys can be added here
 }
