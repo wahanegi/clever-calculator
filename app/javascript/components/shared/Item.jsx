@@ -1,79 +1,115 @@
 import React, { useState } from 'react'
 import { PcItemFormGroup, PcItemInputControl, PcItemSelectControl } from '../ui'
-import { discountedPrice, getItemTypeConditions } from '../utils'
+import { getItemTypeConditions } from '../utils'
+import { fetchQuoteItems } from '../services'
 
-// TODO: will be replaced with value fetch from backend
-const DUMMY_PRICE = 7777
+export const Item = ({ itemData, selectedOptions, setSelectedOptions, quoteId }) => {
+  const quoteItem = itemData.attributes
+  const {
+    isItemFixed,
+    isItemOpen,
+    isItemSelectableOptions,
+    isShowSimpleParams,
+    isShowCombinedParams,
+  } = getItemTypeConditions(quoteItem.item)
 
-export const Item = ({ itemData, className = '' }) => {
-  const [openParamValues, setOpenParamValues] = useState({})
-  const [selectableValues, setSelectableValues] = useState({})
-  const [discount, setDiscount] = useState('')
+  const [selectedValue, setSelectedValue] = useState(quoteItem.is_selectable_options ? quoteItem.pricing_parameters[Object.keys(quoteItem.pricing_options)[0]] : 0)
+  const [openValue, setOpenValue] = useState(quoteItem.is_open ? quoteItem.pricing_parameters[quoteItem.item.open_parameters_label[0]] : 0)
+  const [discountValue, setDiscountValue] = useState(quoteItem.discount || 0)
 
-  const { isItemFixed, isItemOpen, isItemSelectableOptions, isShowSimpleParams, isShowCombinedParams } =
-    getItemTypeConditions(itemData)
+  const handleSelectedChange = (label) => (value) => {
+    console.info('handleSelectedChange', label, value)
 
-  const handleSelectChange = (key) => (label) => {
-    const value = itemData.pricing_options?.[key]?.options?.[label] ?? ''
-    setSelectableValues((prev) => ({
-      ...prev,
-      [key]: { label, value },
-    }))
+    setSelectedValue(value)
+    updateQuoteItem({
+      select_param_values: { [label]: value },
+    })
   }
 
-  const handleOpenParamChange = (label) => (e) => {
-    setOpenParamValues((prev) => ({
-      ...prev,
-      [label]: e.target.value,
-    }))
+  const handleOpenChange = (label) => (e) => {
+    console.info('handleOpenChange', e, label)
+
+    const value = e.target.value || 0
+    setOpenValue(value)
+    updateQuoteItem({
+      open_param_values: { [label]: value },
+    })
+  }
+
+  const handleDiscountChange = (e) => {
+    console.info('handleDiscountChange', e)
+
+    const value = e.target.value || 0
+    setDiscountValue(value)
+    updateQuoteItem({
+      discount: value,
+    })
+  }
+
+  const updateQuoteItem = (params) => {
+    fetchQuoteItems.update(quoteId, itemData.id, {
+      quote_item: {
+        ...params,
+      },
+    }).then((updatedQuoteItem) => {
+      setSelectedOptions(selectedOptions.map((option) => {
+        option.quote_items = option.quote_items.map((item) => {
+          if (updatedQuoteItem.data.id === item.id) {
+            return updatedQuoteItem.data
+          }
+          return item
+        })
+        return option
+      }))
+    })
   }
 
   const renderFixedParams = () =>
-    Object.entries(itemData.fixed_parameters || {}).map(([label, value]) => (
+    Object.entries(quoteItem.item.fixed_parameters || {}).map(([label, value]) => (
       <PcItemFormGroup key={label} label={label}>
         <PcItemInputControl paramType="price" value={parseFloat(value)} />
       </PcItemFormGroup>
     ))
 
   const renderOpenParams = () =>
-    (itemData.open_parameters_label || []).map((label) => (
+    (quoteItem.item.open_parameters_label || []).map((label) => (
       <PcItemFormGroup key={label} paramType="open-param" label={label}>
         <PcItemInputControl
           paramType="open-price-input"
-          value={openParamValues[label] || ''}
-          onChange={handleOpenParamChange(label)}
+          value={openValue}
+          onChange={handleOpenChange(label)}
         />
       </PcItemFormGroup>
     ))
 
   const renderSelectParams = () =>
-    Object.entries(itemData.pricing_options || {}).map(([paramKey, { options }]) => (
+    Object.entries(quoteItem.item.pricing_options || {}).map(([paramKey, { options }]) => (
       <PcItemFormGroup key={`select-${paramKey}`} paramType="selectable-param" label={paramKey}>
         <PcItemSelectControl
-          value={selectableValues[paramKey]?.label || ''}
-          options={Object.entries(options).map(([label]) => ({
-            label,
-            value: label,
-          }))}
-          onChange={handleSelectChange(paramKey)}
+          value={selectedValue}
+          options={Object.entries(options).map(([label, value]) => ({ label, value: value }))}
+          onChange={handleSelectedChange(paramKey)}
         />
       </PcItemFormGroup>
     ))
 
   const renderDiscountInput = () => (
     <PcItemFormGroup paramType="discount" label="Discount">
-      <PcItemInputControl paramType="discount" value={discount} onChange={(e) => setDiscount(e.target.value)} />
+      <PcItemInputControl paramType="discount"
+                          value={discountValue}
+                          max={100}
+                          onChange={handleDiscountChange} />
     </PcItemFormGroup>
   )
 
   return (
     <div>
       {isShowSimpleParams && (
-        <div className={`d-flex flex-column gap-3 px-0 align-items-end ${className}`}>
+        <div className={'d-flex flex-column gap-3 px-0 align-items-end'}>
           <div className="d-flex flex-wrap align-items-end gap-3">
             {isItemFixed && renderFixedParams()}
             <PcItemFormGroup paramType="discounted-price" label="Discounted price">
-              <PcItemInputControl paramType="discounted-price" value={discountedPrice(DUMMY_PRICE, discount)} />
+              <PcItemInputControl paramType="discounted-price" value={quoteItem.final_price} />
             </PcItemFormGroup>
           </div>
 
@@ -88,14 +124,14 @@ export const Item = ({ itemData, className = '' }) => {
       {isShowCombinedParams && (
         <div className="d-flex flex-column flex-md-row gap-5 pt-2 align-items-start justify-content-between">
           {/* Left Side */}
-          <div className={`d-flex flex-column gap-3 px-0 pc-item-price-param align-items-start ${className}`}>
+          <div className={'d-flex flex-column gap-3 px-0 pc-item-price-param align-items-start'}>
             <div className="d-flex flex-wrap gap-3">
               {/* Select Values */}
-              {Object.entries(itemData.pricing_options || {}).map(([paramKey, { value_label }]) => (
+              {Object.entries(quoteItem.item.pricing_options || {}).map(([paramKey, { value_label }]) => (
                 <PcItemFormGroup key={`label-${paramKey}`} label={value_label}>
                   <PcItemInputControl
                     paramType="select-price-value"
-                    value={selectableValues[paramKey]?.value || ''}
+                    value={quoteItem.pricing_parameters[paramKey] || ''}
                     disabled
                   />
                 </PcItemFormGroup>
@@ -110,14 +146,14 @@ export const Item = ({ itemData, className = '' }) => {
           </div>
 
           {/* Right Side */}
-          <div className={`d-flex flex-column gap-3 px-0 align-items-end pc-item-price-param ${className}`}>
+          <div className={'d-flex flex-column gap-3 px-0 align-items-end pc-item-price-param'}>
             <div className="d-flex flex-wrap justify-content-end gap-3">
               <PcItemFormGroup paramType="price" label="Price">
-                <PcItemInputControl paramType="price" value={DUMMY_PRICE} />
+                <PcItemInputControl paramType="price" value={quoteItem.price} />
               </PcItemFormGroup>
 
               <PcItemFormGroup paramType="discounted-price" label="Discounted price">
-                <PcItemInputControl paramType="discounted-price" value={DUMMY_PRICE} />
+                <PcItemInputControl paramType="discounted-price" value={quoteItem.final_price} />
               </PcItemFormGroup>
             </div>
 

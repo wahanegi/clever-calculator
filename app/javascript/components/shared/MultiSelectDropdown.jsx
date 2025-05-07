@@ -2,49 +2,26 @@ import React, { useRef, useState } from 'react'
 import { Form } from 'react-bootstrap'
 import { Typeahead } from 'react-bootstrap-typeahead'
 import { PcCheckboxOption, PcIcon, PcTransparentButton } from '../ui'
-import { getRemovedCategory } from '../utils'
 
 export const MultiSelectDropdown = ({
-  id,
-  label = 'Select items',
-  hasIcon = true,
-  selected,
-  setSelected,
-  showDeleteModal,
-  selectableOptions,
-}) => {
+                                      id,
+                                      label = 'Select items',
+                                      hasIcon = true,
+                                      selectedOptions,
+                                      selectableOptions,
+                                      onSelect,
+                                      onChange,
+                                      isSelected,
+                                    }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
 
   const typeaheadRef = useRef(null)
-
-  const isSelected = (option) => selected.some((item) => item.id === option.id)
-
-  const toggleSelection = (option) => {
-    // Remove the option from selected array
-    if (isSelected(option)) {
-      showDeleteModal(option.id)
-    } else {
-      // Add the option to selected array
-      setSelected([...selected, option])
-    }
-  }
 
   const handleBlur = () => setIsMenuOpen(false)
 
   const handleMenuOpen = (e) => {
     if (!isMenuOpen) typeaheadRef.current.focus()
     setIsMenuOpen((prev) => !prev)
-  }
-
-  const handleTypeaheadOnChange = (newSelected) => {
-    if (newSelected.length < selected.length) {
-      const removedCategory = getRemovedCategory(selected, newSelected)
-
-      if (removedCategory) {
-        return showDeleteModal(removedCategory.id)
-      }
-    }
-    setSelected(newSelected)
   }
 
   const handleClick = () => {
@@ -66,10 +43,10 @@ export const MultiSelectDropdown = ({
         labelKey={'name'}
         placeholder={'Make a selection'}
         ref={typeaheadRef}
-        selected={selected}
+        selected={selectedOptions}
         options={selectableOptions}
         filterBy={() => true} // set array of options with no changes
-        onChange={handleTypeaheadOnChange}
+        onChange={onChange}
         onBlur={handleBlur}
         open={isMenuOpen}
         multiple
@@ -78,7 +55,7 @@ export const MultiSelectDropdown = ({
           <PcCheckboxOption
             option={option}
             isSelected={isSelected}
-            toggleSelection={toggleSelection}
+            toggleSelection={onSelect}
             className={'pc-checkbox-items-pricing'}
           />
         )}

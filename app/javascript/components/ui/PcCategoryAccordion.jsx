@@ -16,7 +16,6 @@ export const PcCategoryAccordion = ({
   }
 
   return (
-    <>
       <Accordion flush activeKey={isOpen ? ['0'] : []} bsPrefix={'pc-category-accordion'}>
         <Accordion.Item eventKey="0">
           <div className={'position-relative'}>
@@ -47,6 +46,5 @@ export const PcCategoryAccordion = ({
           </Accordion.Body>
         </Accordion.Item>
       </Accordion>
-    </>
   )
 }

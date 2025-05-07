@@ -3,7 +3,6 @@ import { Button, Modal } from 'react-bootstrap'
 import { PcIcon } from '../ui'
 
 export const DeleteItemModal = ({show, onHide, onConfirmDelete, props}) => {
-
   return (
     <Modal
       {...props}

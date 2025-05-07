@@ -4,7 +4,7 @@ import { useAppHooks } from '../hooks'
 import { DeleteItemModal, ItemsPricingTopBar, Item, QuoteCreation, ROUTES } from '../shared'
 import { PcCategoryAccordion, PcItemAccordion, PcItemFormGroup, PcItemTextareaControl } from '../ui'
 import { getCurrentStepId, normalizeApiCategories, normalizeApiItems } from '../utils'
-import { fetchCategories, fetchItems } from '../services'
+import { fetchCategories, fetchItems, fetchQuoteItems } from '../services'
 
 export const ItemsPricing = () => {
   const { navigate, queryParams, location } = useAppHooks()
@@ -12,10 +12,9 @@ export const ItemsPricing = () => {
   const [selectedOptions, setSelectedOptions] = useState([])
   const [expandedAccordions, setExpandedAccordions] = useState([])
   const [isShowDeleteModal, setIsShowDeleteModal] = useState(false)
-  const [categoryIdToDelete, setCategoryIdToDelete] = useState(null)
+  const [removeSelectedOption, setRemoveSelectedOption] = useState({})
   const [selectableOptions, setSelectableOptions] = useState([])
   const [items, setItems] = useState([])
-  const [quoteItems, setQuoteItems] = useState([])
   const [notesStates, setNotesStates] = useState({})
 
   const quoteId = queryParams.get('quote_id')
@@ -40,26 +39,34 @@ export const ItemsPricing = () => {
     })
   }, [])
 
-  const showDeleteModal = (categoryId) => {
-    setCategoryIdToDelete(categoryId)
+  useEffect(() => {
+    fetchQuoteItems.index(quoteId).then((data) => {
+      setSelectedOptions(data)
+    })
+  }, [])
+
+  const showDeleteModal = (option) => {
+    setRemoveSelectedOption(option)
     setIsShowDeleteModal(true)
   }
   const handleToggle = (id) => {
     setExpandedAccordions((prev) => (prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]))
   }
-  const handleConfirmDeleteCategory = () => {
-    setSelectedOptions((prev) => prev.filter((category) => category.id !== categoryIdToDelete))
-    setExpandedAccordions((prev) => prev.filter((id) => id !== categoryIdToDelete))
-    setCategoryIdToDelete(null)
+  const handleConfirmDelete = async () => {
+    await fetchQuoteItems.deleteSelected(quoteId, removeSelectedOption.quote_items.map(item => item.id))
+
+    setSelectedOptions((prev) => prev.filter((option) => option.id !== removeSelectedOption.id && option.type !== removeSelectedOption.type))
+    setExpandedAccordions((prev) => prev.filter((id) => id !== removeSelectedOption.id))
+    setRemoveSelectedOption(null)
     setIsShowDeleteModal(false)
   }
 
   const handleCancelDeleteCategory = () => {
-    setCategoryIdToDelete(null)
+    setRemoveSelectedOption(null)
     setIsShowDeleteModal(false)
   }
 
-  const expandAll = () => setExpandedAccordions(selectedOptions.map((category) => category.id))
+  const expandAll = () => setExpandedAccordions(selectedOptions.map((selectedOption) => selectedOption.id))
   const collapseAll = () => setExpandedAccordions([])
 
   const handleNotesChange = (itemId, value) => {
@@ -102,6 +109,7 @@ export const ItemsPricing = () => {
         <QuoteCreation currentStepId={currentStepId} />
 
         <ItemsPricingTopBar
+          quoteId={quoteId}
           totalPrice={totalPrice}
           selectedOptions={selectedOptions}
           setSelectedOptions={setSelectedOptions}
@@ -119,37 +127,40 @@ export const ItemsPricing = () => {
 
       <section className={'d-flex flex-column gap-4 mb-12'}>
         {selectedOptions.length > 0 &&
-          selectedOptions.map((category) => {
-            const isItem = category.type === 'item'
+          selectedOptions.map((selectedOption) => {
+            const isItem = selectedOption.type === 'item'
 
             const categoryItems = isItem
-              ? [items.find((item) => item.id === category.id)].filter(Boolean)
-              : items.filter((item) => item.category_id === category.id)
+              ? [items.find((item) => item.id === selectedOption.id)].filter(Boolean)
+              : items.filter((item) => item.category_id === selectedOption.id)
 
-            const accordionTitle = isItem ? 'Item without category' : category.name
+            const accordionTitle = isItem ? 'Item without category' : selectedOption.name
 
             return (
               <PcCategoryAccordion
-                key={`category-${category.id}`}
+                key={`category-${selectedOption.id}`}
                 categoryName={accordionTitle}
-                isOpen={expandedAccordions.includes(category.id)}
-                onToggle={() => handleToggle(category.id)}
-                onDelete={() => showDeleteModal(category.id)}
+                isOpen={expandedAccordions.includes(selectedOption.id)}
+                onToggle={() => handleToggle(selectedOption.id)}
+                onDelete={() => showDeleteModal(selectedOption)}
               >
                 <div className={'d-flex flex-column gap-6'}>
-                  {categoryItems.map((item) => {
+                  {selectedOption.quote_items.map((item) => {
                     const notesState = notesStates[item.id] || {}
                     const notesIcon = notesState.note?.trim() ? 'noted' : 'note'
 
                     return (
                       <PcItemAccordion
-                        key={`item-${item.id}`}
-                        itemName={item.name}
+                        key={`quote-item-${item.id}`}
+                        itemName={item.attributes.item.name}
                         isNotesShow={notesState.isNotesOpen}
                         onToggleNotes={() => toggleItemNotes(item.id)}
                         notesIcon={notesIcon}
                       >
-                        <Item itemData={item} />
+                        <Item itemData={item}
+                              quoteId={quoteId}
+                              selectedOptions={selectedOptions}
+                              setSelectedOptions={setSelectedOptions} />
 
                         {notesState.isNotesOpen && (
                           <PcItemFormGroup label={'Notes'} paramType={'notes'}>
@@ -194,7 +205,7 @@ export const ItemsPricing = () => {
       <DeleteItemModal
         show={isShowDeleteModal}
         onHide={handleCancelDeleteCategory}
-        onConfirmDelete={handleConfirmDeleteCategory}
+        onConfirmDelete={handleConfirmDelete}
       />
     </Container>
   )

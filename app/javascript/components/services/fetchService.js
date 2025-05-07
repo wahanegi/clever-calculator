@@ -1,5 +1,5 @@
 import { ENDPOINTS } from '../shared'
-import { del, get, post, put } from './api/httpRequests'
+import { del, get, patch, post, put } from './api/httpRequests'
 import { extractNames } from '../utils'
 
 export const fetchQuotes = {
@@ -52,6 +52,9 @@ export const fetchItems = {
 }
 
 export const fetchQuoteItems = {
-  createFromItem: async (quoteId, data) => await post(`${ENDPOINTS.QUOTES}/${quoteId}/quote_items/create_from_item`, data),
-  createFromCategory: async (quoteId, data) => await post(`${ENDPOINTS.QUOTES}/${quoteId}/quote_items/create_from_quote`, data),
+  createFromItem: async (quoteId, itemId) => await post(`${ENDPOINTS.QUOTES}/${quoteId}/quote_items/create_from_item`, { quote_item: { item_id: itemId } }),
+  createFromCategory: async (quoteId, categoryId) => await post(`${ENDPOINTS.QUOTES}/${quoteId}/quote_items/create_from_category`, { quote_item: { category_id: categoryId } }),
+  deleteSelected: async (quoteId, quoteItemIds) => await del(`${ENDPOINTS.QUOTES}/${quoteId}/quote_items/destroy_selected`, { quote_item_ids: quoteItemIds }),
+  index: async (quoteId) => await get(`${ENDPOINTS.QUOTES}/${quoteId}/quote_items`),
+  update: async (quoteId, quoteItemId, data) => await patch(`${ENDPOINTS.QUOTES}/${quoteId}/quote_items/${quoteItemId}`, data),
 }

@@ -6,9 +6,12 @@ Rails.application.routes.draw do
   namespace :api do
     namespace :v1 do
       resources :quotes, only: [:create, :update] do
-        resources :quote_items, only: [:destroy] do
-          post :create_from_item, on: :collection
-          post :create_from_category, on: :collection
+        resources :quote_items, only: [:update, :index] do
+          collection do
+            post :create_from_item
+            post :create_from_category
+            delete :destroy_selected
+          end
         end
       end
       resources :customers, only: [:index] do
