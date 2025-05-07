@@ -15,7 +15,7 @@ export const ItemsPricing = () => {
   const [categoryIdToDelete, setCategoryIdToDelete] = useState(null)
   const [selectableOptions, setSelectableOptions] = useState([])
   const [items, setItems] = useState([])
-
+  const [quoteItems, setQuoteItems] = useState([])
   const [notesStates, setNotesStates] = useState({})
 
   const quoteId = queryParams.get('quote_id')

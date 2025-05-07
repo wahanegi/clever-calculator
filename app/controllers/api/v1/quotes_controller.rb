@@ -5,6 +5,7 @@ module Api
 
       def create
         quote = current_user.quotes.build(quote_params)
+
         if quote.save
           render json: QuoteSerializer.new(quote).serializable_hash, status: :created
         else
@@ -24,6 +25,7 @@ module Api
 
       def set_quote
         @quote = current_user.quotes.find_by(id: params[:id])
+
         render json: { error: "Quote not found" }, status: :not_found unless @quote
       end
 

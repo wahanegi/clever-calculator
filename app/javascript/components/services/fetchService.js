@@ -50,3 +50,8 @@ export const fetchCategories = {
 export const fetchItems = {
   uncategorized: async () => await get(ENDPOINTS.UNCATEGORIZED_ITEMS),
 }
+
+export const fetchQuoteItems = {
+  createFromItem: async (quoteId, data) => await post(`${ENDPOINTS.QUOTES}/${quoteId}/quote_items/create_from_item`, data),
+  createFromCategory: async (quoteId, data) => await post(`${ENDPOINTS.QUOTES}/${quoteId}/quote_items/create_from_quote`, data),
+}
