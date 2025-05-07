@@ -6,7 +6,7 @@ import { PcIcon } from '../ui'
 
 export const Header = ({ setting }) => {
   const Logo = () =>
-    <Navbar.Brand className={'ms-1 ms-xxl-22 ms-xl-22 ms-lg-10 ms-md-2'}>
+    <Navbar.Brand className={'ms-1 ms-xxl-27 ms-xl-27 ms-lg-10 ms-md-2'}>
       {setting?.logo ?
         (<img src={setting.logo} className={'header-logo object-fit-contain'} alt={'Logo'} />)
         : (<div className={'header-logo d-flex'}>

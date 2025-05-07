@@ -4,17 +4,26 @@
     <ol>
       <li class="file input optional">
         <%= f.label :logo, class: 'label' %>
-        <%= f.file_field :logo %>
+        <%= f.file_field :logo, accept: Setting::ALLOWED_IMAGE_TYPES.join(',') %>
+        <% if setting.errors[:logo].present? %>
+          <p class="inline-errors"><%= setting.errors.full_messages_for(:logo).to_sentence %></p>
+        <% end %>
       </li>
 
       <li class="file input optional">
         <%= f.label :login_background, class: 'label' %>
-        <%= f.file_field :login_background %>
+        <%= f.file_field :login_background, accept: Setting::ALLOWED_IMAGE_TYPES.join(',') %>
+        <% if setting.errors[:login_background].present? %>
+          <p class="inline-errors"><%= setting.errors.messages_for(:login_background).to_sentence %></p>
+        <% end %>
       </li>
 
       <li class="file input optional">
         <%= f.label :app_background, class: 'label' %>
-        <%= f.file_field :app_background %>
+        <%= f.file_field :app_background, accept: Setting::ALLOWED_IMAGE_TYPES.join(',') %>
+        <% if setting.errors[:app_background].present? %>
+          <p class="inline-errors"><%= setting.errors.messages_for(:app_background).to_sentence %></p>
+        <% end %>
       </li>
 
       <li class="color input optional">
