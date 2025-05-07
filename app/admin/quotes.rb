@@ -119,7 +119,7 @@ ActiveAdmin.register Quote do
         column 'Pricing Parameters' do |quote_item|
           if quote_item.pricing_parameters.present?
             quote_item.pricing_parameters.map do |key, value|
-              "#{key}: #{value}"
+              "#{parameter_display_name(key)}: #{value}"
             end.join(" | ")
           else
             "-"
@@ -176,6 +176,7 @@ ActiveAdmin.register Quote do
   end
 
   controller do
+    helper ActiveAdmin::ItemsHelper
     before_action :sanitize_blank_arrays, only: [:create, :update]
 
     def update
