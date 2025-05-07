@@ -1,5 +1,4 @@
 .pc-item-input {
-  flex: 1 1 auto;
   margin-top: 7px; // reserve place for 1/2 height of label with position-absolute
   width: 200px;
 
@@ -107,7 +106,6 @@
 .pc-item-input.selectable-param {
   .form-select {
     padding: 7px 12px;
-    //width: 200px;
     border: 1px solid $primary;
     border-radius: 4px;
   }
@@ -191,11 +189,9 @@
   .form-control {
     padding-left: 24px;
     border: 1px solid $primary;
-    //font-weight: 600;
   }
 
   .pc-suffix-left {
-    //font-weight: 600;
     color: $dark;
   }
 

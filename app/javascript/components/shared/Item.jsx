@@ -1,61 +1,86 @@
 import React, { useState } from 'react'
-import { Col, Row } from 'react-bootstrap'
 import { PcItemFormGroup, PcItemInputControl, PcItemSelectControl } from '../ui'
-import { discountedPrice, getItemTypeConditions, getOptionsFromPricingOptions } from '../utils'
+import { discountedPrice, getItemTypeConditions } from '../utils'
 
 // TODO: will be replaced with value fetch from backend
 const DUMMY_PRICE = 7777
 
 export const Item = ({ itemData, className = '' }) => {
-  const fixedValue = parseFloat(Object.values(itemData.fixed_parameters)[0])
-  const fixedValueLabel = Object.keys(itemData.fixed_parameters)[0]
-  const { options, valueLabel } = getOptionsFromPricingOptions(itemData.pricing_options)
-  const selectableParamLabel = Object.keys(itemData.pricing_options || {})[0] || ''
-
-  const [openParamValue, setOpenParamValue] = useState('')
-  const [selectableValue, setSelectableValue] = useState('')
+  const [openParamValues, setOpenParamValues] = useState({})
+  const [selectableValues, setSelectableValues] = useState({})
   const [discount, setDiscount] = useState('')
 
   const { isItemFixed, isItemOpen, isItemSelectableOptions, isShowSimpleParams, isShowCombinedParams } =
     getItemTypeConditions(itemData)
+
+  const handleSelectChange = (key) => (label) => {
+    const value = itemData.pricing_options?.[key]?.options?.[label] ?? ''
+    setSelectableValues((prev) => ({
+      ...prev,
+      [key]: { label, value },
+    }))
+  }
+
+  const handleOpenParamChange = (label) => (e) => {
+    setOpenParamValues((prev) => ({
+      ...prev,
+      [label]: e.target.value,
+    }))
+  }
+
+  const renderFixedParams = () =>
+    Object.entries(itemData.fixed_parameters || {}).map(([label, value]) => (
+      <PcItemFormGroup key={label} label={label}>
+        <PcItemInputControl paramType="price" value={parseFloat(value)} />
+      </PcItemFormGroup>
+    ))
+
+  const renderOpenParams = () =>
+    (itemData.open_parameters_label || []).map((label) => (
+      <PcItemFormGroup key={label} paramType="open-param" label={label}>
+        <PcItemInputControl
+          paramType="open-price-input"
+          value={openParamValues[label] || ''}
+          onChange={handleOpenParamChange(label)}
+        />
+      </PcItemFormGroup>
+    ))
+
+  const renderSelectParams = () =>
+    Object.entries(itemData.pricing_options || {}).map(([paramKey, { options }]) => (
+      <PcItemFormGroup key={`select-${paramKey}`} paramType="selectable-param" label={paramKey}>
+        <PcItemSelectControl
+          value={selectableValues[paramKey]?.label || ''}
+          options={Object.entries(options).map(([label]) => ({
+            label,
+            value: label,
+          }))}
+          onChange={handleSelectChange(paramKey)}
+        />
+      </PcItemFormGroup>
+    ))
+
+  const renderDiscountInput = () => (
+    <PcItemFormGroup paramType="discount" label="Discount">
+      <PcItemInputControl paramType="discount" value={discount} onChange={(e) => setDiscount(e.target.value)} />
+    </PcItemFormGroup>
+  )
 
   return (
     <div>
       {isShowSimpleParams && (
         <div className={`d-flex flex-column gap-3 px-0 align-items-end ${className}`}>
           <div className="d-flex flex-wrap align-items-end gap-3">
-            {isItemFixed && (
-              <PcItemFormGroup paramType="price" label="Price">
-                <PcItemInputControl paramType="price" value={fixedValue} />
-              </PcItemFormGroup>
-            )}
+            {isItemFixed && renderFixedParams()}
             <PcItemFormGroup paramType="discounted-price" label="Discounted price">
               <PcItemInputControl paramType="discounted-price" value={discountedPrice(DUMMY_PRICE, discount)} />
             </PcItemFormGroup>
           </div>
 
           <div className="d-flex flex-wrap align-items-end gap-3">
-            {isItemOpen && (
-              <PcItemFormGroup paramType="open-price-input" label={itemData.open_parameters_label[0]}>
-                <PcItemInputControl
-                  paramType="open-price-input"
-                  value={openParamValue}
-                  onChange={(e) => setOpenParamValue(e.target.value)}
-                />
-              </PcItemFormGroup>
-            )}
-            {isItemSelectableOptions && (
-              <PcItemFormGroup paramType="selectable-param" label={selectableParamLabel}>
-                <PcItemSelectControl
-                  value={selectableValue}
-                  options={options}
-                  onChange={(val) => setSelectableValue(val)}
-                />
-              </PcItemFormGroup>
-            )}
-            <PcItemFormGroup paramType="discount" label="Discount">
-              <PcItemInputControl paramType="discount" value={discount} onChange={(e) => setDiscount(e.target.value)} />
-            </PcItemFormGroup>
+            {isItemOpen && renderOpenParams()}
+            {isItemSelectableOptions && renderSelectParams()}
+            {renderDiscountInput()}
           </div>
         </div>
       )}
@@ -63,44 +88,24 @@ export const Item = ({ itemData, className = '' }) => {
       {isShowCombinedParams && (
         <div className="d-flex flex-column flex-md-row gap-5 pt-2 align-items-start justify-content-between">
           {/* Left Side */}
-          <div className={`d-flex flex-column gap-3 px-0 pc-item-price-param ${className}`}>
+          <div className={`d-flex flex-column gap-3 px-0 pc-item-price-param align-items-start ${className}`}>
             <div className="d-flex flex-wrap gap-3">
-              {itemData.is_selectable_options && (
-                <PcItemFormGroup label={valueLabel}>
+              {/* Select Values */}
+              {Object.entries(itemData.pricing_options || {}).map(([paramKey, { value_label }]) => (
+                <PcItemFormGroup key={`label-${paramKey}`} label={value_label}>
                   <PcItemInputControl
                     paramType="select-price-value"
-                    value={selectableValue}
-                    onChange={(e) => setOpenParamValue(e.target.value)}
+                    value={selectableValues[paramKey]?.value || ''}
                     disabled
                   />
                 </PcItemFormGroup>
-              )}
-              {itemData.is_fixed && (
-                <PcItemFormGroup label={fixedValueLabel}>
-                  <PcItemInputControl paramType="price" value={fixedValue} disabled />
-                </PcItemFormGroup>
-              )}
+              ))}
+              {renderFixedParams()}
             </div>
 
             <div className="d-flex flex-wrap gap-3">
-              {itemData.is_selectable_options && (
-                <PcItemFormGroup paramType="selectable-param" label={selectableParamLabel}>
-                  <PcItemSelectControl
-                    value={selectableValue}
-                    options={options}
-                    onChange={(val) => setSelectableValue(val)}
-                  />
-                </PcItemFormGroup>
-              )}
-              {itemData.is_open && (
-                <PcItemFormGroup paramType="open-param" label={itemData.open_parameters_label[0]}>
-                  <PcItemInputControl
-                    paramType="open-price-input"
-                    value={openParamValue}
-                    onChange={(e) => setOpenParamValue(e.target.value)}
-                  />
-                </PcItemFormGroup>
-              )}
+              {renderSelectParams()}
+              {renderOpenParams()}
             </div>
           </div>
 
@@ -116,15 +121,7 @@ export const Item = ({ itemData, className = '' }) => {
               </PcItemFormGroup>
             </div>
 
-            <div className="d-flex flex-wrap justify-content-end gap-3">
-              <PcItemFormGroup paramType="discount" label="Discount">
-                <PcItemInputControl
-                  paramType="discount"
-                  value={discount}
-                  onChange={(e) => setDiscount(e.target.value)}
-                />
-              </PcItemFormGroup>
-            </div>
+            <div className="d-flex flex-wrap justify-content-end gap-3">{renderDiscountInput()}</div>
           </div>
         </div>
       )}
