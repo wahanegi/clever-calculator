@@ -5,7 +5,7 @@ ActiveAdmin.register Quote do
                                                         { open_param_values: {}, select_param_values: {} }
                                                       ]
 
-  filter :customer_company_name, as: :string, label: 'Customer Name'
+  filter :customer_company_name, as: :string, label: 'Company Name'
   filter :user, as: :select, collection: proc {
     User.joins(:quotes).distinct.order(:email).map do |u|
       ["#{u.email} (#{u.name})", u.id]
@@ -15,7 +15,7 @@ ActiveAdmin.register Quote do
   index do
     selectable_column
     id_column
-    column 'Customer Name' do |quote|
+    column 'Company Name' do |quote|
       quote.customer.company_name
     end
     column 'Created By' do |quote|
@@ -104,7 +104,7 @@ ActiveAdmin.register Quote do
 
   show do
     attributes_table do
-      row 'Customer Name' do |quote|
+      row 'Company Name' do |quote|
         quote.customer.company_name
       end
       row 'Created By' do |quote|
