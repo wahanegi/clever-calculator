@@ -2,7 +2,8 @@ ActiveAdmin.register Quote do
   permit_params :customer_id, :user_id, :total_price, category_ids: [], item_ids: [],
                                                       quote_items_attributes: [
                                                         :id, :item_id, :price, :discount, :final_price, :_destroy,
-                                                        { open_param_values: {}, select_param_values: {} }
+                                                        { open_param_values: {}, select_param_values: {} },
+                                                        { note_attributes: [:id, :notes, :is_printable, :_destroy] }
                                                       ]
 
   filter :customer_company_name, as: :string, label: 'Company Name'
@@ -91,11 +92,16 @@ ActiveAdmin.register Quote do
       qf.input :price, as: :number, input_html: { min: 0, readonly: true, value: qf.object.price || 0, class: 'read-only-price' }, hint: 'Price will be calculated automatically based on Pricing parameters'
       qf.input :discount, as: :number, input_html: { min: 0, class: 'discount-input' }
       qf.input :final_price, as: :number, input_html: { min: 0, readonly: true, value: qf.object.final_price || 0, class: 'read-only-price' }, hint: 'Final price will be calculated automatically based on Discount'
+      qf.has_many :note, allow_destroy: true, new_record: true, heading: false, class: 'quote-item-note-wrapper' do |n|
+        n.input :notes, as: :text, input_html: { class: 'note-textarea', rows: 6 }, label: 'Note'
+        n.input :is_printable, as: :boolean, label: 'Is Printable'
+        n.input :_destroy, as: :hidden, input_html: { value: '0', class: 'destroy-field' }
+      end
 
       qf.template.concat(
         qf.template.content_tag(:div, class: 'has_many_buttons') do
           qf.template.button_tag('Add Same Item', type: 'button', class: 'button add-same-item') +
-          qf.template.link_to('Remove', '#', class: 'button has_many_remove')
+          qf.template.link_to('Remove Item', '#', class: 'button has_many_remove')
         end
       )
     end
@@ -113,6 +119,7 @@ ActiveAdmin.register Quote do
       row :total_price
       row :created_at
     end
+
     panel 'Quote Items' do
       table_for quote.quote_items do
         column :item
@@ -128,6 +135,13 @@ ActiveAdmin.register Quote do
         column :price
         column :discount
         column :final_price
+        column :note do |quote_item|
+          if quote_item.note
+            link_to truncate(quote_item.note.notes, length: 50), admin_note_path(quote_item.note)
+          else
+            "No note"
+          end
+        end
       end
     end
   end
@@ -206,7 +220,8 @@ ActiveAdmin.register Quote do
       params[:quote][:quote_items_attributes]&.values&.map do |attrs|
         attrs.permit(
           :id, :item_id, :price, :discount, :final_price, :_destroy,
-          open_param_values: {}, select_param_values: {}
+          open_param_values: {}, select_param_values: {},
+          note_attributes: [:id, :notes, :is_printable, :_destroy]
         )
       end || []
     end
