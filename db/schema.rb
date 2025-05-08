@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_04_16_111645) do
+ActiveRecord::Schema[8.0].define(version: 2025_04_24_083627) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -111,6 +111,12 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_16_111645) do
     t.string "step", default: "customer_info", null: false
     t.index ["customer_id"], name: "index_quotes_on_customer_id"
     t.index ["user_id"], name: "index_quotes_on_user_id"
+  end
+
+  create_table "settings", force: :cascade do |t|
+    t.text "style"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "solid_cable_messages", force: :cascade do |t|

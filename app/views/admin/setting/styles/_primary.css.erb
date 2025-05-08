@@ -1,0 +1,120 @@
+:root {
+    --bs-primary: <%= color_hex %>;
+    --bs-link-color: <%= color_hex %>;
+}
+
+.form-check-input:checked {
+    background-color: <%= color_hex %>;
+    border-color: <%= color_hex %>;
+}
+
+.form-check-input[type=checkbox]:indeterminate {
+    background-color: <%= color_hex %>;
+    border-color: <%= color_hex %>;
+}
+
+.form-range::-webkit-slider-thumb {
+    background-color: <%= color_hex %>;
+}
+
+.form-range::-moz-range-thumb {
+    background-color: <%= color_hex %>;
+}
+
+.btn-primary {
+    --bs-btn-bg: <%= color_hex %>;
+    --bs-btn-border-color: <%= color_hex %>;
+    --bs-btn-disabled-bg: <%= color_hex %>;
+    --bs-btn-disabled-border-color: <%= color_hex %>;
+}
+
+.btn-outline-primary {
+    --bs-btn-color: <%= color_hex %>;
+    --bs-btn-border-color: <%= color_hex %>;
+    --bs-btn-hover-bg: <%= color_hex %>;
+    --bs-btn-hover-border-color: <%= color_hex %>;
+    --bs-btn-active-bg: <%= color_hex %>;
+    --bs-btn-active-border-color: <%= color_hex %>;
+    --bs-btn-disabled-color: <%= color_hex %>;
+    --bs-btn-disabled-border-color: <%= color_hex %>;
+}
+
+.dropdown-menu {
+    --bs-dropdown-link-active-bg: <%= color_hex %>;
+}
+
+.dropdown-menu-dark {
+    --bs-dropdown-link-active-bg: <%= color_hex %>;
+}
+
+.nav-pills {
+    --bs-nav-pills-link-active-bg: <%= color_hex %>;
+}
+
+.pagination {
+    --bs-pagination-active-bg: <%= color_hex %>;
+    --bs-pagination-active-border-color: <%= color_hex %>;
+}
+
+.progress,
+.progress-stacked {
+    --bs-progress-bar-bg: <%= color_hex %>;
+}
+
+.list-group {
+    --bs-list-group-active-bg: <%= color_hex %>;
+    --bs-list-group-active-border-color: <%= color_hex %>;
+}
+
+.btn-primary:hover, .btn-primary:focus {
+    background: <%= color_hex %>;
+}
+
+.btn-outline-primary {
+    color: <%= color_hex %> !important;
+}
+
+:root {
+    --bs-primary-rgb: <%= color_rgb %>;
+    --bs-link-color-rgb: <%= color_rgb %>;
+    --bs-focus-ring-color: rgba(<%= color_rgb %>, 0.25);
+}
+
+.form-control:focus {
+    box-shadow: 0 0 0 0.25rem rgba(<%= color_rgb %>, 0.25);
+}
+
+.form-select:focus {
+    box-shadow: 0 0 0 0.25rem rgba(<%= color_rgb %>, 0.25);
+}
+
+.form-check-input:focus {
+    box-shadow: 0 0 0 0.25rem rgba(<%= color_rgb %>, 0.25);
+}
+
+.form-range:focus::-webkit-slider-thumb {
+    box-shadow: 0 0 0 1px #fff, 0 0 0 0.25rem rgba(<%= color_rgb %>, 0.25);
+}
+.form-range:focus::-moz-range-thumb {
+    box-shadow: 0 0 0 1px #fff, 0 0 0 0.25rem rgba(<%= color_rgb %>, 0.25);
+}
+
+.btn-outline-primary {
+    --bs-btn-focus-shadow-rgb: <%= color_rgb %>;
+}
+
+.nav-link:focus-visible {
+    box-shadow: 0 0 0 0.25rem rgba(<%= color_rgb %>, 0.25);
+}
+
+.accordion {
+    --bs-accordion-btn-focus-box-shadow: 0 0 0 0.25rem rgba(<%= color_rgb %>, 0.25);
+}
+
+.pagination {
+    --bs-pagination-focus-box-shadow: 0 0 0 0.25rem rgba(<%= color_rgb %>, 0.25);
+}
+
+.btn-close {
+    --bs-btn-close-focus-shadow: 0 0 0 0.25rem rgba(<%= color_rgb %>, 0.25);
+}

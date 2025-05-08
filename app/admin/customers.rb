@@ -49,7 +49,7 @@ ActiveAdmin.register Customer do
 
   form do |f|
     f.inputs do
-      f.input :logo, as: :file
+      f.input :logo, as: :file, input_html: { accept: Customer::ALLOWED_LOGO_TYPES.join(',') }
       f.input :company_name
       f.input :first_name
       f.input :last_name
