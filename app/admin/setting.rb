@@ -11,7 +11,7 @@ ActiveAdmin.register_page "Setting" do
     if @setting.update(setting_params)
       redirect_to admin_setting_path, notice: "Setting was successfully updated."
     else
-      redirect_to admin_setting_path, alert: @setting.errors.full_messages.to_sentence
+      render :index
     end
   end
 

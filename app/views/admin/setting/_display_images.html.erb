@@ -2,34 +2,30 @@
   <h3>Display & Control Images</h3>
   <div class="panel_contents">
     <div class="columns">
-
       <div class="column" style="width: 32.0%; margin-right: 2%;">
-        <% if setting.logo.attached? %>
+        <% if setting.logo.attached? && setting.logo.persisted? %>
           <%= image_tag setting.logo, style: 'margin-bottom: 10px; object-fit: contain; width: 200px; max-height: 200px;' %>
           <%= button_to 'Remove logo', admin_setting_remove_image_path(type: 'logo'), method: :delete %>
         <% else %>
           Logo not uploaded
         <% end %>
       </div>
-
       <div class="column" style="width: 32.0%; margin-right: 2%;">
-        <% if setting.login_background.attached? %>
+        <% if setting.login_background.attached? && setting.login_background.persisted? %>
           <%= image_tag setting.login_background, style: 'margin-bottom: 10px; object-fit: contain; width: 200px; max-height: 200px;' %>
           <%= button_to 'Remove login background', admin_setting_remove_image_path(type: 'login_background'), method: :delete %>
         <% else %>
           Login background not uploaded
         <% end %>
       </div>
-
       <div class="column" style="width: 32.0%;">
-        <% if setting.app_background.attached? %>
+        <% if setting.app_background.attached? && setting.app_background.persisted? %>
           <%= image_tag setting.app_background, style: 'margin-bottom: 10px; object-fit: contain; width: 200px; max-height: 200px;' %>
           <%= button_to 'Remove app background', admin_setting_remove_image_path(type: 'app_background'), method: :delete %>
         <% else %>
           App background not uploaded
         <% end %>
       </div>
-
       <div style="clear:both;"></div>
     </div>
   </div>
