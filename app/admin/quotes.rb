@@ -37,7 +37,7 @@ ActiveAdmin.register Quote do
       f.input :categories, as: :check_boxes,
                            collection: Category.enabled.order(:name).pluck(:name, :id),
                            wrapper_html: { class: 'categories-wrapper' }
-      f.input :item_ids, label: 'Items Without Category', as: :check_boxes, collection: Item.enabled.where(category_id: nil).order(:name),
+      f.input :item_ids, label: 'Items Without Category', as: :check_boxes, collection: Item.enabled.without_category.order(:name),
                          wrapper_html: { class: 'categories-wrapper' }
       f.input :total_price, as: :number, input_html: { min: 0, readonly: true }, hint: 'Total price will be calculated automatically based on quote items.'
     end

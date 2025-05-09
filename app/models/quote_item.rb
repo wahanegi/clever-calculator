@@ -18,9 +18,11 @@ class QuoteItem < ApplicationRecord
   def compile_pricing_parameters
     return unless item
 
-    self.pricing_parameters = (item.fixed_parameters || {})
-                              .merge(open_param_values || {})
-                              .merge(select_param_values || {})
+    fixed = item.fixed_parameters || {}
+    open = open_param_values || { item.open_parameters_label&.first => 0 }
+    select = select_param_values || { item.pricing_options&.keys&.first => 0 }
+
+    self.pricing_parameters = fixed.merge(open, select).reject { |k, v| k.blank? || v.blank? }
   end
 
   def calculate_price_from_formula

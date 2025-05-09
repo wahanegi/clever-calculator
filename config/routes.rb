@@ -5,12 +5,21 @@ Rails.application.routes.draw do
 
   namespace :api do
     namespace :v1 do
+      resources :quotes, only: [:create, :update] do
+        resources :quote_items, only: [:update, :index] do
+          collection do
+            post :create_from_item
+            post :create_from_category
+            delete :destroy_selected
+          end
+        end
+      end
       resource :setting, only: [:show]
-      resources :quotes, only: [:create, :update]
       resources :customers, only: [:index] do
         post :upsert, on: :collection
       end
-      resources :categories, only: [ :index ]
+      resources :categories, only: [:index]
+      get 'items/uncategorized', to: 'items#uncategorized'
     end
   end
 

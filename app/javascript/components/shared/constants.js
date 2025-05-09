@@ -13,6 +13,7 @@ export const ENDPOINTS = {
   CUSTOMERS: '/api/v1/customers',
   CUSTOMERS_UPSERT: '/api/v1/customers/upsert',
   CATEGORIES: '/api/v1/categories',
+  UNCATEGORIZED_ITEMS: '/api/v1/items/uncategorized',
 }
 
 export const STEPS = {
