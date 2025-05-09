@@ -12,6 +12,7 @@ export const fetchAuthentication = {
 }
 
 export const fetchCustomers = {
+  show: () => get(ENDPOINTS.SETTING),
   index: () => get(ENDPOINTS.CUSTOMERS),
   upsert: (data) => post(ENDPOINTS.CUSTOMERS_UPSERT, data),
   upsertUseFormData: async (customer) => {
@@ -41,6 +42,10 @@ export const fetchCustomers = {
 
     return post(ENDPOINTS.CUSTOMERS_UPSERT, formData)
   },
+}
+
+export const fetchSetting = {
+  show: () => get(ENDPOINTS.SETTING),
 }
 
 export const fetchCategories = {

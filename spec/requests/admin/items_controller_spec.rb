@@ -30,7 +30,8 @@ RSpec.describe 'Admin::Items', type: :request do
              fixed_parameters: { 'Platform Fee' => '1000' },
              open_parameters_label: ['Users'],
              pricing_options: { "Tier" => { "options" => { "Silver" => "200" }, "value_label" => "Cost Per User" } },
-             calculation_formula: 'Platform Fee * Tier')
+             calculation_formula: 'Platform_Fee * Tier',
+             formula_parameters: %w[Platform_Fee Tier])
     end
 
     it 'displays the item details with parameters and formula' do
@@ -38,14 +39,14 @@ RSpec.describe 'Admin::Items', type: :request do
       expect(response).to have_http_status(:success)
       expect(response.body).to include(item.name)
       expect(response.body).to include(item.category.name)
-      expect(response.body).to include('Platform Fee')
+      expect(response.body).to include('Platform_Fee')
       expect(response.body).to include('1000')
       expect(response.body).to include('Users')
       expect(response.body).to include('Tier')
       expect(response.body).to include('Silver')
       expect(response.body).to include('200')
       expect(response.body).to include('Cost Per User')
-      expect(response.body).to include('Platform Fee * Tier')
+      expect(response.body).to include('Platform_Fee * Tier')
     end
   end
 

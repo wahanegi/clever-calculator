@@ -3,7 +3,7 @@
     <div class="quote-params-block">
       <ul>
         <% fixed_parameters.each do |name, value| %>
-          <li><%= name %>: <%= value %></li>
+          <li><%= parameter_display_name(name) %>: <%= value %></li>
         <% end %>
       </ul>
     </div>
@@ -14,7 +14,7 @@
         <% open_parameters_label.each do |label| %>
           <li>
             <label>
-              <%= label %>
+              <%= parameter_display_name(label) %>
               <input type="number"
                      name="quote[quote_items_attributes][NEW_RECORD][open_param_values][<%= label %>]"
                      class="quote-open-param-input param-input"
@@ -31,7 +31,7 @@
         <% select_parameters.each do |sel_name, data| %>
           <li>
             <label>
-              <%= sel_name %>
+              <%= parameter_display_name(sel_name) %>
               <select name="quote[quote_items_attributes][NEW_RECORD][select_param_values][<%= sel_name %>]"
                       class="quote-select-param-input param-input">
                 <option value="">— Select —</option>

@@ -14,6 +14,7 @@ Rails.application.routes.draw do
           end
         end
       end
+      resource :setting, only: [:show]
       resources :customers, only: [:index] do
         post :upsert, on: :collection
       end
