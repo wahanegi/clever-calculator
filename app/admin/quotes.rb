@@ -180,6 +180,10 @@ ActiveAdmin.register Quote do
     end
   end
 
+  action_item :back, only: :show do
+    link_to "Back To Quotes", admin_quotes_path
+  end
+
   collection_action :load_items, method: :post do
     category_ids = params[:category_ids] || []
     item_ids = params[:item_ids] || []

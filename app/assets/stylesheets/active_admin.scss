@@ -294,5 +294,9 @@ ol li:last-child a.has_many_remove {
   width: 30% !important;
 }
 
+.col-created_by {
+  min-width: 90px;
+}
+
 @import 'active_admin/forms/select';
 @import 'active_admin/forms/dropdown-select';

@@ -4,7 +4,15 @@ class QuoteItem < ApplicationRecord
   belongs_to :quote
   belongs_to :item
 
-  validates :price, presence: true, numericality: { greater_than_or_equal_to: 0 }, unless: :destroyed?
+  validates :price,
+            presence: {
+              message: "Could not be calculated – please make sure all required parameters are filled in"
+            },
+            numericality: {
+              greater_than_or_equal_to: 0,
+              message: "Must be a valid number (check your parameter inputs)"
+            },
+            unless: -> { destroyed? || errors[:price].present? }
   validates :discount, numericality: { greater_than_or_equal_to: 0, less_than_or_equal_to: 100 }
   validates :final_price, presence: true, numericality: { greater_than_or_equal_to: 0 }, unless: :destroyed?
 
