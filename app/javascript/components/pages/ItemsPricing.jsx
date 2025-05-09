@@ -3,43 +3,28 @@ import { Button, Container, Form } from 'react-bootstrap'
 import { useAppHooks } from '../hooks'
 import { DeleteItemModal, ItemsPricingTopBar, Item, QuoteCreation, ROUTES } from '../shared'
 import { PcCategoryAccordion, PcItemAccordion, PcItemFormGroup, PcItemTextareaControl } from '../ui'
-import { getCurrentStepId, normalizeApiCategories, normalizeApiItems } from '../utils'
-import { fetchCategories, fetchItems, fetchQuoteItems } from '../services'
+import { getCurrentStepId, totalFinalPrice } from '../utils'
+import { fetchQuoteItems, fetchSelectableOptions } from '../services'
 
 export const ItemsPricing = () => {
   const { navigate, queryParams, location } = useAppHooks()
+  const quoteId = queryParams.get('quote_id')
+  const currentStepId = getCurrentStepId(location.pathname)
 
   const [selectedOptions, setSelectedOptions] = useState([])
   const [expandedAccordions, setExpandedAccordions] = useState([])
   const [isShowDeleteModal, setIsShowDeleteModal] = useState(false)
   const [removeSelectedOption, setRemoveSelectedOption] = useState({})
   const [selectableOptions, setSelectableOptions] = useState([])
-  const [items, setItems] = useState([])
   const [notesStates, setNotesStates] = useState({})
 
-  const quoteId = queryParams.get('quote_id')
-  const currentStepId = getCurrentStepId(location.pathname)
-  const totalPrice = 0
+  const isSelectedOptionsEmpty = selectedOptions.length === 0
+  console.log('selectedOptions', selectedOptions)
 
   useEffect(() => {
-    Promise.all([fetchCategories.index(), fetchItems.uncategorized()]).then(([categoryRes, uncategorizedRes]) => {
-      const categories = normalizeApiCategories(categoryRes.data)
-      const itemsData = normalizeApiItems(categoryRes.included)
-      const uncategorizedItems = normalizeApiItems(uncategorizedRes.data)
-
-      const categoryOptions = categories.map((category) => ({ ...category, type: 'category' }))
-      const itemOptions = uncategorizedItems.map((item) => ({
-        id: item.id,
-        name: item.name,
-        type: 'item',
-      }))
-
-      setSelectableOptions([...categoryOptions, ...itemOptions])
-      setItems([...itemsData, ...uncategorizedItems])
+    fetchSelectableOptions.index().then((data) => {
+      setSelectableOptions(data)
     })
-  }, [])
-
-  useEffect(() => {
     fetchQuoteItems.index(quoteId).then((data) => {
       setSelectedOptions(data)
     })
@@ -49,16 +34,20 @@ export const ItemsPricing = () => {
     setRemoveSelectedOption(option)
     setIsShowDeleteModal(true)
   }
+
   const handleToggle = (id) => {
     setExpandedAccordions((prev) => (prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]))
   }
-  const handleConfirmDelete = async () => {
-    await fetchQuoteItems.deleteSelected(quoteId, removeSelectedOption.quote_items.map(item => item.id))
 
-    setSelectedOptions((prev) => prev.filter((option) => option.id !== removeSelectedOption.id && option.type !== removeSelectedOption.type))
-    setExpandedAccordions((prev) => prev.filter((id) => id !== removeSelectedOption.id))
-    setRemoveSelectedOption(null)
-    setIsShowDeleteModal(false)
+  const handleConfirmDelete = () => {
+    const quoteItemIds = removeSelectedOption.quote_items.map(item => item.id)
+
+    fetchQuoteItems.deleteSelected(quoteId, quoteItemIds).then(() => {
+      setSelectedOptions(selectedOptions.filter((option) => option.id !== removeSelectedOption.id && option.type === removeSelectedOption.type))
+      setExpandedAccordions((prev) => prev.filter((id) => id !== removeSelectedOption.id))
+      setRemoveSelectedOption(null)
+      setIsShowDeleteModal(false)
+    })
   }
 
   const handleCancelDeleteCategory = () => {
@@ -103,6 +92,13 @@ export const ItemsPricing = () => {
 
   const handleBack = () => navigate(ROUTES.CUSTOMER_INFO)
 
+  const EmptyQuotePrompt = () =>
+    isSelectedOptionsEmpty && (
+      <div className="text-center text-primary fst-italic py-6">
+        Select one or more items to start your quote.
+      </div>
+    )
+
   return (
     <Container className={'wrapper pt-16'}>
       <section className={'mb-12 px-8'}>
@@ -110,7 +106,7 @@ export const ItemsPricing = () => {
 
         <ItemsPricingTopBar
           quoteId={quoteId}
-          totalPrice={totalPrice}
+          totalPrice={selectedOptions.reduce((total, option) => total + parseFloat(totalFinalPrice(option?.quote_items || [])), 0).toFixed(2)}
           selectedOptions={selectedOptions}
           setSelectedOptions={setSelectedOptions}
           expandAll={expandAll}
@@ -120,84 +116,67 @@ export const ItemsPricing = () => {
           selectableOptions={selectableOptions}
         />
 
-        {selectedOptions.length === 0 && (
-          <div className="text-center text-primary fst-italic py-6">Select one or more items to start your quote.</div>
-        )}
+        <EmptyQuotePrompt />
       </section>
 
       <section className={'d-flex flex-column gap-4 mb-12'}>
-        {selectedOptions.length > 0 &&
-          selectedOptions.map((selectedOption) => {
-            const isItem = selectedOption.type === 'item'
+        {selectedOptions.map((selectedOption) =>
+          <PcCategoryAccordion
+            key={`category-${selectedOption.id}`}
+            categoryName={selectedOption.name}
+            isOpen={expandedAccordions.includes(selectedOption.id)}
+            onToggle={() => handleToggle(selectedOption.id)}
+            onDelete={() => showDeleteModal(selectedOption)}
+            categoryPrice={totalFinalPrice(selectedOption.quote_items)}
+          >
+            <div className={'d-flex flex-column gap-6'}>
+              {selectedOption.quote_items.map((item) => {
+                const notesState = notesStates[item.id] || {}
+                const notesIcon = notesState.note?.trim() ? 'noted' : 'note'
 
-            const categoryItems = isItem
-              ? [items.find((item) => item.id === selectedOption.id)].filter(Boolean)
-              : items.filter((item) => item.category_id === selectedOption.id)
+                return (
+                  <PcItemAccordion
+                    key={`quote-item-${item.id}`}
+                    itemName={item.attributes.item.name}
+                    isNotesShow={notesState.isNotesOpen}
+                    onToggleNotes={() => toggleItemNotes(item.id)}
+                    notesIcon={notesIcon}
+                    quotePrice={item.attributes.final_price}>
+                    <Item itemData={item}
+                          quoteId={quoteId}
+                          selectedOptions={selectedOptions}
+                          setSelectedOptions={setSelectedOptions} />
 
-            const accordionTitle = isItem ? 'Item without category' : selectedOption.name
-
-            return (
-              <PcCategoryAccordion
-                key={`category-${selectedOption.id}`}
-                categoryName={accordionTitle}
-                isOpen={expandedAccordions.includes(selectedOption.id)}
-                onToggle={() => handleToggle(selectedOption.id)}
-                onDelete={() => showDeleteModal(selectedOption)}
-              >
-                <div className={'d-flex flex-column gap-6'}>
-                  {selectedOption.quote_items.map((item) => {
-                    const notesState = notesStates[item.id] || {}
-                    const notesIcon = notesState.note?.trim() ? 'noted' : 'note'
-
-                    return (
-                      <PcItemAccordion
-                        key={`quote-item-${item.id}`}
-                        itemName={item.attributes.item.name}
-                        isNotesShow={notesState.isNotesOpen}
-                        onToggleNotes={() => toggleItemNotes(item.id)}
-                        notesIcon={notesIcon}
-                      >
-                        <Item itemData={item}
-                              quoteId={quoteId}
-                              selectedOptions={selectedOptions}
-                              setSelectedOptions={setSelectedOptions} />
-
-                        {notesState.isNotesOpen && (
-                          <PcItemFormGroup label={'Notes'} paramType={'notes'}>
-                            <PcItemTextareaControl
-                              placeholder={''}
-                              className={'mb-3 mt-9'}
-                              value={notesState.note || ''}
-                              onChange={(e) => handleNotesChange(item.id, e.target.value)}
-                            />
-                            <Form.Check
-                              type={'checkbox'}
-                              label={'Include notes with quote'}
-                              className={'fs-10'}
-                              checked={notesState.include || false}
-                              onChange={(e) => handleIncludeNotesChange(item.id, e.target.checked)}
-                            />
-                          </PcItemFormGroup>
-                        )}
-                      </PcItemAccordion>
-                    )
-                  })}
-                </div>
-              </PcCategoryAccordion>
-            )
-          })}
+                    {notesState.isNotesOpen && (
+                      <PcItemFormGroup label={'Notes'} paramType={'notes'}>
+                        <PcItemTextareaControl
+                          placeholder={''}
+                          className={'mb-3 mt-9'}
+                          value={notesState.note || ''}
+                          onChange={(e) => handleNotesChange(item.id, e.target.value)}
+                        />
+                        <Form.Check
+                          type={'checkbox'}
+                          label={'Include notes with quote'}
+                          className={'fs-10'}
+                          checked={notesState.include || false}
+                          onChange={(e) => handleIncludeNotesChange(item.id, e.target.checked)}
+                        />
+                      </PcItemFormGroup>
+                    )}
+                  </PcItemAccordion>
+                )
+              })}
+            </div>
+          </PcCategoryAccordion>)}
       </section>
 
       <section className={'d-flex justify-content-center align-items-center gap-4 mb-4'}>
         <Button variant={'outline-primary'} className={'fw-bold pc-btn'} onClick={handleBack}>
           Back
         </Button>
-        <Button
-          variant={'outline-primary'}
-          className={'fw-bold pc-btn pc-btn-download'}
-          onClick={handleDownload}
-          disabled={selectedOptions.length === 0}
-        >
+        <Button variant={'outline-primary'} className={'fw-bold pc-btn pc-btn-download'}
+                onClick={handleDownload} disabled={isSelectedOptionsEmpty}>
           Download
         </Button>
       </section>

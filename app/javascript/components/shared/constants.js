@@ -14,6 +14,7 @@ export const ENDPOINTS = {
   CUSTOMERS_UPSERT: '/api/v1/customers/upsert',
   CATEGORIES: '/api/v1/categories',
   UNCATEGORIZED_ITEMS: '/api/v1/items/uncategorized',
+  SELECTABLE_OPTIONS: '/api/v1/selectable_options',
 }
 
 export const STEPS = {

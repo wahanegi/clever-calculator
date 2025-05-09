@@ -63,3 +63,7 @@ export const fetchQuoteItems = {
   index: async (quoteId) => await get(`${ENDPOINTS.QUOTES}/${quoteId}/quote_items`),
   update: async (quoteId, quoteItemId, data) => await patch(`${ENDPOINTS.QUOTES}/${quoteId}/quote_items/${quoteItemId}`, data),
 }
+
+export const fetchSelectableOptions = {
+  index: async () => await get(ENDPOINTS.SELECTABLE_OPTIONS),
+}

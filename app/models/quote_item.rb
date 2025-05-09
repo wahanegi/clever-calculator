@@ -18,11 +18,9 @@ class QuoteItem < ApplicationRecord
   def compile_pricing_parameters
     return unless item
 
-    fixed = item.fixed_parameters || {}
-    open = open_param_values || { item.open_parameters_label&.first => 0 }
-    select = select_param_values || { item.pricing_options&.keys&.first => 0 }
+    fixed, open, select = assemble_parameters
 
-    self.pricing_parameters = fixed.merge(open, select).reject { |k, v| k.blank? || v.blank? }
+    self.pricing_parameters = fixed.merge(open, select)
   end
 
   def calculate_price_from_formula
@@ -48,5 +46,17 @@ class QuoteItem < ApplicationRecord
 
   def item_requires_formula?
     item&.calculation_formula.present?
+  end
+
+  def assemble_parameters
+    fixed = item.fixed_parameters || {}
+    open = fetch_or_default(item.open_parameters_label&.first, open_param_values)
+    select = fetch_or_default(item.pricing_options&.keys&.first, select_param_values)
+
+    [fixed, open, select]
+  end
+
+  def fetch_or_default(key, value)
+    value.presence || (key ? { key => 0 } : {})
   end
 end

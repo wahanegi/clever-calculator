@@ -13,18 +13,18 @@ class GroupedQuoteItemsSerializer
     end
 
     data.map do |model, quote_items|
-      generate_data(model, model.class.name.downcase, quote_items)
+      generate_data(model, quote_items)
     end
   end
 
   private
 
-  def generate_data(model, name, quote_items)
+  def generate_data(model, quote_items)
     {
       id: model.id,
       name: model.name,
       quote_items: QuoteItemSerializer.new(quote_items, is_collection: true).serializable_hash[:data] || [],
-      type: name
+      type: model.class.name.downcase
     }
   end
 end
