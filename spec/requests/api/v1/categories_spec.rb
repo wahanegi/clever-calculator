@@ -10,6 +10,7 @@ RSpec.describe "API::V1::Categories", type: :request do
     context "when active and disabled categories exist" do
       let!(:active_category) { create(:category, name: "Active Category", is_disabled: false) }
       let!(:disabled_category) { create(:category, name: "Disabled Category", is_disabled: true) }
+      let!(:item) { create(:item, category: active_category) }
 
       it "returns list of only active categories" do
         get "/api/v1/categories"
