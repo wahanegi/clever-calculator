@@ -14,7 +14,7 @@
         <% open_parameters_label.each do |label| %>
           <li>
             <label>
-              <%= parameter_display_name(label) %>
+              <%= parameter_display_name(label) %> <abbr title="required">*</abbr>
               <input type="number"
                      name="quote[quote_items_attributes][NEW_RECORD][open_param_values][<%= label %>]"
                      class="quote-open-param-input param-input"
@@ -31,7 +31,7 @@
         <% select_parameters.each do |sel_name, data| %>
           <li>
             <label>
-              <%= parameter_display_name(sel_name) %>
+              <%= parameter_display_name(sel_name) %> <abbr title="required">*</abbr>
               <select name="quote[quote_items_attributes][NEW_RECORD][select_param_values][<%= sel_name %>]"
                       class="quote-select-param-input param-input">
                 <option value="">— Select —</option>
