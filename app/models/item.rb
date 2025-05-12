@@ -1,5 +1,5 @@
 class Item < ApplicationRecord
-  belongs_to :category, optional: true
+  belongs_to :category, optional: true, counter_cache: true
   has_many :quote_items, dependent: :destroy
 
   validates :name, presence: true
@@ -11,6 +11,8 @@ class Item < ApplicationRecord
   validates_with ItemFormulaSyntaxValidator
 
   scope :enabled, -> { where(is_disabled: false) }
+
+  scope :without_category, -> { where(category_id: nil) }
 
   def self.ransackable_attributes(_auth_object = nil)
     %w[category_id created_at id is_disabled name updated_at]
