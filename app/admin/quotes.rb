@@ -45,6 +45,9 @@ ActiveAdmin.register Quote do
               div class: 'dropdown-toggle' do
                 text_node 'Click to select categories...'
               end
+              div class: 'selected-category-names' do
+                text_node 'No categories selected'
+              end
 
               div class: 'dropdown-content' do
                 f.input :categories,
@@ -69,16 +72,19 @@ ActiveAdmin.register Quote do
             text_node 'Items Without Category'
           end
 
-          li class: 'dropdown-wrapper check_boxes input optional', id: 'quote_items_ids_input' do
+          li class: 'dropdown-wrapper check_boxes input optional', id: 'quote_item_ids_input' do
             fieldset class: 'choices' do
               div class: 'dropdown-toggle' do
                 text_node 'Click to select items...'
+              end
+              div class: 'selected-item-names' do
+                text_node 'No items selected'
               end
 
               div class: 'dropdown-content' do
                 f.input :item_ids,
                         as: :check_boxes,
-                        collection: Item.enabled.where(category_id: nil).order(:name),
+                        collection: Item.enabled.where(category_id: nil).order(:name).pluck(:name, :id),
                         label: false,
                         input_html: { class: 'items-checkbox' }
               end

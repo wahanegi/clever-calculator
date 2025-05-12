@@ -223,6 +223,10 @@ document.addEventListener('DOMContentLoaded', () => {
       } catch (error) {
         console.error('Error loading items:', error)
       }
+
+      if (window.dropdownUpdateFunctions) {
+        window.dropdownUpdateFunctions.forEach((updateFn) => updateFn())
+      }
     })
   }
 
