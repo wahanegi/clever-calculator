@@ -125,6 +125,30 @@ RSpec.describe Item, type: :model do
           item.calculation_formula = 'param1 + ( 2 * param2 )'
           expect(item).to be_valid
         end
+
+        it 'is invalid with formula starting with operator' do
+          item.calculation_formula = '+ param1 + param2'
+          expect(item).not_to be_valid
+          expect(item.errors[:calculation_formula]).to include('cannot start with a mathematical operator')
+        end
+
+        it 'is invalid with formula ending with operator' do
+          item.calculation_formula = 'param1 + param2 +'
+          expect(item).not_to be_valid
+          expect(item.errors[:calculation_formula]).to include('cannot end with a mathematical operator')
+        end
+
+        it 'is invalid with Dentaku syntax error' do
+          item.calculation_formula = 'param1 + * param2'
+          expect(item).not_to be_valid
+          expect(item.errors[:calculation_formula].first).to include('has missing operands. Ensure the correct number of arguments')
+        end
+
+        it 'is invalid with unbalance parentheses' do
+          item.calculation_formula = '( param1 + param2'
+          expect(item).not_to be_valid
+          expect(item.errors[:calculation_formula].first).to include('too many opening parentheses')
+        end
       end
     end
 

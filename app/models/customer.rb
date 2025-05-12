@@ -24,6 +24,10 @@ class Customer < ApplicationRecord
        updated_at]
   end
 
+  def self.ransackable_associations(_auth_object = nil)
+    ["quotes"]
+  end
+
   private
 
   def logo_size_and_type
