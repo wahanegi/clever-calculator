@@ -10,6 +10,7 @@ RSpec.describe "Admin::Quotes", type: :request do
   let!(:item_select) { create(:item, :with_pricing_options, name: "Select Item", category: nil) }
   let!(:quote) { create(:quote, customer: customer, user: user) }
   let!(:quote_item) { create(:quote_item, quote: quote, item: item_fixed, price: 2500, discount: 10, final_price: 2250) }
+  let(:unescaped_response_body) { CGI.unescapeHTML(response.body) }
 
   before do
     sign_in admin_user
@@ -19,11 +20,10 @@ RSpec.describe "Admin::Quotes", type: :request do
     it "renders the index page successfully" do
       get admin_quotes_path
       expect(response).to be_successful
-      unescaped_body = CGI.unescapeHTML(response.body)
-      expect(unescaped_body).to include("Quotes")
-      expect(unescaped_body).to include(customer.company_name)
-      expect(unescaped_body).to include(user.name)
-      expect(unescaped_body).to include(quote.total_price.to_s)
+      expect(unescaped_response_body).to include("Quotes")
+      expect(unescaped_response_body).to include(customer.company_name)
+      expect(unescaped_response_body).to include(user.name)
+      expect(unescaped_response_body).to include(quote.total_price.to_s)
     end
   end
 
@@ -31,13 +31,13 @@ RSpec.describe "Admin::Quotes", type: :request do
     it "renders the show page successfully" do
       get admin_quote_path(quote)
       expect(response).to be_successful
-      expect(response.body).to include(customer.company_name)
-      expect(response.body).to include(user.name)
-      expect(response.body).to include("Quote Items")
-      expect(response.body).to include(item_fixed.name)
-      expect(response.body).to include("2500")
-      expect(response.body).to include("10")
-      expect(response.body).to include("2250")
+      expect(unescaped_response_body).to include(customer.company_name)
+      expect(unescaped_response_body).to include(user.name)
+      expect(unescaped_response_body).to include("Quote Items")
+      expect(unescaped_response_body).to include(item_fixed.name)
+      expect(unescaped_response_body).to include("2500")
+      expect(unescaped_response_body).to include("10")
+      expect(unescaped_response_body).to include("2250")
     end
   end
 
