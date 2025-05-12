@@ -30,7 +30,8 @@ RSpec.describe 'Admin::Items', type: :request do
              fixed_parameters: { 'Platform Fee' => '1000' },
              open_parameters_label: ['Users'],
              pricing_options: { "Tier" => { "options" => { "Silver" => "200" }, "value_label" => "Cost Per User" } },
-             calculation_formula: 'Platform Fee * Tier')
+             calculation_formula: 'Platform_Fee * Tier',
+             formula_parameters: %w[Platform_Fee Tier])
     end
 
     it 'displays the item details with parameters and formula' do
@@ -38,14 +39,14 @@ RSpec.describe 'Admin::Items', type: :request do
       expect(response).to have_http_status(:success)
       expect(response.body).to include(item.name)
       expect(response.body).to include(item.category.name)
-      expect(response.body).to include('Platform Fee')
+      expect(response.body).to include('Platform_Fee')
       expect(response.body).to include('1000')
       expect(response.body).to include('Users')
       expect(response.body).to include('Tier')
       expect(response.body).to include('Silver')
       expect(response.body).to include('200')
       expect(response.body).to include('Cost Per User')
-      expect(response.body).to include('Platform Fee * Tier')
+      expect(response.body).to include('Platform_Fee * Tier')
     end
   end
 
@@ -60,16 +61,45 @@ RSpec.describe 'Admin::Items', type: :request do
       }
     end
 
+    let(:valid_params_without_category) do
+      {
+        item: {
+          name: 'Test Item',
+          description: 'A test item'
+        }
+      }
+    end
+
     let(:invalid_params) { { item: { name: '' } } }
 
-    it 'creates a new item and redirects' do
-      expect do
-        post '/admin/items', params: valid_params
-      end.to change(Item, :count).by(1)
+    context 'when a category is' do
+      it 'not selected and redirects to the item page' do
+        expect do
+          post admin_items_path, params: valid_params_without_category
+        end.to change(Item, :count).by(1)
 
-      expect(response).to redirect_to(%r{/admin/items/\d+})
-      follow_redirect!
-      expect(response.body).to include('Test Item')
+        expect(response).to redirect_to(admin_item_path(Item.last))
+
+        follow_redirect!
+
+        expect(response).to have_http_status(:ok)
+        expect(response.body).to include('Test Item')
+        expect(response.body).to include('Item was successfully created.')
+      end
+
+      it 'selected and redirects to the item page' do
+        expect do
+          post admin_items_path(category_id: category.id), params: valid_params
+        end.to change(Item, :count).by(1)
+
+        expect(response).to redirect_to(admin_item_path(Item.last))
+
+        follow_redirect!
+
+        expect(response).to have_http_status(:ok)
+        expect(response.body).to include('Test Item')
+        expect(response.body).to include('Item was successfully created.')
+      end
     end
 
     context 'with session parameters' do
@@ -114,7 +144,7 @@ RSpec.describe 'Admin::Items', type: :request do
         expect(item.is_fixed).to be true
         expect(item.is_open).to be true
         expect(item.is_selectable_options).to be true
-        expect(response).to redirect_to(%r{/admin/items/\d+})
+        expect(response).to redirect_to(admin_item_path(item))
       end
 
       it 'does not create an item with invalid params' do
@@ -137,8 +167,42 @@ RSpec.describe 'Admin::Items', type: :request do
         }
       }
     end
-
+    let(:valid_params_without_category) do
+      {
+        item: {
+          name: 'Updated Item',
+          description: 'Updated description',
+          category_id: nil
+        }
+      }
+    end
     let(:invalid_params) { { item: { name: '' } } }
+
+    context 'when category is' do
+      it 'selected and redirects to the edit category page' do
+        put admin_item_path(item), params: valid_params
+
+        expect(response).to redirect_to(edit_admin_category_path(category))
+
+        follow_redirect!
+
+        expect(response).to have_http_status(:ok)
+        expect(response.body).to include('Updated Item')
+        expect(response.body).to include("Item was successfully updated.")
+      end
+
+      it 'not selected and redirects to the item page' do
+        put admin_item_path(item), params: valid_params_without_category
+
+        expect(response).to redirect_to(admin_item_path(item))
+
+        follow_redirect!
+
+        expect(response).to have_http_status(:ok)
+        expect(response.body).to include('Updated Item')
+        expect(response.body).to include("Item was successfully updated.")
+      end
+    end
 
     it 'updates the item and redirects' do
       put "/admin/items/#{item.id}", params: valid_params
@@ -146,7 +210,7 @@ RSpec.describe 'Admin::Items', type: :request do
 
       expect(item.name).to eq('Updated Item')
       expect(item.description).to eq('Updated description')
-      expect(response).to redirect_to("/admin/items/#{item.id}")
+      expect(response).to redirect_to(edit_admin_category_path(item.category))
       follow_redirect!
       expect(response.body).to include('Updated Item')
     end

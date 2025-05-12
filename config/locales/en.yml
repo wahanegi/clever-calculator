@@ -32,3 +32,12 @@ en:
     predicates:
       matches: equals
       eq: equivalent
+  activerecord:
+    errors:
+      models:
+        quote:
+          attributes:
+            customer:
+              required: "can't be blank"
+            user:
+              required: "can't be blank"

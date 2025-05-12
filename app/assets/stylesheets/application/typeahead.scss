@@ -1,0 +1,334 @@
+/*** ALL GENERAL STYLES FOR REACT-BOOTSTRAP-TYPEAHEAD ***/
+
+$rbt-color-primary: var(--bs-primary) !default;
+$rbt-color-disabled: $gray-light !default;
+$rbt-color-white: #fff !default;
+
+// Hide IE's native "clear" button
+.rbt .rbt-input-main::-ms-clear {
+  display: none;
+}
+
+.rbt-input-main {
+  border: none !important;
+  border-radius: 4px;
+}
+
+/* Set color to transparent to prevent duplicated text rendering
+ * when the customer deletes characters after selecting an option
+ * from the select list in the rbt-input.
+ *
+ * This issue occurs specifically when the selected value is longer
+ * than the visible input width — causing the hint to visually overlap.
+ *
+ * This is a known issue with the Typeahead component in version 6.4.1.
+ */
+.rbt-input-hint {
+  color: transparent !important;
+}
+
+/**
+ *** Menu ***
+ **/
+.rbt-menu {
+  margin-bottom: 2px; // Spacing for dropup
+
+  & > .dropdown-item {
+    padding: 6px 12px;
+    color: $gray-700;
+
+    &:focus {
+      outline: none;
+      color: var(--bs-primary);
+      background-color: var(--bs-light);
+    }
+
+    &:hover {
+      color: var(--bs-primary);
+      background-color: var(--bs-light);
+    }
+  }
+
+  &-pagination-option {
+    text-align: center;
+  }
+
+  &.dropdown-menu {
+    &.show {
+      margin-top: 4px;
+      border: 1px solid var(--bs-primary) !important;
+    }
+  }
+}
+
+/**
+ *** Multi-select Input ***
+ **/
+$rbt-background-color-disabled: #e9ecef !default;
+
+$rbt-border-color-focus: var(--bs-primary) !default;
+$rbt-border-color-focus-invalid: #dc3545 !default;
+$rbt-border-color-focus-valid: #28a745 !default;
+
+$rbt-box-shadow-dimensions: 0 0 0 0.2rem;
+$rbt-box-shadow-color: rgba(0, 123, 255, 0.25) !default;
+$rbt-box-shadow-color-invalid: rgba(220, 53, 69, 0.25) !default;
+$rbt-box-shadow-color-valid: rgba(40, 167, 69, 0.25) !default;
+
+$rbt-color-focus: #495057 !default;
+$rbt-placeholder-color: var(--bs-secondary) !default;
+
+.rbt-input-multi {
+  position: relative;
+  padding: 12px 42px 6px 10px;
+  border: 1px solid var(--bs-primary) !important;
+  border-radius: 4px;
+  overflow: hidden;
+
+  // Apply Bootstrap focus styles
+  &.focus {
+    border: 1px solid var(--bs-primary) !important;
+    outline: 0;
+  }
+
+  &.form-control {
+    height: auto;
+  }
+
+  // BS4 uses the :disabled pseudo-class, which doesn't work with non-inputs.
+  &.disabled {
+    background-color: $rbt-background-color-disabled;
+    opacity: 1;
+  }
+
+  // Apply Bootstrap placeholder styles
+  input {
+    // Firefox
+    &::-moz-placeholder {
+      color: $rbt-placeholder-color;
+      opacity: 1;
+    }
+
+    // Internet Explorer 10+
+    &:-ms-input-placeholder {
+      color: $rbt-placeholder-color;
+    }
+
+    // Safari and Chrome
+    &::-webkit-input-placeholder {
+      color: $rbt-placeholder-color;
+    }
+  }
+
+  .rbt-input-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: start;
+    align-items: center;
+    gap: 4px;
+    padding-right: 2px;
+    overflow: hidden;
+  }
+}
+
+/**
+ *** Token ***
+ **/
+$rbt-token-background-color: $blue-light !default;
+$rbt-token-color: $rbt-color-primary !default;
+
+$rbt-token-disabled-background-color: rgba(0, 0, 0, 0.1) !default;
+$rbt-token-disabled-color: $rbt-color-disabled !default;
+
+$rbt-token-active-background-color: $rbt-color-primary !default;
+$rbt-token-active-color: $rbt-color-white !default;
+
+.rbt-token {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2px 12px 2px 16px;
+  max-width: 180px;
+  border: 1px solid var(--bs-primary) !important;
+  border-radius: 18px;
+  font-family: $font-family-lato;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1;
+  color: $rbt-token-color;
+  background-color: $rbt-token-background-color;
+  transform: scale(1) !important;
+
+  .rbt-token-label {
+    overflow: hidden; /* Hides any content that overflows the element's width */
+    white-space: nowrap; /* Prevents text from wrapping to a new line */
+    text-overflow: ellipsis; /* Displays "..." when the text is cut off */
+
+    &:not(:last-child) {
+      padding-right: 9px;
+    }
+  }
+
+  &-disabled {
+    color: $rbt-token-disabled-color;
+    background-color: $rbt-token-disabled-background-color;
+    pointer-events: none;
+  }
+
+  &-removeable {
+    height: 100%;
+  }
+
+  &-active {
+    outline: none;
+    text-decoration: none;
+    color: $rbt-token-active-color;
+    background-color: $rbt-token-active-background-color;
+  }
+
+  & &-remove-button {
+    // Hide Bootstrap close button image
+    display: flex;
+    justify-content: center;
+    align-items: end;
+    // Override Bootstrap button shadow
+    padding-left: 0;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    outline: none;
+    font-size: inherit;
+    font-weight: normal;
+    color: inherit;
+    background-image: none;
+    box-shadow: none;
+    text-shadow: none;
+    opacity: 1;
+
+    .rbt-close-content {
+      // Override `display: none` in BS5 styles.
+      display: block;
+    }
+  }
+}
+
+/**
+ *** Loader + CloseButton container ***
+ **/
+.rbt-aux {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 2rem;
+  pointer-events: none; /* Don't block clicks on the input */
+
+  &-lg {
+    width: 3rem;
+  }
+
+  & .rbt-close {
+    margin-top: -0.25rem;
+    pointer-events: auto; /* Override pointer-events: none; above */
+  }
+}
+
+.has-aux .form-control {
+  padding-right: 2rem;
+
+  // Position validation icons next to clear button and loader.
+  &.is-valid,
+  &.is-invalid {
+    padding-right: 4rem;
+    background-position: right 2rem center;
+  }
+}
+
+// Default highlight style
+.rbt-highlight-text {
+  padding: 0;
+  color: var(--bs-primary);
+  background-color: var(--bs-light);
+}
+
+/**
+ *** Input Groups ***
+ **/
+.input-group > .rbt {
+  flex: 1;
+
+  // Form-controls within input-groups have a higher z-index.
+  & .rbt-input-hint,
+  & .rbt-aux {
+    z-index: 5;
+  }
+
+  &:not(:first-child) .form-control {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+  }
+
+  &:not(:last-child) .form-control {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+}
+
+/**
+ *** TYPEAHEAD CUSTOM STYLES for "Items & Pricing" Page ***
+ **/
+.pc-typeahead-items-pricing {
+  .rbt-menu {
+    & > .dropdown-item {
+      padding: 0; // set "0" for prevent duplicate click when choose category from dropdown
+    }
+
+    &.dropdown-menu {
+      &.show {
+        padding: 16px 0;
+      }
+    }
+  }
+
+  .rbt-input-multi {
+    //border-width: 1px !important;
+
+    .rbt-input-main {
+      font-size: 14px;
+      line-height: 1.7;
+    }
+  }
+
+  .rbt-token-remove-button {
+    align-items: center;
+
+    .rbt-close-content {
+      position: relative;
+      visibility: hidden;
+      font-size: 10px;
+    }
+
+    .rbt-close-content::after {
+      position: absolute;
+      content: 'X'; // change "×" to "X"
+      top: 50%;
+      left: 50%;
+      width: inherit;
+      height: inherit;
+      visibility: visible;
+      transform: translate(-50%, -50%);
+    }
+  }
+}
+
+/**
+ *** TYPEAHEAD CUSTOM STYLES for "Customer info" Page ***
+ **/
+.pc-typeahead-customer-info {
+  .pc-icon-reserve-place {
+    padding-right: 26px;
+    background-color: $white;
+  }
+}

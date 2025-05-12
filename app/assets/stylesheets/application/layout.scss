@@ -1,5 +1,3 @@
-@import 'layout/header';
-
 .layout {
   background-image: url('./assets/bg-calculator.png');
   background-position: left calc(#{min(50vh, 504px)});
@@ -8,6 +6,6 @@
 
 @media (max-width: 1300px) {
   .layout {
-    background-image: none;
+    background-image: none !important;
   }
 }

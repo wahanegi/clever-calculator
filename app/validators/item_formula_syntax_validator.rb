@@ -1,7 +1,6 @@
 class ItemFormulaSyntaxValidator < ActiveModel::Validator
   def validate(record)
     return if record.calculation_formula.blank?
-    return unless requires_calculation_formula?(record)
 
     check_all_formula_parameters_present(record)
     check_allowed_parameters(record)
@@ -27,16 +26,16 @@ class ItemFormulaSyntaxValidator < ActiveModel::Validator
 
   def check_allowed_parameters(record)
     operators = %w[+ - * / % ( )]
+    tokens = record.calculation_formula.scan(/[\w\s]+|\S/).map(&:strip).reject(&:empty?)
 
-    invalid_parameters = record.calculation_formula.split(' ').reject do |param|
-      param.match?(/\A\d+(\.\d+)?\z/) ||
-        operators.include?(param) ||
-        record.formula_parameters.include?(param)
+    invalid_parameters = tokens.reject do |token|
+      token.match?(/\A\d+(\.\d+)?\z/) ||
+        operators.include?(token) ||
+        record.formula_parameters.include?(token)
     end
-
     return if invalid_parameters.empty?
 
-    record.errors.add(:calculation_formula, "contains invalid parameters: #{invalid_parameters.join(', ')}")
+    record.errors.add(:calculation_formula, "contains invalid parameters: #{invalid_parameters.uniq.join(', ')}")
   end
 
   def check_operator_placement(record)

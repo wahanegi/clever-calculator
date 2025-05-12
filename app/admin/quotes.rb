@@ -6,7 +6,7 @@ ActiveAdmin.register Quote do
                                                         { note_attributes: [:id, :notes, :is_printable, :_destroy] }
                                                       ]
 
-  filter :customer_company_name, as: :string, label: 'Customer Name'
+  filter :customer_company_name, as: :string, label: 'Company Name'
   filter :user, as: :select, collection: proc {
     User.joins(:quotes).distinct.order(:email).map do |u|
       ["#{u.email} (#{u.name})", u.id]
@@ -16,7 +16,7 @@ ActiveAdmin.register Quote do
   index do
     selectable_column
     id_column
-    column 'Customer Name' do |quote|
+    column 'Company Name' do |quote|
       quote.customer.company_name
     end
     column 'Created By' do |quote|
@@ -35,12 +35,66 @@ ActiveAdmin.register Quote do
     f.inputs do
       f.input :customer, as: :select, collection: Customer.pluck(:company_name, :id), input_html: { class: 'custom-select' }
       f.input :user, as: :select, collection: User.order(:name).pluck(:name, :id), input_html: { class: 'custom-select' }
-      f.input :categories, as: :check_boxes,
-                           collection: Category.enabled.order(:name).pluck(:name, :id),
-                           wrapper_html: { class: 'categories-wrapper' }
-      f.input :item_ids, label: 'Items Without Category', as: :check_boxes, collection: Item.enabled.where(category_id: nil).order(:name),
-                         wrapper_html: { class: 'categories-wrapper' }
-      f.input :total_price, as: :number, input_html: { min: 0, readonly: true }, hint: 'Total price will be calculated automatically based on quote items.'
+      f.inputs class: 'dropdown-group' do
+        li class: 'dropdown-fieldset' do
+          span class: 'fieldset-title' do
+            text_node 'Categories'
+          end
+
+          li class: 'dropdown-wrapper check_boxes input optional', id: 'quote_category_ids_input' do
+            fieldset class: 'choices' do
+              div class: 'dropdown-toggle' do
+                text_node 'Click to select categories...'
+              end
+              div class: 'selected-category-names' do
+                text_node 'No categories selected'
+              end
+
+              div class: 'dropdown-content' do
+                f.input :categories,
+                        as: :check_boxes,
+                        collection: Category.enabled
+                                            .joins(:items)
+                                            .where(items: { is_disabled: false })
+                                            .distinct
+                                            .order(:name)
+                                            .pluck(:name, :id),
+                        label: false,
+                        input_html: { class: 'category-checkbox' }
+              end
+            end
+          end
+        end
+      end
+
+      f.inputs class: 'dropdown-group' do
+        li class: 'dropdown-fieldset' do
+          span class: 'fieldset-title' do
+            text_node 'Items Without Category'
+          end
+
+          li class: 'dropdown-wrapper check_boxes input optional', id: 'quote_item_ids_input' do
+            fieldset class: 'choices' do
+              div class: 'dropdown-toggle' do
+                text_node 'Click to select items...'
+              end
+              div class: 'selected-item-names' do
+                text_node 'No items selected'
+              end
+
+              div class: 'dropdown-content' do
+                f.input :item_ids,
+                        as: :check_boxes,
+                        collection: Item.enabled.where(category_id: nil).order(:name).pluck(:name, :id),
+                        label: false,
+                        input_html: { class: 'items-checkbox' }
+              end
+            end
+          end
+        end
+      end
+
+      f.input :total_price, as: :number, input_html: { min: 0, readonly: true }, required: false, hint: 'Total price will be calculated automatically based on quote items.'
     end
     div do
       button_tag 'Load Items', type: 'button', id: 'load-items-button', class: 'button'
@@ -73,7 +127,7 @@ ActiveAdmin.register Quote do
       end
 
       qf.template.concat(
-        qf.template.content_tag(:div) do
+        qf.template.content_tag(:div, class: 'category-name-group') do
           qf.template.content_tag(:label, 'Category', class: 'category-name-label') +
           qf.template.content_tag(:span, qf.object.item&.category&.name || 'Other', class: 'category-name-field') +
           qf.template.tag(:br) +
@@ -89,9 +143,9 @@ ActiveAdmin.register Quote do
         end
       )
 
-      qf.input :price, as: :number, input_html: { min: 0, readonly: true, value: qf.object.price || 0, class: 'read-only-price' }, hint: 'Price will be calculated automatically based on Pricing parameters'
+      qf.input :price, as: :number, input_html: { min: 0, readonly: true, value: qf.object.price || 0, class: 'read-only-price' }, required: false, hint: 'Price will be calculated automatically based on Pricing parameters'
       qf.input :discount, as: :number, input_html: { min: 0, class: 'discount-input' }
-      qf.input :final_price, as: :number, input_html: { min: 0, readonly: true, value: qf.object.final_price || 0, class: 'read-only-price' }, hint: 'Final price will be calculated automatically based on Discount'
+      qf.input :final_price, as: :number, input_html: { min: 0, readonly: true, value: qf.object.final_price || 0, class: 'read-only-price' }, required: false, hint: 'Final price will be calculated automatically based on Discount'
       qf.has_many :note, allow_destroy: true, new_record: true, heading: false, class: 'quote-item-note-wrapper' do |n|
         n.input :notes, as: :text, input_html: { class: 'note-textarea', rows: 6 }, label: 'Note'
         n.input :is_printable, as: :boolean, label: 'Is Printable'
@@ -110,7 +164,7 @@ ActiveAdmin.register Quote do
 
   show do
     attributes_table do
-      row 'Customer Name' do |quote|
+      row 'Company Name' do |quote|
         quote.customer.company_name
       end
       row 'Created By' do |quote|
@@ -126,7 +180,7 @@ ActiveAdmin.register Quote do
         column 'Pricing Parameters' do |quote_item|
           if quote_item.pricing_parameters.present?
             quote_item.pricing_parameters.map do |key, value|
-              "#{key}: #{value}"
+              "#{parameter_display_name(key)}: #{value}"
             end.join(" | ")
           else
             "-"
@@ -144,6 +198,10 @@ ActiveAdmin.register Quote do
         end
       end
     end
+  end
+
+  action_item :back, only: :show do
+    link_to "Back To Quotes", admin_quotes_path
   end
 
   collection_action :load_items, method: :post do
@@ -171,23 +229,37 @@ ActiveAdmin.register Quote do
   end
 
   collection_action :render_quote_item_parameters, method: :post do
-    item = Item.find(params[:item_id])
+    item = Item.find_by(id: params[:item_id])
+    return head :not_found unless item
+
+    allowed_open_keys = item.open_parameters_label || []
+    allowed_select_keys = item.pricing_options&.keys || []
+
+    open_param_values = extract_safe_params(params[:open_param_values], allowed_open_keys)
+    select_param_values = extract_safe_params(params[:select_param_values], allowed_select_keys)
+
     render partial: "admin/quotes/quote_item_parameters", locals: {
       fixed_parameters: item.fixed_parameters || {},
-      open_parameters_label: item.open_parameters_label || [],
+      open_parameters_label: allowed_open_keys,
       select_parameters: item.pricing_options || {},
-      open_param_values: params[:open_param_values]&.to_unsafe_h || {},
-      select_param_values: params[:select_param_values]&.to_unsafe_h || {}
+      open_param_values: open_param_values,
+      select_param_values: select_param_values
     }
   end
 
   controller do
+    helper ActiveAdmin::ItemsHelper
     before_action :sanitize_blank_arrays, only: [:create, :update]
 
     def update
       @quote = Quote.find(params[:id])
       permitted_attrs = permitted_quote_items_attrs
       process_quote_items(permitted_attrs)
+
+      if @quote.errors.any?
+        render :edit
+        return
+      end
 
       quote_params = prepare_quote_params
       @quote.quote_items.reload
@@ -252,7 +324,20 @@ ActiveAdmin.register Quote do
     end
 
     def create_quote_item(attrs)
-      @quote.quote_items.build(attrs.except(:_destroy, :id, :quote_id)).save
+      quote_item = @quote.quote_items.build(attrs.except(:_destroy, :id, :quote_id))
+      return if quote_item.save
+
+      @quote.errors.add(:base, "Quote item could not be saved: #{quote_item.errors.full_messages.to_sentence}")
+    end
+
+    def extract_safe_params(param_set, allowed_keys)
+      return {} if param_set.blank?
+
+      if param_set.is_a?(ActionController::Parameters)
+        param_set.permit(*allowed_keys).to_h
+      else
+        param_set.to_h.slice(*allowed_keys)
+      end
     end
   end
 end

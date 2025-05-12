@@ -8,8 +8,16 @@ RSpec.describe QuoteItem, type: :model do
   end
 
   describe 'validations' do
-    it { is_expected.to validate_presence_of(:price) }
-    it { is_expected.to validate_numericality_of(:price).is_greater_than_or_equal_to(0) }
+    it 'adds a custom error if price is nil' do
+      quote_item = build(:quote_item, price: nil, discount: 10, final_price: 0, item: build(:item), quote: build(:quote))
+      quote_item.valid?
+      expect(quote_item.errors[:price]).to include("Could not be calculated – please make sure all required parameters are filled in")
+    end
+    it 'validates that price is a number greater than or equal to 0' do
+      quote_item = build(:quote_item, price: -1, quote: build(:quote), item: build(:item))
+      quote_item.valid?
+      expect(quote_item.errors[:price]).to include("Must be a valid number between 0 and 99999999.99 (check your parameter inputs)")
+    end
     it { is_expected.to validate_numericality_of(:discount).is_greater_than_or_equal_to(0).is_less_than_or_equal_to(100) }
     it { is_expected.to validate_presence_of(:final_price) }
     it { is_expected.to validate_numericality_of(:final_price).is_greater_than_or_equal_to(0) }
@@ -27,7 +35,7 @@ RSpec.describe QuoteItem, type: :model do
         subject.price = -1
         subject.valid?
         expect(subject).not_to be_valid
-        expect(subject.errors[:price]).to include("must be greater than or equal to 0")
+        expect(subject.errors[:price]).to include("Must be a valid number between 0 and 99999999.99 (check your parameter inputs)")
       end
 
       it 'is valid with discount = 0' do
@@ -119,7 +127,7 @@ RSpec.describe QuoteItem, type: :model do
 
         quote_item.valid?
 
-        expect(quote_item.errors[:price]).to include("can't be blank")
+        expect(quote_item.errors[:price]).to include("Could not be calculated – please make sure all required parameters are filled in")
       end
     end
 

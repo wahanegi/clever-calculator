@@ -280,6 +280,12 @@ document.addEventListener('DOMContentLoaded', () => {
     setTimeout(() => initializeQuoteItems(), 0)
   }
 
+  if (window.location.pathname.match(/\/admin\/quotes\/\d+\/edit/)) {
+    document
+      .querySelectorAll(`${selectors.categoryCheckboxes}, ${selectors.itemCheckboxes}`)
+      .forEach((cb) => (cb.checked = false))
+  }
+
   /**
    * Handles the "Load Items" button click, fetching and adding selected items.
    */
@@ -325,6 +331,10 @@ document.addEventListener('DOMContentLoaded', () => {
           .forEach((cb) => (cb.checked = false))
       } catch (error) {
         console.error('Error loading items:', error)
+      }
+
+      if (window.dropdownUpdateFunctions) {
+        window.dropdownUpdateFunctions.forEach((updateFn) => updateFn())
       }
     })
   }

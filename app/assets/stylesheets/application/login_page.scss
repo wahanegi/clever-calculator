@@ -1,3 +1,9 @@
+.login {
+  background-image: url('./assets/login_background.png');
+  background-position: center;
+  background-repeat: repeat-x;
+}
+
 .login-card {
   max-width: 1056px;
   padding: 72px 20px;
@@ -9,46 +15,15 @@
 
 .login-logo {
   max-width: 307px;
-}
 
-.bg-blue-sky {
-  background-color: $blue-sky;
-  background-position: center;
-  background-repeat: repeat-x;
+  &-image {
+    height: 70px;
+    max-width: 150px;
+  }
 }
 
 .flesh-message {
   height: 24px;
-}
-
-.border-label {
-  position: absolute;
-  top: -0.4rem;
-  left: 0.8rem;
-  background: linear-gradient(to bottom, $light 50%, $white 50%);
-}
-
-.form-control {
-  height: 42px;
-}
-
-.form-control::placeholder {
-  color: $gray;
-}
-
-.form-control:focus,
-.form-control:active {
-  box-shadow: none !important;
-  background-color: $white !important;
-}
-
-.form-control:-webkit-autofill {
-  background-color: white !important;
-  transition: background-color 5000s ease-in-out 0s;
-}
-
-.form-control:-webkit-autofill:focus {
-  background-color: white !important;
 }
 
 .or-divider {
@@ -62,7 +37,7 @@
   content: '';
   flex: 1;
   height: 1px;
-  background-color: $secondary;
+  background-color: var(--bs-secondary);
 }
 
 .or-divider::before {

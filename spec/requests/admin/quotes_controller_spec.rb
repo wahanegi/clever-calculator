@@ -185,7 +185,7 @@ RSpec.describe "Admin::Quotes", type: :request do
         initial_discount = existing_item.discount
         patch admin_quote_path(quote_to_update), params: { quote: invalid_update_attributes }
 
-        expect(response).to have_http_status(:found)
+        expect(response).to have_http_status(:ok)
 
         existing_item.reload
         expect(existing_item.discount).to eq(initial_discount)
