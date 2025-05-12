@@ -49,11 +49,11 @@ export const Item = ({ itemData, selectedOptions, setSelectedOptions, quoteId })
     const quoteItemParameters = {}
 
     if (is_open) {
-      quoteItemParameters.open_param_values = { [openLabel]: newOpenValue }
+      quoteItemParameters.open_param_values = { [openLabel]: newOpen }
     }
 
     if (is_selectable_options) {
-      quoteItemParameters.select_param_values = { [selectedLabel]: newSelectedValue }
+      quoteItemParameters.select_param_values = { [selectedLabel]: newSelected }
     }
 
     // console.info('quoteItemParameters', quoteItemParameters)

@@ -1,5 +1,5 @@
 import React from 'react'
-import { getExpandCollapseStates, getRemovedCategory } from '../utils'
+import { getExpandCollapseStates } from '../utils'
 import { ExpandCollapseButtons } from './ExpandCollapseButtons'
 import { MultiSelectDropdown } from './MultiSelectDropdown'
 import { fetchQuoteItems } from '../services'
@@ -22,44 +22,38 @@ export const ItemsPricingTopBar = ({
 
   const isSelected = (option) => selectedOptions.some((item) => item.id === option.id && item.type === option.type)
 
-  const handleQuoteItemSelect = async (option) => {
-    console.info('handleQuoteItemSelect', option)
+  const handleOptionChange = (newSelectedOptions) => {
+    console.info('handleOptionChange', newSelectedOptions)
 
-    if (isSelected(option)) {
-      showDeleteModal(option)
+    if (newSelectedOptions.length === 1 && newSelectedOptions[0].quote_items !== undefined) {
+      showDeleteModal(newSelectedOptions[0])
+      return
+    }
+
+    const foundSelectedOption = newSelectedOptions.find((option) => option.quote_items === undefined)
+    console.info('foundSelectedOption', foundSelectedOption)
+    const removeSelectedOption = selectedOptions.find((option) => foundSelectedOption.id === option.id && foundSelectedOption.type === option.type)
+    console.info('removeSelectedOption', removeSelectedOption)
+
+    if (removeSelectedOption !== undefined) {
+      showDeleteModal(removeSelectedOption)
     } else {
-      switch (option.type) {
+      switch (foundSelectedOption.type) {
         case 'category':
-          fetchQuoteItems.createFromCategory(quoteId, option.id)
-            .then((quoteItems) => {
-              setSelectedOptions(prevState => [...prevState, { ...option, quote_items: quoteItems.data }])
-            })
+          fetchQuoteItems.createFromCategory(quoteId, foundSelectedOption.id).then((quoteItems) => {
+            setSelectedOptions(prevState => [...prevState, { ...foundSelectedOption, quote_items: quoteItems.data }])
+          })
           break
         case 'item':
-          fetchQuoteItems.createFromItem(quoteId, option.id).then((quoteItem) => {
-            setSelectedOptions(prevState => [...prevState, { ...option, quote_items: [quoteItem.data] }])
+          fetchQuoteItems.createFromItem(quoteId, foundSelectedOption.id).then((quoteItem) => {
+            setSelectedOptions(prevState => [...prevState, { ...foundSelectedOption, quote_items: [quoteItem.data] }])
           })
           break
         default:
-          console.error('Invalid option type', option)
+          console.error('Invalid option type', foundSelectedOption)
           break
       }
     }
-  }
-
-  const handleOptionChange = (newSelected) => {
-    console.info('handleOptionChange', newSelected)
-
-    if (newSelected.length < selectedOptions.length) {
-      const removedCategory = getRemovedCategory(selectedOptions, newSelected)
-
-      if (removedCategory) {
-        console.info('handleOptionChange', removedCategory)
-
-        return showDeleteModal(removedCategory)
-      }
-    }
-    setSelectedOptions(newSelected)
   }
 
   const TotalPrice = () =>
@@ -78,7 +72,6 @@ export const ItemsPricingTopBar = ({
         isSelected={isSelected}
         selectedOptions={selectedOptions}
         selectableOptions={selectableOptions}
-        onSelect={handleQuoteItemSelect}
         onChange={handleOptionChange}
       />
 

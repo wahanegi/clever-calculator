@@ -19,6 +19,7 @@ export const ItemsPricing = () => {
   const [notesStates, setNotesStates] = useState({})
 
   const isSelectedOptionsEmpty = selectedOptions.length === 0
+  const totalPrice = selectedOptions.reduce((total, option) => total + parseFloat(totalFinalPrice(option?.quote_items || [])), 0).toFixed(2)
   console.log('selectedOptions', selectedOptions)
 
   useEffect(() => {
@@ -43,7 +44,7 @@ export const ItemsPricing = () => {
     const quoteItemIds = removeSelectedOption.quote_items.map(item => item.id)
 
     fetchQuoteItems.deleteSelected(quoteId, quoteItemIds).then(() => {
-      setSelectedOptions(selectedOptions.filter((option) => option.id !== removeSelectedOption.id && option.type === removeSelectedOption.type))
+      setSelectedOptions(selectedOptions.filter(((option) => !(removeSelectedOption.id === option.id && removeSelectedOption.type === option.type))))
       setExpandedAccordions((prev) => prev.filter((id) => id !== removeSelectedOption.id))
       setRemoveSelectedOption(null)
       setIsShowDeleteModal(false)
@@ -106,7 +107,7 @@ export const ItemsPricing = () => {
 
         <ItemsPricingTopBar
           quoteId={quoteId}
-          totalPrice={selectedOptions.reduce((total, option) => total + parseFloat(totalFinalPrice(option?.quote_items || [])), 0).toFixed(2)}
+          totalPrice={totalPrice}
           selectedOptions={selectedOptions}
           setSelectedOptions={setSelectedOptions}
           expandAll={expandAll}
