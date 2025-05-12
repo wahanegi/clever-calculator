@@ -72,12 +72,12 @@ RSpec.describe 'Admin::Items', type: :request do
     let(:invalid_params) { { item: { name: '' } } }
 
     context 'when a category is' do
-      it 'not selected and redirects to the new category page' do
+      it 'not selected and redirects to the item page' do
         expect do
           post admin_items_path, params: valid_params_without_category
         end.to change(Item, :count).by(1)
 
-        expect(response).to redirect_to(new_admin_category_path)
+        expect(response).to redirect_to(admin_item_path(Item.last))
 
         follow_redirect!
 
@@ -86,12 +86,12 @@ RSpec.describe 'Admin::Items', type: :request do
         expect(response.body).to include('Item was successfully created.')
       end
 
-      it 'selected and redirects to the edit category page' do
+      it 'selected and redirects to the item page' do
         expect do
           post admin_items_path(category_id: category.id), params: valid_params
         end.to change(Item, :count).by(1)
 
-        expect(response).to redirect_to(edit_admin_category_path(category))
+        expect(response).to redirect_to(admin_item_path(Item.last))
 
         follow_redirect!
 
@@ -143,7 +143,7 @@ RSpec.describe 'Admin::Items', type: :request do
         expect(item.is_fixed).to be true
         expect(item.is_open).to be true
         expect(item.is_selectable_options).to be true
-        expect(response).to redirect_to(edit_admin_category_path(item.category))
+        expect(response).to redirect_to(admin_item_path(item))
       end
 
       it 'does not create an item with invalid params' do
