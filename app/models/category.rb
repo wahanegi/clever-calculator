@@ -4,6 +4,8 @@ class Category < ApplicationRecord
   ASCII_CHARACTERS = /\A[[:ascii:]]*\z/
 
   has_many :items, dependent: :nullify
+  has_many :quote_categories, dependent: :destroy
+  has_many :quotes, through: :quote_categories
 
   normalizes :name, with: ->(name) { name.gsub(/\s+/, ' ').strip }
 
@@ -18,6 +20,8 @@ class Category < ApplicationRecord
   validates :name, format: { with: ASCII_CHARACTERS,
                              message: "must contain only ASCII characters" },
                    if: -> { name.present? }
+
+  scope :enabled, -> { where(is_disabled: false) }
 
   def self.ransackable_attributes(_auth_object = nil)
     %w[created_at description id id_value is_disabled name updated_at]

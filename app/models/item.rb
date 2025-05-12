@@ -1,5 +1,6 @@
 class Item < ApplicationRecord
   belongs_to :category, optional: true, counter_cache: true
+  has_many :quote_items, dependent: :destroy
 
   validates :name, presence: true
   validates :name, uniqueness: { scope: :category_id, message: "Item name must be unique within category" }
@@ -7,7 +8,9 @@ class Item < ApplicationRecord
   validate :fixed_parameters_values_must_be_numeric
   validate :pricing_options_values_must_be_numeric
   validates :calculation_formula, presence: true, if: :requires_calculation_formula?
-  validate :calculation_formula_must_be_valid, if: :requires_calculation_formula?
+  validates_with ItemFormulaSyntaxValidator
+
+  scope :enabled, -> { where(is_disabled: false) }
 
   scope :without_category, -> { where(category_id: nil) }
 
@@ -73,49 +76,5 @@ class Item < ApplicationRecord
 
   def requires_calculation_formula?
     is_fixed || is_open || is_selectable_options
-  end
-
-  def calculation_formula_must_be_valid
-    return if calculation_formula.blank?
-
-    check_all_formula_parameters_present
-    check_allowed_parameters
-    check_parentheses_balanced
-  end
-
-  def check_all_formula_parameters_present
-    missing_parameters = formula_parameters.reject do |param|
-      calculation_formula.match?(/\b#{Regexp.escape(param)}\b/)
-    end
-
-    return unless missing_parameters.any?
-
-    errors.add(:calculation_formula, "is missing parameters: #{missing_parameters.join(', ')}")
-  end
-
-  def check_allowed_parameters
-    operators = %w[+ - * / % ( )]
-
-    invalid_parameters = calculation_formula.split(' ').reject do |param|
-      param.match?(/\A\d+(\.\d+)?\z/) || # Matches numbers
-        operators.include?(param) || # Matches operators
-        formula_parameters.include?(param) # Matches formula parameters
-    end
-
-    return unless invalid_parameters.any?
-
-    errors.add(:calculation_formula, "contains invalid parameters: #{invalid_parameters.join(', ')}")
-  end
-
-  def check_parentheses_balanced
-    parentheses = []
-    calculation_formula.each_char do |char|
-      parentheses.push(char) if char == '('
-      parentheses.pop if char == ')' && parentheses.any?
-    end
-
-    return unless parentheses.any? || calculation_formula.count('(') != calculation_formula.count(')')
-
-    errors.add(:calculation_formula, 'has unbalanced parentheses')
   end
 end
