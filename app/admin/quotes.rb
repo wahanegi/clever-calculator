@@ -34,11 +34,59 @@ ActiveAdmin.register Quote do
     f.inputs do
       f.input :customer, as: :select, collection: Customer.pluck(:company_name, :id), input_html: { class: 'custom-select' }
       f.input :user, as: :select, collection: User.order(:name).pluck(:name, :id), input_html: { class: 'custom-select' }
-      f.input :categories, as: :check_boxes,
-                           collection: Category.enabled.order(:name).pluck(:name, :id),
-                           wrapper_html: { class: 'categories-wrapper' }
-      f.input :item_ids, label: 'Items Without Category', as: :check_boxes, collection: Item.enabled.without_category.order(:name),
-                         wrapper_html: { class: 'categories-wrapper' }
+      f.inputs class: 'dropdown-group' do
+        li class: 'dropdown-fieldset' do
+          span class: 'fieldset-title' do
+            text_node 'Categories'
+          end
+
+          li class: 'dropdown-wrapper check_boxes input optional', id: 'quote_category_ids_input' do
+            fieldset class: 'choices' do
+              div class: 'dropdown-toggle' do
+                text_node 'Click to select categories...'
+              end
+
+              div class: 'dropdown-content' do
+                f.input :categories,
+                        as: :check_boxes,
+                        collection: Category.enabled
+                                            .joins(:items)
+                                            .where(items: { is_disabled: false })
+                                            .distinct
+                                            .order(:name)
+                                            .pluck(:name, :id),
+                        label: false,
+                        input_html: { class: 'category-checkbox' }
+              end
+            end
+          end
+        end
+      end
+
+      f.inputs class: 'dropdown-group' do
+        li class: 'dropdown-fieldset' do
+          span class: 'fieldset-title' do
+            text_node 'Items Without Category'
+          end
+
+          li class: 'dropdown-wrapper check_boxes input optional', id: 'quote_items_ids_input' do
+            fieldset class: 'choices' do
+              div class: 'dropdown-toggle' do
+                text_node 'Click to select items...'
+              end
+
+              div class: 'dropdown-content' do
+                f.input :item_ids,
+                        as: :check_boxes,
+                        collection: Item.enabled.where(category_id: nil).order(:name),
+                        label: false,
+                        input_html: { class: 'items-checkbox' }
+              end
+            end
+          end
+        end
+      end
+
       f.input :total_price, as: :number, input_html: { min: 0, readonly: true }, hint: 'Total price will be calculated automatically based on quote items.'
     end
     div do
@@ -130,6 +178,10 @@ ActiveAdmin.register Quote do
         column :final_price
       end
     end
+  end
+
+  action_item :back, only: :show do
+    link_to "Back To Quotes", admin_quotes_path
   end
 
   collection_action :load_items, method: :post do

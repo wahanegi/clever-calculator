@@ -173,6 +173,12 @@ document.addEventListener('DOMContentLoaded', () => {
     heading.style.display = 'block'
   }
 
+  if (window.location.pathname.match(/\/admin\/quotes\/\d+\/edit/)) {
+    document
+      .querySelectorAll(`${selectors.categoryCheckboxes}, ${selectors.itemCheckboxes}`)
+      .forEach((cb) => (cb.checked = false))
+  }
+
   // Event Handlers
   // Handle clicking the "Load Items" button
   const loadItemsButton = document.querySelector(selectors.loadButton)
