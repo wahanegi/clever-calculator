@@ -46,10 +46,10 @@ RSpec.describe "Admin::CategoriesController", type: :request do
   end
 
   describe 'POST /admin/categories' do
-    it 'checks redirect to the categories page and successfully creates a category' do
+    it 'checks redirect to the category page and successfully creates a category' do
       post admin_categories_path, params: { category: { name: 'Category', description: 'Description' } }
 
-      expect(response).to redirect_to(admin_categories_path)
+      expect(response).to redirect_to(admin_category_path(Category.last))
 
       follow_redirect!
 
