@@ -1,0 +1,52 @@
+<%= form_with model: setting, url: admin_setting_update_path, method: :put, html: { multipart: true } do |f| %>
+  <fieldset class="inputs">
+    <ol>
+      <li class="file input optional">
+        <%= f.label :logo, class: 'label' %>
+        <%= f.file_field :logo, accept: Setting::ALLOWED_IMAGE_TYPES.join(',') %>
+        <% if setting.errors[:logo].present? %>
+          <p class="inline-errors"><%= setting.errors.full_messages_for(:logo).to_sentence %></p>
+        <% end %>
+      </li>
+      <li class="file input optional">
+        <%= f.label :login_background, class: 'label' %>
+        <%= f.file_field :login_background, accept: Setting::ALLOWED_IMAGE_TYPES.join(',') %>
+        <% if setting.errors[:login_background].present? %>
+          <p class="inline-errors"><%= setting.errors.full_messages_for(:login_background).to_sentence %></p>
+        <% end %>
+      </li>
+      <li class="file input optional">
+        <%= f.label :app_background, class: 'label' %>
+        <%= f.file_field :app_background, accept: Setting::ALLOWED_IMAGE_TYPES.join(',') %>
+        <% if setting.errors[:app_background].present? %>
+          <p class="inline-errors"><%= setting.errors.full_messages_for(:app_background).to_sentence %></p>
+        <% end %>
+      </li>
+      <li class="color input optional">
+        <%= f.label :primary_color, class: 'label' %>
+        <%= f.color_field :primary_color, value: style.primary_color %>
+      </li>
+      <li class="color input optional">
+        <%= f.label :secondary_color, class: 'label' %>
+        <%= f.color_field :secondary_color, value: style.secondary_color %>
+      </li>
+      <li class="color input optional">
+        <%= f.label :blue_light_color, class: 'label' %>
+        <%= f.color_field :blue_light_color, value: style.blue_light_color %>
+      </li>
+      <li class="color input optional">
+        <%= f.label :blue_sky_color, class: 'label' %>
+        <%= f.color_field :blue_sky_color, value: style.blue_sky_color %>
+      </li>
+      <li class="color input optional">
+        <%= f.label :light_color, class: 'label' %>
+        <%= f.color_field :light_color, value: style.light_color %>
+      </li>
+    </ol>
+  </fieldset>
+  <%= f.submit 'Save' %>
+<% end %>
+<%= button_to 'Reset to Default', admin_setting_reset_path,
+              method: :patch,
+              'data-confirm': "Are you sure you want to reset the setting to default?",
+              style: 'margin-top: 10px;' %>
