@@ -9,6 +9,7 @@ export const ROUTES = {
 export const ENDPOINTS = {
   QUOTES: '/api/v1/quotes',
   LOGOUT: '/users/sign_out',
+  SETTING: '/api/v1/setting',
   CUSTOMERS: '/api/v1/customers',
   CUSTOMERS_UPSERT: '/api/v1/customers/upsert',
   CATEGORIES: '/api/v1/categories',
@@ -97,4 +98,9 @@ export const INPUT_VALIDATORS = {
   maxSizeFile: 2 * 1024 * 1024,
   allowedFileTypes: ['image/jpeg', 'image/png'],
   // future validation rules can be added here
+}
+
+export const LOCAL_STORAGE_KEYS = {
+  setting: 'setting',
+  // future localStorage keys can be added here
 }

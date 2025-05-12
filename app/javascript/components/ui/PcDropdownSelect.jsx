@@ -52,8 +52,8 @@ export const PcDropdownSelect = ({
     if (t) setIsMenuOpen(true)
   }
 
-  const handleClick = () => {
-    setIsMenuOpen(!isMenuOpen)
+  const handleClick = (e) => {
+    setIsMenuOpen(prev => !prev)
   }
 
   const TypeaheadControls = () =>
