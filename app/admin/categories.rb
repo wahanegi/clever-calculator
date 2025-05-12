@@ -36,22 +36,24 @@ ActiveAdmin.register Category do
     end
     f.actions
 
-    panel edit_action? ? "Items" : "Items without category" do
-      div do
-        link_to 'Add Item', edit_action? ? new_admin_item_path(category_id: resource.id) : new_admin_item_path, class: 'button'
-      end
-
-      items = edit_action? ? resource.items : Item.without_category
-
-      if items.any?
-        table_for items do
-          column 'Item name' do |item|
-            link_to item.name, edit_admin_item_path(item)
-          end
-          column 'Item description', :description
+    if edit_action?
+      panel "Items" do
+        div do
+          link_to 'Add Item', new_admin_item_path(category_id: resource.id), class: 'button'
         end
-      else
-        "Items not found"
+
+        items = resource.items
+
+        if items.any?
+          table_for items do
+            column 'Item name' do |item|
+              link_to item.name, edit_admin_item_path(item)
+            end
+            column 'Item description', :description
+          end
+        else
+          "Items not found"
+        end
       end
     end
   end
@@ -66,8 +68,14 @@ ActiveAdmin.register Category do
     end
 
     panel "Items" do
-      if resource.items.any?
-        table_for resource.items do
+      div do
+        link_to 'Add Item', new_admin_item_path(category_id: resource.id), class: 'button'
+      end
+
+      items = resource.items
+
+      if items.any?
+        table_for items do
           column 'Item name' do |item|
             link_to item.name, admin_item_path(item)
           end
@@ -109,15 +117,5 @@ ActiveAdmin.register Category do
 
   controller do
     helper ActiveAdmin::ActionCheckHelper
-
-    def create
-      @category = Category.new(permitted_params[:category])
-
-      if @category.save
-        redirect_to admin_categories_path, notice: 'Category was successfully created.'
-      else
-        render :new
-      end
-    end
   end
 end

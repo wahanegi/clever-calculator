@@ -11,6 +11,7 @@ ActiveAdmin.register Item do
   filter :is_disabled, label: "Disabled"
 
   index do
+    selectable_column
     id_column
     column :name
     column :category, sortable: :category_id
@@ -81,8 +82,8 @@ ActiveAdmin.register Item do
         end
       end
 
-      tmp_fixed  = session_service.get(:fixed) || {}
-      tmp_open   = session_service.get(:open) || []
+      tmp_fixed = session_service.get(:fixed) || {}
+      tmp_open = session_service.get(:open) || []
       tmp_select = session_service.get(:select) || {}
 
       panel "Pricing Parameters" do
@@ -140,6 +141,19 @@ ActiveAdmin.register Item do
     end
   end
 
+  batch_action :assign_to_category, form: -> { { category: Category.pluck(:name, :id) } } do |ids, inputs|
+    category = Category.find_by(id: inputs[:category])
+
+    if category
+      # rubocop:disable Rails/SkipsModelValidations
+      Item.where(id: ids).update_all(category_id: category.id)
+      # rubocop:enable Rails/SkipsModelValidations
+      redirect_to admin_items_path, notice: "Category was successfully assigned."
+    else
+      redirect_back fallback_location: admin_items_path, alert: "Category not found."
+    end
+  end
+
   controller do
     helper_method :session_service
 
@@ -150,11 +164,7 @@ ActiveAdmin.register Item do
       if @item.save
         session_service.delete
 
-        if @item.category.present?
-          redirect_to edit_admin_category_path(@item.category), notice: "Item was successfully created."
-        else
-          redirect_to new_admin_category_path, notice: "Item was successfully created."
-        end
+        redirect_to admin_item_path(@item), notice: "Item was successfully created."
       else
         flash.now[:error] = "Failed to create item: #{@item.errors.full_messages.to_sentence}"
         render :new, status: :unprocessable_entity
@@ -243,8 +253,8 @@ ActiveAdmin.register Item do
 
     param_type = params[:parameter_type]
     param_name = case param_type
-                 when "Fixed"  then params[:fixed_parameter_name].to_s.strip
-                 when "Open"   then params[:open_parameter_name].to_s.strip
+                 when "Fixed" then params[:fixed_parameter_name].to_s.strip
+                 when "Open" then params[:open_parameter_name].to_s.strip
                  when "Select" then params[:select_parameter_name].to_s.strip
                  end
 
