@@ -1,4 +1,5 @@
 class QuoteItem < ApplicationRecord
+  MAX_ALLOWED_PRICE = 99_999_999.99
   attr_accessor :open_param_values, :select_param_values
 
   belongs_to :quote
@@ -10,7 +11,8 @@ class QuoteItem < ApplicationRecord
             },
             numericality: {
               greater_than_or_equal_to: 0,
-              message: "Must be a valid number (check your parameter inputs)"
+              less_than_or_equal_to: MAX_ALLOWED_PRICE,
+              message: "Must be a valid number between 0 and #{MAX_ALLOWED_PRICE} (check your parameter inputs)"
             },
             unless: -> { destroyed? || errors[:price].present? }
   validates :discount, numericality: { greater_than_or_equal_to: 0, less_than_or_equal_to: 100 }
@@ -45,7 +47,12 @@ class QuoteItem < ApplicationRecord
   private
 
   def calculate_final_price
-    self.final_price = price - (price * (discount / 100))
+    calculated = price - (price * (discount / 100))
+    if calculated > MAX_ALLOWED_PRICE
+      errors.add(:final_price, "exceeds the allowed maximum of #{MAX_ALLOWED_PRICE}")
+    else
+      self.final_price = calculated
+    end
   end
 
   def recalculate_quote_total_price

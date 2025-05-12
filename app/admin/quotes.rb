@@ -96,13 +96,6 @@ ActiveAdmin.register Quote do
       qf.input :item_id, as: :hidden, input_html: { class: 'item-id-field' }
       qf.input :id, as: :hidden if qf.object.persisted?
       qf.input :_destroy, as: :hidden, input_html: { value: '0', class: 'destroy-field' }
-      if qf.object.errors.any?
-        qf.template.concat(
-          qf.template.content_tag(:div, class: 'inline-errors') do
-            qf.object.errors.full_messages.join(', ')
-          end
-        )
-      end
 
       if qf.object.pricing_parameters.present? && qf.object.item&.open_parameters_label.present?
         qf.object.item.open_parameters_label.each do |label|
