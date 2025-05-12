@@ -4,7 +4,7 @@ class Customer < ApplicationRecord
 
   normalizes :company_name, with: ->(company_name) { company_name.gsub(/\s+/, ' ').strip }
 
-  validates :company_name, presence: true, uniqueness: { case_sensitive: false }
+  validates :company_name, presence: true, uniqueness: { case_sensitive: false }, length: { maximum: 50 }
   validate :logo_size_and_type, if: -> { logo.attached? }
 
   MAX_LOGO_SIZE = 2.megabytes

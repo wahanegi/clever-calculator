@@ -50,7 +50,7 @@ ActiveAdmin.register Customer do
   form do |f|
     f.inputs do
       f.input :logo, as: :file, input_html: { accept: Customer::ALLOWED_LOGO_TYPES.join(',') }
-      f.input :company_name
+      f.input :company_name, hint: "Maximum 50 characters"
       f.input :first_name
       f.input :last_name
       f.input :email

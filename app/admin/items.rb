@@ -41,7 +41,7 @@ ActiveAdmin.register Item do
     meta_data = session_service.all
 
     f.inputs "Item Details" do
-      f.input :name, required: true, input_html: { value: f.object.name.presence || meta_data["name"] }
+      f.input :name, required: true, input_html: { value: f.object.name.presence || meta_data["name"] }, hint: "Maximum 50 characters"
       f.input :description, as: :string, input_html: { value: f.object.description.presence || meta_data["description"] }
       f.input :category_id, as: :select,
                             collection: Category.pluck(:name, :id),
