@@ -8,8 +8,8 @@
 // $sidebar-width: 242px;
 
 // Active Admin's got SASS!
-@import "active_admin/mixins";
-@import "active_admin/base";
+@import 'active_admin/mixins';
+@import 'active_admin/base';
 
 // Overriding any non-variable Sass must be done after the fact.
 // For example, to change the default status-tag color:
@@ -150,7 +150,6 @@
   .form-actions {
     margin-top: 30px;
 
-
     input {
       background-color: #357edd;
       color: white;
@@ -181,7 +180,7 @@
       color: #444;
     }
 
-    input[type="text"] {
+    input[type='text'] {
       padding: 8px 10px;
       border-radius: 4px;
       border: 1px solid #ccc;
@@ -233,4 +232,6 @@
   color: #222 !important;
 }
 
-@import "active_admin/forms/select";
+@import 'active_admin/forms/select';
+@import 'active_admin/forms/dropdown-select';
+@import 'active_admin/forms/quote-form';

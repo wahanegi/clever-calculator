@@ -42,23 +42,23 @@
 .pc-item-input.price {
   .form-control {
     padding-left: 24px;
-    border-top: 1.3px solid $primary;
-    color: $secondary;
+    border-top: 1.3px solid var(--bs-primary);
+    color: var(--bs-secondary);
   }
 
   .pc-suffix-left {
-    color: $secondary;
+    color: var(--bs-secondary);
   }
 
   ::placeholder {
-    color: $secondary;
+    color: var(--bs-secondary);
   }
 }
 
 .pc-item-input.original-cost {
   .form-control {
     padding-left: 24px;
-    border-top: 1.3px solid $primary;
+    border-top: 1.3px solid var(--bs-primary);
     color: $dark;
   }
 
@@ -74,7 +74,7 @@
 .pc-item-input.open-cost {
   .form-control {
     padding-left: 24px;
-    border: 1.3px solid $secondary;
+    border: 1.3px solid var(--bs-secondary);
     color: $dark
   }
 
@@ -92,13 +92,13 @@
 .pc-item-input.notes {
   .form-control {
     padding-right: 24px;
-    border: 1.3px solid $primary;
+    border: 1.3px solid var(--bs-primary);
     color: $dark
   }
 
   .pc-suffix-right {
     font-weight: 600;
-    color: $secondary;
+    color: var(--bs-secondary);
   }
 
   ::placeholder {
@@ -125,7 +125,7 @@
       margin-right: 5px;
       width: 20px;
       height: 20px;
-      border-color: $primary;
+      border-color: var(--bs-primary);
       cursor: pointer;
 
       &:focus {
@@ -133,8 +133,8 @@
       }
 
       &:checked {
-        border-color: $primary;
-        background-color: $primary;
+        border-color: var(--bs-primary);
+        background-color: var(--bs-primary);
       }
     }
 
@@ -147,7 +147,7 @@
 .pc-item-input.discounted-price {
   .form-control {
     padding-left: 24px;
-    border-top: 1.3px solid $primary;
+    border-top: 1.3px solid var(--bs-primary);
     font-weight: 600;
   }
 

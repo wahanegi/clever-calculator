@@ -1,0 +1,87 @@
+.dropdown-group > ol {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.dropdown-fieldset {
+  width: 20%;
+}
+
+.dropdown-wrapper {
+  width: 30%;
+  padding-left: 7px;
+  padding-right: 0;
+  position: relative;
+}
+
+.dropdown-fieldset .fieldset-title {
+  font-weight: bold;
+  color: #5e6469;
+}
+
+.dropdown-toggle {
+  padding: 5px;
+  border: 1px solid #767676;
+  background-color: #fff;
+  border-radius: 2px;
+  cursor: pointer;
+  width: 100%;
+}
+
+.dropdown-toggle:hover {
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.4);
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  top: 32px;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  background: #fff;
+  border: 1px solid #767676;
+  border-radius: 4px;
+  padding: 8px;
+  max-height: 150px;
+  overflow-y: auto;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  margin-top: 5px;
+}
+
+.dropdown-content .choices-group {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.dropdown-wrapper.open .dropdown-content {
+  display: block;
+}
+
+.dropdown-content .choice {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px 0;
+}
+
+.dropdown-content input[type='checkbox'] {
+  margin-right: 8px;
+  vertical-align: text-bottom;
+  padding-top: 2px;
+  cursor: pointer;
+}
+
+.dropdown-content label {
+  cursor: pointer;
+  display: inline;
+}
+
+.selected-item-names,
+.selected-category-names {
+  margin-top: 5px;
+}
