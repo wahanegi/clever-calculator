@@ -23,7 +23,6 @@ export const PcItemInputControl = ({
       onChange={onChange}
       placeholder={placeholder}
       disabled={isDisabled}
-      min={0}
       className="nospin fs-10 pc-lh-xl"
       {...props}
     />

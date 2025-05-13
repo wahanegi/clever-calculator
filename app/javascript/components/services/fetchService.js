@@ -62,6 +62,7 @@ export const fetchQuoteItems = {
   deleteSelected: async (quoteId, quoteItemIds) => await del(`${ENDPOINTS.QUOTES}/${quoteId}/quote_items/destroy_selected`, { quote_item_ids: quoteItemIds }),
   index: async (quoteId) => await get(`${ENDPOINTS.QUOTES}/${quoteId}/quote_items`),
   update: async (quoteId, quoteItemId, data) => await patch(`${ENDPOINTS.QUOTES}/${quoteId}/quote_items/${quoteItemId}`, data),
+  duplicateOne: async (quoteId, quoteItemId) => await post(`${ENDPOINTS.QUOTES}/${quoteId}/quote_items/${quoteItemId}/duplicate`),
 }
 
 export const fetchSelectableOptions = {

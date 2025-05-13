@@ -2,7 +2,7 @@ module Api
   module V1
     class QuoteItemsController < BaseController
       before_action :set_quote
-      before_action :set_quote_item, only: %i[update]
+      before_action :set_quote_item, only: %i[update duplicate]
 
       rescue_from ActiveRecord::RecordNotFound, with: :render_not_found
 
@@ -37,6 +37,16 @@ module Api
         @quote.quote_items.where(id: params[:quote_item_ids]).destroy_all
 
         head :no_content
+      end
+
+      def duplicate
+        cloned_quote_item = @quote_item.dup
+
+        if cloned_quote_item.save
+          render json: serialize_quote_item(cloned_quote_item), status: :created
+        else
+          render json: ErrorSerializer.new(cloned_quote_item.errors).serializable_hash, status: :unprocessable_entity
+        end
       end
 
       private

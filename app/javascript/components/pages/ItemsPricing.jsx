@@ -138,11 +138,12 @@ export const ItemsPricing = () => {
                 return (
                   <PcItemAccordion
                     key={`quote-item-${item.id}`}
-                    itemName={item.attributes.item.name}
+                    item={item}
+                    quoteId={quoteId}
+                    setSelectedOptions={setSelectedOptions}
                     isNotesShow={notesState.isNotesOpen}
                     onToggleNotes={() => toggleItemNotes(item.id)}
-                    notesIcon={notesIcon}
-                    quotePrice={item.attributes.final_price}>
+                    notesIcon={notesIcon}>
                     <Item itemData={item}
                           quoteId={quoteId}
                           selectedOptions={selectedOptions}

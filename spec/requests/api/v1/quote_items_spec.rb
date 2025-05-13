@@ -97,4 +97,16 @@ RSpec.describe "Api::V1::QuoteItems", type: :request do
       end
     end
   end
+
+  describe 'POST /api/v1/quotes/:quote_id/quote_items/:id/duplicate' do
+    let!(:quote_item) { create(:quote_item, quote: quote, item: item) }
+
+    it 'duplicates the quote item and adds it to the quote' do
+      post duplicate_api_v1_quote_quote_item_path(quote, quote_item)
+
+      expect(response).to have_http_status(:created)
+      expect(quote.quote_items.size).to eq(2)
+      expect(quote.quote_items.ids).to include(quote_item.id)
+    end
+  end
 end

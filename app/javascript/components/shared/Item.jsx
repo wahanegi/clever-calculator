@@ -107,6 +107,7 @@ export const Item = ({ itemData, selectedOptions, setSelectedOptions, quoteId })
       <PcItemInputControl paramType="discount"
                           value={discountValue}
                           max={100}
+                          min={0}
                           onChange={handleDiscountChange} />
     </PcItemFormGroup>
   )

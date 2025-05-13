@@ -12,6 +12,7 @@ Rails.application.routes.draw do
             post :create_from_category
             delete :destroy_selected
           end
+          post :duplicate, on: :member
         end
       end
       resources :selectable_options, only: [:index]
