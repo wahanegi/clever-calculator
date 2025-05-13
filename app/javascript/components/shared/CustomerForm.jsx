@@ -35,22 +35,33 @@ export const CustomerForm = () => {
     const { value, label } = selected[0]
     const selectedCustomer = customers.find((customer) => customer.id === value)
 
+    let newCompanyName = label
+
     if (selectedCustomer) {
       setCustomer(selectedCustomer.attributes)
+      newCompanyName = selectedCustomer.attributes.company_name
     } else {
       setCustomer(prev => ({ ...prev, company_name: label }))
     }
 
-    setIsNextDisabled(false)
-    setErrors((prev) => ({ ...prev, company_name: '' }))
+    const errorMessage = newCompanyName.length > 50 ? 'Company name is too long (maximum is 50 characters)' : ''
+    setErrors((prev) => ({
+      ...prev,
+      company_name: errorMessage,
+    }))
+    setIsNextDisabled(!!errorMessage) // Disable Next button if there’s an error
   }
 
   const handleCompanyInputChange = (text) => {
     text = text.trimStart()
 
     if (text) {
-      setIsNextDisabled(false)
-      setErrors((prev) => ({ ...prev, company_name: '' }))
+      const errorMessage = text.length > 50 ? 'Company name is too long (maximum is 50 characters)' : ''
+      setErrors((prev) => ({
+        ...prev,
+        company_name: errorMessage,
+      }))
+      setIsNextDisabled(!!errorMessage) // Disable Next button if there’s an error
     } else {
       setIsNextDisabled(true)
       setErrors((prev) => ({ ...prev, company_name: 'Company name is required' }))
@@ -153,6 +164,7 @@ export const CustomerForm = () => {
 
   const handleClearInput = () => {
     setCustomer(prev => ({ ...prev, company_name: '' }))
+    setErrors(prev => ({ ...prev, company_name: '' }))
     setIsNextDisabled(true)
   }
 
