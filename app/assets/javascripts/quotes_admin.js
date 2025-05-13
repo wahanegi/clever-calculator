@@ -72,7 +72,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     })
     const noteAddButton = noteContainer.querySelector('.has_many_add')
-    if (noteAddButton) noteAddButton.style.display = 'inline-block'
+    if (noteAddButton) toggleAddNoteButton(noteAddButton, noteContainer)
   }
 
   /**

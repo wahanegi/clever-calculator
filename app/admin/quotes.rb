@@ -147,9 +147,8 @@ ActiveAdmin.register Quote do
       qf.input :discount, as: :number, input_html: { min: 0, class: 'discount-input' }
       qf.input :final_price, as: :number, input_html: { min: 0, readonly: true, value: qf.object.final_price || 0, class: 'read-only-price' }, required: false, hint: 'Final price will be calculated automatically based on Discount'
       qf.has_many :note, allow_destroy: true, new_record: true, heading: false, class: 'quote-item-note-wrapper' do |n|
-        n.input :notes, as: :text, input_html: { class: 'note-textarea', rows: 6 }, label: 'Note'
-        n.input :is_printable, as: :boolean, label: 'Is Printable'
-        n.input :_destroy, as: :hidden, input_html: { value: '0', class: 'destroy-field' }
+        n.input :notes, as: :text, input_html: { class: 'note-textarea', rows: 6 }
+        n.input :is_printable, as: :boolean
       end
 
       qf.template.concat(
@@ -191,9 +190,16 @@ ActiveAdmin.register Quote do
         column :final_price
         column :note do |quote_item|
           if quote_item.note
-            link_to truncate(quote_item.note.notes, length: 50), admin_note_path(quote_item.note)
+            quote_item.note.notes
           else
-            "No note"
+            'No notes'
+          end
+        end
+        column 'Is note printable?' do |quote_item|
+          if quote_item.note
+            quote_item.note.is_printable
+          else
+            'No notes'
           end
         end
       end
@@ -313,7 +319,7 @@ ActiveAdmin.register Quote do
 
     def destroy_quote_item(id)
       if (quote_item = @quote.quote_items.find_by(id:))
-        quote_item.delete
+        quote_item.destroy
       end
     end
 
