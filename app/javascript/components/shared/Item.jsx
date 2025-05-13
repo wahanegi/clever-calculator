@@ -21,28 +21,14 @@ export const Item = ({ itemData, selectedOptions, setSelectedOptions, quoteId })
   const [openValue, setOpenValue] = useState(is_open ? quoteItem.pricing_parameters[openLabel] : 0)
   const [discountValue, setDiscountValue] = useState(quoteItem.discount || 0)
 
-  const handleSelectedChange = (label) => (value) => {
-    console.info('handleSelectedChange', label, value)
+  function isValidDiscount(value) {
+    const num = parseFloat(value)
 
-    setSelectedValue(value)
-    updateQuoteItem(value, openValue, discountValue)
-  }
+    if (isNaN(num)) return false
 
-  const handleOpenChange = (label) => (e) => {
-    // console.info('handleOpenChange', e, label)
+    const rounded = Math.round(num * 100) / 100
 
-    const value = e.target.value || 0
-    setOpenValue(value)
-    updateQuoteItem(selectedValue, value, discountValue)
-  }
-
-  const handleDiscountChange = (e) => {
-    // console.info('handleDiscountChange', e)
-
-    const value = e.target.value || 0
-    setDiscountValue(value)
-
-    updateQuoteItem(selectedValue, openValue, value)
+    return rounded >= 0.0 && rounded <= 100.0
   }
 
   const updateQuoteItem = (newSelected, newOpen, newDiscount) => {
@@ -55,8 +41,6 @@ export const Item = ({ itemData, selectedOptions, setSelectedOptions, quoteId })
     if (is_selectable_options) {
       quoteItemParameters.select_param_values = { [selectedLabel]: newSelected }
     }
-
-    // console.info('quoteItemParameters', quoteItemParameters)
 
     fetchQuoteItems.update(quoteId, itemData.id, {
       quote_item: {
@@ -71,6 +55,27 @@ export const Item = ({ itemData, selectedOptions, setSelectedOptions, quoteId })
         ),
       })))
     })
+  }
+
+  const handleSelectedChange = (label) => (value) => {
+    setSelectedValue(value)
+
+    updateQuoteItem(value, openValue, discountValue)
+  }
+
+  const handleOpenChange = (label) => (e) => {
+    const value = e.target.value || 0
+    setOpenValue(value)
+    updateQuoteItem(selectedValue, value, discountValue)
+  }
+
+  const handleDiscountChange = (e) => {
+    const value = e.target.value
+
+    if (isValidDiscount(value)) {
+      setDiscountValue(value)
+      updateQuoteItem(selectedValue, openValue, value)
+    }
   }
 
   const renderFixedParams = () =>
@@ -106,8 +111,6 @@ export const Item = ({ itemData, selectedOptions, setSelectedOptions, quoteId })
     <PcItemFormGroup paramType="discount" label="Discount">
       <PcItemInputControl paramType="discount"
                           value={discountValue}
-                          max={100}
-                          min={0}
                           onChange={handleDiscountChange} />
     </PcItemFormGroup>
   )

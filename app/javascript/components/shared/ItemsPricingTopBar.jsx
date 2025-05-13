@@ -21,38 +21,50 @@ export const ItemsPricingTopBar = ({
   } = getExpandCollapseStates(selectedOptions, expandedAccordions)
 
   const isSelected = (option) => selectedOptions.some((item) => item.id === option.id && item.type === option.type)
+  const createByOptionType = (foundSelectedOption) => {
+    switch (foundSelectedOption.type) {
+      case 'category':
+        fetchQuoteItems.createFromCategory(quoteId, foundSelectedOption.id).then((quoteItems) => {
+          setSelectedOptions(prev => [...prev, { ...foundSelectedOption, quote_items: quoteItems.data }])
+        })
+        break
+      case 'item':
+        fetchQuoteItems.createFromItem(quoteId, foundSelectedOption.id).then((quoteItem) => {
+          setSelectedOptions(prev => [...prev, { ...foundSelectedOption, quote_items: [quoteItem.data] }])
+        })
+        break
+      default:
+        console.error('Invalid option type', foundSelectedOption)
+        break
+    }
+  }
+
+  function findRemovedItem(original, updated) {
+    const updatedKeys = new Set(updated.map(i => `${i.type}:${i.id}`))
+    return original.find(i => !updatedKeys.has(`${i.type}:${i.id}`))
+  }
+
+  const hasQuoteItems = (option) => option.quote_items !== undefined
 
   const handleOptionChange = (newSelectedOptions) => {
-    console.info('handleOptionChange', newSelectedOptions)
+    if (newSelectedOptions.every((option) => hasQuoteItems(option))) {
+      const item = findRemovedItem(selectedOptions, newSelectedOptions)
+      if (item) showDeleteModal(item)
+      return
+    }
 
-    if (newSelectedOptions.length === 1 && newSelectedOptions[0].quote_items !== undefined) {
+    if (newSelectedOptions.length === 1 && hasQuoteItems(newSelectedOptions[0])) {
       showDeleteModal(newSelectedOptions[0])
       return
     }
 
-    const foundSelectedOption = newSelectedOptions.find((option) => option.quote_items === undefined)
-    console.info('foundSelectedOption', foundSelectedOption)
-    const removeSelectedOption = selectedOptions.find((option) => foundSelectedOption.id === option.id && foundSelectedOption.type === option.type)
-    console.info('removeSelectedOption', removeSelectedOption)
+    const foundSelectedOption = newSelectedOptions.find((option) => !hasQuoteItems(option))
+    const removedSelectedOption = selectedOptions.find((option) => foundSelectedOption.id === option.id && foundSelectedOption.type === option.type)
 
-    if (removeSelectedOption !== undefined) {
-      showDeleteModal(removeSelectedOption)
+    if (removedSelectedOption) {
+      showDeleteModal(removedSelectedOption)
     } else {
-      switch (foundSelectedOption.type) {
-        case 'category':
-          fetchQuoteItems.createFromCategory(quoteId, foundSelectedOption.id).then((quoteItems) => {
-            setSelectedOptions(prevState => [...prevState, { ...foundSelectedOption, quote_items: quoteItems.data }])
-          })
-          break
-        case 'item':
-          fetchQuoteItems.createFromItem(quoteId, foundSelectedOption.id).then((quoteItem) => {
-            setSelectedOptions(prevState => [...prevState, { ...foundSelectedOption, quote_items: [quoteItem.data] }])
-          })
-          break
-        default:
-          console.error('Invalid option type', foundSelectedOption)
-          break
-      }
+      createByOptionType(foundSelectedOption)
     }
   }
 

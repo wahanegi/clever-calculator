@@ -25,16 +25,16 @@ export const PcItemAccordion = ({
 
   const handleItemAdd = () => {
     fetchQuoteItems.duplicateOne(quoteId, item.id).then((data) => {
-      const cloneQuoteItem = data.data
+      const clonedQuoteItem = data.data
 
       setSelectedOptions(prev => {
-        const categoryId = cloneQuoteItem.attributes?.item?.category_id
+        const categoryId = clonedQuoteItem.attributes?.item?.category_id
 
         return prev.map(option => {
           if (isTarget(option, item, categoryId)) {
             return {
               ...option,
-              quote_items: [...option.quote_items, cloneQuoteItem],
+              quote_items: [...option.quote_items, clonedQuoteItem],
             }
           }
 
@@ -52,15 +52,22 @@ export const PcItemAccordion = ({
 
         return prev.map(option => {
           if (isTarget(option, item, categoryId)) {
-            return {
-              ...option,
-              quote_items: option.quote_items.filter((quoteItem) => quoteItem.id !== item.id),
+            const quoteItems = option.quote_items.filter((quoteItem) => quoteItem.id !== item.id)
+
+            if (quoteItems.length > 0) {
+              return {
+                ...option,
+                quote_items: quoteItems,
+              }
+            } else {
+              return null
             }
           }
 
           return option
-        })
+        }).filter((option) => option !== null)
       })
+
     })
   }
 

@@ -20,7 +20,7 @@ export const ItemsPricing = () => {
 
   const isSelectedOptionsEmpty = selectedOptions.length === 0
   const totalPrice = selectedOptions.reduce((total, option) => total + parseFloat(totalFinalPrice(option?.quote_items || [])), 0).toFixed(2)
-  console.log('selectedOptions', selectedOptions)
+
 
   useEffect(() => {
     fetchSelectableOptions.index().then((data) => {
