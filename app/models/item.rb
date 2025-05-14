@@ -2,7 +2,7 @@ class Item < ApplicationRecord
   belongs_to :category, optional: true, counter_cache: true
   has_many :quote_items, dependent: :destroy
 
-  validates :name, presence: true
+  validates :name, presence: true, length: { maximum: 50 }
   validates :name, uniqueness: { scope: :category_id, message: "Item name must be unique within category" }
   validate :category_must_be_active
   validate :fixed_parameters_values_must_be_numeric
