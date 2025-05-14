@@ -1,3 +1,6 @@
+//= require active_admin_helpers
+//= require note_active_admin
+
 document.addEventListener('DOMContentLoaded', () => {
   // Main container for quote items
   const container = document.querySelector('.has_many_container.quote_items')
@@ -18,61 +21,6 @@ document.addEventListener('DOMContentLoaded', () => {
     categoryCheckboxes: "input[name='quote[category_ids][]']",
     itemCheckboxes: "input[name='quote[item_ids][]']",
     loadButton: '#load-items-button',
-  }
-
-  // Utility Functions
-  /**
-   * Retrieves the CSRF token from the meta tag
-   * @returns {string|null} The CSRF token or null if not found
-   */
-  const getCsrfToken = () => document.querySelector('meta[name="csrf-token"]')?.getAttribute('content')
-
-  /**
-   * Performs a POST request with CSRF token and JSON body
-   * @param {string} url - The endpoint URL
-   * @param {Object} body - The request payload
-   * @returns {Promise<Response>} The fetch response
-   * @throws {Error} If the response is not OK
-   */
-  const fetchWithConfig = async (url, body) => {
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-CSRF-Token': getCsrfToken(),
-      },
-      body: JSON.stringify(body),
-    })
-    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`)
-    return response
-  }
-
-  /**
-   * Extracts the quote item index from the form input name
-   * Used to replace NEW_RECORD placeholder in rendered HTML
-   * @param {HTMLElement} group - The quote item group element
-   * @returns {string|undefined} The quote item index or undefined if not found
-   */
-  const getQuoteItemIndex = (group) => {
-    return group
-      .querySelector('input[name^="quote[quote_items_attributes]"]')
-      ?.name.match(/quote_items_attributes\]\[(\d+)\]/)?.[1]
-  }
-
-  /**
-   * Cleans note fields in a note container, removing empty notes and showing the add button.
-   * @param {HTMLElement} noteContainer - The note container element.
-   */
-  const cleanNoteFields = (noteContainer) => {
-    const noteFields = noteContainer.querySelectorAll('.has_many_fields')
-    noteFields.forEach((field) => {
-      const textarea = field.querySelector('textarea.note-textarea')
-      if (!textarea || !textarea.value.trim()) {
-        field.remove()
-      }
-    })
-    const noteAddButton = noteContainer.querySelector('.has_many_add')
-    if (noteAddButton) toggleAddNoteButton(noteAddButton, noteContainer)
   }
 
   /**
@@ -110,13 +58,13 @@ document.addEventListener('DOMContentLoaded', () => {
   const renderQuoteParameters = async (group, itemId) => {
     const previewContainer = group.querySelector(selectors.preview)
     if (!previewContainer) {
-      console.error('Preview container not found for group:', group)
+      handleError('Preview container not found for group', null, { group })
       return
     }
 
     const quoteItemIndex = getQuoteItemIndex(group)
     if (!quoteItemIndex) {
-      console.error('Quote item index not found for group:', group)
+      handleError('Quote item index not found for group', null, { group })
       return
     }
 
@@ -148,11 +96,11 @@ document.addEventListener('DOMContentLoaded', () => {
       })
       const html = await response.text()
       if (!html.trim()) {
-        console.warn('Empty response from render_quote_item_parameters for item_id:', itemId)
+        handleError('Empty response from render_quote_item_parameters', null, { itemId })
       }
       previewContainer.innerHTML = html.replace(/NEW_RECORD/g, quoteItemIndex)
     } catch (error) {
-      console.error('Error rendering quote parameters for item_id:', itemId, error)
+      handleError('Error rendering quote parameters', error, { itemId })
     }
   }
 
@@ -164,7 +112,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const addNewQuoteItem = async (itemData, isDuplicate = false) => {
     const addButton = container.querySelector(selectors.addButton)
     if (!addButton || !addButton.dataset.html) {
-      console.error('Quote item add button or template not found')
+      handleError('Quote item add button or template not found')
       return
     }
 
@@ -180,15 +128,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     container.insertBefore(newItemGroup, addButton)
 
-    const noteContainer = newItemGroup.querySelector('.has_many_container.note')
-    if (noteContainer) cleanNoteFields(noteContainer)
-
     updateItemFields(newItemGroup, itemData, isDuplicate)
     if (itemData.item_id) await renderQuoteParameters(newItemGroup, itemData.item_id)
   }
 
   /**
-   * Initializes existing quote items, cleaning notes and rendering parameters.
+   * Initializes existing quote items and renders parameters.
    * @param {number} [retryCount=0] - Number of retry attempts.
    */
   const initializeQuoteItems = (retryCount = 0) => {
@@ -203,71 +148,15 @@ document.addEventListener('DOMContentLoaded', () => {
     itemGroups.forEach(async (group, index) => {
       const itemId = group.querySelector(selectors.itemId)?.value
       if (itemId) {
-        const noteContainer = group.querySelector('.has_many_container.note')
-        if (noteContainer) cleanNoteFields(noteContainer)
         await renderQuoteParameters(group, itemId)
       } else {
-        console.warn(
-          'No itemId found for QuoteItem, index:',
+        handleError('No itemId found for QuoteItem', null, {
           index,
-          'group:',
-          group.outerHTML.substring(0, 200) + '...',
-        )
-      }
-    })
-  }
-
-  /**
-   * Toggles the visibility of the "Add New Note" button based on note presence.
-   * @param {HTMLElement} addButton - The "Add New Note" button.
-   * @param {HTMLElement} noteContainer - The note container element.
-   */
-  const toggleAddNoteButton = (addButton, noteContainer) => {
-    const noteFields = noteContainer.querySelectorAll('.has_many_fields')
-    addButton.style.display = noteFields.length >= 1 ? 'none' : 'inline-block'
-  }
-
-  /**
-   * Sets up event listeners for note add/remove buttons in a note container.
-   * @param {HTMLElement} noteContainer - The note container element.
-   */
-  const setupNoteContainer = (noteContainer) => {
-    const addNoteButton = noteContainer.querySelector('.has_many_add')
-    if (!addNoteButton) {
-      console.warn('Add New Note button not found in note container')
-      return
-    }
-
-    addNoteButton.addEventListener('click', () => {
-      addNoteButton.style.display = 'none'
-      setTimeout(() => toggleAddNoteButton(addNoteButton, noteContainer), 0)
-    })
-
-    noteContainer.addEventListener('click', (event) => {
-      if (event.target.classList.contains('has_many_remove')) {
-        setTimeout(() => toggleAddNoteButton(addNoteButton, noteContainer), 0)
-      }
-    })
-  }
-
-  // Initialize existing note containers
-  document.querySelectorAll('.has_many_container.note').forEach(setupNoteContainer)
-
-  // Watch for dynamically added QuoteItems
-  const observer = new MutationObserver((mutations) => {
-    mutations.forEach((mutation) => {
-      if (mutation.addedNodes.length) {
-        mutation.addedNodes.forEach((node) => {
-          if (node.nodeType === 1) {
-            node.querySelectorAll('.has_many_container.note').forEach(setupNoteContainer)
-          }
+          groupHtml: group.outerHTML.substring(0, 200) + '...',
         })
       }
     })
-  })
-  observer.observe(container, { childList: true, subtree: true })
-
-  // Event Handlers
+  }
 
   /**
    * Initializes the form, showing the heading if quote items exist.
@@ -330,7 +219,7 @@ document.addEventListener('DOMContentLoaded', () => {
           .querySelectorAll(`${selectors.categoryCheckboxes}:checked, ${selectors.itemCheckboxes}:checked`)
           .forEach((cb) => (cb.checked = false))
       } catch (error) {
-        console.error('Error loading items:', error)
+        handleError('Error loading items', error)
       }
 
       if (window.dropdownUpdateFunctions) {
