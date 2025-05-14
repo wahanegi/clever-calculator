@@ -13,14 +13,14 @@ class QuoteDocxGenerator
   private
 
   def build_docx(&block)
-    tempfile = Tempfile.new(["quote_#{@quote.id}", '.docx'])
-    tempfile.binmode
-    Caracal::Document.save tempfile.path, &block
-    tempfile.rewind
-    tempfile
+    file = Tempfile.new(["quote_#{@quote.id}", '.docx'])
+    file.binmode
+    Caracal::Document.save file.path, &block
+    file.rewind
+    file
   rescue StandardError => e
-    tempfile&.close
-    tempfile&.unlink
+    file&.close
+    file&.unlink
     raise e
   end
 end

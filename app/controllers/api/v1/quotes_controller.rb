@@ -24,7 +24,13 @@ module Api
       def generate_file
         file = QuoteDocxGenerator.new(@quote).call
 
-        send_file file.path, type: Mime[:docx], disposition: 'attachment', filename: "quote_#{@quote.id}.docx"
+        send_data file.read,
+                  type: Mime[:docx],
+                  disposition: 'attachment',
+                  filename: "quote_#{@quote.id}.docx"
+      ensure
+        file.close
+        file.unlink
       end
 
       def reset
