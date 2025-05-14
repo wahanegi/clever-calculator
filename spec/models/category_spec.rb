@@ -7,10 +7,11 @@ RSpec.describe Category, type: :model do
     it { is_expected.to be_valid }
 
     describe 'name' do
-      let(:printable_ascii_characters) { (33..126).map(&:chr).join }
+      let(:printable_ascii_characters) { ('!'..'~').to_a.sample(50).join }
       let(:printable_utf_8_characters) { (126..255).map { |c| c.chr(Encoding::UTF_8) }.join }
 
       it { is_expected.to validate_presence_of(:name) }
+      it { is_expected.to validate_length_of(:name).is_at_most(50) }
 
       it { is_expected.to validate_uniqueness_of(:name).case_insensitive.scoped_to(:is_disabled).with_message("A category with this name already exists") }
 

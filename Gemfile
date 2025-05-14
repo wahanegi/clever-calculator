@@ -12,13 +12,13 @@ gem "image_processing", "~> 1.2"                                    # Use Active
 gem "jbuilder", '~> 2.13.0'                                         # Build JSON APIs with ease [https://github.com/rails/jbuilder]
 gem "jsbundling-rails", '~> 1.3.1'                                  # Bundle and transpile JavaScript [https://github.com/rails/jsbundling-rails]
 gem "jsonapi-serializer", "~> 2.2.0"                                # Fast, simple and easy to use JSON:API serialization library (also known as fast_jsonapi).
-gem "kamal", '~> 2.5.3', require: false                             # Deploy this application anywhere as a Docker container [https://kamal-deploy.org]
+gem "kamal", '~> 2.6.0', require: false                             # Deploy this application anywhere as a Docker container [https://kamal-deploy.org]
 gem "pg", "~> 1.5.9"                                                # Use postgresql as the database for Active Record
 gem "puma", "~> 6.6.0"                                              # Use the Puma web server [https://github.com/puma/puma]
 gem "rails", "~> 8.0.2"                                             # Bundle edge Rails instead: gem "rails", github: "rails/rails", branch: "main"
 gem "ruby-vips", "~> 2.2"                                           # Ruby extension for the libvips image processing library.
 gem 'sass-rails', '~> 6.0.0'                                        # Ruby on Rails stylesheet engine for Sass
-gem "solid_cable", '~> 3.0.7'                                       # Use the database-backed adapters for Action Cable
+gem "solid_cable", '~> 3.0.8'                                       # Use the database-backed adapters for Action Cable
 gem "solid_cache", '~> 1.0.7'                                       # Use the database-backed adapters for Rails.cache
 gem "solid_queue", '~> 1.1.5'                                       # Use the database-backed adapters for Active Job
 gem "sprockets", '~> 3.7.5', '< 4.0'                                # Rack-based asset packaging system
@@ -48,5 +48,5 @@ group :development do
 end
 
 group :production do
-  gem "aws-sdk-s3", '~> 1.184.0'                   # AWS SDK for Ruby
+  gem "aws-sdk-s3", '~> 1.185.0'                   # AWS SDK for Ruby
 end
