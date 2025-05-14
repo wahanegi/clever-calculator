@@ -3,8 +3,9 @@ import { Button, Container, Form } from 'react-bootstrap'
 import { useAppHooks } from '../hooks'
 import { DeleteItemModal, ItemsPricingTopBar, Item, QuoteCreation, ROUTES } from '../shared'
 import { PcCategoryAccordion, PcItemAccordion, PcItemFormGroup, PcItemTextareaControl } from '../ui'
-import { getCurrentStepId, totalFinalPrice } from '../utils'
-import { fetchQuoteItems, fetchSelectableOptions } from '../services'
+import { getCurrentStepId, totalFinalPrice, triggerFileDownload } from '../utils'
+import { fetchQuoteItems, fetchQuotes, fetchSelectableOptions } from '../services'
+import { AlertModal } from '../shared/AlertModal'
 
 export const ItemsPricing = () => {
   const { navigate, queryParams, location } = useAppHooks()
@@ -17,6 +18,8 @@ export const ItemsPricing = () => {
   const [removeSelectedOption, setRemoveSelectedOption] = useState({})
   const [selectableOptions, setSelectableOptions] = useState([])
   const [notesStates, setNotesStates] = useState({})
+  const [isShowCancelQuoteAlertModal, setIsShowCancelQuoteAlertModal] = useState(false)
+  const [isShowResetQuoteAlertModal, setIsShowResetQuoteAlertModal] = useState(false)
 
   const isSelectedOptionsEmpty = selectedOptions.length === 0
   const totalPrice = selectedOptions.reduce((total, option) => total + parseFloat(totalFinalPrice(option?.quote_items || [])), 0).toFixed(2)
@@ -80,30 +83,88 @@ export const ItemsPricing = () => {
     }))
   }
 
-  const handleDownload = async () => {
-    const notesToSend = Object.entries(notesStates).reduce((acc, [itemId, { note, include }]) => {
-      if (include && note?.trim()) {
-        acc.push({ item_id: itemId, note })
-      }
-      return acc
-    }, [])
-
-    console.log({ notesToSend })
+  const handleFileDownload = () => {
+    fetchQuotes.generateFile(quoteId)
+      .then((blob) => {
+        triggerFileDownload(blob, `quote_${quoteId}.docx`)
+      }).catch((err) => {
+      console.error('File download failed', err)
+    })
   }
 
-  const handleBack = () => navigate(ROUTES.CUSTOMER_INFO)
+  const handleCustomerBack = () => {
+    setIsShowCancelQuoteAlertModal(true)
+  }
 
-  const EmptyQuotePrompt = () =>
-    isSelectedOptionsEmpty && (
-      <div className="text-center text-primary fst-italic py-6">
-        Select one or more items to start your quote.
-      </div>
+  const handleQuoteReset = () => {
+    setIsShowResetQuoteAlertModal(true)
+  }
+
+  const EmptyQuotePrompt = () => isSelectedOptionsEmpty && (
+    <div className="text-center text-primary fst-italic py-6">
+      Select one or more items to start your quote.
+    </div>
+  )
+
+  const CancelQuoteAlertModal = () => {
+    const handleCancel = () => {
+      console.log('handleCancel in CancelQuoteAlertModal')
+      setIsShowCancelQuoteAlertModal(false)
+    }
+
+    const handleConfirm = () => {
+      console.log('handleConfirm in CancelQuoteAlertModal')
+      setIsShowCancelQuoteAlertModal(false)
+
+      fetchQuotes.destroy(quoteId).then(() => {
+        navigate(ROUTES.CUSTOMER_INFO)
+      })
+    }
+
+    return (
+      <AlertModal show={isShowCancelQuoteAlertModal}
+                  onCancel={handleCancel}
+                  onConfirm={handleConfirm}
+                  confirmButtonText={'Go back'}
+                  title={'Are you sure?'}
+                  bodyText={'Do you really want to go back and cancel the current quote? This action will discard all progress and start a new quote.'} />
     )
+  }
+
+  const ResetQuoteAlertModal = () => {
+    const handleCancel = () => {
+      console.log('handleCancel in ResetQuoteAlertModal')
+      setIsShowResetQuoteAlertModal(false)
+    }
+
+    const handleConfirm = () => {
+      console.log('handleConfirm in ResetQuoteAlertModal')
+      setIsShowResetQuoteAlertModal(false)
+
+      fetchQuotes.reset(quoteId).then(() => {
+        setSelectedOptions([])
+        setExpandedAccordions([])
+        setNotesStates({})
+      })
+    }
+
+    return (
+      <AlertModal show={isShowResetQuoteAlertModal}
+                  onCancel={handleCancel}
+                  onConfirm={handleConfirm}
+                  confirmButtonText={'Reset'}
+                  title={'Are you sure?'}
+                  bodyText={'Do you really want to reset all selected items? You will be able to start over within this quote.'} />
+    )
+  }
 
   return (
     <Container className={'wrapper pt-16'}>
       <section className={'mb-12 px-8'}>
-        <QuoteCreation currentStepId={currentStepId} />
+        <QuoteCreation currentStepId={currentStepId}
+                       onReset={handleQuoteReset}
+                       disabledResetButton={isSelectedOptionsEmpty}
+        />
 
         <ItemsPricingTopBar
           quoteId={quoteId}
@@ -174,11 +235,11 @@ export const ItemsPricing = () => {
       </section>
 
       <section className={'d-flex justify-content-center align-items-center gap-4 mb-4'}>
-        <Button variant={'outline-primary'} className={'fw-bold pc-btn'} onClick={handleBack}>
+        <Button variant={'outline-primary'} className={'fw-bold pc-btn'} onClick={handleCustomerBack}>
           Back
         </Button>
         <Button variant={'outline-primary'} className={'fw-bold pc-btn pc-btn-download'}
-                onClick={handleDownload} disabled={isSelectedOptionsEmpty}>
+                onClick={handleFileDownload} disabled={isSelectedOptionsEmpty}>
           Download
         </Button>
       </section>
@@ -188,6 +249,8 @@ export const ItemsPricing = () => {
         onHide={handleCancelDeleteCategory}
         onConfirmDelete={handleConfirmDelete}
       />
+      <ResetQuoteAlertModal />
+      <CancelQuoteAlertModal />
     </Container>
   )
 }
