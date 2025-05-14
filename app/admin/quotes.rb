@@ -189,18 +189,10 @@ ActiveAdmin.register Quote do
         column :discount
         column :final_price
         column :note do |quote_item|
-          if quote_item.note
-            quote_item.note.notes
-          else
-            'No notes'
-          end
+          quote_item&.note&.notes || 'No notes'
         end
         column 'Is note printable?' do |quote_item|
-          if quote_item.note
-            quote_item.note.is_printable
-          else
-            'No notes'
-          end
+          quote_item&.note.nil? ? 'No notes' : quote_item.note.is_printable
         end
       end
     end
