@@ -233,7 +233,7 @@ ActiveAdmin.register Item do
   end
 
   action_item :back, only: :show do
-    if resource.category.present?
+    if params[:back_to].present? && resource.category.present?
       link_to "Back to Category", admin_category_path(resource.category)
     else
       link_to "Back to Items", admin_items_path
