@@ -1,4 +1,6 @@
 class Category < ApplicationRecord
+  has_many :items, dependent: :nullify
+
   ASCII_CHARACTERS = /\A[[:ascii:]]*\z/
 
   has_many :items, dependent: :nullify
@@ -9,7 +11,7 @@ class Category < ApplicationRecord
 
   after_update :disable_related_items_if_disabled
 
-  validates :name, presence: true
+  validates :name, presence: true, length: { maximum: 50 }
   validates :name, uniqueness: { scope: :is_disabled,
                                  case_sensitive: false,
                                  conditions: -> { where(is_disabled: false) },

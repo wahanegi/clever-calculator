@@ -2,7 +2,8 @@ ActiveAdmin.register Quote do
   permit_params :customer_id, :user_id, :total_price, category_ids: [], item_ids: [],
                                                       quote_items_attributes: [
                                                         :id, :item_id, :price, :discount, :final_price, :_destroy,
-                                                        { open_param_values: {}, select_param_values: {} }
+                                                        { open_param_values: {}, select_param_values: {} },
+                                                        { note_attributes: [:id, :notes, :is_printable, :_destroy] }
                                                       ]
 
   filter :customer_company_name, as: :string, label: 'Company Name'
@@ -45,6 +46,9 @@ ActiveAdmin.register Quote do
               div class: 'dropdown-toggle' do
                 text_node 'Click to select categories...'
               end
+              div class: 'selected-category-names' do
+                text_node 'No categories selected'
+              end
 
               div class: 'dropdown-content' do
                 f.input :categories,
@@ -69,16 +73,19 @@ ActiveAdmin.register Quote do
             text_node 'Items Without Category'
           end
 
-          li class: 'dropdown-wrapper check_boxes input optional', id: 'quote_items_ids_input' do
+          li class: 'dropdown-wrapper check_boxes input optional', id: 'quote_item_ids_input' do
             fieldset class: 'choices' do
               div class: 'dropdown-toggle' do
                 text_node 'Click to select items...'
+              end
+              div class: 'selected-item-names' do
+                text_node 'No items selected'
               end
 
               div class: 'dropdown-content' do
                 f.input :item_ids,
                         as: :check_boxes,
-                        collection: Item.enabled.where(category_id: nil).order(:name),
+                        collection: Item.enabled.where(category_id: nil).order(:name).pluck(:name, :id),
                         label: false,
                         input_html: { class: 'items-checkbox' }
               end
@@ -87,7 +94,7 @@ ActiveAdmin.register Quote do
         end
       end
 
-      f.input :total_price, as: :number, input_html: { min: 0, readonly: true }, hint: 'Total price will be calculated automatically based on quote items.'
+      f.input :total_price, as: :number, input_html: { min: 0, readonly: true }, required: false, hint: 'Total price will be calculated automatically based on quote items.'
     end
     div do
       button_tag 'Load Items', type: 'button', id: 'load-items-button', class: 'button'
@@ -120,7 +127,7 @@ ActiveAdmin.register Quote do
       end
 
       qf.template.concat(
-        qf.template.content_tag(:div) do
+        qf.template.content_tag(:div, class: 'category-name-group') do
           qf.template.content_tag(:label, 'Category', class: 'category-name-label') +
           qf.template.content_tag(:span, qf.object.item&.category&.name || 'Other', class: 'category-name-field') +
           qf.template.tag(:br) +
@@ -136,14 +143,18 @@ ActiveAdmin.register Quote do
         end
       )
 
-      qf.input :price, as: :number, input_html: { min: 0, readonly: true, value: qf.object.price || 0, class: 'read-only-price' }, hint: 'Price will be calculated automatically based on Pricing parameters'
+      qf.input :price, as: :number, input_html: { min: 0, readonly: true, value: qf.object.price || 0, class: 'read-only-price' }, required: false, hint: 'Price will be calculated automatically based on Pricing parameters'
       qf.input :discount, as: :number, input_html: { min: 0, class: 'discount-input' }
-      qf.input :final_price, as: :number, input_html: { min: 0, readonly: true, value: qf.object.final_price || 0, class: 'read-only-price' }, hint: 'Final price will be calculated automatically based on Discount'
+      qf.input :final_price, as: :number, input_html: { min: 0, readonly: true, value: qf.object.final_price || 0, class: 'read-only-price' }, required: false, hint: 'Final price will be calculated automatically based on Discount'
+      qf.has_many :note, allow_destroy: true, new_record: true, heading: false, class: 'quote-item-note-wrapper' do |n|
+        n.input :notes, as: :text, input_html: { class: 'note-textarea', rows: 6 }
+        n.input :is_printable, as: :boolean, label: 'Is downloadable'
+      end
 
       qf.template.concat(
         qf.template.content_tag(:div, class: 'has_many_buttons') do
           qf.template.button_tag('Add Same Item', type: 'button', class: 'button add-same-item') +
-          qf.template.link_to('Remove', '#', class: 'button has_many_remove')
+          qf.template.link_to('Remove Item', '#', class: 'button has_many_remove')
         end
       )
     end
@@ -161,6 +172,7 @@ ActiveAdmin.register Quote do
       row :total_price
       row :created_at
     end
+
     panel 'Quote Items' do
       table_for quote.quote_items do
         column :item
@@ -176,6 +188,12 @@ ActiveAdmin.register Quote do
         column :price
         column :discount
         column :final_price
+        column :note do |quote_item|
+          quote_item&.note&.notes || 'No notes'
+        end
+        column 'Is note downloadable?' do |quote_item|
+          quote_item&.note.nil? ? 'No notes' : quote_item.note.is_printable
+        end
       end
     end
   end
@@ -236,6 +254,11 @@ ActiveAdmin.register Quote do
       permitted_attrs = permitted_quote_items_attrs
       process_quote_items(permitted_attrs)
 
+      if @quote.errors.any?
+        render :edit
+        return
+      end
+
       quote_params = prepare_quote_params
       @quote.quote_items.reload
       if @quote.update(quote_params)
@@ -258,7 +281,8 @@ ActiveAdmin.register Quote do
       params[:quote][:quote_items_attributes]&.values&.map do |attrs|
         attrs.permit(
           :id, :item_id, :price, :discount, :final_price, :_destroy,
-          open_param_values: {}, select_param_values: {}
+          open_param_values: {}, select_param_values: {},
+          note_attributes: [:id, :notes, :is_printable, :_destroy]
         )
       end || []
     end
@@ -287,7 +311,7 @@ ActiveAdmin.register Quote do
 
     def destroy_quote_item(id)
       if (quote_item = @quote.quote_items.find_by(id:))
-        quote_item.delete
+        quote_item.destroy
       end
     end
 

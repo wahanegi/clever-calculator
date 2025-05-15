@@ -16,6 +16,7 @@ RSpec.describe Quote, type: :model do
     it { is_expected.to have_many(:items).through(:quote_items) }
     it { is_expected.to have_many(:quote_categories).dependent(:destroy) }
     it { is_expected.to have_many(:categories).through(:quote_categories) }
+    it { is_expected.to have_many(:notes).dependent(:destroy) }
   end
 
   describe 'validations' do
@@ -25,13 +26,13 @@ RSpec.describe Quote, type: :model do
     it 'is invalid without a customer' do
       quote = build(:quote, customer: nil)
       quote.valid?
-      expect(quote.errors[:customer]).to include('must exist')
+      expect(quote.errors[:customer]).to include("can't be blank")
     end
 
     it 'is invalid without a user' do
       quote = build(:quote, user: nil)
       quote.valid?
-      expect(quote.errors[:user]).to include('must exist')
+      expect(quote.errors[:user]).to include("can't be blank")
     end
   end
 

@@ -17,6 +17,7 @@ RSpec.describe Item, type: :model do
     describe 'name' do
       it { is_expected.to validate_presence_of(:name) }
       it { is_expected.to validate_uniqueness_of(:name).scoped_to(:category_id).with_message('Item name must be unique within category') }
+      it { is_expected.to validate_length_of(:name).is_at_most(50) }
 
       it 'allows same name with different categories' do
         category1 = create(:category)

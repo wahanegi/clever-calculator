@@ -1,8 +1,11 @@
 class QuoteItem < ApplicationRecord
+  MAX_ALLOWED_PRICE = 99_999_999.99
   attr_accessor :open_param_values, :select_param_values
 
   belongs_to :quote
   belongs_to :item
+  has_one :note, dependent: :destroy
+  accepts_nested_attributes_for :note, allow_destroy: true
 
   validates :price,
             presence: {
@@ -10,7 +13,8 @@ class QuoteItem < ApplicationRecord
             },
             numericality: {
               greater_than_or_equal_to: 0,
-              message: "Must be a valid number (check your parameter inputs)"
+              less_than_or_equal_to: MAX_ALLOWED_PRICE,
+              message: "Must be a valid number between 0 and #{MAX_ALLOWED_PRICE} (check your parameter inputs)"
             },
             unless: -> { destroyed? || errors[:price].present? }
   validates :discount, numericality: { greater_than_or_equal_to: 0, less_than_or_equal_to: 100 }
@@ -19,6 +23,7 @@ class QuoteItem < ApplicationRecord
   before_validation :compile_pricing_parameters
   before_validation :calculate_price_from_formula, if: -> { item_requires_formula? }
   before_validation :calculate_final_price, if: -> { price.present? && discount.present? }
+  before_validation :assign_quote_to_note
 
   after_save :recalculate_quote_total_price
   after_destroy :recalculate_quote_total_price
@@ -45,7 +50,12 @@ class QuoteItem < ApplicationRecord
   private
 
   def calculate_final_price
-    self.final_price = price - (price * (discount / 100))
+    calculated = price - (price * (discount / 100))
+    if calculated > MAX_ALLOWED_PRICE
+      errors.add(:final_price, "exceeds the allowed maximum of #{MAX_ALLOWED_PRICE}")
+    else
+      self.final_price = calculated
+    end
   end
 
   def recalculate_quote_total_price
@@ -66,5 +76,11 @@ class QuoteItem < ApplicationRecord
 
   def fetch_or_default(key, value)
     value.presence || (key ? { key => 0 } : {})
+  end
+
+  def assign_quote_to_note
+    return unless note.present? && quote.present?
+
+    note.quote ||= quote
   end
 end

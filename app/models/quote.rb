@@ -1,4 +1,5 @@
 class Quote < ApplicationRecord
+  MAX_ALLOWED_PRICE = 99_999_999.99
   belongs_to :customer
   belongs_to :user
   has_many :quote_items, dependent: :destroy
@@ -6,8 +7,10 @@ class Quote < ApplicationRecord
   has_many :items, through: :quote_items
   has_many :quote_categories, dependent: :destroy
   has_many :categories, through: :quote_categories
+  has_many :notes, dependent: :destroy
 
-  validates :total_price, presence: true, numericality: { greater_than_or_equal_to: 0 }
+  validates :total_price, presence: true,
+                          numericality: { greater_than_or_equal_to: 0, less_than_or_equal_to: MAX_ALLOWED_PRICE }
 
   enum :step, { customer_info: 'customer_info', items_pricing: 'items_pricing', completed: 'completed' }
 

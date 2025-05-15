@@ -10,9 +10,10 @@ RSpec.describe Customer, type: :model do
   describe 'validations' do
     it { is_expected.to be_valid }
 
-    describe 'company_name' do
+    context 'company_name' do
       it { is_expected.to validate_presence_of(:company_name) }
       it { is_expected.to validate_uniqueness_of(:company_name).case_insensitive }
+      it { is_expected.to validate_length_of(:company_name).is_at_most(50) }
     end
 
     context 'logo' do
