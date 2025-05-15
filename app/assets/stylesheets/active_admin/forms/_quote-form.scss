@@ -17,7 +17,7 @@ label.category-name-label {
   color: #5e6469;
 }
 
-.quote-form a.has_many_add {
+.quote-form > .has_many_container.quote_items > a.has_many_add {
   display: none !important;
 }
 
@@ -40,7 +40,11 @@ label.category-name-label {
   align-items: center;
 }
 
-ol li:last-child a.has_many_remove {
+.has_many_container.quote_items > ol > fieldset > ol > li > a.has_many_remove {
+  display: none;
+}
+
+.has_many_container.quote_items > fieldset.inputs.has_many_fields > ol > li > a.has_many_remove {
   display: none;
 }
 
@@ -60,6 +64,15 @@ ol li:last-child a.has_many_remove {
 
 .col-created_by {
   min-width: 90px;
+}
+
+.col-note {
+  max-width: 200px;
+  text-align: justify;
+}
+
+.col-is_note_downloadable {
+  width: 171px;
 }
 
 .category-name-group {
