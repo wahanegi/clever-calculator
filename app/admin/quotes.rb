@@ -148,7 +148,7 @@ ActiveAdmin.register Quote do
       qf.input :final_price, as: :number, input_html: { min: 0, readonly: true, value: qf.object.final_price || 0, class: 'read-only-price' }, required: false, hint: 'Final price will be calculated automatically based on Discount'
       qf.has_many :note, allow_destroy: true, new_record: true, heading: false, class: 'quote-item-note-wrapper' do |n|
         n.input :notes, as: :text, input_html: { class: 'note-textarea', rows: 6 }
-        n.input :is_printable, as: :boolean
+        n.input :is_printable, as: :boolean, label: 'Is downloadable'
       end
 
       qf.template.concat(
@@ -191,7 +191,7 @@ ActiveAdmin.register Quote do
         column :note do |quote_item|
           quote_item&.note&.notes || 'No notes'
         end
-        column 'Is note printable?' do |quote_item|
+        column 'Is note downloadable?' do |quote_item|
           quote_item&.note.nil? ? 'No notes' : quote_item.note.is_printable
         end
       end
