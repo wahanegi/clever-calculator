@@ -4,6 +4,8 @@ class QuoteItem < ApplicationRecord
 
   belongs_to :quote
   belongs_to :item
+  has_one :note, dependent: :destroy
+  accepts_nested_attributes_for :note, allow_destroy: true
 
   validates :price,
             presence: {
@@ -21,6 +23,7 @@ class QuoteItem < ApplicationRecord
   before_validation :compile_pricing_parameters
   before_validation :calculate_price_from_formula, if: -> { item_requires_formula? }
   before_validation :calculate_final_price, if: -> { price.present? && discount.present? }
+  before_validation :assign_quote_to_note
 
   after_save :recalculate_quote_total_price
   after_destroy :recalculate_quote_total_price
@@ -61,5 +64,11 @@ class QuoteItem < ApplicationRecord
 
   def item_requires_formula?
     item&.calculation_formula.present?
+  end
+
+  def assign_quote_to_note
+    return unless note.present? && quote.present?
+
+    note.quote ||= quote
   end
 end
