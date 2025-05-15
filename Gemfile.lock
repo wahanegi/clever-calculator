@@ -112,7 +112,7 @@ GEM
     benchmark (0.4.0)
     bigdecimal (3.1.9)
     bindex (0.8.1)
-    bootsnap (1.18.4)
+    bootsnap (1.18.6)
       msgpack (~> 1.2)
     brakeman (7.0.2)
       racc
@@ -470,7 +470,7 @@ PLATFORMS
 DEPENDENCIES
   activeadmin (~> 3.3.0)
   aws-sdk-s3 (~> 1.185.0)
-  bootsnap (~> 1.18.4)
+  bootsnap (~> 1.18.6)
   brakeman
   cssbundling-rails (~> 1.4.3)
   debug
