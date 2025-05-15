@@ -22,9 +22,9 @@ export const Item = ({ itemData, selectedOptions, setSelectedOptions, quoteId })
   const [discountValue, setDiscountValue] = useState(quoteItem.discount || 0)
 
   function isValidDiscount(value) {
-    const num = parseFloat(value)
+    let num = parseFloat(value)
 
-    if (isNaN(num)) return false
+    num = isNaN(num) ? 0 : num
 
     const rounded = Math.round(num * 100) / 100
 
@@ -35,17 +35,17 @@ export const Item = ({ itemData, selectedOptions, setSelectedOptions, quoteId })
     const quoteItemParameters = {}
 
     if (is_open) {
-      quoteItemParameters.open_param_values = { [openLabel]: newOpen }
+      quoteItemParameters.open_param_values = { [openLabel]: newOpen || 0 }
     }
 
     if (is_selectable_options) {
-      quoteItemParameters.select_param_values = { [selectedLabel]: newSelected }
+      quoteItemParameters.select_param_values = { [selectedLabel]: newSelected || 0 }
     }
 
     fetchQuoteItems.update(quoteId, itemData.id, {
       quote_item: {
         ...quoteItemParameters,
-        discount: newDiscount,
+        discount: newDiscount || 0,
       },
     }).then((updatedQuoteItem) => {
       setSelectedOptions(selectedOptions.map((option) => ({
@@ -58,24 +58,25 @@ export const Item = ({ itemData, selectedOptions, setSelectedOptions, quoteId })
   }
 
   const handleSelectedChange = (label) => (value) => {
-    setSelectedValue(value)
+    setSelectedValue(value === '' ? 0 : value)
 
     updateQuoteItem(value, openValue, discountValue)
   }
 
   const handleOpenChange = (label) => (e) => {
-    const value = e.target.value || 0
+    const { value } = e.target
+
     setOpenValue(value)
-    updateQuoteItem(selectedValue, value, discountValue)
+
+    updateQuoteItem(selectedValue, Number(value), discountValue)
   }
 
   const handleDiscountChange = (e) => {
-    const value = e.target.value
+    const { value } = e.target
 
-    if (isValidDiscount(value)) {
-      setDiscountValue(value)
-      updateQuoteItem(selectedValue, openValue, value)
-    }
+    setDiscountValue(value)
+
+    if (isValidDiscount(value)) updateQuoteItem(selectedValue, openValue, Number(value))
   }
 
   const renderFixedParams = () =>
