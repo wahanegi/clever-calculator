@@ -6,7 +6,7 @@ ActiveAdmin.register Customer do
     id_column
     column :logo do |customer|
       if customer.logo.attached?
-        image_tag customer.logo, height: 100
+        image_tag customer.logo, style: 'max-height: 100px; max-width: 300px;'
       else
         'No logo uploaded'
       end
@@ -24,7 +24,7 @@ ActiveAdmin.register Customer do
     attributes_table do
       row :logo do |customer|
         if customer.logo.attached?
-          image_tag customer.logo, height: 100
+          image_tag customer.logo, style: 'max-height: 100px; max-width: 300px;'
         else
           'No logo uploaded'
         end

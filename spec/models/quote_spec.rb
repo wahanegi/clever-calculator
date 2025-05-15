@@ -16,6 +16,7 @@ RSpec.describe Quote, type: :model do
     it { is_expected.to have_many(:items).through(:quote_items) }
     it { is_expected.to have_many(:quote_categories).dependent(:destroy) }
     it { is_expected.to have_many(:categories).through(:quote_categories) }
+    it { is_expected.to have_many(:notes).dependent(:destroy) }
   end
 
   describe 'validations' do
