@@ -112,6 +112,17 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_01_143252) do
     t.index ["quote_id"], name: "index_quote_categories_on_quote_id"
   end
 
+  create_table "notes", force: :cascade do |t|
+    t.bigint "quote_id", null: false
+    t.bigint "quote_item_id"
+    t.text "notes", null: false
+    t.boolean "is_printable", default: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["quote_id"], name: "index_notes_on_quote_id"
+    t.index ["quote_item_id"], name: "index_notes_on_quote_item_id"
+  end
+
   create_table "quote_items", force: :cascade do |t|
     t.bigint "quote_id", null: false
     t.bigint "item_id", null: false
@@ -300,6 +311,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_01_143252) do
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "items", "categories"
+  add_foreign_key "notes", "quote_items"
+  add_foreign_key "notes", "quotes"
   add_foreign_key "quote_categories", "categories"
   add_foreign_key "quote_categories", "quotes"
   add_foreign_key "quote_items", "items"

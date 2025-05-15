@@ -7,6 +7,7 @@ class Quote < ApplicationRecord
   has_many :items, through: :quote_items
   has_many :quote_categories, dependent: :destroy
   has_many :categories, through: :quote_categories
+  has_many :notes, dependent: :destroy
 
   validates :total_price, presence: true,
                           numericality: { greater_than_or_equal_to: 0, less_than_or_equal_to: MAX_ALLOWED_PRICE }
