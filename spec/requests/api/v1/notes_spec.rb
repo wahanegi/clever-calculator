@@ -87,4 +87,16 @@ RSpec.describe "Api::V1::Notes", type: :request do
       end
     end
   end
+
+  describe "DELETE /api/v1/quotes/:quote_id/quote_items/:quote_item_id/note" do
+    before do
+      delete "/api/v1/quotes/#{quote.id}/quote_items/#{quote_item.id}/note",
+             headers: headers
+    end
+
+    it "deletes the note" do
+      expect(response).to have_http_status(:no_content)
+      expect(quote_item.reload.note).to be_nil
+    end
+  end
 end

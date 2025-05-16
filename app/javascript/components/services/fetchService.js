@@ -79,4 +79,5 @@ export const fetchSelectableOptions = {
 
 export const fetchNotes = {
   upsert: async (quoteId, quoteItemId, data) => await post(`${ENDPOINTS.QUOTES}/${quoteId}/quote_items/${quoteItemId}/note/upsert`, data),
+  destroy: async (quoteId, quoteItemId) => await del(`${ENDPOINTS.QUOTES}/${quoteId}/quote_items/${quoteItemId}/note`),
 }

@@ -17,7 +17,7 @@ Rails.application.routes.draw do
             delete :destroy_selected
           end
           post :duplicate, on: :member
-          resource :note, only: [], controller: 'notes' do
+          resource :note, only: [:destroy] do
             post :upsert
           end
         end

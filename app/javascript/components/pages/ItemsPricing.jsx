@@ -31,17 +31,16 @@ export const ItemsPricing = () => {
     })
     fetchQuoteItems.index(quoteId).then((data) => {
       setSelectedOptions(data)
-      // Initialize notesStates from quote_items
+
       const initialNotesStates = {}
       data.forEach((option) => {
         option.quote_items.forEach((item) => {
           const note = item.attributes?.note
-          if (note) {
-            initialNotesStates[item.id] = {
-              note: note.notes || '',
-              include: note.is_printable || false,
-              isNotesOpen: false,
-            }
+          initialNotesStates[item.id] = {
+            note: note?.notes || '',
+            include: note?.is_printable || false,
+            isNotesOpen: false,
+            tempNote: note?.notes || '',
           }
         })
       })
@@ -78,9 +77,20 @@ export const ItemsPricing = () => {
   const collapseAll = () => setExpandedAccordions([])
 
   const handleNotesChange = (itemId, value) => {
+    setNotesStates((prev) => ({
+      ...prev,
+      [itemId]: {
+        ...(prev[itemId] || {}),
+        tempNote: value,
+      },
+    }))
+  }
+
+  const handleNotesBlur = (itemId) => {
+    const tempNote = notesStates[itemId]?.tempNote || ''
     const updatedNote = {
       ...(notesStates[itemId] || {}),
-      note: value,
+      note: tempNote,
     }
     setNotesStates((prev) => ({
       ...prev,
@@ -102,28 +112,50 @@ export const ItemsPricing = () => {
   }
 
   const updateNote = (itemId, noteData) => {
+    const current = notesStates[itemId] || {}
+
+    const hasChanged =
+      (noteData.note || '') !== (current.note || '') || (noteData.include || false) !== (current.include || false)
+
+    if (!hasChanged) return
+    
     const noteParameters = {
       note: {
-        notes: noteData.note,
-        is_printable: noteData.include,
+        notes: noteData.note || '',
+        is_printable: noteData.include || false,
       },
     }
 
-    fetchNotes.upsert(quoteId, itemId, noteParameters).then((updatedNoteData) => {
-      const updatedAttributes = updatedNoteData?.data?.attributes
-      if (!updatedAttributes) return
+    if (!noteData?.note?.trim()) {
+      fetchNotes.destroy(quoteId, itemId).then(() => {
+        setNotesStates((prev) => ({
+          ...prev,
+          [itemId]: {
+            ...(prev[itemId] || {}),
+            note: '',
+            include: false,
+            tempNote: '',
+          },
+        }))
+      })
+    } else {
+      fetchNotes.upsert(quoteId, itemId, noteParameters).then((updatedNoteData) => {
+        const updatedAttributes = updatedNoteData?.data?.attributes
+        if (!updatedAttributes) return
 
-      const { notes, is_printable } = updatedAttributes
+        const { notes, is_printable } = updatedAttributes
 
-      setNotesStates((prev) => ({
-        ...prev,
-        [itemId]: {
-          ...(prev[itemId] || {}),
-          note: notes,
-          include: is_printable,
-        },
-      }))
-    })
+        setNotesStates((prev) => ({
+          ...prev,
+          [itemId]: {
+            ...(prev[itemId] || {}),
+            note: notes,
+            include: is_printable,
+            tempNote: notes,
+          },
+        }))
+      })
+    }
   }
 
   const toggleItemNotes = (itemId) => {
@@ -261,8 +293,9 @@ export const ItemsPricing = () => {
                         <PcItemTextareaControl
                           placeholder={''}
                           className={'mb-3 mt-9'}
-                          value={notesState.note || ''}
+                          value={notesState.tempNote || ''}
                           onChange={(e) => handleNotesChange(item.id, e.target.value)}
+                          onBlur={() => handleNotesBlur(item.id)}
                         />
                         <Form.Check
                           type={'checkbox'}

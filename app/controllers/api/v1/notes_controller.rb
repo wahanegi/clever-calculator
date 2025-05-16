@@ -1,8 +1,8 @@
 module Api
   module V1
     class NotesController < BaseController
-      before_action :set_quote, only: %i[upsert]
-      before_action :set_quote_item, only: %i[upsert]
+      before_action :set_quote, only: %i[upsert destroy]
+      before_action :set_quote_item, only: %i[upsert destroy]
 
       def upsert
         note = @quote_item.note || @quote_item.build_note(quote: @quote)
@@ -14,6 +14,16 @@ module Api
         end
       end
 
+      def destroy
+        note = @quote_item.note
+        if note&.destroy
+          head :no_content
+        else
+          render json: ErrorSerializer.new(note&.errors || { note: ['not found'] }).serializable_hash,
+                 status: :unprocessable_entity
+        end
+      end
+
       private
 
       def note_params
@@ -21,14 +31,14 @@ module Api
       end
 
       def set_quote
-        @quote = Quote.find(params[:quote_id])
+        @quote = Quote.find_by(id: params[:quote_id])
         return if @quote
 
         render json: { error: "Quote not found with ID #{params[:quote_id]}" }, status: :not_found
       end
 
       def set_quote_item
-        @quote_item = @quote.quote_items.find(params[:quote_item_id])
+        @quote_item = @quote.quote_items.find_by(id: params[:quote_item_id])
         return if @quote_item
 
         render json: { error: "QuoteItem not found with ID #{params[:quote_item_id]} for Quote ID #{@quote.id}" },
