@@ -21,19 +21,20 @@ export const CustomerForm = () => {
   }, [])
 
   const options = customers.map((customer) => ({
-    value: customer.id,
+    value: parseInt(customer.id),
     label: customer.attributes.company_name,
   }))
 
   const selectedCompany =
-    customers.find((c) => c.attributes.company_name.toLowerCase() === customer.company_name.toLowerCase())?.id ||
-    customer.company_name
+    customers.find((c) =>
+      c.attributes.company_name.toLowerCase() === customer.company_name.toLowerCase(),
+    )?.attributes.company_name || customer.company_name
 
   const handleCompanyChange = (selected) => {
     if (selected.length === 0) return
 
     const { value, label } = selected[0]
-    const selectedCustomer = customers.find((customer) => customer.id === value)
+    const selectedCustomer = customers.find((customer) => parseInt(customer.id) === value)
 
     let newCompanyName = label
 
@@ -200,6 +201,7 @@ export const CustomerForm = () => {
                     onInputChange={handleCompanyInputChange}
                     onClearInput={handleClearInput}
                     hasIcon={true}
+                    labelKey="label"
                   />
                 </Col>
               </Row>

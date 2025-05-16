@@ -4,7 +4,7 @@ ruby "3.4.1"
 
 gem "activeadmin", "~> 3.3.0"                                       # A framework for creating elegant and customizable admin panels
 # gem "bcrypt", "~> 3.1"                                            # Use Active Model has_secure_password [https://guides.rubyonrails.org/active_model_basics.html#securepassword]
-gem "bootsnap", '~> 1.18.4', require: false                         # Reduces boot times through caching; required in config/boot.rb
+gem "bootsnap", '~> 1.18.6', require: false                         # Reduces boot times through caching; required in config/boot.rb
 gem "cssbundling-rails", '~> 1.4.3'                                 # Bundle and process CSS [https://github.com/rails/cssbundling-rails]
 gem 'dentaku', "~> 3.5.4"                                           # Evaluator for a mathematical and logical formulas
 gem "devise", "~> 4.9.4"                                            # Authentication
@@ -48,5 +48,5 @@ group :development do
 end
 
 group :production do
-  gem "aws-sdk-s3", '~> 1.185.0'                   # AWS SDK for Ruby
+  gem "aws-sdk-s3", '~> 1.186.0'                   # AWS SDK for Ruby
 end
