@@ -4,7 +4,7 @@ import { useAppHooks } from '../hooks'
 import { DeleteItemModal, ItemsPricingTopBar, Item, QuoteCreation, ROUTES } from '../shared'
 import { PcCategoryAccordion, PcItemAccordion, PcItemFormGroup, PcItemTextareaControl } from '../ui'
 import { getCurrentStepId, totalFinalPrice, triggerFileDownload } from '../utils'
-import { fetchQuoteItems, fetchQuotes, fetchSelectableOptions } from '../services'
+import { fetchNotes, fetchQuoteItems, fetchQuotes, fetchSelectableOptions } from '../services'
 import { AlertModal } from '../shared/AlertModal'
 
 export const ItemsPricing = () => {
@@ -31,6 +31,21 @@ export const ItemsPricing = () => {
     })
     fetchQuoteItems.index(quoteId).then((data) => {
       setSelectedOptions(data)
+      // Initialize notesStates from quote_items
+      const initialNotesStates = {}
+      data.forEach((option) => {
+        option.quote_items.forEach((item) => {
+          const note = item.attributes?.note
+          if (note) {
+            initialNotesStates[item.id] = {
+              note: note.notes || '',
+              include: note.is_printable || false,
+              isNotesOpen: false,
+            }
+          }
+        })
+      })
+      setNotesStates(initialNotesStates)
     })
   }, [])
 
@@ -63,17 +78,52 @@ export const ItemsPricing = () => {
   const collapseAll = () => setExpandedAccordions([])
 
   const handleNotesChange = (itemId, value) => {
+    const updatedNote = {
+      ...(notesStates[itemId] || {}),
+      note: value,
+    }
     setNotesStates((prev) => ({
       ...prev,
-      [itemId]: { ...(prev[itemId] || {}), note: value },
+      [itemId]: updatedNote,
     }))
+    updateNote(itemId, updatedNote)
   }
 
   const handleIncludeNotesChange = (itemId, checked) => {
+    const updatedNote = {
+      ...(notesStates[itemId] || {}),
+      include: checked,
+    }
     setNotesStates((prev) => ({
       ...prev,
-      [itemId]: { ...(prev[itemId] || {}), include: checked },
+      [itemId]: updatedNote,
     }))
+    updateNote(itemId, updatedNote)
+  }
+
+  const updateNote = (itemId, noteData) => {
+    const noteParameters = {
+      note: {
+        notes: noteData.note,
+        is_printable: noteData.include,
+      },
+    }
+
+    fetchNotes.upsert(quoteId, itemId, noteParameters).then((updatedNoteData) => {
+      const updatedAttributes = updatedNoteData?.data?.attributes
+      if (!updatedAttributes) return
+
+      const { notes, is_printable } = updatedAttributes
+
+      setNotesStates((prev) => ({
+        ...prev,
+        [itemId]: {
+          ...(prev[itemId] || {}),
+          note: notes,
+          include: is_printable,
+        },
+      }))
+    })
   }
 
   const toggleItemNotes = (itemId) => {
@@ -108,12 +158,10 @@ export const ItemsPricing = () => {
 
   const CancelQuoteAlertModal = () => {
     const handleCancel = () => {
-      console.log('handleCancel in CancelQuoteAlertModal')
       setIsShowCancelQuoteAlertModal(false)
     }
 
     const handleConfirm = () => {
-      console.log('handleConfirm in CancelQuoteAlertModal')
       setIsShowCancelQuoteAlertModal(false)
 
       fetchQuotes.destroy(quoteId).then(() => {
@@ -133,12 +181,10 @@ export const ItemsPricing = () => {
 
   const ResetQuoteAlertModal = () => {
     const handleCancel = () => {
-      console.log('handleCancel in ResetQuoteAlertModal')
       setIsShowResetQuoteAlertModal(false)
     }
 
     const handleConfirm = () => {
-      console.log('handleConfirm in ResetQuoteAlertModal')
       setIsShowResetQuoteAlertModal(false)
 
       fetchQuotes.reset(quoteId).then(() => {

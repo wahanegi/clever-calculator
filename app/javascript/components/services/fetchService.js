@@ -76,3 +76,7 @@ export const fetchQuoteItems = {
 export const fetchSelectableOptions = {
   index: async () => await get(ENDPOINTS.SELECTABLE_OPTIONS),
 }
+
+export const fetchNotes = {
+  upsert: async (quoteId, quoteItemId, data) => await post(`${ENDPOINTS.QUOTES}/${quoteId}/quote_items/${quoteItemId}/note/upsert`, data),
+}
