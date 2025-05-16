@@ -17,10 +17,9 @@ class QuoteDocxGenerator
     file.binmode
     Caracal::Document.save file.path, &block
     file.rewind
-    file
-  rescue StandardError => e
-    file&.close
-    file&.unlink
-    raise e
+    file.read
+  ensure
+    file.close
+    file.unlink
   end
 end
