@@ -1,7 +1,7 @@
 module Api
   module V1
     class QuotesController < BaseController
-      before_action :set_quote, only: %i[update destroy reset generate_file]
+      before_action :set_quote, only: %i[update destroy reset]
 
       def create
         quote = current_user.quotes.build(quote_params)
@@ -22,12 +22,15 @@ module Api
       end
 
       def generate_file
-        docx = QuoteDocxGenerator.new(@quote).call
+        quote = current_user.quotes
+                            .includes(:customer, :user, quote_items: [:note, { item: :category }])
+                            .find_by(id: params[:id])
+        docx = QuoteDocxGenerator.new(quote).call
 
         send_data docx,
                   type: Mime[:docx],
                   disposition: 'attachment',
-                  filename: "quote_#{@quote.id}.docx"
+                  filename: "quote.docx"
       end
 
       def reset

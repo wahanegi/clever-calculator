@@ -1,25 +1,87 @@
 class QuoteDocxGenerator
   def initialize(quote)
+    @setting = Setting.current
     @quote = quote
+    @grouped_items = grouped_quote_items
+    @colors = parsed_brand_colors
+    @logo_size = if @setting.logo.attached?
+                   { width: @setting.logo.metadata[:width],
+                     height: @setting.logo.metadata[:height] }
+                 else
+                   { width: 200, height: 200 }
+                 end
   end
 
   def call
-    build_docx do |docx|
-      docx.h1 "Quote ##{@quote.id}", align: :center
-      # Add more content as needed
+    build_docx do |docx, logo|
+      QuoteDocxSections::HeaderSection.new(docx, logo.path, @colors, @logo_size).call
+      QuoteDocxSections::PricingSheetSection.new(docx, @colors, @quote).call
+      QuoteDocxSections::CostSummarySection.new(docx, @colors, @grouped_items, @quote).call
+      QuoteDocxSections::CostDetailsSection.new(docx, @colors, @grouped_items).call
     end
   end
 
   private
 
-  def build_docx(&block)
-    file = Tempfile.new(["quote_#{@quote.id}", '.docx'])
-    file.binmode
-    Caracal::Document.save file.path, &block
-    file.rewind
-    file.read
+  def grouped_quote_items
+    @quote.quote_items.each_with_object({}) do |quote_item, grouped_data|
+      item = quote_item.item
+      key = item.category || item
+
+      grouped_data[key] ||= []
+      grouped_data[key] << quote_item
+    end
+  end
+
+  def build_docx
+    logo_file = logo_tempfile
+    docx_file = docx_tempfile
+
+    docx_file.binmode
+    Caracal::Document.save(docx_file.path) do |document|
+      yield document, logo_file
+    end
+    docx_file.rewind
+    docx_file.read
   ensure
-    file.close
-    file.unlink
+    close_and_remove_each logo_file, docx_file
+  end
+
+  def logo_tempfile
+    io, extension = fetch_logo
+    file = Tempfile.new ['logo', extension]
+    file.binmode
+    file.write(io.read)
+    file.rewind
+    file
+  end
+
+  def docx_tempfile
+    Tempfile.new(["quote_#{@quote.id}", ".docx"])
+  end
+
+  def close_and_remove_each(*files)
+    files.each do |f|
+      f.close
+      f.unlink
+    end
+  end
+
+  def fetch_logo
+    if @setting.logo.attached?
+      blob = @setting.logo.blob
+      [StringIO.new(blob.download), ".#{blob.filename.extension}"]
+    else
+      path = Rails.root.join("app/assets/images/logo.png")
+      [File.open(path, 'rb'), File.extname(path)]
+    end
+  end
+
+  def parsed_brand_colors
+    brand_style = BrandColorParser.new(@setting.style)
+
+    { primary: brand_style.primary_color.remove('#'),
+      secondary: brand_style.secondary_color.remove('#'),
+      blue_light: brand_style.blue_light_color.remove('#') }
   end
 end
