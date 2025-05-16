@@ -3,6 +3,7 @@ module Api
     class CustomersController < BaseController
       def index
         customers = Customer.order(updated_at: :desc)
+
         render json: CustomerSerializer.new(customers).serializable_hash, status: :ok
       end
 

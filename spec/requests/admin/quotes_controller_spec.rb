@@ -45,12 +45,12 @@ RSpec.describe "Admin::Quotes", type: :request do
     it "renders the new quote form successfully" do
       get new_admin_quote_path
       expect(response).to be_successful
-      expect(response.body).to include("New Quote")
-      expect(response.body).to include("Customer")
-      expect(response.body).to include("Categories")
-      expect(response.body).to include("Items Without Category")
-      expect(response.body).to include("Load Items")
-      expect(response.body).to include("Quote Items")
+      expect(unescaped_response_body).to include("New Quote")
+      expect(unescaped_response_body).to include("Customer")
+      expect(unescaped_response_body).to include("Categories")
+      expect(unescaped_response_body).to include("Items Without Category")
+      expect(unescaped_response_body).to include("Load Items")
+      expect(unescaped_response_body).to include("Quote Items")
     end
   end
 
@@ -105,10 +105,10 @@ RSpec.describe "Admin::Quotes", type: :request do
     it "renders the edit quote form successfully" do
       get edit_admin_quote_path(quote)
       expect(response).to be_successful
-      expect(response.body).to include("Edit Quote")
-      expect(response.body).to include(customer.company_name)
-      expect(response.body).to include("item-id-field")
-      expect(response.body).to include("value=\"#{item_fixed.id}\"")
+      expect(unescaped_response_body).to include("Edit Quote")
+      expect(unescaped_response_body).to include(customer.company_name)
+      expect(unescaped_response_body).to include("item-id-field")
+      expect(unescaped_response_body).to include("value=\"#{item_fixed.id}\"")
     end
   end
 

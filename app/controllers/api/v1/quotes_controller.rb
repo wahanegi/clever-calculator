@@ -1,12 +1,13 @@
 module Api
   module V1
     class QuotesController < BaseController
-      before_action :set_quote, only: [:update]
+      before_action :set_quote, only: %i[update destroy reset]
 
       def create
         quote = current_user.quotes.build(quote_params)
+
         if quote.save
-          render json: QuoteSerializer.new(quote).serializable_hash, status: :created
+          render json: serialize_quote(quote), status: :created
         else
           render json: { errors: quote.errors.full_messages }, status: :unprocessable_entity
         end
@@ -14,21 +15,50 @@ module Api
 
       def update
         if @quote.update(quote_params)
-          render json: QuoteSerializer.new(@quote).serializable_hash, status: :ok
+          render json: serialize_quote(@quote), status: :ok
         else
           render json: { errors: @quote.errors.full_messages }, status: :unprocessable_entity
         end
+      end
+
+      def generate_file
+        quote = current_user.quotes
+                            .includes(:customer, :user, quote_items: [:note, { item: :category }])
+                            .find_by(id: params[:id])
+        docx = QuoteDocxGenerator.new(quote).call
+
+        send_data docx,
+                  type: Mime[:docx],
+                  disposition: 'attachment',
+                  filename: "quote.docx"
+      end
+
+      def reset
+        @quote.quote_items.destroy_all
+
+        render json: serialize_quote(@quote), status: :ok
+      end
+
+      def destroy
+        @quote.destroy
+
+        head :no_content
       end
 
       private
 
       def set_quote
         @quote = current_user.quotes.find_by(id: params[:id])
+
         render json: { error: "Quote not found" }, status: :not_found unless @quote
       end
 
       def quote_params
         params.require(:quote).permit(:customer_id, :total_price, :step)
+      end
+
+      def serialize_quote(quote, **options)
+        QuoteSerializer.new(quote, **options).serializable_hash
       end
     end
   end

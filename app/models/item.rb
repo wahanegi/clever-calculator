@@ -11,6 +11,7 @@ class Item < ApplicationRecord
   validates_with ItemFormulaSyntaxValidator
 
   scope :enabled, -> { where(is_disabled: false) }
+  scope :without_category, -> { where(category_id: nil) }
 
   scope :without_category, -> { where(category_id: nil) }
 

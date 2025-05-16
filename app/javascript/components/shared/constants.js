@@ -13,6 +13,8 @@ export const ENDPOINTS = {
   CUSTOMERS: '/api/v1/customers',
   CUSTOMERS_UPSERT: '/api/v1/customers/upsert',
   CATEGORIES: '/api/v1/categories',
+  UNCATEGORIZED_ITEMS: '/api/v1/items/uncategorized',
+  SELECTABLE_OPTIONS: '/api/v1/selectable_options',
 }
 
 export const STEPS = {
@@ -51,6 +53,7 @@ import trashUrl from '../../../assets/images/icons/trash.svg'
 import dropdownArrowDownUrl from '../../../assets/images/icons/arrow-down.svg'
 import dropdownArrowUpUrl from '../../../assets/images/icons/arrow-up.svg'
 import crossUrl from '../../../assets/images/icons/cross.svg'
+import alertUrl from '../../../assets/images/icons/alert.svg'
 
 export const IMAGE_ASSETS = {
   ICONS: {
@@ -76,6 +79,7 @@ export const IMAGE_ASSETS = {
     dropdownArrowDown: dropdownArrowDownUrl,
     dropdownArrowUp: dropdownArrowUpUrl,
     cross: crossUrl,
+    alert: alertUrl,
   },
   // future asset files can be added here
 }
