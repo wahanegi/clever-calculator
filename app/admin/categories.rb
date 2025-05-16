@@ -77,7 +77,7 @@ ActiveAdmin.register Category do
       if items.any?
         table_for items do
           column 'Item name' do |item|
-            link_to item.name, admin_item_path(item)
+            link_to item.name, admin_item_path(item, back_to: 'category')
           end
           column 'Item description', :description
         end
