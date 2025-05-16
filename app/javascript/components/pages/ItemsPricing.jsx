@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { Button, Container, Form } from 'react-bootstrap'
 import { useAppHooks } from '../hooks'
 import { DeleteItemModal, ItemsPricingTopBar, Item, QuoteCreation, ROUTES } from '../shared'
@@ -6,6 +6,7 @@ import { PcCategoryAccordion, PcItemAccordion, PcItemFormGroup, PcItemTextareaCo
 import { getCurrentStepId, totalFinalPrice, triggerFileDownload } from '../utils'
 import { fetchNotes, fetchQuoteItems, fetchQuotes, fetchSelectableOptions } from '../services'
 import { AlertModal } from '../shared/AlertModal'
+import debounce from 'lodash/debounce'
 
 export const ItemsPricing = () => {
   const { navigate, queryParams, location } = useAppHooks()
@@ -96,7 +97,7 @@ export const ItemsPricing = () => {
       ...prev,
       [itemId]: updatedNote,
     }))
-    updateNote(itemId, updatedNote)
+    debouncedUpdateNote(itemId, updatedNote)
   }
 
   const handleIncludeNotesChange = (itemId, checked) => {
@@ -108,7 +109,7 @@ export const ItemsPricing = () => {
       ...prev,
       [itemId]: updatedNote,
     }))
-    updateNote(itemId, updatedNote)
+    debouncedUpdateNote(itemId, updatedNote)
   }
 
   const updateNote = (itemId, noteData) => {
@@ -157,6 +158,12 @@ export const ItemsPricing = () => {
       })
     }
   }
+
+  const debouncedUpdateNote = useRef(
+    debounce((itemId, data) => {
+      updateNote(itemId, data)
+    }, 200),
+  ).current
 
   const toggleItemNotes = (itemId) => {
     setNotesStates((prev) => ({
