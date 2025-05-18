@@ -27,8 +27,6 @@ Rails.application.routes.draw do
       resources :customers, only: [:index] do
         post :upsert, on: :collection
       end
-      resources :categories, only: [:index]
-      get 'items/uncategorized', to: 'items#uncategorized'
     end
   end
 

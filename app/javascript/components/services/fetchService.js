@@ -56,14 +56,6 @@ export const fetchSetting = {
   show: () => get(ENDPOINTS.SETTING),
 }
 
-export const fetchCategories = {
-  index: async () => await get(ENDPOINTS.CATEGORIES),
-}
-
-export const fetchItems = {
-  uncategorized: async () => await get(ENDPOINTS.UNCATEGORIZED_ITEMS),
-}
-
 export const fetchQuoteItems = {
   createFromItem: async (quoteId, itemId) => await post(`${ENDPOINTS.QUOTES}/${quoteId}/quote_items/create_from_item`, { quote_item: { item_id: itemId } }),
   createFromCategory: async (quoteId, categoryId) => await post(`${ENDPOINTS.QUOTES}/${quoteId}/quote_items/create_from_category`, { quote_item: { category_id: categoryId } }),
