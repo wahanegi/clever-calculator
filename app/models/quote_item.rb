@@ -68,14 +68,26 @@ class QuoteItem < ApplicationRecord
 
   def assemble_parameters
     fixed = item.fixed_parameters || {}
-    open = fetch_or_default(item.open_parameters_label&.first, open_param_values)
-    select = fetch_or_default(item.pricing_options&.keys&.first, select_param_values)
+    open = fetch_open_parameters
+    select = fetch_select_parameters
 
     [fixed, open, select]
   end
 
-  def fetch_or_default(key, value)
-    value.presence || (key ? { key => 0 } : {})
+  def fetch_open_parameters
+    return {} if item.open_parameters_label.blank?
+
+    Array(item.open_parameters_label).index_with do |label|
+      open_param_values&.dig(label) || 0
+    end
+  end
+
+  def fetch_select_parameters
+    return {} if item.pricing_options.blank?
+
+    item.pricing_options.keys.index_with do |key|
+      select_param_values&.dig(key) || 0
+    end
   end
 
   def assign_quote_to_note

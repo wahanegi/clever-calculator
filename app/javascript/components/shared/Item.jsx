@@ -14,11 +14,17 @@ export const Item = ({ itemData, selectedOptions, setSelectedOptions, quoteId })
   } = getItemTypeConditions(quoteItem.item)
 
   const { is_open, is_selectable_options, open_parameters_label, pricing_options, fixed_parameters } = quoteItem.item
-  const selectedLabel = is_selectable_options ? Object.keys(pricing_options)[0] : null
-  const openLabel = is_open ? open_parameters_label[0] : null
 
-  const [selectedValue, setSelectedValue] = useState(is_selectable_options ? quoteItem.pricing_parameters[selectedLabel] : 0)
-  const [openValue, setOpenValue] = useState(is_open ? quoteItem.pricing_parameters[openLabel] : 0)
+  const [selectedValues, setSelectedValues] = useState(
+    is_selectable_options
+      ? Object.fromEntries(Object.keys(pricing_options).map((key) => [key, quoteItem.pricing_parameters[key] || 0]))
+      : {},
+  )
+  const [openValues, setOpenValues] = useState(
+    is_open
+      ? Object.fromEntries(open_parameters_label.map((label) => [label, quoteItem.pricing_parameters[label] || 0]))
+      : {},
+  )
   const [discountValue, setDiscountValue] = useState(quoteItem.discount || 0)
 
   function isValidDiscount(value) {
@@ -31,15 +37,15 @@ export const Item = ({ itemData, selectedOptions, setSelectedOptions, quoteId })
     return rounded >= 0.0 && rounded <= 100.0
   }
 
-  const updateQuoteItem = (newSelected, newOpen, newDiscount) => {
+  const updateQuoteItem = (newSelectedValues, newOpenValues, newDiscount) => {
     const quoteItemParameters = {}
 
     if (is_open) {
-      quoteItemParameters.open_param_values = { [openLabel]: newOpen || 0 }
+      quoteItemParameters.open_param_values = newOpenValues
     }
 
     if (is_selectable_options) {
-      quoteItemParameters.select_param_values = { [selectedLabel]: newSelected || 0 }
+      quoteItemParameters.select_param_values = newSelectedValues
     }
 
     fetchQuoteItems.update(quoteId, itemData.id, {
@@ -58,17 +64,18 @@ export const Item = ({ itemData, selectedOptions, setSelectedOptions, quoteId })
   }
 
   const handleSelectedChange = (label) => (value) => {
-    setSelectedValue(value === '' ? 0 : value)
+    const updatedValues = { ...selectedValues, [label]: value === '' ? 0 : value }
 
-    updateQuoteItem(value, openValue, discountValue)
+    setSelectedValues(updatedValues)
+    updateQuoteItem(updatedValues, openValues, discountValue)
   }
 
   const handleOpenChange = (label) => (e) => {
     const { value } = e.target
+    const updated = { ...openValues, [label]: Number(value) }
 
-    setOpenValue(value)
-
-    updateQuoteItem(selectedValue, Number(value), discountValue)
+    setOpenValues(updated)
+    updateQuoteItem(selectedValues, updated, discountValue)
   }
 
   const handleDiscountChange = (e) => {
@@ -76,7 +83,7 @@ export const Item = ({ itemData, selectedOptions, setSelectedOptions, quoteId })
 
     setDiscountValue(value)
 
-    if (isValidDiscount(value)) updateQuoteItem(selectedValue, openValue, Number(value))
+    if (isValidDiscount(value)) updateQuoteItem(selectedValues, openValues, Number(value))
   }
 
   const renderFixedParams = () =>
@@ -91,7 +98,7 @@ export const Item = ({ itemData, selectedOptions, setSelectedOptions, quoteId })
       <PcItemFormGroup key={label} paramType="open-param" label={label}>
         <PcItemInputControl
           paramType="open-price-input"
-          value={openValue}
+          value={openValues[label] || 0}
           onChange={handleOpenChange(label)}
         />
       </PcItemFormGroup>
@@ -101,8 +108,8 @@ export const Item = ({ itemData, selectedOptions, setSelectedOptions, quoteId })
     Object.entries(pricing_options || {}).map(([paramKey, { options }]) => (
       <PcItemFormGroup key={`select-${paramKey}`} paramType="selectable-param" label={paramKey}>
         <PcItemSelectControl
-          value={selectedValue}
-          options={Object.entries(options).map(([label, value]) => ({ label, value: value }))}
+          value={selectedValues[paramKey]}
+          options={Object.entries(options).map(([label, value]) => ({ label, value }))}
           onChange={handleSelectedChange(paramKey)}
         />
       </PcItemFormGroup>

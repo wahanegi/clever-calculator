@@ -21,6 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Remove extra spaces
     formula = formula.replace(/\s+/g, ' ').trim()
 
+    formula = formula.replace(',', '.')
     formulaInput.value = formula
   })
 

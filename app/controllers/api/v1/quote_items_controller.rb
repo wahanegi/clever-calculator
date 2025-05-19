@@ -12,14 +12,17 @@ module Api
 
       def create_from_item
         item = Item.find(params[:quote_item][:item_id])
-        quote_item = @quote.quote_items.create(item: item)
-
-        render json: serialize_quote_item(quote_item), status: :created
+        quote_item = @quote.quote_items.build(item: item, price: 0, discount: 0, final_price: 0)
+        if quote_item.save
+          render json: serialize_quote_item(quote_item), status: :created
+        else
+          render json: ErrorSerializer.new(quote_item.errors).serializable_hash, status: :unprocessable_entity
+        end
       end
 
       def create_from_category
         category = Category.find(params[:quote_item][:category_id])
-        items = category.items.map { |item| { item: item } }
+        items = category.items.map { |item| { item: item, price: 0, discount: 0, final_price: 0 } }
         quote_items = @quote.quote_items.create(items)
 
         render json: serialize_quote_item(quote_items, is_collection: true), status: :created
