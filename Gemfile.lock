@@ -143,6 +143,9 @@ GEM
       responders
       warden (~> 1.2.3)
     diff-lcs (1.6.1)
+    docx (0.3.0)
+      nokogiri (~> 1.8, >= 1.8.1)
+      rubyzip (~> 1.2, >= 1.2.1)
     dotenv (3.1.8)
     drb (2.2.1)
     ed25519 (1.4.0)
@@ -482,6 +485,7 @@ DEPENDENCIES
   debug
   dentaku (~> 3.5.4)
   devise (~> 4.9.4)
+  docx (~> 0.3.0)
   dotenv
   factory_bot_rails
   faker
