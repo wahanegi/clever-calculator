@@ -327,7 +327,7 @@ export const ItemsPricing = () => {
         <Button variant={'outline-primary'} className={'fw-bold pc-btn'} onClick={handleCustomerBack}>
           Back
         </Button>
-        <Button variant={'outline-primary'} className={'fw-bold pc-btn pc-btn-download'}
+        <Button variant={'primary'} className={'fw-bold pc-btn pc-btn-download'}
                 onClick={handleFileDownload} disabled={isSelectedOptionsEmpty}>
           Download
         </Button>

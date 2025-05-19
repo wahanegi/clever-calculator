@@ -29,6 +29,24 @@ RSpec.describe User, type: :model do
       it { is_expected.to validate_uniqueness_of(:email).case_insensitive }
     end
 
+    describe 'phone' do
+      it { is_expected.to allow_value(nil).for(:phone) }
+      it { is_expected.to allow_value('').for(:phone) }
+      it { is_expected.to allow_value('+1234567890').for(:phone) }
+      it { is_expected.to allow_value('123-456-7890').for(:phone) }
+      it { is_expected.to allow_value('123 456 7890').for(:phone) }
+
+      it {
+        is_expected.not_to allow_value('abc123').for(:phone)
+                                                .with_message('must be a valid phone number (digits, spaces, or dashes only, optional + at start)')
+      }
+
+      it {
+        is_expected.not_to allow_value('+123!456@7890').for(:phone)
+                                                       .with_message('must be a valid phone number (digits, spaces, or dashes only, optional + at start)')
+      }
+    end
+
     describe 'password' do
       it { is_expected.to validate_presence_of(:password) }
       it { is_expected.to validate_length_of(:password).is_at_least(8) }
