@@ -30,9 +30,9 @@ module QuoteDocxSections
 
     def row(quote_item)
       [quote_item.item.name,
-       quote_item.price.zero? ? '-' : number_to_currency(quote_item.price),
-       quote_item.discount.zero? ? '-' : quote_item.discount,
-       quote_item.final_price.zero? ? 'Included' : number_to_currency(quote_item.final_price),
+       number_to_currency(number_or_default(quote_item.price)),
+       number_or_default(quote_item.discount),
+       number_to_currency(number_or_default(quote_item.final_price, 'Included')),
        quote_item.note&.is_printable ? quote_item.note.notes.to_s : "-"]
     end
 
@@ -43,6 +43,10 @@ module QuoteDocxSections
         color: '1f2f3f', align: :center,
         bold: true,
         size: 18 }
+    end
+
+    def number_or_default(number, default = '-')
+      number.zero? ? default : number
     end
   end
 end
