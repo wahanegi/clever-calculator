@@ -46,7 +46,7 @@ module QuoteDocxSections
     end
 
     def phone_and_title_row
-      ['Representative Phone:', presence_or_default(nil),
+      ['Representative Phone:', presence_or_default(@quote.user&.phone),
        'Customer Title:', presence_or_default(@quote.customer&.position)]
     end
 

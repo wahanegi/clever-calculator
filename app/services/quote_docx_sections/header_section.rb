@@ -10,10 +10,10 @@ module QuoteDocxSections
     end
 
     def call
-      @docx.page_margins top: 580, bottom: 580, left: 580, right: 580
+      @docx.page_margins top: 580, bottom: 1400, left: 580, right: 580
       @docx.page_numbers true, align: :right, label: 'Page'
       @docx.img @image_path, width: @logo_size[:width], height: @logo_size[:height], align: :center
-      @docx.p '230 W Ohio St, Suite 520, Chicago IL 60564', size: 10, align: :center
+      @docx.p '230 W Ohio St, Suite 520, Chicago IL 60564', size: 13, align: :center
       @docx.hr size: 4, color: @colors[:primary], spacing: 8
     end
 
