@@ -32,22 +32,26 @@ module QuoteDocxSections
 
     def generated_and_name_row
       ['Generated on:', Time.current.strftime('%B %d, %Y'),
-       'Company Name:', @quote.customer&.company_name || '-']
+       'Company Name:', presence_or_default(@quote.customer&.company_name)]
     end
 
     def company_and_name_row
-      ['Company Representative:', @quote.user&.name || '-',
-       'Client Name:', @quote.customer&.full_name || '-']
+      ['Company Representative:', presence_or_default(@quote.user&.name),
+       'Client Name:', presence_or_default(@quote.customer&.full_name)]
     end
 
     def email_row
-      ['Representative Email:', @quote.user&.email || '-',
-       'Email:', @quote.customer&.email || '-']
+      ['Representative Email:', presence_or_default(@quote.user&.email),
+       'Email:', presence_or_default(@quote.customer&.email)]
     end
 
     def phone_and_title_row
-      ['Representative Phone:', '-',
-       'Customer Title:', @quote.customer&.position || '-']
+      ['Representative Phone:', presence_or_default(nil),
+       'Customer Title:', presence_or_default(@quote.customer&.position)]
+    end
+
+    def presence_or_default(value, default = '-')
+      value.presence || default
     end
   end
 end

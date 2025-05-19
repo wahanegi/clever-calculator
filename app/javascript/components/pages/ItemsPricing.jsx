@@ -206,9 +206,7 @@ export const ItemsPricing = () => {
     const handleConfirm = () => {
       setIsShowCancelQuoteAlertModal(false)
 
-      fetchQuotes.destroy(quoteId).then(() => {
-        navigate(ROUTES.CUSTOMER_INFO)
-      })
+      navigate(ROUTES.CUSTOMER_INFO)
     }
 
     return (

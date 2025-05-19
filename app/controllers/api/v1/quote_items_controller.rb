@@ -43,7 +43,7 @@ module Api
       end
 
       def duplicate
-        cloned_quote_item = @quote_item.dup
+        cloned_quote_item = @quote.quote_items.build(item: @quote_item.item, price: 0, discount: 0, final_price: 0)
 
         if cloned_quote_item.save
           render json: serialize_quote_item(cloned_quote_item), status: :created

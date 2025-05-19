@@ -1,7 +1,7 @@
 module Api
   module V1
     class QuotesController < BaseController
-      before_action :set_quote, only: %i[update destroy reset]
+      before_action :set_quote, only: %i[update reset]
 
       def create
         quote = current_user.quotes.build(quote_params)
@@ -37,12 +37,6 @@ module Api
         @quote.quote_items.destroy_all
 
         render json: serialize_quote(@quote), status: :ok
-      end
-
-      def destroy
-        @quote.destroy
-
-        head :no_content
       end
 
       private
