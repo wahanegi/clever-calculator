@@ -1,10 +1,10 @@
 ActiveAdmin.register Quote do
   permit_params :customer_id, :user_id, :total_price, category_ids: [], item_ids: [],
-                quote_items_attributes: [
-                  :id, :item_id, :price, :discount, :final_price, :_destroy,
-                  { open_param_values: {}, select_param_values: {} },
-                  { note_attributes: [:id, :notes, :is_printable, :_destroy] }
-                ]
+                                                      quote_items_attributes: [
+                                                        :id, :item_id, :price, :discount, :final_price, :_destroy,
+                                                        { open_param_values: {}, select_param_values: {} },
+                                                        { note_attributes: [:id, :notes, :is_printable, :_destroy] }
+                                                      ]
 
   filter :customer_company_name, as: :string, label: 'Company Name'
   filter :user, as: :select, collection: proc {
