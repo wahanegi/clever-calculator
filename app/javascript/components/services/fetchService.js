@@ -5,7 +5,6 @@ import { extractNames } from '../utils'
 export const fetchQuotes = {
   create: (data) => post(ENDPOINTS.QUOTES, data),
   update: (id, data) => put(`${ENDPOINTS.QUOTES}/${id}`, data),
-  destroy: (id) => del(`${ENDPOINTS.QUOTES}/${id}`),
   reset: (id) => patch(`${ENDPOINTS.QUOTES}/${id}/reset`),
   generateFile: (id) => get(`${ENDPOINTS.QUOTES}/${id}/generate_file`, {}, {
     responseType: 'blob',

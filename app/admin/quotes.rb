@@ -203,7 +203,7 @@ ActiveAdmin.register Quote do
   end
 
   action_item :generate_file, only: :show do
-    link_to "Download .DOCX", generate_file_admin_quote_path(resource)
+    link_to "Download", generate_file_admin_quote_path(resource)
   end
 
   member_action :generate_file, method: :get do

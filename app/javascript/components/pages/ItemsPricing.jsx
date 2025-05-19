@@ -119,7 +119,7 @@ export const ItemsPricing = () => {
       (noteData.note || '') !== (current.note || '') || (noteData.include || false) !== (current.include || false)
 
     if (!hasChanged) return
-    
+
     const noteParameters = {
       note: {
         notes: noteData.note || '',
@@ -203,9 +203,7 @@ export const ItemsPricing = () => {
     const handleConfirm = () => {
       setIsShowCancelQuoteAlertModal(false)
 
-      fetchQuotes.destroy(quoteId).then(() => {
-        navigate(ROUTES.CUSTOMER_INFO)
-      })
+      navigate(ROUTES.CUSTOMER_INFO)
     }
 
     return (

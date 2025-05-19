@@ -13,10 +13,10 @@ module QuoteDocxSections
       primary_color, secondary_color = colors
 
       @docx.h3 "Cost Summary", align: :center, padding: 10
-      @docx.table(table_data, border_size: 1, border_color: '1f2f3f', width: 8000) do
+      @docx.table(table_data, border_size: 1, border_color: '1f2f3f', align: :right, width: 5700) do
         cell_style cells, size: 16, border_size: 0
         cell_style rows[-1], bold: true, background: secondary_color, color: '1f2f3f', size: 18, align: :center
-        cell_style cols[1], align: :right
+        cell_style cols[1], align: :right, width: 1400
         cell_style rows[0], bold: true, background: primary_color, color: '1f2f3f', align: :center
       end
       @docx.p
