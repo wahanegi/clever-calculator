@@ -115,19 +115,9 @@ export const ItemsPricing = () => {
   const updateNote = (itemId, noteData) => {
     const current = notesStates[itemId] || {}
 
-    const hasChanged =
-      (noteData.note || '') !== (current.note || '') || (noteData.include || false) !== (current.include || false)
+    const trimmedNote = noteData?.note?.trim() || ''
 
-    if (!hasChanged) return
-    
-    const noteParameters = {
-      note: {
-        notes: noteData.note || '',
-        is_printable: noteData.include || false,
-      },
-    }
-
-    if (!noteData?.note?.trim()) {
+    if (trimmedNote === '') {
       fetchNotes.destroy(quoteId, itemId).then(() => {
         setNotesStates((prev) => ({
           ...prev,
@@ -139,24 +129,37 @@ export const ItemsPricing = () => {
           },
         }))
       })
-    } else {
-      fetchNotes.upsert(quoteId, itemId, noteParameters).then((updatedNoteData) => {
-        const updatedAttributes = updatedNoteData?.data?.attributes
-        if (!updatedAttributes) return
-
-        const { notes, is_printable } = updatedAttributes
-
-        setNotesStates((prev) => ({
-          ...prev,
-          [itemId]: {
-            ...(prev[itemId] || {}),
-            note: notes,
-            include: is_printable,
-            tempNote: notes,
-          },
-        }))
-      })
+      return
     }
+
+    const hasChanged =
+      trimmedNote !== (current.note || '').trim() || (noteData.include || false) !== (current.include || false)
+
+    if (!hasChanged) return
+
+    const noteParameters = {
+      note: {
+        notes: trimmedNote,
+        is_printable: noteData.include || false,
+      },
+    }
+
+    fetchNotes.upsert(quoteId, itemId, noteParameters).then((updatedNoteData) => {
+      const updatedAttributes = updatedNoteData?.data?.attributes
+      if (!updatedAttributes) return
+
+      const { notes, is_printable } = updatedAttributes
+
+      setNotesStates((prev) => ({
+        ...prev,
+        [itemId]: {
+          ...(prev[itemId] || {}),
+          note: notes,
+          include: is_printable,
+          tempNote: notes,
+        },
+      }))
+    })
   }
 
   const debouncedUpdateNote = useRef(
