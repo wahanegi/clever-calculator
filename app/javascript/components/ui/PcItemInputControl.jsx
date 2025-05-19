@@ -2,7 +2,7 @@ import React from 'react'
 import { Form } from 'react-bootstrap'
 
 export const PcItemInputControl = ({
-  type = 'number',
+  type,
   paramType = 'price',
   value,
   onChange,
@@ -16,9 +16,11 @@ export const PcItemInputControl = ({
     paramType === 'original-cost' ||
     paramType === 'select-price-value'
 
+  const inputType = type || (isDisabled ? 'text' : 'number')
+
   return (
     <Form.Control
-      type={type}
+      type={inputType}
       value={value}
       onChange={onChange}
       placeholder={placeholder}

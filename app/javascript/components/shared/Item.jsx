@@ -25,7 +25,7 @@ export const Item = ({ itemData, selectedOptions, setSelectedOptions, quoteId })
       ? Object.fromEntries(open_parameters_label.map((label) => [label, quoteItem.pricing_parameters[label] || 0]))
       : {},
   )
-  const [discountValue, setDiscountValue] = useState(quoteItem.discount || 0)
+  const [discountValue, setDiscountValue] = useState(Number(quoteItem.discount) || 0)
 
   function isValidDiscount(value) {
     let num = parseFloat(value)
@@ -81,9 +81,14 @@ export const Item = ({ itemData, selectedOptions, setSelectedOptions, quoteId })
   const handleDiscountChange = (e) => {
     const { value } = e.target
 
-    setDiscountValue(value)
+    let numericValue = parseFloat(value)
 
-    if (isValidDiscount(value)) updateQuoteItem(selectedValues, openValues, Number(value))
+    if (isNaN(numericValue)) numericValue = 0
+    numericValue = Math.max(0, Math.min(100, numericValue))
+
+    setDiscountValue(numericValue)
+
+    updateQuoteItem(selectedValues, openValues, numericValue)
   }
 
   const renderFixedParams = () =>
@@ -130,7 +135,10 @@ export const Item = ({ itemData, selectedOptions, setSelectedOptions, quoteId })
           <div className="d-flex flex-wrap align-items-end gap-3">
             {isItemFixed && renderFixedParams()}
             <PcItemFormGroup paramType="discounted-price" label="Discounted price">
-              <PcItemInputControl paramType="discounted-price" value={quoteItem.final_price} />
+              <PcItemInputControl
+                paramType="discounted-price"
+                value={Number(quoteItem.final_price) > 0 ? Number(quoteItem.final_price).toFixed(2) : 0}
+              />
             </PcItemFormGroup>
           </div>
 
@@ -170,11 +178,17 @@ export const Item = ({ itemData, selectedOptions, setSelectedOptions, quoteId })
           <div className={'d-flex flex-column gap-3 px-0 align-items-end pc-item-price-param'}>
             <div className="d-flex flex-wrap justify-content-end gap-3">
               <PcItemFormGroup paramType="price" label="Price">
-                <PcItemInputControl paramType="price" value={quoteItem.price} />
+                <PcItemInputControl
+                  paramType="price"
+                  value={Number(quoteItem.price) > 0 ? Number(quoteItem.price).toFixed(2) : 0}
+                />
               </PcItemFormGroup>
 
               <PcItemFormGroup paramType="discounted-price" label="Discounted price">
-                <PcItemInputControl paramType="discounted-price" value={quoteItem.final_price} />
+                <PcItemInputControl
+                  paramType="discounted-price"
+                  value={Number(quoteItem.final_price) > 0 ? Number(quoteItem.final_price).toFixed(2) : 0}
+                />
               </PcItemFormGroup>
             </div>
 
