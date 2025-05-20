@@ -3,6 +3,8 @@ module Api
     class QuotesController < BaseController
       before_action :set_quote, only: %i[update reset]
 
+      rescue_from ActiveRecord::RecordNotFound, with: :render_not_found
+
       def create
         quote = current_user.quotes.build(quote_params)
 
@@ -24,7 +26,8 @@ module Api
       def generate_file
         quote = current_user.quotes
                             .includes(:customer, :user, quote_items: [:note, { item: :category }])
-                            .find_by(id: params[:id])
+                            .find(params[:id])
+
         docx = QuoteDocxGenerator.new(quote).call
 
         send_data docx,
@@ -42,9 +45,11 @@ module Api
       private
 
       def set_quote
-        @quote = current_user.quotes.find_by(id: params[:id])
+        @quote = current_user.quotes.find(params[:id])
+      end
 
-        render json: { error: "Quote not found" }, status: :not_found unless @quote
+      def render_not_found
+        render json: { error: "Quote not found" }, status: :not_found
       end
 
       def quote_params

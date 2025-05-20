@@ -46,11 +46,9 @@ module QuoteDocxSections
     end
 
     def format_number(number, default = '-', currency: true)
-      if number.zero?
-        default
-      else
-        (currency ? number_to_currency(number) : number)
-      end
+      return default if number.nil? || number.zero?
+
+      (currency ? number_to_currency(number) : number)
     end
   end
 end

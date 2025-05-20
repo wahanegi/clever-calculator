@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { PcItemFormGroup, PcItemInputControl, PcItemSelectControl } from '../ui'
 import { getItemTypeConditions } from '../utils'
 import { fetchQuoteItems } from '../services'
+import debounce from 'lodash/debounce'
 
 export const Item = ({ itemData, selectedOptions, setSelectedOptions, quoteId }) => {
   const quoteItem = itemData.attributes
@@ -27,17 +28,7 @@ export const Item = ({ itemData, selectedOptions, setSelectedOptions, quoteId })
   )
   const [discountValue, setDiscountValue] = useState(Number(quoteItem.discount) || 0)
 
-  function isValidDiscount(value) {
-    let num = parseFloat(value)
-
-    num = isNaN(num) ? 0 : num
-
-    const rounded = Math.round(num * 100) / 100
-
-    return rounded >= 0.0 && rounded <= 100.0
-  }
-
-  const updateQuoteItem = (newSelectedValues, newOpenValues, newDiscount) => {
+  const updateQuoteItemDebounced = debounce((newSelectedValues, newOpenValues, newDiscount) => {
     const quoteItemParameters = {}
 
     if (is_open) {
@@ -61,13 +52,13 @@ export const Item = ({ itemData, selectedOptions, setSelectedOptions, quoteId })
         ),
       })))
     })
-  }
+  }, 200)
 
   const handleSelectedChange = (label) => (value) => {
     const updatedValues = { ...selectedValues, [label]: value === '' ? 0 : value }
 
     setSelectedValues(updatedValues)
-    updateQuoteItem(updatedValues, openValues, discountValue)
+    updateQuoteItemDebounced(updatedValues, openValues, discountValue)
   }
 
   const handleOpenChange = (label) => (e) => {
@@ -75,7 +66,7 @@ export const Item = ({ itemData, selectedOptions, setSelectedOptions, quoteId })
     const updated = { ...openValues, [label]: Number(value) }
 
     setOpenValues(updated)
-    updateQuoteItem(selectedValues, updated, discountValue)
+    updateQuoteItemDebounced(selectedValues, updated, discountValue)
   }
 
   const handleDiscountChange = (e) => {
@@ -88,7 +79,7 @@ export const Item = ({ itemData, selectedOptions, setSelectedOptions, quoteId })
 
     setDiscountValue(numericValue)
 
-    updateQuoteItem(selectedValues, openValues, numericValue)
+    updateQuoteItemDebounced(selectedValues, openValues, numericValue)
   }
 
   const renderFixedParams = () =>

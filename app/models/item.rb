@@ -13,8 +13,6 @@ class Item < ApplicationRecord
   scope :enabled, -> { where(is_disabled: false) }
   scope :without_category, -> { where(category_id: nil) }
 
-  scope :without_category, -> { where(category_id: nil) }
-
   def self.ransackable_attributes(_auth_object = nil)
     %w[category_id created_at id is_disabled name updated_at]
   end
