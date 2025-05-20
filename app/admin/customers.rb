@@ -5,11 +5,7 @@ ActiveAdmin.register Customer do
     selectable_column
     id_column
     column :logo do |customer|
-      if customer.logo.attached?
-        image_tag customer.logo, style: 'max-height: 100px; max-width: 300px;'
-      else
-        'No logo uploaded'
-      end
+      attached_image_or_fallback customer.logo
     end
     column :company_name
     column :first_name
@@ -23,11 +19,7 @@ ActiveAdmin.register Customer do
   show do
     attributes_table do
       row :logo do |customer|
-        if customer.logo.attached?
-          image_tag customer.logo, style: 'max-height: 100px; max-width: 300px;'
-        else
-          'No logo uploaded'
-        end
+        attached_image_or_fallback customer.logo
       end
       row :company_name
       row :first_name
@@ -48,6 +40,10 @@ ActiveAdmin.register Customer do
   filter :notes
 
   form do |f|
+    panel 'Logo' do
+      attached_image_or_fallback customer.logo
+    end
+
     f.inputs do
       f.input :logo, as: :file, input_html: { accept: Customer::ALLOWED_LOGO_TYPES.join(',') }
       f.input :company_name, hint: "Maximum 50 characters"
@@ -59,5 +55,13 @@ ActiveAdmin.register Customer do
       f.input :notes
     end
     f.actions
+  end
+
+  action_item :back, only: :show do
+    link_to "Back to Customers", admin_customers_path
+  end
+
+  controller do
+    helper ActiveAdmin::ImagePreviewHelper
   end
 end
