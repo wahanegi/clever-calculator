@@ -42,8 +42,10 @@ ActiveAdmin.register Item do
     meta_data = session_service.all
 
     f.inputs "Item Details" do
-      f.input :name, required: true, input_html: { value: f.object.name.presence || meta_data["name"] }, hint: "Maximum 50 characters"
-      f.input :description, as: :string, input_html: { value: f.object.description.presence || meta_data["description"] }
+      f.input :name, required: true, input_html: { value: f.object.name.presence || meta_data["name"] },
+                     hint: "Maximum 50 characters"
+      f.input :description, as: :string,
+                            input_html: { value: f.object.description.presence || meta_data["description"] }
       f.input :category_id, as: :select,
                             collection: Category.pluck(:name, :id),
                             include_blank: "No Category",
@@ -158,6 +160,8 @@ ActiveAdmin.register Item do
     helper ActiveAdmin::ItemsHelper
     helper_method :session_service
 
+    before_action :set_session_navigation
+
     def create
       @item = Item.new(permitted_params[:item])
       session_service.update_with_tmp_to_item(@item)
@@ -217,6 +221,20 @@ ActiveAdmin.register Item do
         TmpParamsSessionService.new(session, item_key.to_s)
       end
     end
+
+    def set_session_navigation
+      return unless request.referer && request.get?
+
+      referer_path = URI.parse(request.referer).path
+
+      session['back_to'] = if referer_path.match?(%r{^/admin/categories/(\d+|\d+/edit)$})
+                             'category'
+                           elsif referer_path == '/admin/items'
+                             nil
+                           else
+                             session['back_to'] # keep it unchanged
+                           end
+    end
   end
 
   actions :all, except: [:destroy]
@@ -233,7 +251,7 @@ ActiveAdmin.register Item do
   end
 
   action_item :back, only: :show do
-    if params[:back_to].present? && resource.category.present?
+    if session['back_to'] == "category" && resource.category.present?
       link_to "Back to Category", admin_category_path(resource.category)
     else
       link_to "Back to Items", admin_items_path
@@ -302,7 +320,8 @@ ActiveAdmin.register Item do
       end
       # Validate parameter value
       unless valid_options
-        flash[:error] = "At least one valid option (with non-empty description and value) is required for Select parameter"
+        flash[:error] =
+          "At least one valid option (with non-empty description and value) is required for Select parameter"
         return redirect_back(fallback_location: @item&.id ? edit_admin_item_path(@item) : new_admin_item_path)
       end
 
