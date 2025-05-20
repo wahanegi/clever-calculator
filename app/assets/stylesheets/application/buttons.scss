@@ -6,7 +6,7 @@
 
     &:hover,
     &:focus {
-      background: var(--bs-primary);
+      background: $blue-600 !important;
     }
 
     &:active {
@@ -58,7 +58,9 @@
 
     &:hover,
     &:focus {
-      background: inherit;
+      background: $blue-600 !important;
+      color: var(--bs-white) !important;
+      border-color: $blue-600 !important;
     }
 
     &:active {

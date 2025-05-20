@@ -17,7 +17,7 @@ textarea {
 .form-control:active,
 .form-select:focus,
 .form-select:active {
-  box-shadow: none !important;
+  box-shadow: 0px 1px 6px 0px $blue-700 !important;
   background-color: $white !important;
 }
 
@@ -35,6 +35,10 @@ textarea {
 .rbt-input-main {
   border: none !important;
   border-radius: 4px;
+}
+
+.rbt-input-main:focus {
+  box-shadow: none !important;
 }
 
 .rbt-menu .dropdown-item:hover,
