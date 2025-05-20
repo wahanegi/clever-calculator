@@ -169,7 +169,11 @@ ActiveAdmin.register Item do
       if @item.save
         session_service.delete
 
-        redirect_to admin_item_path(@item), notice: "Item was successfully created."
+        if session['back_to'] == 'category' && @item.category.present?
+          redirect_to edit_admin_category_path(@item.category), notice: "Item was successfully created."
+        else
+          redirect_to admin_item_path(@item), notice: "Item was successfully created."
+        end
       else
         flash.now[:error] = "Failed to create item: #{@item.errors.full_messages.to_sentence}"
         render :new, status: :unprocessable_entity
@@ -202,7 +206,7 @@ ActiveAdmin.register Item do
       if @item.update(permitted_params[:item].except(:formula_parameters))
         session_service.delete
 
-        if @item.category.present?
+        if session['back_to'] == 'category' && @item.category.present?
           redirect_to edit_admin_category_path(@item.category), notice: "Item was successfully updated."
         else
           redirect_to admin_item_path(@item), notice: "Item was successfully updated."
