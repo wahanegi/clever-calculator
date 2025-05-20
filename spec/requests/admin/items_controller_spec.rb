@@ -179,10 +179,10 @@ RSpec.describe 'Admin::Items', type: :request do
     let(:invalid_params) { { item: { name: '' } } }
 
     context 'when category is' do
-      it 'selected and redirects to the edit category page' do
+      it 'selected and redirects to the item page' do
         put admin_item_path(item), params: valid_params
 
-        expect(response).to redirect_to(edit_admin_category_path(category))
+        expect(response).to redirect_to(admin_item_path(item))
 
         follow_redirect!
 
@@ -210,7 +210,7 @@ RSpec.describe 'Admin::Items', type: :request do
 
       expect(item.name).to eq('Updated Item')
       expect(item.description).to eq('Updated description')
-      expect(response).to redirect_to(edit_admin_category_path(item.category))
+      expect(response).to redirect_to(admin_item_path(item))
       follow_redirect!
       expect(response.body).to include('Updated Item')
     end
