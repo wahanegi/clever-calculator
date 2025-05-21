@@ -232,6 +232,12 @@
   color: #222 !important;
 }
 
+.break-word {
+  word-break: break-word;
+  overflow-wrap: break-word;
+  hyphens: auto;
+}
+
 @import 'active_admin/forms/select';
 @import 'active_admin/forms/dropdown-select';
 @import 'active_admin/forms/quote-form';
