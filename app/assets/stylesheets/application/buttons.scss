@@ -6,7 +6,8 @@
 
     &:hover,
     &:focus {
-      background: var(--bs-primary);
+      background: color-mix(in srgb, var(--bs-primary), white 35%) !important;
+      border-color: color-mix(in srgb, var(--bs-primary), white 35%) !important;
     }
 
     &:active {
@@ -58,7 +59,9 @@
 
     &:hover,
     &:focus {
-      background: inherit;
+      background: color-mix(in srgb, var(--bs-primary), white 35%) !important;
+      color: var(--bs-white) !important;
+      border-color: color-mix(in srgb, var(--bs-primary), white 35%) !important;
     }
 
     &:active {
