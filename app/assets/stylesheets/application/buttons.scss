@@ -6,7 +6,8 @@
 
     &:hover,
     &:focus {
-      background: $blue-600 !important;
+      background: color-mix(in srgb, var(--bs-primary), white 35%) !important;
+      border-color: color-mix(in srgb, var(--bs-primary), white 35%) !important;
     }
 
     &:active {
@@ -58,9 +59,9 @@
 
     &:hover,
     &:focus {
-      background: $blue-600 !important;
+      background: color-mix(in srgb, var(--bs-primary), white 35%) !important;
       color: var(--bs-white) !important;
-      border-color: $blue-600 !important;
+      border-color: color-mix(in srgb, var(--bs-primary), white 35%) !important;
     }
 
     &:active {

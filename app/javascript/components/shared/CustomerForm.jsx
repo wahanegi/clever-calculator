@@ -273,7 +273,7 @@ export const CustomerForm = () => {
         </Row>
       </div>
 
-      <Button type={'submit'} className="pc-btn mb-4 border-0" disabled={isNextDisabled}>
+      <Button type={'submit'} className="pc-btn mb-4" disabled={isNextDisabled}>
         Next
       </Button>
     </Form>
