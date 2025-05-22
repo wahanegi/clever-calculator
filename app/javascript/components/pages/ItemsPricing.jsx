@@ -332,6 +332,7 @@ export const ItemsPricing = () => {
       </section>
 
       <DeleteItemModal
+        nameItem={removeSelectedOption?.name}
         show={isShowDeleteModal}
         onHide={handleCancelDeleteCategory}
         onConfirmDelete={handleConfirmDelete}
