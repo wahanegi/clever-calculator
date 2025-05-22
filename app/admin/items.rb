@@ -169,11 +169,7 @@ ActiveAdmin.register Item do
       if @item.save
         session_service.delete
 
-        if session['back_to'] == 'category' && @item.category.present?
-          redirect_to edit_admin_category_path(@item.category), notice: "Item was successfully created."
-        else
-          redirect_to admin_item_path(@item), notice: "Item was successfully created."
-        end
+        redirect_to target_path, notice: "Item was successfully created."
       else
         flash.now[:error] = "Failed to create item: #{@item.errors.full_messages.to_sentence}"
         render :new, status: :unprocessable_entity
@@ -206,11 +202,7 @@ ActiveAdmin.register Item do
       if @item.update(permitted_params[:item].except(:formula_parameters))
         session_service.delete
 
-        if session['back_to'] == 'category' && @item.category.present?
-          redirect_to edit_admin_category_path(@item.category), notice: "Item was successfully updated."
-        else
-          redirect_to admin_item_path(@item), notice: "Item was successfully updated."
-        end
+        redirect_to target_path, notice: "Item was successfully updated."
       else
         flash[:error] = "Failed to update item: #{@item.errors.full_messages.to_sentence}"
         render :edit
@@ -227,17 +219,32 @@ ActiveAdmin.register Item do
     end
 
     def set_session_navigation
-      return unless request.referer && request.get?
+      return unless request.referer
 
       referer_path = URI.parse(request.referer).path
 
-      session['back_to'] = if referer_path.match?(%r{^/admin/categories/(\d+|\d+/edit)$})
-                             'category'
-                           elsif referer_path == '/admin/items'
-                             nil
-                           else
-                             session['back_to'] # keep it unchanged
-                           end
+      session['back_to'] = determine_back_to(referer_path)
+    end
+
+    def determine_back_to(path)
+      return 'category' if path.match?(%r{^/admin/categories/\d+$})
+      return 'category-edit' if path.match?(%r{^/admin/categories/\d+/edit$})
+      return nil if path == '/admin/items' && request.get?
+
+      session['back_to'] # unchanged
+    end
+
+    def target_path
+      return admin_item_path(@item) if @item.category.blank?
+
+      case session['back_to']
+      when 'category'
+        admin_category_path(@item.category)
+      when 'category-edit'
+        edit_admin_category_path(@item.category)
+      else
+        admin_item_path(@item)
+      end
     end
   end
 
