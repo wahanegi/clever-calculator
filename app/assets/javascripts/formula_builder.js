@@ -5,10 +5,40 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (!formulaDisplay || !formulaInput) return
 
+  formulaDisplay.focus()
+
   document.querySelectorAll('.formula-btn').forEach((btn) => {
     btn.addEventListener('click', () => {
       const symbol = btn.innerText
-      formulaDisplay.innerText += ` ${symbol} `
+      const selection = window.getSelection()
+
+      let range
+
+      // Make selection within formulaDisplay field
+      if (selection.rangeCount > 0 && formulaDisplay.contains(selection.anchorNode)) {
+        range = selection.getRangeAt(0)
+      } else {
+        // Otherwise insert at the end of formulaDisplay
+        range = document.createRange()
+        range.selectNodeContents(formulaDisplay)
+        range.collapse(false) // move to end
+      }
+
+      range.deleteContents()
+
+      const spaceBefore = document.createTextNode(' ')
+      const symbolNode = document.createTextNode(symbol)
+      const spaceAfter = document.createTextNode(' ')
+
+      range.insertNode(spaceAfter)
+      range.insertNode(symbolNode)
+      range.insertNode(spaceBefore)
+
+      // Move caret to after the inserted symbol
+      range.setStartAfter(spaceAfter)
+      range.collapse(true)
+      selection.removeAllRanges()
+      selection.addRange(range)
     })
   })
 
