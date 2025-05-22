@@ -43,13 +43,13 @@ ActiveAdmin.register Item do
 
     f.inputs "Item Details" do
       f.input :name, required: true, input_html: { value: f.object.name.presence || meta_data["name"] },
-                     hint: "Maximum 50 characters"
+              hint: "Maximum 50 characters"
       f.input :description, as: :string,
-                            input_html: { value: f.object.description.presence || meta_data["description"] }
+              input_html: { value: f.object.description.presence || meta_data["description"] }
       f.input :category_id, as: :select,
-                            collection: Category.pluck(:name, :id),
-                            include_blank: "No Category",
-                            selected: f.object.category_id.presence || meta_data["category_id"] || params[:category_id]
+              collection: Category.pluck(:name, :id),
+              include_blank: "No Category",
+              selected: f.object.category_id.presence || meta_data["category_id"] || params[:category_id]
     end
 
     div class: "add-param-link-wrapper" do
@@ -58,14 +58,14 @@ ActiveAdmin.register Item do
 
       para do
         concat(link_to("Add Parameter", "#", class: "button store-and-navigate", data: {
-                         redirect: new_parameter_admin_item_path(id: item_id),
-                         item_id: item_id
-                       }))
+          redirect: new_parameter_admin_item_path(id: item_id),
+          item_id: item_id
+        }))
 
         concat(link_to(formula_label, "#", class: "button store-and-navigate", data: {
-                         redirect: new_formula_admin_item_path(id: item_id),
-                         item_id: item_id
-                       }))
+          redirect: new_formula_admin_item_path(id: item_id),
+          item_id: item_id
+        }))
       end
     end
 
@@ -169,11 +169,7 @@ ActiveAdmin.register Item do
       if @item.save
         session_service.delete
 
-        if session['back_to'] == 'category' && @item.category.present?
-          redirect_to edit_admin_category_path(@item.category), notice: "Item was successfully created."
-        else
-          redirect_to admin_item_path(@item), notice: "Item was successfully created."
-        end
+        redirect_to target_path, notice: "Item was successfully created."
       else
         flash.now[:error] = "Failed to create item: #{@item.errors.full_messages.to_sentence}"
         render :new, status: :unprocessable_entity
@@ -206,11 +202,7 @@ ActiveAdmin.register Item do
       if @item.update(permitted_params[:item].except(:formula_parameters))
         session_service.delete
 
-        if session['back_to'] == 'category' && @item.category.present?
-          redirect_to edit_admin_category_path(@item.category), notice: "Item was successfully updated."
-        else
-          redirect_to admin_item_path(@item), notice: "Item was successfully updated."
-        end
+        redirect_to target_path, notice: "Item was successfully updated."
       else
         flash[:error] = "Failed to update item: #{@item.errors.full_messages.to_sentence}"
         render :edit
@@ -221,23 +213,38 @@ ActiveAdmin.register Item do
 
     def session_service
       @session_service ||= begin
-        item_key = params[:id].presence || "new"
-        TmpParamsSessionService.new(session, item_key.to_s)
-      end
+                             item_key = params[:id].presence || "new"
+                             TmpParamsSessionService.new(session, item_key.to_s)
+                           end
     end
 
     def set_session_navigation
-      return unless request.referer && request.get?
+      return unless request.referer
 
       referer_path = URI.parse(request.referer).path
 
-      session['back_to'] = if referer_path.match?(%r{^/admin/categories/(\d+|\d+/edit)$})
-                             'category'
-                           elsif referer_path == '/admin/items'
-                             nil
-                           else
-                             session['back_to'] # keep it unchanged
-                           end
+      session['back_to'] = determine_back_to(referer_path)
+    end
+
+    def determine_back_to(path)
+      return 'category' if path.match?(%r{^/admin/categories/\d+$})
+      return 'category-edit' if path.match?(%r{^/admin/categories/\d+/edit$})
+      return nil if path == '/admin/items' && request.get?
+
+      session['back_to'] # unchanged
+    end
+
+    def target_path
+      return admin_item_path(@item) unless @item.category.present?
+
+      case session['back_to']
+      when 'category'
+        admin_category_path(@item.category)
+      when 'category-edit'
+        edit_admin_category_path(@item.category)
+      else
+        admin_item_path(@item)
+      end
     end
   end
 
