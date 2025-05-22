@@ -1,5 +1,12 @@
 export const getItemTypeConditions = (itemData = {}) => {
-  const { is_fixed, is_open, is_selectable_options, fixed_parameters = {}, pricing_options = {} } = itemData
+  const {
+    is_fixed,
+    is_open,
+    is_selectable_options,
+    fixed_parameters = {},
+    pricing_options = {},
+    formula_parameters,
+  } = itemData
 
   const fixedParamCount = Object.keys(fixed_parameters).length
   const openParamCount = itemData.open_parameters_label?.length || 0
@@ -10,7 +17,8 @@ export const getItemTypeConditions = (itemData = {}) => {
   const isItemSelectableOptions = Boolean(!is_fixed && !is_open && is_selectable_options && selectableParamCount === 1)
 
   const isShowSimpleParams = isItemFixed || isItemOpen || isItemSelectableOptions
-  const isShowCombinedParams = !isShowSimpleParams
+  const isShowIncludedParams = Boolean(formula_parameters?.length === 0)
+  const isShowCombinedParams = !isShowSimpleParams && !isShowIncludedParams
 
   return {
     isItemFixed,
@@ -18,5 +26,6 @@ export const getItemTypeConditions = (itemData = {}) => {
     isItemSelectableOptions,
     isShowSimpleParams,
     isShowCombinedParams,
+    isShowIncludedParams,
   }
 }

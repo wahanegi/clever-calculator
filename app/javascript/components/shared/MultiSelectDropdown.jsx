@@ -5,7 +5,7 @@ import { PcCheckboxOption, PcIcon, PcTransparentButton } from '../ui'
 
 export const MultiSelectDropdown = ({
                                       id,
-                                      label = 'Select items',
+                                      label = 'Select Categories & Items',
                                       hasIcon = true,
                                       selectedOptions,
                                       selectableOptions,
@@ -74,8 +74,7 @@ export const MultiSelectDropdown = ({
           <PcCheckboxOption
             label={option.name}
             checked={isSelected(option)}
-            onChange={(e) => {
-            }}
+            onChange={(e) => {}}
             className={'pc-checkbox-items-pricing'}
           />
         )}
