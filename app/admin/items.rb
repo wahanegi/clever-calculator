@@ -43,13 +43,13 @@ ActiveAdmin.register Item do
 
     f.inputs "Item Details" do
       f.input :name, required: true, input_html: { value: f.object.name.presence || meta_data["name"] },
-              hint: "Maximum 50 characters"
+                     hint: "Maximum 50 characters"
       f.input :description, as: :string,
-              input_html: { value: f.object.description.presence || meta_data["description"] }
+                            input_html: { value: f.object.description.presence || meta_data["description"] }
       f.input :category_id, as: :select,
-              collection: Category.pluck(:name, :id),
-              include_blank: "No Category",
-              selected: f.object.category_id.presence || meta_data["category_id"] || params[:category_id]
+                            collection: Category.pluck(:name, :id),
+                            include_blank: "No Category",
+                            selected: f.object.category_id.presence || meta_data["category_id"] || params[:category_id]
     end
 
     div class: "add-param-link-wrapper" do
@@ -58,14 +58,14 @@ ActiveAdmin.register Item do
 
       para do
         concat(link_to("Add Parameter", "#", class: "button store-and-navigate", data: {
-          redirect: new_parameter_admin_item_path(id: item_id),
-          item_id: item_id
-        }))
+                         redirect: new_parameter_admin_item_path(id: item_id),
+                         item_id: item_id
+                       }))
 
         concat(link_to(formula_label, "#", class: "button store-and-navigate", data: {
-          redirect: new_formula_admin_item_path(id: item_id),
-          item_id: item_id
-        }))
+                         redirect: new_formula_admin_item_path(id: item_id),
+                         item_id: item_id
+                       }))
       end
     end
 
@@ -213,9 +213,9 @@ ActiveAdmin.register Item do
 
     def session_service
       @session_service ||= begin
-                             item_key = params[:id].presence || "new"
-                             TmpParamsSessionService.new(session, item_key.to_s)
-                           end
+        item_key = params[:id].presence || "new"
+        TmpParamsSessionService.new(session, item_key.to_s)
+      end
     end
 
     def set_session_navigation
@@ -235,7 +235,7 @@ ActiveAdmin.register Item do
     end
 
     def target_path
-      return admin_item_path(@item) unless @item.category.present?
+      return admin_item_path(@item) if @item.category.blank?
 
       case session['back_to']
       when 'category'
