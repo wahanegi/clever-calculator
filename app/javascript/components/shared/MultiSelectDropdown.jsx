@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { Form } from 'react-bootstrap'
 import { Typeahead } from 'react-bootstrap-typeahead'
 import { PcCheckboxOption, PcIcon, PcTransparentButton } from '../ui'
@@ -15,6 +15,23 @@ export const MultiSelectDropdown = ({
   const [isMenuOpen, setIsMenuOpen] = useState(false)
 
   const typeaheadRef = useRef(null)
+
+  useEffect(() => {
+    const inputWrapper = document.querySelector('div.rbt-input-wrapper');
+
+    if (!inputWrapper) return;
+
+    const onWheel = (e) => {
+      e.preventDefault();
+      inputWrapper.scrollBy({ left: e.deltaY, behavior: 'smooth' });
+    };
+
+    inputWrapper.addEventListener('wheel', onWheel, { passive: false });
+
+    return () => {
+      inputWrapper.removeEventListener('wheel', onWheel);
+    };
+  }, []);
 
   const handleBlur = () => setIsMenuOpen(false)
 
