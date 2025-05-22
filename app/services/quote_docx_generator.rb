@@ -1,15 +1,11 @@
 class QuoteDocxGenerator
   def initialize(quote)
     @setting = Setting.current
+    @logo = @setting.logo
     @quote = quote
     @grouped_items = grouped_quote_items
     @colors = parsed_brand_colors
-    @logo_size = if @setting.logo.attached?
-                   { width: @setting.logo.metadata[:width],
-                     height: @setting.logo.metadata[:height] }
-                 else
-                   { width: 200, height: 200 }
-                 end
+    @logo_size = logo_dimensions
   end
 
   def call
@@ -68,8 +64,8 @@ class QuoteDocxGenerator
   end
 
   def fetch_logo
-    if @setting.logo.attached?
-      blob = @setting.logo.blob
+    if @logo.attached?
+      blob = @logo.blob
       [StringIO.new(blob.download), ".#{blob.filename.extension}"]
     else
       path = Rails.root.join("app/assets/images/logo.png")
@@ -83,5 +79,18 @@ class QuoteDocxGenerator
     { primary: brand_style.primary_color.remove('#'),
       secondary: brand_style.secondary_color.remove('#'),
       blue_light: brand_style.blue_light_color.remove('#') }
+  end
+
+  def logo_dimensions
+    return { width: 200, height: 200 } unless @logo.attached?
+
+    @logo.analyze unless @logo.analyzed?
+
+    width = @logo.metadata[:width]
+    height = @logo.metadata[:height]
+
+    Rails.logger.warn "Logo metadata is missing dimensions: #{@logo.metadata.inspect}" if width.nil? || height.nil?
+
+    { width: width || 200, height: height || 200 }
   end
 end
