@@ -127,7 +127,14 @@ $rbt-placeholder-color: var(--bs-secondary) !default;
     align-items: center;
     gap: 4px;
     padding-right: 2px;
-    overflow: hidden;
+    overflow-y: hidden;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
   }
 }
 

@@ -17,21 +17,24 @@ export const MultiSelectDropdown = ({
   const typeaheadRef = useRef(null)
 
   useEffect(() => {
-    const inputWrapper = document.querySelector('div.rbt-input-wrapper');
+    const inputWrapper = document.querySelector('div.rbt-input-wrapper')
 
-    if (!inputWrapper) return;
+    if (!inputWrapper) return
 
     const onWheel = (e) => {
-      e.preventDefault();
-      inputWrapper.scrollBy({ left: e.deltaY, behavior: 'smooth' });
-    };
+      const deltaY = e.deltaY
+      if (deltaY !== 0) {
+        e.preventDefault()
+        inputWrapper.scrollLeft += deltaY
+      }
+    }
 
-    inputWrapper.addEventListener('wheel', onWheel, { passive: false });
+    inputWrapper.addEventListener('wheel', onWheel, { passive: false })
 
     return () => {
-      inputWrapper.removeEventListener('wheel', onWheel);
-    };
-  }, []);
+      inputWrapper.removeEventListener('wheel', onWheel)
+    }
+  }, [])
 
   const handleBlur = () => setIsMenuOpen(false)
 
@@ -71,7 +74,8 @@ export const MultiSelectDropdown = ({
           <PcCheckboxOption
             label={option.name}
             checked={isSelected(option)}
-            onChange={(e) => {}}
+            onChange={(e) => {
+            }}
             className={'pc-checkbox-items-pricing'}
           />
         )}
