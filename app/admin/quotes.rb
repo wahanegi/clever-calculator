@@ -232,7 +232,8 @@ ActiveAdmin.register Quote do
           open_parameters_label: item.open_parameters_label || [],
           pricing_options: item.pricing_options || {}
         },
-        discount: 0
+        discount: 0,
+        has_formula_parameters: item.formula_parameters.any?
       }
     }
   end
