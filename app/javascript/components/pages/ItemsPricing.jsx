@@ -33,6 +33,8 @@ export const ItemsPricing = () => {
     fetchQuoteItems.index(quoteId).then((data) => {
       setSelectedOptions(data)
 
+      setExpandedAccordions(data.map((option) => option.id))
+
       const initialNotesStates = {}
       data.forEach((option) => {
         option.quote_items.forEach((item) => {
@@ -262,6 +264,7 @@ export const ItemsPricing = () => {
           expandedAccordions={expandedAccordions}
           showDeleteModal={showDeleteModal}
           selectableOptions={selectableOptions}
+          setExpandedAccordions={setExpandedAccordions}
         />
 
         <EmptyQuotePrompt />
