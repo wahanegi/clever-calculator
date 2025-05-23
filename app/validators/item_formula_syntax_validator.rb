@@ -26,7 +26,7 @@ class ItemFormulaSyntaxValidator < ActiveModel::Validator
 
   def check_allowed_parameters(record)
     operators = %w[+ - * / % ( )]
-    tokens = record.calculation_formula.scan(/[\w\s]+|\S/).map(&:strip).reject(&:empty?)
+    tokens = record.calculation_formula.scan(%r{\d+\.\d+|\d+|[A-Za-z_]\w*|[+\-*/%()\]]})
 
     invalid_parameters = tokens.reject do |token|
       token.match?(/\A\d+(\.\d+)?\z/) ||

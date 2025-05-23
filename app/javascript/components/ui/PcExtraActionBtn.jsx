@@ -8,7 +8,7 @@ export const PcExtraActionBtn = ({
   disabled = false,
   onClick,
   type = 'button',
-  variant = 'outline-primary',
+  variant = '',
   iconName = '',
 }) => {
   return (

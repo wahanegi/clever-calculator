@@ -1,5 +1,5 @@
 import React from 'react'
-import { Nav, Navbar } from 'react-bootstrap'
+import { Button, Navbar } from 'react-bootstrap'
 import { ROUTES } from '../shared'
 import { fetchAuthentication } from '../services'
 import { PcIcon } from '../ui'
@@ -28,10 +28,10 @@ export const Header = ({ setting }) => {
       }
     }
 
-    return <Nav.Link onClick={handleLogout} className={'me-1 me-xxl-25 me-xl-25 me-lg-15 me-md-2 header-logout'}>
+    return <Button onClick={handleLogout} className={'me-1 me-xxl-25 me-xl-25 me-lg-15 me-md-2 header-logout btn btn-primary'}>
       <span className={'text-white me-2 fw-normal text-decoration-underline'}>Logout</span>
       <PcIcon name={'logout'} alt={'Logout'} className={'pc-icon-logout'} />
-    </Nav.Link>
+    </Button>
   }
 
   return <header className={'header bg-primary'}>

@@ -1,10 +1,20 @@
 ActiveAdmin.register Quote do
-  permit_params :customer_id, :user_id, :total_price, category_ids: [], item_ids: [],
-                                                      quote_items_attributes: [
-                                                        :id, :item_id, :price, :discount, :final_price, :_destroy,
-                                                        { open_param_values: {}, select_param_values: {} },
-                                                        { note_attributes: [:id, :notes, :is_printable, :_destroy] }
-                                                      ]
+  permit_params :customer_id,
+                :user_id,
+                :total_price,
+                category_ids: [],
+                item_ids: [],
+                quote_items_attributes: [:id,
+                                         :item_id,
+                                         :price,
+                                         :discount,
+                                         :final_price,
+                                         :_destroy,
+                                         { open_param_values: {}, select_param_values: {} },
+                                         { note_attributes: [:id,
+                                                             :notes,
+                                                             :is_printable,
+                                                             :_destroy] }]
 
   filter :customer_company_name, as: :string, label: 'Company Name'
   filter :user, as: :select, collection: proc {
@@ -129,10 +139,10 @@ ActiveAdmin.register Quote do
       qf.template.concat(
         qf.template.content_tag(:div, class: 'category-name-group') do
           qf.template.content_tag(:label, 'Category', class: 'category-name-label') +
-          qf.template.content_tag(:span, qf.object.item&.category&.name || 'Other', class: 'category-name-field') +
-          qf.template.tag(:br) +
-          qf.template.content_tag(:label, 'Item Name', class: 'item-name-label') +
-          qf.template.content_tag(:span, qf.object.item&.name || '', class: 'item-name-field', data: { item_name: qf.object.item&.name })
+            qf.template.content_tag(:span, qf.object.item&.category&.name || 'Other', class: 'category-name-field') +
+            qf.template.tag(:br) +
+            qf.template.content_tag(:label, 'Item Name', class: 'item-name-label') +
+            qf.template.content_tag(:span, qf.object.item&.name || '', class: 'item-name-field', data: { item_name: qf.object.item&.name })
         end
       )
 
@@ -154,7 +164,7 @@ ActiveAdmin.register Quote do
       qf.template.concat(
         qf.template.content_tag(:div, class: 'has_many_buttons') do
           qf.template.button_tag('Add Same Item', type: 'button', class: 'button add-same-item') +
-          qf.template.link_to('Remove Item', '#', class: 'button has_many_remove')
+            qf.template.link_to('Remove Item', '#', class: 'button has_many_remove')
         end
       )
     end
@@ -202,6 +212,17 @@ ActiveAdmin.register Quote do
     link_to "Back To Quotes", admin_quotes_path
   end
 
+  action_item :generate_file, only: :show do
+    link_to "Download", generate_file_admin_quote_path(resource)
+  end
+
+  member_action :generate_file, method: :get do
+    send_data QuoteDocxGenerator.new(resource).call,
+              type: Mime[:docx],
+              disposition: 'attachment',
+              filename: "quote.docx"
+  end
+
   collection_action :load_items, method: :post do
     category_ids = params[:category_ids] || []
     item_ids = params[:item_ids] || []
@@ -221,7 +242,8 @@ ActiveAdmin.register Quote do
           open_parameters_label: item.open_parameters_label || [],
           pricing_options: item.pricing_options || {}
         },
-        discount: 0
+        discount: 0,
+        has_formula_parameters: item.formula_parameters.any?
       }
     }
   end

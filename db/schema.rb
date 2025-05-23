@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_05_01_143252) do
+ActiveRecord::Schema[8.0].define(version: 2025_05_19_120811) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -103,15 +103,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_01_143252) do
     t.index ["name", "category_id"], name: "index_items_on_name_and_category_id", unique: true
   end
 
-  create_table "quote_categories", force: :cascade do |t|
-    t.bigint "quote_id", null: false
-    t.bigint "category_id", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["category_id"], name: "index_quote_categories_on_category_id"
-    t.index ["quote_id"], name: "index_quote_categories_on_quote_id"
-  end
-
   create_table "notes", force: :cascade do |t|
     t.bigint "quote_id", null: false
     t.bigint "quote_item_id"
@@ -121,6 +112,15 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_01_143252) do
     t.datetime "updated_at", null: false
     t.index ["quote_id"], name: "index_notes_on_quote_id"
     t.index ["quote_item_id"], name: "index_notes_on_quote_item_id"
+  end
+
+  create_table "quote_categories", force: :cascade do |t|
+    t.bigint "quote_id", null: false
+    t.bigint "category_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["category_id"], name: "index_quote_categories_on_category_id"
+    t.index ["quote_id"], name: "index_quote_categories_on_quote_id"
   end
 
   create_table "quote_items", force: :cascade do |t|
@@ -304,6 +304,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_01_143252) do
     t.string "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "phone"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
