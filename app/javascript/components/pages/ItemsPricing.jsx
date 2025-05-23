@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { Button, Container, Form } from 'react-bootstrap'
 import { useAppHooks } from '../hooks'
-import { DeleteItemModal, ItemsPricingTopBar, Item, QuoteCreation, ROUTES } from '../shared'
+import { DeleteItemModal, ItemsPricingTopBar, Item, QuoteCreation, DownloadSuccessModal, ROUTES } from '../shared'
 import { PcCategoryAccordion, PcItemAccordion, PcItemFormGroup, PcItemTextareaControl } from '../ui'
 import { getCurrentStepId, totalFinalPrice, triggerFileDownload } from '../utils'
 import { fetchNotes, fetchQuoteItems, fetchQuotes, fetchSelectableOptions } from '../services'
@@ -21,6 +21,7 @@ export const ItemsPricing = () => {
   const [notesStates, setNotesStates] = useState({})
   const [isShowCancelQuoteAlertModal, setIsShowCancelQuoteAlertModal] = useState(false)
   const [isShowResetQuoteAlertModal, setIsShowResetQuoteAlertModal] = useState(false)
+  const [isShowSuccessfulDownloadModal, setIsShowSuccessfulDownloadModal] = useState(false)
 
   const isSelectedOptionsEmpty = selectedOptions.length === 0
   const totalPrice = selectedOptions.reduce((total, option) => total + parseFloat(totalFinalPrice(option?.quote_items || [])), 0).toFixed(2)
@@ -175,16 +176,22 @@ export const ItemsPricing = () => {
     }))
   }
 
-  const handleFileDownload = () => {
+  const handleFileDownload = (e) => {
+    e.target.blur()
+
     fetchQuotes.generateFile(quoteId)
       .then((blob) => {
         triggerFileDownload(blob, `quote_${quoteId}.docx`)
+
+        setIsShowSuccessfulDownloadModal(true)
       }).catch((err) => {
       console.error('File download failed', err)
     })
   }
 
-  const handleCustomerBack = () => {
+  const handleCustomerBack = (e) => {
+    e.target.blur()
+
     setIsShowCancelQuoteAlertModal(true)
   }
 
@@ -325,26 +332,22 @@ export const ItemsPricing = () => {
         <Button
           variant={'outline-primary'}
           className={'fw-bold pc-btn'}
-          onClick={(e) => {
-            e.target.blur()
-            handleCustomerBack()
-          }}
+          onClick={handleCustomerBack}
         >
           Back
         </Button>
         <Button
           variant={'primary'}
           className={'fw-bold pc-btn pc-btn-download'}
-          onClick={(e) => {
-            e.target.blur()
-            handleFileDownload()
-          }}
+          onClick={handleFileDownload}
           disabled={isSelectedOptionsEmpty}
         >
           Download
         </Button>
       </section>
 
+      <DownloadSuccessModal onHide={() => setIsShowSuccessfulDownloadModal(false)}
+                            show={isShowSuccessfulDownloadModal} />
       <DeleteItemModal
         nameItem={removeSelectedOption?.name}
         show={isShowDeleteModal}

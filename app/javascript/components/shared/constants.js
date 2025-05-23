@@ -54,6 +54,8 @@ import dropdownArrowDownUrl from '../../../assets/images/icons/arrow-down.svg'
 import dropdownArrowUpUrl from '../../../assets/images/icons/arrow-up.svg'
 import crossUrl from '../../../assets/images/icons/cross.svg'
 import alertUrl from '../../../assets/images/icons/alert.svg'
+import checkCircleUrl from '../../../assets/images/icons/check-circle.svg'
+import manCalculatorUrl from '../../../assets/images/man_calculator.png'
 
 export const IMAGE_ASSETS = {
   ICONS: {
@@ -80,7 +82,11 @@ export const IMAGE_ASSETS = {
     dropdownArrowUp: dropdownArrowUpUrl,
     cross: crossUrl,
     alert: alertUrl,
+    checkCircle: checkCircleUrl,
   },
+  BACKGROUNDS: {
+    manCalculator: manCalculatorUrl
+  }
   // future asset files can be added here
 }
 
