@@ -32,9 +32,15 @@ export const PcItemAccordion = ({
 
         return prev.map(option => {
           if (isTarget(option, item, categoryId)) {
+            const index = option.quote_items.findIndex((qi) => qi.id === item.id)
+            if (index === -1) return option
+
+            const newQuoteItems = [...option.quote_items]
+            newQuoteItems.splice(index + 1, 0, clonedQuoteItem) // Insert after the current item
+
             return {
               ...option,
-              quote_items: [...option.quote_items, clonedQuoteItem],
+              quote_items: newQuoteItems,
             }
           }
 

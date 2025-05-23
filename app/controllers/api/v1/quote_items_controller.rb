@@ -7,7 +7,8 @@ module Api
       rescue_from ActiveRecord::RecordNotFound, with: :render_not_found
 
       def index
-        render json: group_serialize_quote_items(@quote.quote_items.includes(item: :category)), status: :ok
+        render json: group_serialize_quote_items(@quote.quote_items.includes(item: :category).order('items.id')),
+               status: :ok
       end
 
       def create_from_item

@@ -14,6 +14,7 @@ export const ItemsPricingTopBar = ({
                                      showDeleteModal,
                                      selectableOptions,
                                      quoteId,
+                                     setExpandedAccordions,
                                    }) => {
   const {
     shouldDisableExpandBtn,
@@ -26,11 +27,15 @@ export const ItemsPricingTopBar = ({
       case 'category':
         fetchQuoteItems.createFromCategory(quoteId, foundSelectedOption.id).then((quoteItems) => {
           setSelectedOptions(prev => [...prev, { ...foundSelectedOption, quote_items: quoteItems.data }])
+
+          setExpandedAccordions(prev => [...prev, foundSelectedOption.id])
         })
         break
       case 'item':
         fetchQuoteItems.createFromItem(quoteId, foundSelectedOption.id).then((quoteItem) => {
           setSelectedOptions(prev => [...prev, { ...foundSelectedOption, quote_items: [quoteItem.data] }])
+
+          setExpandedAccordions(prev => [...prev, foundSelectedOption.id])
         })
         break
       default:
