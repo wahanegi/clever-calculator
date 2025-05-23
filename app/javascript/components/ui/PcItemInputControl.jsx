@@ -26,6 +26,12 @@ export const PcItemInputControl = ({
       placeholder={placeholder}
       disabled={isDisabled}
       className="nospin fs-10 pc-lh-xl"
+      onWheel={(e) => e.target.blur()}
+      onKeyDown={(e) => {
+        if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+          e.preventDefault()
+        }
+      }}
       {...props}
     />
   )

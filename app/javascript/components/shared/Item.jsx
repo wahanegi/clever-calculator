@@ -27,7 +27,20 @@ export const Item = ({ itemData, selectedOptions, setSelectedOptions, quoteId })
       ? Object.fromEntries(open_parameters_label.map((label) => [label, quoteItem.pricing_parameters[label] || 0]))
       : {},
   )
-  const [discountValue, setDiscountValue] = useState(Number(quoteItem.discount) || 0)
+  const [touchedOpenParams, setTouchedOpenParams] = useState(
+    is_open
+      ? Object.fromEntries(
+          open_parameters_label.map((label) => [
+            label,
+            quoteItem.pricing_parameters[label] !== undefined && quoteItem.pricing_parameters[label] !== 0,
+          ]),
+        )
+      : {},
+  )
+
+  const initialDiscount = Number(quoteItem.discount)
+  const [discountValue, setDiscountValue] = useState(initialDiscount || 0)
+  const [isDiscountTouched, setIsDiscountTouched] = useState(initialDiscount !== 0)
 
   const updateQuoteItemDebounced = debounce((newSelectedValues, newOpenValues, newDiscount) => {
     const quoteItemParameters = {}
@@ -64,14 +77,25 @@ export const Item = ({ itemData, selectedOptions, setSelectedOptions, quoteId })
 
   const handleOpenChange = (label) => (e) => {
     const { value } = e.target
-    const updated = { ...openValues, [label]: Number(value) }
-
+    const numericValue = value === '' ? 0 : Number(value)
+    const updated = { ...openValues, [label]: numericValue }
     setOpenValues(updated)
+
+    const updatedTouched = {
+      ...touchedOpenParams,
+      [label]: value !== '0' && value.trim() !== '',
+    }
+
+    setTouchedOpenParams(updatedTouched)
+
     updateQuoteItemDebounced(selectedValues, updated, discountValue)
   }
 
   const handleDiscountChange = (e) => {
     const { value } = e.target
+
+    const isEmpty = value.trim() === '0' || value.trim() === ''
+    setIsDiscountTouched(!isEmpty)
 
     let numericValue = parseFloat(value)
 
@@ -95,7 +119,7 @@ export const Item = ({ itemData, selectedOptions, setSelectedOptions, quoteId })
       <PcItemFormGroup key={label} paramType="open-param" label={label}>
         <PcItemInputControl
           paramType="open-price-input"
-          value={openValues[label] || 0}
+          value={touchedOpenParams[label] ? openValues[label] : ''}
           onChange={handleOpenChange(label)}
         />
       </PcItemFormGroup>
@@ -114,9 +138,11 @@ export const Item = ({ itemData, selectedOptions, setSelectedOptions, quoteId })
 
   const renderDiscountInput = () => (
     <PcItemFormGroup paramType="discount" label="Discount">
-      <PcItemInputControl paramType="discount"
-                          value={discountValue}
-                          onChange={handleDiscountChange} />
+      <PcItemInputControl
+        paramType="discount"
+        value={isDiscountTouched ? discountValue : ''}
+        onChange={handleDiscountChange}
+      />
     </PcItemFormGroup>
   )
 
