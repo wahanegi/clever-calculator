@@ -12,6 +12,7 @@ export const Item = ({ itemData, selectedOptions, setSelectedOptions, quoteId })
     isItemSelectableOptions,
     isShowSimpleParams,
     isShowCombinedParams,
+    isShowIncludedParams,
   } = getItemTypeConditions(quoteItem.item)
 
   const { is_open, is_selectable_options, open_parameters_label, pricing_options, fixed_parameters } = quoteItem.item
@@ -119,18 +120,22 @@ export const Item = ({ itemData, selectedOptions, setSelectedOptions, quoteId })
     </PcItemFormGroup>
   )
 
+  const renderDiscountedPrice = (label = 'Discounted price') => (
+    <PcItemFormGroup paramType="discounted-price" label={label}>
+      <PcItemInputControl
+        paramType="discounted-price"
+        value={Number(quoteItem.final_price) > 0 ? Number(quoteItem.final_price).toFixed(2) : 0}
+      />
+    </PcItemFormGroup>
+  )
+
   return (
     <div>
       {isShowSimpleParams && (
         <div className={'d-flex flex-column gap-3 px-0 align-items-end'}>
           <div className="d-flex flex-wrap align-items-end gap-3">
             {isItemFixed && renderFixedParams()}
-            <PcItemFormGroup paramType="discounted-price" label="Discounted price">
-              <PcItemInputControl
-                paramType="discounted-price"
-                value={Number(quoteItem.final_price) > 0 ? Number(quoteItem.final_price).toFixed(2) : 0}
-              />
-            </PcItemFormGroup>
+            {renderDiscountedPrice()}
           </div>
 
           <div className="d-flex flex-wrap align-items-end gap-3">
@@ -174,16 +179,18 @@ export const Item = ({ itemData, selectedOptions, setSelectedOptions, quoteId })
                   value={Number(quoteItem.price) > 0 ? Number(quoteItem.price).toFixed(2) : 0}
                 />
               </PcItemFormGroup>
-
-              <PcItemFormGroup paramType="discounted-price" label="Discounted price">
-                <PcItemInputControl
-                  paramType="discounted-price"
-                  value={Number(quoteItem.final_price) > 0 ? Number(quoteItem.final_price).toFixed(2) : 0}
-                />
-              </PcItemFormGroup>
+              {renderDiscountedPrice()}
             </div>
 
             <div className="d-flex flex-wrap justify-content-end gap-3">{renderDiscountInput()}</div>
+          </div>
+        </div>
+      )}
+
+      {isShowIncludedParams && (
+        <div className={'d-flex flex-column gap-3 px-0 align-items-end'}>
+          <div className="d-flex flex-wrap align-items-end gap-3">
+            {renderDiscountedPrice('Included price')}
           </div>
         </div>
       )}
