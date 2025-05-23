@@ -21,7 +21,7 @@ export const PcItemFormGroup = ({
   }
   
   return (
-    <Form.Group className={`position-relative pc-item-input ${paramType} ${className}`}>
+    <Form.Group className={`position-relative pc-item-input ${paramType} ${className}`} title={normalizeLabel(label)}>
       <Form.Label className="pc-label position-absolute top-0 translate-middle-y px-1 py-0 bg-white text-gray-750">
         {normalizeLabel(label)}
       </Form.Label>
