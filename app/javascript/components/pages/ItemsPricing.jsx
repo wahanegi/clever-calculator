@@ -322,11 +322,25 @@ export const ItemsPricing = () => {
       </section>
 
       <section className={'d-flex justify-content-center align-items-center gap-4 mb-4'}>
-        <Button variant={'outline-primary'} className={'fw-bold pc-btn'} onClick={handleCustomerBack}>
+        <Button
+          variant={'outline-primary'}
+          className={'fw-bold pc-btn'}
+          onClick={(e) => {
+            e.target.blur()
+            handleCustomerBack()
+          }}
+        >
           Back
         </Button>
-        <Button variant={'primary'} className={'fw-bold pc-btn pc-btn-download'}
-                onClick={handleFileDownload} disabled={isSelectedOptionsEmpty}>
+        <Button
+          variant={'primary'}
+          className={'fw-bold pc-btn pc-btn-download'}
+          onClick={(e) => {
+            e.target.blur()
+            handleFileDownload()
+          }}
+          disabled={isSelectedOptionsEmpty}
+        >
           Download
         </Button>
       </section>
