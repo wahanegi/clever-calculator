@@ -64,20 +64,25 @@ export const MultiSelectDropdown = ({
         ref={typeaheadRef}
         selected={selectedOptions}
         options={selectableOptions}
-        filterBy={() => true} // set array of options with no changes
         onChange={onChange}
         onBlur={handleBlur}
         open={isMenuOpen}
         multiple
         className={'pc-typeahead-items-pricing'}
-        renderMenuItemChildren={(option) => (
-          <PcCheckboxOption
-            label={option.name}
-            checked={isSelected(option)}
-            onChange={(e) => {}}
-            className={'pc-checkbox-items-pricing'}
-          />
-        )}
+        renderMenuItemChildren={(option, props) => {
+          const query = props.text || ''
+          const regex = new RegExp(`(${query})`, 'gi')
+          const highlightedLabel = option.name.replace(regex, '<span class="rbt-highlight-text">$1</span>')
+
+          return (
+            <PcCheckboxOption
+              label={<span dangerouslySetInnerHTML={{ __html: highlightedLabel }} />}
+              checked={isSelected(option)}
+              onChange={() => {}}
+              className={'pc-checkbox-items-pricing'}
+            />
+          )
+        }}
         inputProps={{ onClick: handleClick }}
       />
 
