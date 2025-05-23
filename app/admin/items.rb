@@ -229,7 +229,7 @@ ActiveAdmin.register Item do
     def determine_back_to(path)
       return 'category' if path.match?(%r{^/admin/categories/\d+$})
       return 'category-edit' if path.match?(%r{^/admin/categories/\d+/edit$})
-      return nil if path == '/admin/items' && request.get?
+      return nil if path == '/admin/items' && params[:action] == 'index'
 
       session['back_to'] # unchanged
     end
