@@ -308,26 +308,13 @@ $rbt-token-active-color: $rbt-color-white !default;
     }
   }
 
-  .rbt-token-remove-button {
-    align-items: center;
-
     .rbt-close-content {
-      position: relative;
-      visibility: hidden;
       font-size: 10px;
     }
 
-    .rbt-close-content::after {
-      position: absolute;
-      content: 'X'; // change "×" to "X"
-      top: 50%;
-      left: 50%;
-      width: inherit;
-      height: inherit;
-      visibility: visible;
-      transform: translate(-50%, -50%);
+    .rbt-token-removeable {
+      cursor: pointer;
     }
-  }
 }
 
 /**

@@ -83,6 +83,41 @@ export const MultiSelectDropdown = ({
             />
           )
         }}
+        // Custom render for selected tokens to make them removable 
+        renderToken={(option, props, index) => (
+          <div
+            key={index}
+            className="rbt-token rbt-token-removeable"
+            tabIndex={0}
+            onClick={(e) => {
+              e.stopPropagation()
+              const updated = selectedOptions.filter(
+                (selected) => selected.id !== option.id || selected.type !== option.type,
+              )
+              onChange(updated)
+            }}
+          >
+            <div className="rbt-token-label">{option.name}</div>
+            <button
+              tabIndex={-1}
+              aria-label="Remove"
+              className="close btn-close rbt-close rbt-token-remove-button"
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation()
+                const updated = selectedOptions.filter(
+                  (selected) => selected.id !== option.id || selected.type !== option.type,
+                )
+                onChange(updated)
+              }}
+            >
+              <span aria-hidden="true" className="rbt-close-content">
+                X
+              </span>
+              <span className="sr-only visually-hidden">Remove</span>
+            </button>
+          </div>
+        )}
         inputProps={{ onClick: handleClick }}
       />
 
