@@ -114,3 +114,5 @@ export const LOCAL_STORAGE_KEYS = {
   setting: 'setting',
   // future localStorage keys can be added here
 }
+
+export const MAX_DECIMAL_14_2 = '99999999999999.99'

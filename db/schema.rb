@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_05_19_120811) do
+ActiveRecord::Schema[8.0].define(version: 2025_05_26_111656) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -127,9 +127,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_19_120811) do
     t.bigint "quote_id", null: false
     t.bigint "item_id", null: false
     t.jsonb "pricing_parameters", default: {}, null: false
-    t.decimal "price", precision: 10, scale: 2, null: false
+    t.decimal "price", precision: 14, scale: 2, null: false
     t.decimal "discount", precision: 5, scale: 2, default: "0.0", null: false
-    t.decimal "final_price", precision: 10, scale: 2, null: false
+    t.decimal "final_price", precision: 14, scale: 2, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["item_id"], name: "index_quote_items_on_item_id"
@@ -139,7 +139,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_19_120811) do
   create_table "quotes", force: :cascade do |t|
     t.bigint "customer_id", null: false
     t.bigint "user_id", null: false
-    t.decimal "total_price", precision: 10, scale: 2, default: "0.0", null: false
+    t.decimal "total_price", precision: 14, scale: 2, default: "0.0", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "step", default: "customer_info", null: false

@@ -1,15 +1,16 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { Button, Container, Form } from 'react-bootstrap'
 import { useAppHooks } from '../hooks'
-import { DeleteItemModal, ItemsPricingTopBar, Item, QuoteCreation, DownloadSuccessModal, ROUTES } from '../shared'
-import { PcCategoryAccordion, PcItemAccordion, PcItemFormGroup, PcItemTextareaControl } from '../ui'
+import { DeleteItemModal, ItemsPricingTopBar, Item, QuoteCreation, DownloadSuccessModal } from '../shared'
+import { CancelQuoteAlertModal, OverLimitAlertModal, PcCategoryAccordion, PcItemAccordion, PcItemFormGroup, PcItemTextareaControl } from '../ui'
 import { getCurrentStepId, totalFinalPrice, triggerFileDownload } from '../utils'
 import { fetchNotes, fetchQuoteItems, fetchQuotes, fetchSelectableOptions } from '../services'
 import { AlertModal } from '../shared/AlertModal'
 import debounce from 'lodash/debounce'
 
 export const ItemsPricing = () => {
-  const { navigate, queryParams, location } = useAppHooks()
+  const [isOverPriceLimit, setIsOverPriceLimit] = useState(false)
+  const { queryParams, location } = useAppHooks()
   const quoteId = queryParams.get('quote_id')
   const currentStepId = getCurrentStepId(location.pathname)
 
@@ -207,27 +208,6 @@ export const ItemsPricing = () => {
     </div>
   )
 
-  const CancelQuoteAlertModal = () => {
-    const handleCancel = () => {
-      setIsShowCancelQuoteAlertModal(false)
-    }
-
-    const handleConfirm = () => {
-      setIsShowCancelQuoteAlertModal(false)
-
-      navigate(ROUTES.CUSTOMER_INFO)
-    }
-
-    return (
-      <AlertModal show={isShowCancelQuoteAlertModal}
-                  onCancel={handleCancel}
-                  onConfirm={handleConfirm}
-                  confirmButtonText={'Go back'}
-                  title={'Are you sure?'}
-                  bodyText={'Do you really want to go back and cancel the current quote? This action will discard all progress and start a new quote.'} />
-    )
-  }
-
   const ResetQuoteAlertModal = () => {
     const handleCancel = () => {
       setIsShowResetQuoteAlertModal(false)
@@ -304,7 +284,8 @@ export const ItemsPricing = () => {
                     <Item itemData={item}
                           quoteId={quoteId}
                           selectedOptions={selectedOptions}
-                          setSelectedOptions={setSelectedOptions} />
+                          setSelectedOptions={setSelectedOptions}
+                          setIsOverPriceLimit={setIsOverPriceLimit}/>
 
                     {notesState.isNotesOpen && (
                       <PcItemFormGroup label={'Notes'} paramType={'notes'}>
@@ -358,7 +339,8 @@ export const ItemsPricing = () => {
         onConfirmDelete={handleConfirmDelete}
       />
       <ResetQuoteAlertModal />
-      <CancelQuoteAlertModal />
+      <CancelQuoteAlertModal isShowCancelQuoteAlertModal={isShowCancelQuoteAlertModal} setIsShowCancelQuoteAlertModal={setIsShowCancelQuoteAlertModal}/>
+      <OverLimitAlertModal isOverPriceLimit={isOverPriceLimit} setIsOverPriceLimit={setIsOverPriceLimit} />
     </Container>
   )
 }

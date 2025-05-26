@@ -1,5 +1,5 @@
 class QuoteItem < ApplicationRecord
-  MAX_ALLOWED_PRICE = 99_999_999.99
+  MAX_ALLOWED_PRICE = 999_999_999_999.99
   attr_accessor :open_param_values, :select_param_values
 
   belongs_to :quote

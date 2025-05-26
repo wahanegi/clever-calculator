@@ -44,7 +44,10 @@ export const MultiSelectDropdown = ({
   }
 
   const handleClick = () => {
-    setIsMenuOpen(!isMenuOpen)
+    if (!isMenuOpen) {
+      setIsMenuOpen(true)
+      typeaheadRef.current.focus()
+    }
   }
 
   const TypeaheadControls = () => (

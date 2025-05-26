@@ -1,5 +1,5 @@
 class Quote < ApplicationRecord
-  MAX_ALLOWED_PRICE = 99_999_999.99
+  MAX_ALLOWED_PRICE = 999_999_999_999.99
   belongs_to :customer
   belongs_to :user
   has_many :quote_items, dependent: :destroy

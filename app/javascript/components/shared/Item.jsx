@@ -4,7 +4,7 @@ import { getItemTypeConditions } from '../utils'
 import { fetchQuoteItems } from '../services'
 import debounce from 'lodash/debounce'
 
-export const Item = ({ itemData, selectedOptions, setSelectedOptions, quoteId }) => {
+export const Item = ({ itemData, selectedOptions, setSelectedOptions, quoteId, setIsOverPriceLimit }) => {
   const quoteItem = itemData.attributes
   const {
     isItemFixed,
@@ -64,8 +64,19 @@ export const Item = ({ itemData, selectedOptions, setSelectedOptions, quoteId })
         quote_items: option.quote_items.map((item) =>
           updatedQuoteItem.data.id === item.id ? updatedQuoteItem.data : item,
         ),
-      })))
-    })
+      })),
+        )
+        setIsOverPriceLimit(false)
+      })
+      .catch((error) => {
+        if (
+          error?.response?.data?.errors?.final_price?.includes(
+            'Final price exceeds the allowed maximum of 999999999999.99',
+          )
+        ) {
+          setIsOverPriceLimit(true)
+        }
+      })
   }, 200)
 
   const handleSelectedChange = (label) => (value) => {
