@@ -1,3 +1,5 @@
+MAX_ALLOWED_VALUE = '99999999999999.99'.freeze
+
 ActiveAdmin.register Item do
   permit_params do
     %i[
@@ -303,6 +305,11 @@ ActiveAdmin.register Item do
         flash[:error] = "Parameter value can't be blank for Fixed parameter"
         return redirect_back(fallback_location: @item&.id ? edit_admin_item_path(@item) : new_admin_item_path)
       end
+
+      if param_value > MAX_ALLOWED_VALUE
+        flash[:error] = "Parameter value exceeds maximum allowed value of #{MAX_ALLOWED_VALUE}"
+        return redirect_back(fallback_location: @item&.id ? edit_admin_item_path(@item) : new_admin_item_path)
+      end
       fixed = session_service.get(:fixed) || {}
       fixed[param_name] = param_value
       session_service.set(:fixed, fixed)
@@ -325,6 +332,11 @@ ActiveAdmin.register Item do
         desc = pair["description"].to_s.strip
         val = pair["value"].to_s.strip
         next if desc.blank? || val.blank?
+
+        if val > MAX_ALLOWED_VALUE
+          flash[:error] = "Option value '#{val}' for '#{desc}' exceeds maximum allowed value of #{MAX_ALLOWED_VALUE}"
+          return redirect_back(fallback_location: @item&.id ? edit_admin_item_path(@item) : new_admin_item_path)
+        end
 
         sub_hash[desc] = val
         valid_options = true

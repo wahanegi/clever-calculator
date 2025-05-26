@@ -1,4 +1,5 @@
 class ItemFormulaSyntaxValidator < ActiveModel::Validator
+  MAX_ALLOWED_VALUE = 999_999_999_999.99
   def validate(record)
     return if record.calculation_formula.blank?
 
@@ -6,6 +7,7 @@ class ItemFormulaSyntaxValidator < ActiveModel::Validator
     check_allowed_parameters(record)
     check_operator_placement(record)
     validate_formula_syntax(record)
+    check_max_allowed_value(record)
   end
 
   private
@@ -54,6 +56,17 @@ class ItemFormulaSyntaxValidator < ActiveModel::Validator
     handle_parse_error(record, e)
   rescue StandardError => e
     record.errors.add(:calculation_formula, "could not validate formula: #{e.message}")
+  end
+
+  def check_max_allowed_value(record)
+    numbers = record.calculation_formula.scan(/-?\d+(?:\.\d+)?/)
+    float_numbers = numbers.map(&:to_f)
+
+    invalid_numbers = float_numbers.select { |num| num > MAX_ALLOWED_VALUE }
+    return if invalid_numbers.empty?
+
+    record.errors.add(:calculation_formula,
+                      "contains values exceeding maximum allowed value of #{MAX_ALLOWED_VALUE}")
   end
 
   def handle_parse_error(record, error)
