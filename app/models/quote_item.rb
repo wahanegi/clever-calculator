@@ -31,16 +31,15 @@ class QuoteItem < ApplicationRecord
   def compile_pricing_parameters
     return unless item
 
-    fixed, open, select = assemble_parameters
-
-    self.pricing_parameters = fixed.merge(open, select)
+    self.pricing_parameters = assemble_parameters
   end
 
   def calculate_price_from_formula
     return unless item_requires_formula?
 
     calculator = Dentaku::Calculator.new
-    self.price = calculator.evaluate(item.calculation_formula, pricing_parameters)
+    transformed = pricing_parameters.transform_keys(&:to_formula_name)
+    self.price = calculator.evaluate(item.calculation_formula, transformed)
   rescue Dentaku::UnboundVariableError => e
     errors.add(:price, "missing variable(s): #{e.unbound_variables.join(', ')}")
   rescue StandardError => e
@@ -71,7 +70,7 @@ class QuoteItem < ApplicationRecord
     open = fetch_open_parameters
     select = fetch_select_parameters
 
-    [fixed, open, select]
+    fixed.merge(open, select)
   end
 
   def fetch_open_parameters

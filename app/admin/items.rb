@@ -289,7 +289,7 @@ ActiveAdmin.register Item do
                  when "Open" then params[:open_parameter_name].to_s.strip
                  when "Select" then params[:select_parameter_name].to_s.strip
                  end
-    param_name = param_name.gsub(/\s+/, "_")
+
     if param_name.blank?
       flash[:error] = "Parameter name can't be blank"
       return redirect_back(fallback_location: @item&.id ? edit_admin_item_path(@item) : new_admin_item_path)

@@ -1,5 +1,6 @@
 class ItemFormulaSyntaxValidator < ActiveModel::Validator
   MAX_ALLOWED_VALUE = 999_999_999_999.99
+
   def validate(record)
     return if record.calculation_formula.blank?
 
@@ -17,7 +18,7 @@ class ItemFormulaSyntaxValidator < ActiveModel::Validator
   end
 
   def check_all_formula_parameters_present(record)
-    missing_parameters = record.formula_parameters.reject do |param|
+    missing_parameters = record.formula_parameters.map(&:to_formula_name).reject do |param|
       record.calculation_formula.match?(/\b#{Regexp.escape(param)}\b/)
     end
 
@@ -33,7 +34,7 @@ class ItemFormulaSyntaxValidator < ActiveModel::Validator
     invalid_parameters = tokens.reject do |token|
       token.match?(/\A\d+(\.\d+)?\z/) ||
         operators.include?(token) ||
-        record.formula_parameters.include?(token)
+        record.formula_parameters.map(&:to_formula_name).include?(token)
     end
     return if invalid_parameters.empty?
 

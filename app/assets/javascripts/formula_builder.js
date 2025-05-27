@@ -1,3 +1,43 @@
+function toFormulaName(text) {
+  return text
+    .toLowerCase()
+    .replace(/[^a-z0-9\s]/g, '')
+    .trim()
+    .replace(/\s+/g, '_')
+}
+
+function insertSymbol(symbol) {
+  const selection = window.getSelection()
+
+  let range
+
+  // Make selection within formulaDisplay field
+  if (selection.rangeCount > 0 && formulaDisplay.contains(selection.anchorNode)) {
+    range = selection.getRangeAt(0)
+  } else {
+    // Otherwise insert at the end of formulaDisplay
+    range = document.createRange()
+    range.selectNodeContents(formulaDisplay)
+    range.collapse(false) // move to end
+  }
+
+  range.deleteContents()
+
+  const spaceBefore = document.createTextNode(' ')
+  const symbolNode = document.createTextNode(symbol)
+  const spaceAfter = document.createTextNode(' ')
+
+  range.insertNode(spaceAfter)
+  range.insertNode(symbolNode)
+  range.insertNode(spaceBefore)
+
+  // Move caret to after the inserted symbol
+  range.setStartAfter(spaceAfter)
+  range.collapse(true)
+  selection.removeAllRanges()
+  selection.addRange(range)
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   const formulaDisplay = document.getElementById('formulaDisplay')
   const formulaInput = document.getElementById('formulaInput')
@@ -7,38 +47,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
   formulaDisplay.focus()
 
-  document.querySelectorAll('.formula-btn').forEach((btn) => {
+  document.querySelectorAll('.formula-btn.operator-btn').forEach((btn) => {
     btn.addEventListener('click', () => {
-      const symbol = btn.innerText
-      const selection = window.getSelection()
+      insertSymbol(btn.innerText)
+    })
+  })
 
-      let range
-
-      // Make selection within formulaDisplay field
-      if (selection.rangeCount > 0 && formulaDisplay.contains(selection.anchorNode)) {
-        range = selection.getRangeAt(0)
-      } else {
-        // Otherwise insert at the end of formulaDisplay
-        range = document.createRange()
-        range.selectNodeContents(formulaDisplay)
-        range.collapse(false) // move to end
-      }
-
-      range.deleteContents()
-
-      const spaceBefore = document.createTextNode(' ')
-      const symbolNode = document.createTextNode(symbol)
-      const spaceAfter = document.createTextNode(' ')
-
-      range.insertNode(spaceAfter)
-      range.insertNode(symbolNode)
-      range.insertNode(spaceBefore)
-
-      // Move caret to after the inserted symbol
-      range.setStartAfter(spaceAfter)
-      range.collapse(true)
-      selection.removeAllRanges()
-      selection.addRange(range)
+  document.querySelectorAll('.formula-btn.param-btn').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const symbol = toFormulaName(btn.innerText)
+      insertSymbol(symbol)
     })
   })
 

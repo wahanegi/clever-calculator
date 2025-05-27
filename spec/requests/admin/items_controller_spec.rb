@@ -30,8 +30,8 @@ RSpec.describe 'Admin::Items', type: :request do
              fixed_parameters: { 'Platform Fee' => '1000' },
              open_parameters_label: ['Users'],
              pricing_options: { "Tier" => { "options" => { "Silver" => "200" }, "value_label" => "Cost Per User" } },
-             calculation_formula: 'Platform_Fee * Tier',
-             formula_parameters: %w[Platform_Fee Tier])
+             calculation_formula: 'platform_fee * tier',
+             formula_parameters: ["Platform fee", "Tier"])
     end
 
     it 'displays the item details with parameters and formula' do
@@ -39,14 +39,14 @@ RSpec.describe 'Admin::Items', type: :request do
       expect(response).to have_http_status(:success)
       expect(response.body).to include(item.name)
       expect(response.body).to include(item.category.name)
-      expect(response.body).to include('Platform_Fee')
+      expect(response.body).to include('Platform Fee')
       expect(response.body).to include('1000')
       expect(response.body).to include('Users')
       expect(response.body).to include('Tier')
       expect(response.body).to include('Silver')
       expect(response.body).to include('200')
       expect(response.body).to include('Cost Per User')
-      expect(response.body).to include('Platform_Fee * Tier')
+      expect(response.body).to include('platform_fee * tier')
     end
   end
 
@@ -126,7 +126,7 @@ RSpec.describe 'Admin::Items', type: :request do
         }
 
         post '/admin/items/new/update_formula', params: {
-          calculation_formula: 'Acquisition * Tier + Custom'
+          calculation_formula: 'acquisition * tier + custom'
         }
       end
 
@@ -140,7 +140,7 @@ RSpec.describe 'Admin::Items', type: :request do
         expect(item.open_parameters_label).to eq(['Custom'])
         expect(item.pricing_options).to eq("Tier" => { "options" => { "1-5" => "100" }, "value_label" => "Cost Per User" })
         expect(item.formula_parameters).to eq(%w[Acquisition Custom Tier])
-        expect(item.calculation_formula).to eq('Acquisition * Tier + Custom')
+        expect(item.calculation_formula).to eq('acquisition * tier + custom')
         expect(item.is_fixed).to be true
         expect(item.is_open).to be true
         expect(item.is_selectable_options).to be true
