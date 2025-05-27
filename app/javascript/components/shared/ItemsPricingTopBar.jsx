@@ -3,6 +3,7 @@ import { getExpandCollapseStates } from '../utils'
 import { ExpandCollapseButtons } from './ExpandCollapseButtons'
 import { MultiSelectDropdown } from './MultiSelectDropdown'
 import { fetchQuoteItems } from '../services'
+import { TotalPrice } from '../ui'
 
 export const ItemsPricingTopBar = ({
                                      totalPrice,
@@ -22,21 +23,32 @@ export const ItemsPricingTopBar = ({
   } = getExpandCollapseStates(selectedOptions, expandedAccordions)
 
   const isSelected = (option) => selectedOptions.some((item) => item.id === option.id && item.type === option.type)
+
+  const replaceItem = (realItem, foundSelectedOption, tempId) => {
+    setSelectedOptions((prev) =>
+      prev.map((opt) =>
+        opt.tempId === tempId
+          ? { ...foundSelectedOption, quote_items: Array.isArray(realItem) ? realItem : [realItem] }
+          : opt,
+      ),
+    )
+  }
+
   const createByOptionType = (foundSelectedOption) => {
+    const tempId = `temp-${Date.now()}`
+    const optimisticItem = { ...foundSelectedOption, quote_items: [], tempId }
+
+    setSelectedOptions((prev) => [...prev, optimisticItem])
+    setExpandedAccordions((prev) => [...prev, foundSelectedOption.id])
+
     switch (foundSelectedOption.type) {
       case 'category':
-        fetchQuoteItems.createFromCategory(quoteId, foundSelectedOption.id).then((quoteItems) => {
-          setSelectedOptions(prev => [...prev, { ...foundSelectedOption, quote_items: quoteItems.data }])
-
-          setExpandedAccordions(prev => [...prev, foundSelectedOption.id])
-        })
+        fetchQuoteItems.createFromCategory(quoteId, foundSelectedOption.id)
+          .then((quoteItems) => replaceItem(quoteItems.data, foundSelectedOption, tempId))
         break
       case 'item':
-        fetchQuoteItems.createFromItem(quoteId, foundSelectedOption.id).then((quoteItem) => {
-          setSelectedOptions(prev => [...prev, { ...foundSelectedOption, quote_items: [quoteItem.data] }])
-
-          setExpandedAccordions(prev => [...prev, foundSelectedOption.id])
-        })
+        fetchQuoteItems.createFromItem(quoteId, foundSelectedOption.id)
+          .then((quoteItem) => replaceItem(quoteItem.data, foundSelectedOption, tempId))
         break
       default:
         console.error('Invalid option type', foundSelectedOption)
@@ -73,15 +85,6 @@ export const ItemsPricingTopBar = ({
     }
   }
 
-  const TotalPrice = () =>
-    <div className={'d-flex flex-column align-items-end'}>
-      <div className={'d-flex gap-2 align-items-center'}>
-        <hr className={'pc-hr-divider'} />
-        <span className={'fs-10 text-secondary'}>Total price</span>
-      </div>
-      <span className={'fs-10 pc-fw-900'}>$&nbsp;{totalPrice}</span>
-    </div>
-
   return (
     <div className="pc-grid-bar d-flex flex-column-reverse d-sm-grid align-items-center gap-8 mb-8">
       {/* Dropdown for selecting categories and items without category */}
@@ -99,7 +102,7 @@ export const ItemsPricingTopBar = ({
           disableExpand={shouldDisableExpandBtn}
           disableCollapse={shouldDisableCollapseBtn}
         />
-        <TotalPrice />
+        <TotalPrice totalPrice={totalPrice} />
       </div>
     </div>
   )

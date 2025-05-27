@@ -70,6 +70,7 @@ export const MultiSelectDropdown = ({
         onChange={onChange}
         onBlur={handleBlur}
         open={isMenuOpen}
+        allowNew={false}
         multiple
         className={'pc-typeahead-items-pricing'}
         renderMenuItemChildren={(option, props) => {
