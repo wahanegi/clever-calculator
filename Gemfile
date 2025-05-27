@@ -5,6 +5,7 @@ ruby "3.4.1"
 gem "activeadmin", "~> 3.3.0"                                       # A framework for creating elegant and customizable admin panels
 # gem "bcrypt", "~> 3.1"                                            # Use Active Model has_secure_password [https://guides.rubyonrails.org/active_model_basics.html#securepassword]
 gem "bootsnap", '~> 1.18.6', require: false                         # Reduces boot times through caching; required in config/boot.rb
+gem "caracal", "~> 1.4"                                             # Caracal is a ruby library for dynamically creating professional-quality Microsoft Word documents (.docx).
 gem "cssbundling-rails", '~> 1.4.3'                                 # Bundle and process CSS [https://github.com/rails/cssbundling-rails]
 gem 'dentaku', "~> 3.5.4"                                           # Evaluator for a mathematical and logical formulas
 gem "devise", "~> 4.9.4"                                            # Authentication
@@ -31,6 +32,7 @@ gem "tzinfo-data", '~> 1.2025.2', platforms: %i[ windows jruby ]    # Windows do
 group :development, :test do
   gem "brakeman", require: false                                         # Static analysis for security vulnerabilities [https://brakemanscanner.org/]
   gem "debug", platforms: %i[ mri windows ], require: "debug/prelude"    # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
+  gem "docx", "~> 0.3.0"                                                 # a ruby library/gem for interacting with .docx files [https://github.com/ruby-docx/docx]
   gem "dotenv"                                                           # Loads environment variables from '.env'
   gem "factory_bot_rails"                                                # Provides fixtures replacement for easier test object creation
   gem "faker"                                                            # Generates fake data for testing

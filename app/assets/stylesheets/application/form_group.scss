@@ -1,7 +1,6 @@
 .pc-item-input {
-  flex: 1 1 auto;
   margin-top: 7px; // reserve place for 1/2 height of label with position-absolute
-  max-width: 200px;
+  width: 200px;
 
   .form-control {
     padding: 7px 12px;
@@ -20,6 +19,10 @@
     font-size: 14px;
     font-weight: 700;
     line-height: 1;
+    max-width: 175px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
   }
 
   .pc-suffix {
@@ -36,7 +39,24 @@
       right: 12px;
     }
   }
+}
 
+@media (max-width: 935px) {
+  .pc-item-input {
+    width: 180px;
+  }
+}
+
+@media (max-width: 855px) {
+  .pc-item-input {
+    width: 150px;
+  }
+}
+
+@media (max-width: 371px) {
+  .pc-item-input {
+    width: 130px;
+  }
 }
 
 .pc-item-input.price {
@@ -71,11 +91,11 @@
   }
 }
 
-.pc-item-input.open-cost {
+.pc-item-input.open-param {
   .form-control {
     padding-left: 24px;
-    border: 1.3px solid var(--bs-secondary);
-    color: $dark
+    border: 1.3px solid var(--bs-primary);
+    color: $dark;
   }
 
   .pc-suffix-right {
@@ -84,7 +104,16 @@
   }
 
   ::placeholder {
-    color: $dark
+    color: $dark;
+  }
+}
+
+.pc-item-input.selectable-param {
+  .form-select {
+    text-overflow: ellipsis;
+    padding: 7px 22px 7px 12px;
+    border: 1px solid var(--bs-primary);
+    border-radius: 4px;
   }
 }
 
@@ -93,7 +122,7 @@
   .form-control {
     padding-right: 24px;
     border: 1.3px solid var(--bs-primary);
-    color: $dark
+    color: $dark;
   }
 
   .pc-suffix-right {
@@ -102,12 +131,12 @@
   }
 
   ::placeholder {
-    color: $dark
+    color: $dark;
   }
 }
 
 .pc-item-input.notes {
-  max-width: 100%;
+  width: 100%;
 
   // Form.Check component styles for notes
   .form-check {
@@ -161,6 +190,22 @@
   }
 }
 
+.pc-item-input.open-price-input,
+.pc-item-input.select-price-value {
+  .form-control {
+    padding-left: 24px;
+    border: 1px solid $primary;
+  }
+
+  .pc-suffix-left {
+    color: $dark;
+  }
+
+  ::placeholder {
+    color: $dark;
+  }
+}
+
 // Hide spin for input with type = 'number'
 .nospin::-webkit-outer-spin-button,
 .nospin::-webkit-inner-spin-button {
@@ -170,4 +215,5 @@
 
 .nospin {
   -moz-appearance: textfield;
+  appearance: textfield;
 }

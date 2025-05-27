@@ -21,22 +21,23 @@ document.addEventListener('DOMContentLoaded', () => {
     categoryCheckboxes: "input[name='quote[category_ids][]']",
     itemCheckboxes: "input[name='quote[item_ids][]']",
     loadButton: '#load-items-button',
+    parametersContainer: '.quote-parameters-container',
   }
 
   /**
    * Updates form fields for a quote item group
    * @param {HTMLElement} group - The quote item group element
-   * @param {Object} itemData - Item data containing id, name, category, and discount
-   * @param {boolean} [isNewItem=false] - Whether this is a new item (resets price fields)
+   * @param {Object} itemData - Item data containing id, name, category, discount, and has_formula_parameters
    */
-  const updateItemFields = (group, itemData, isNewItem = false) => {
+  const updateItemFields = (group, itemData) => {
     const fields = {
       itemId: group.querySelector(selectors.itemId),
       itemName: group.querySelector(selectors.itemName),
       category: group.querySelector(selectors.category),
       discount: group.querySelector(selectors.discount),
-      price: isNewItem ? group.querySelector(selectors.price) : null,
-      finalPrice: isNewItem ? group.querySelector(selectors.finalPrice) : null,
+      price: group.querySelector(selectors.price),
+      finalPrice: group.querySelector(selectors.finalPrice),
+      parametersContainer: group.querySelector(selectors.parametersContainer),
     }
 
     if (fields.itemId) fields.itemId.value = itemData.item_id
@@ -48,6 +49,11 @@ document.addEventListener('DOMContentLoaded', () => {
     if (fields.discount) fields.discount.value = itemData.discount || '0'
     if (fields.price) fields.price.value = '0'
     if (fields.finalPrice) fields.finalPrice.value = '0'
+
+    const shouldShowFields = itemData.has_formula_parameters
+    if (fields.discount) fields.discount.closest('.input').style.display = shouldShowFields ? '' : 'none'
+    if (fields.finalPrice) fields.finalPrice.closest('.input').style.display = shouldShowFields ? '' : 'none'
+    if (fields.parametersContainer) fields.parametersContainer.style.display = shouldShowFields ? '' : 'none'
   }
 
   /**
@@ -107,9 +113,8 @@ document.addEventListener('DOMContentLoaded', () => {
   /**
    * Adds a new quote item to the form
    * @param {Object} itemData - Item data containing id, name, category, and discount
-   * @param {boolean} [isDuplicate=false] - Whether this is a duplicate item
    */
-  const addNewQuoteItem = async (itemData, isDuplicate = false) => {
+  const addNewQuoteItem = async (itemData) => {
     const addButton = container.querySelector(selectors.addButton)
     if (!addButton || !addButton.dataset.html) {
       handleError('Quote item add button or template not found')
@@ -128,7 +133,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     container.insertBefore(newItemGroup, addButton)
 
-    updateItemFields(newItemGroup, itemData, isDuplicate)
+    updateItemFields(newItemGroup, itemData)
     if (itemData.item_id) await renderQuoteParameters(newItemGroup, itemData.item_id)
   }
 
@@ -148,7 +153,20 @@ document.addEventListener('DOMContentLoaded', () => {
     itemGroups.forEach(async (group, index) => {
       const itemId = group.querySelector(selectors.itemId)?.value
       if (itemId) {
-        await renderQuoteParameters(group, itemId)
+        try {
+          const response = await fetchWithConfig('/admin/quotes/load_items', {
+            item_ids: [itemId],
+          })
+          const items = await response.json()
+          const itemData = items[0] 
+
+          updateItemFields(group, itemData)
+          if (itemData.has_formula_parameters) {
+            await renderQuoteParameters(group, itemId)
+          }
+        } catch (error) {
+          handleError('Error fetching item data for initialization', error, { itemId })
+        }
       } else {
         handleError('No itemId found for QuoteItem', null, {
           index,
@@ -238,14 +256,17 @@ document.addEventListener('DOMContentLoaded', () => {
       const itemId = currentGroup.querySelector(selectors.itemId)?.value
       if (!itemId) return
 
-      const itemData = {
-        item_id: itemId,
-        item_name: currentGroup.querySelector(selectors.itemName)?.textContent,
-        category_name: currentGroup.querySelector(selectors.category)?.textContent,
-        discount: '0',
-      }
+      try {
+        const response = await fetchWithConfig('/admin/quotes/load_items', {
+          item_ids: [itemId],
+        })
+        const items = await response.json()
+        const itemData = items[0]
 
-      await addNewQuoteItem(itemData, true)
+        await addNewQuoteItem(itemData)
+      } catch (error) {
+        handleError('Error fetching item data for add same item', error, { itemId })
+      }
     })
   }
 

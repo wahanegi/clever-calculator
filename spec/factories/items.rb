@@ -17,7 +17,7 @@ FactoryBot.define do
       fixed_parameters { { "Acquisition" => "2500" } }
       is_fixed { true }
       formula_parameters { ["Acquisition"] }
-      calculation_formula { "Acquisition" }
+      calculation_formula { "Acquisition".to_formula_name }
     end
 
     trait :with_pricing_options do
@@ -32,14 +32,14 @@ FactoryBot.define do
       end
       is_selectable_options { true }
       formula_parameters { ["Tier"] }
-      calculation_formula { "Tier" }
+      calculation_formula { "Tier".to_formula_name }
     end
 
     trait :with_open_parameters do
       open_parameters_label { ["Custom"] }
       is_open { true }
       formula_parameters { ["Custom"] }
-      calculation_formula { "Custom" }
+      calculation_formula { "Custom".to_formula_name }
     end
 
     trait :with_invalid_fixed_parameters do

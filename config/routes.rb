@@ -5,12 +5,28 @@ Rails.application.routes.draw do
 
   namespace :api do
     namespace :v1 do
+      resources :quotes, only: [:create, :update] do
+        member do
+          patch :reset
+          get :generate_file
+        end
+        resources :quote_items, only: [:update, :index] do
+          collection do
+            post :create_from_item
+            post :create_from_category
+            delete :destroy_selected
+          end
+          post :duplicate, on: :member
+          resource :note, only: [:destroy] do
+            post :upsert
+          end
+        end
+      end
+      resources :selectable_options, only: [:index]
       resource :setting, only: [:show]
-      resources :quotes, only: [:create, :update]
       resources :customers, only: [:index] do
         post :upsert, on: :collection
       end
-      resources :categories, only: [ :index ]
     end
   end
 

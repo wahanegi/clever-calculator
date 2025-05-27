@@ -16,7 +16,6 @@ export const PcCategoryAccordion = ({
   }
 
   return (
-    <>
       <Accordion flush activeKey={isOpen ? ['0'] : []} bsPrefix={'pc-category-accordion'}>
         <Accordion.Item eventKey="0">
           <div className={'position-relative'}>
@@ -31,8 +30,7 @@ export const PcCategoryAccordion = ({
             </Accordion.Header>
 
             {/*Extra Accordion.Header elements. For involve button hydration error*/}
-            <div
-              className="pc-extra-actions position-absolute top-50 translate-middle-y d-flex align-items-center gap-5 z-1">
+            <div className="pc-extra-actions position-absolute top-50 translate-middle-y d-flex align-items-center gap-5 z-1">
               <div className="fs-10 text-secondary fw-medium">{`$ ${categoryPrice}`}</div>
 
               <Button variant={'outline'} className={'pc-icon-hover-btn'} onClick={handleOpenModal}>
@@ -43,13 +41,10 @@ export const PcCategoryAccordion = ({
           </div>
 
           <Accordion.Body className="border border-primary border-top-0 bg-white rounded-bottom-2">
-            <div className={'px-8 py-5'}>
-              {children}
-            </div>
+            <div className="px-4 px-md-8 py-5">{children}</div>
             <div className="accordion-bottom-filling bg-light rounded-bottom-2" />
           </Accordion.Body>
         </Accordion.Item>
       </Accordion>
-    </>
   )
 }

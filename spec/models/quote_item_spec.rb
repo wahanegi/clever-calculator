@@ -16,7 +16,7 @@ RSpec.describe QuoteItem, type: :model do
     it 'validates that price is a number greater than or equal to 0' do
       quote_item = build(:quote_item, price: -1, quote: build(:quote), item: build(:item))
       quote_item.valid?
-      expect(quote_item.errors[:price]).to include("Must be a valid number between 0 and 99999999.99 (check your parameter inputs)")
+      expect(quote_item.errors[:price]).to include("Must be a valid number between 0 and 999999999999.99 (check your parameter inputs)")
     end
     it { is_expected.to validate_numericality_of(:discount).is_greater_than_or_equal_to(0).is_less_than_or_equal_to(100) }
     it { is_expected.to validate_presence_of(:final_price) }
@@ -35,7 +35,7 @@ RSpec.describe QuoteItem, type: :model do
         subject.price = -1
         subject.valid?
         expect(subject).not_to be_valid
-        expect(subject.errors[:price]).to include("Must be a valid number between 0 and 99999999.99 (check your parameter inputs)")
+        expect(subject.errors[:price]).to include("Must be a valid number between 0 and 999999999999.99 (check your parameter inputs)")
       end
 
       it 'is valid with discount = 0' do
@@ -85,7 +85,12 @@ RSpec.describe QuoteItem, type: :model do
       let(:quote_item) { build(:quote_item, quote: quote, item: item) }
 
       it 'combines fixed, open, and select parameters correctly' do
-        item.update(fixed_parameters: { 'platform_fee' => '1000' })
+        item.update(
+          fixed_parameters: { 'platform_fee' => '1000' },
+          open_parameters_label: ['setup'],
+          pricing_options: { 'tier' => %w[basic premium] }
+        )
+
         quote_item.open_param_values = { 'setup' => '2500' }
         quote_item.select_param_values = { 'tier' => '500' }
 
@@ -97,7 +102,11 @@ RSpec.describe QuoteItem, type: :model do
       end
 
       it 'handles nil open_param_values' do
-        item.update(fixed_parameters: { 'platform_fee' => '1000' })
+        item.update(
+          fixed_parameters: { 'platform_fee' => '1000' },
+          pricing_options: { 'tier' => %w[basic premium] }
+        )
+
         quote_item.open_param_values = nil
         quote_item.select_param_values = { 'tier' => '500' }
 
@@ -113,7 +122,12 @@ RSpec.describe QuoteItem, type: :model do
       let(:quote_item) { build(:quote_item, quote: quote, item: item) }
 
       it 'evaluates the formula using Dentaku' do
-        item.update(calculation_formula: 'users * setup', fixed_parameters: { 'users' => 10 })
+        item.update(
+          calculation_formula: 'users * setup',
+          fixed_parameters: { 'users' => 10 },
+          open_parameters_label: ['setup']
+        )
+
         quote_item.open_param_values = { 'setup' => 500 }
 
         quote_item.valid?
@@ -179,7 +193,7 @@ RSpec.describe QuoteItem, type: :model do
 
   describe 'pricing_parameters storage' do
     let(:quote) { create(:quote) }
-    let(:item) { create(:item, fixed_parameters: { 'platform_fee' => '1000' }) }
+    let(:item) { create(:item, fixed_parameters: { 'platform_fee' => '1000' }, open_parameters_label: ['setup']) }
     let(:quote_item) { create(:quote_item, quote: quote, item: item, open_param_values: { 'setup' => '2500' }) }
 
     it 'persists pricing_parameters in the database' do

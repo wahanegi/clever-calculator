@@ -1,3 +1,5 @@
+MAX_ALLOWED_VALUE = '99999999999999.99'.freeze
+
 ActiveAdmin.register Item do
   permit_params do
     %i[
@@ -169,11 +171,7 @@ ActiveAdmin.register Item do
       if @item.save
         session_service.delete
 
-        if session['back_to'] == 'category' && @item.category.present?
-          redirect_to edit_admin_category_path(@item.category), notice: "Item was successfully created."
-        else
-          redirect_to admin_item_path(@item), notice: "Item was successfully created."
-        end
+        redirect_to target_path, notice: "Item was successfully created."
       else
         flash.now[:error] = "Failed to create item: #{@item.errors.full_messages.to_sentence}"
         render :new, status: :unprocessable_entity
@@ -206,11 +204,7 @@ ActiveAdmin.register Item do
       if @item.update(permitted_params[:item].except(:formula_parameters))
         session_service.delete
 
-        if session['back_to'] == 'category' && @item.category.present?
-          redirect_to edit_admin_category_path(@item.category), notice: "Item was successfully updated."
-        else
-          redirect_to admin_item_path(@item), notice: "Item was successfully updated."
-        end
+        redirect_to target_path, notice: "Item was successfully updated."
       else
         flash[:error] = "Failed to update item: #{@item.errors.full_messages.to_sentence}"
         render :edit
@@ -227,17 +221,32 @@ ActiveAdmin.register Item do
     end
 
     def set_session_navigation
-      return unless request.referer && request.get?
+      return unless request.referer
 
       referer_path = URI.parse(request.referer).path
 
-      session['back_to'] = if referer_path.match?(%r{^/admin/categories/(\d+|\d+/edit)$})
-                             'category'
-                           elsif referer_path == '/admin/items'
-                             nil
-                           else
-                             session['back_to'] # keep it unchanged
-                           end
+      session['back_to'] = determine_back_to(referer_path)
+    end
+
+    def determine_back_to(path)
+      return 'category' if path.match?(%r{^/admin/categories/\d+$})
+      return 'category-edit' if path.match?(%r{^/admin/categories/\d+/edit$})
+      return nil if path == '/admin/items' && params[:action] == 'index'
+
+      session['back_to'] # unchanged
+    end
+
+    def target_path
+      return admin_item_path(@item) if @item.category.blank?
+
+      case session['back_to']
+      when 'category'
+        admin_category_path(@item.category)
+      when 'category-edit'
+        edit_admin_category_path(@item.category)
+      else
+        admin_item_path(@item)
+      end
     end
   end
 
@@ -280,7 +289,7 @@ ActiveAdmin.register Item do
                  when "Open" then params[:open_parameter_name].to_s.strip
                  when "Select" then params[:select_parameter_name].to_s.strip
                  end
-    param_name = param_name.gsub(/\s+/, "_")
+
     if param_name.blank?
       flash[:error] = "Parameter name can't be blank"
       return redirect_back(fallback_location: @item&.id ? edit_admin_item_path(@item) : new_admin_item_path)
@@ -294,6 +303,11 @@ ActiveAdmin.register Item do
       # Validate parameter value
       if param_value.blank?
         flash[:error] = "Parameter value can't be blank for Fixed parameter"
+        return redirect_back(fallback_location: @item&.id ? edit_admin_item_path(@item) : new_admin_item_path)
+      end
+
+      if param_value > MAX_ALLOWED_VALUE
+        flash[:error] = "Parameter value exceeds maximum allowed value of #{MAX_ALLOWED_VALUE}"
         return redirect_back(fallback_location: @item&.id ? edit_admin_item_path(@item) : new_admin_item_path)
       end
       fixed = session_service.get(:fixed) || {}
@@ -318,6 +332,11 @@ ActiveAdmin.register Item do
         desc = pair["description"].to_s.strip
         val = pair["value"].to_s.strip
         next if desc.blank? || val.blank?
+
+        if val > MAX_ALLOWED_VALUE
+          flash[:error] = "Option value '#{val}' for '#{desc}' exceeds maximum allowed value of #{MAX_ALLOWED_VALUE}"
+          return redirect_back(fallback_location: @item&.id ? edit_admin_item_path(@item) : new_admin_item_path)
+        end
 
         sub_hash[desc] = val
         valid_options = true

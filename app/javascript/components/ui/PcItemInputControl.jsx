@@ -2,8 +2,8 @@ import React from 'react'
 import { Form } from 'react-bootstrap'
 
 export const PcItemInputControl = ({
-  type = 'number',
-  itemType = 'price',
+  type,
+  paramType = 'price',
   value,
   onChange,
   placeholder = '0',
@@ -11,17 +11,27 @@ export const PcItemInputControl = ({
   ...props
 }) => {
   const isDisabled =
-    itemType === 'price' || itemType === 'discounted-price' || itemType === 'original-cost'
+    paramType === 'price' ||
+    paramType === 'discounted-price' ||
+    paramType === 'original-cost' ||
+    paramType === 'select-price-value'
+
+  const inputType = type || (isDisabled ? 'text' : 'number')
 
   return (
     <Form.Control
-      type={type}
+      type={inputType}
       value={value}
       onChange={onChange}
       placeholder={placeholder}
       disabled={isDisabled}
-      min={0}
       className="nospin fs-10 pc-lh-xl"
+      onWheel={(e) => e.target.blur()}
+      onKeyDown={(e) => {
+        if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+          e.preventDefault()
+        }
+      }}
       {...props}
     />
   )

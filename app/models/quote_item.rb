@@ -1,5 +1,5 @@
 class QuoteItem < ApplicationRecord
-  MAX_ALLOWED_PRICE = 99_999_999.99
+  MAX_ALLOWED_PRICE = 999_999_999_999.99
   attr_accessor :open_param_values, :select_param_values
 
   belongs_to :quote
@@ -31,16 +31,15 @@ class QuoteItem < ApplicationRecord
   def compile_pricing_parameters
     return unless item
 
-    self.pricing_parameters = (item.fixed_parameters || {})
-                              .merge(open_param_values || {})
-                              .merge(select_param_values || {})
+    self.pricing_parameters = assemble_parameters
   end
 
   def calculate_price_from_formula
     return unless item_requires_formula?
 
     calculator = Dentaku::Calculator.new
-    self.price = calculator.evaluate(item.calculation_formula, pricing_parameters)
+    transformed = pricing_parameters.transform_keys(&:to_formula_name)
+    self.price = calculator.evaluate(item.calculation_formula, transformed)
   rescue Dentaku::UnboundVariableError => e
     errors.add(:price, "missing variable(s): #{e.unbound_variables.join(', ')}")
   rescue StandardError => e
@@ -64,6 +63,30 @@ class QuoteItem < ApplicationRecord
 
   def item_requires_formula?
     item&.calculation_formula.present?
+  end
+
+  def assemble_parameters
+    fixed = item.fixed_parameters || {}
+    open = fetch_open_parameters
+    select = fetch_select_parameters
+
+    fixed.merge(open, select)
+  end
+
+  def fetch_open_parameters
+    return {} if item.open_parameters_label.blank?
+
+    Array(item.open_parameters_label).index_with do |label|
+      open_param_values&.dig(label) || 0
+    end
+  end
+
+  def fetch_select_parameters
+    return {} if item.pricing_options.blank?
+
+    item.pricing_options.keys.index_with do |key|
+      select_param_values&.dig(key) || 0
+    end
   end
 
   def assign_quote_to_note

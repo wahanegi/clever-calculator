@@ -1,3 +1,43 @@
+function toFormulaName(text) {
+  return text
+    .toLowerCase()
+    .replace(/[^a-z0-9\s]/g, '')
+    .trim()
+    .replace(/\s+/g, '_')
+}
+
+function insertSymbol(symbol) {
+  const selection = window.getSelection()
+
+  let range
+
+  // Make selection within formulaDisplay field
+  if (selection.rangeCount > 0 && formulaDisplay.contains(selection.anchorNode)) {
+    range = selection.getRangeAt(0)
+  } else {
+    // Otherwise insert at the end of formulaDisplay
+    range = document.createRange()
+    range.selectNodeContents(formulaDisplay)
+    range.collapse(false) // move to end
+  }
+
+  range.deleteContents()
+
+  const spaceBefore = document.createTextNode(' ')
+  const symbolNode = document.createTextNode(symbol)
+  const spaceAfter = document.createTextNode(' ')
+
+  range.insertNode(spaceAfter)
+  range.insertNode(symbolNode)
+  range.insertNode(spaceBefore)
+
+  // Move caret to after the inserted symbol
+  range.setStartAfter(spaceAfter)
+  range.collapse(true)
+  selection.removeAllRanges()
+  selection.addRange(range)
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   const formulaDisplay = document.getElementById('formulaDisplay')
   const formulaInput = document.getElementById('formulaInput')
@@ -5,10 +45,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (!formulaDisplay || !formulaInput) return
 
-  document.querySelectorAll('.formula-btn').forEach((btn) => {
+  formulaDisplay.focus()
+
+  document.querySelectorAll('.formula-btn.operator-btn').forEach((btn) => {
     btn.addEventListener('click', () => {
-      const symbol = btn.innerText
-      formulaDisplay.innerText += ` ${symbol} `
+      insertSymbol(btn.innerText)
+    })
+  })
+
+  document.querySelectorAll('.formula-btn.param-btn').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const symbol = toFormulaName(btn.innerText)
+      insertSymbol(symbol)
     })
   })
 
@@ -21,6 +69,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Remove extra spaces
     formula = formula.replace(/\s+/g, ' ').trim()
 
+    formula = formula.replace(',', '.')
     formulaInput.value = formula
   })
 

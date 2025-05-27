@@ -2,9 +2,15 @@ import React from 'react'
 import { Button } from 'react-bootstrap'
 import { MultiStepProgressBar } from './MultiStepProgressBar'
 
-export const QuoteCreation = ({ onClick, currentStepId, isBtnShow = true }) => {
+export const QuoteCreation = ({
+                                onReset,
+                                currentStepId,
+                                isBtnShow = true,
+                                disabledResetButton,
+                              }) => {
   const ResetButton = () => (
-    <Button variant={'outline-primary'} className={'pc-btn pc-btn-reset text-lato'} onClick={onClick}>
+    <Button variant={'outline-primary'} className={'pc-btn pc-btn-reset text-lato'}
+            onClick={onReset} disabled={disabledResetButton}>
       Reset
     </Button>
   )

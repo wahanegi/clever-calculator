@@ -4,8 +4,16 @@
 
 .pc-mw-524 {
   max-width: 524px !important;
-}
 
-.pc-pointer {
-  cursor: pointer;
+  @media (min-width: 576px) {
+    width: 100%;
+  }
+
+  @media (min-width: 768px) {
+    width: 33vw;
+  }
+
+  @media (min-width: 1200px) {
+    width: 27vw;
+  }
 }

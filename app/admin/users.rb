@@ -1,6 +1,6 @@
 ActiveAdmin.register User do
   permit_params do
-    params = [ :name, :email ]
+    params = [ :name, :email, :phone ]
     params += [ :password, :password_confirmation ] if request.params.dig(:user, :password).present?
     params
   end
@@ -14,6 +14,7 @@ ActiveAdmin.register User do
     id_column
     column :name
     column :email
+    column :phone
     column :created_at
     actions
   end
@@ -23,6 +24,7 @@ ActiveAdmin.register User do
       row :id
       row :name
       row :email
+      row :phone
       row :created_at
     end
   end
@@ -34,6 +36,7 @@ ActiveAdmin.register User do
     f.inputs do
       f.input :name
       f.input :email
+      f.input :phone
       f.input :password, required: f.object.new_record?
       f.input :password_confirmation, required: f.object.new_record?
     end
