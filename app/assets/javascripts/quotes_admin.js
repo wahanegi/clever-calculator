@@ -1,5 +1,6 @@
 //= require active_admin_helpers
 //= require note_active_admin
+//= require remove_item
 
 document.addEventListener('DOMContentLoaded', () => {
   // Main container for quote items
@@ -114,7 +115,7 @@ document.addEventListener('DOMContentLoaded', () => {
    * Adds a new quote item to the form
    * @param {Object} itemData - Item data containing id, name, category, and discount
    */
-  const addNewQuoteItem = async (itemData) => {
+  const addNewQuoteItem = async (itemData, insertAfter = null) => {
     const addButton = container.querySelector(selectors.addButton)
     if (!addButton || !addButton.dataset.html) {
       handleError('Quote item add button or template not found')
@@ -131,7 +132,12 @@ document.addEventListener('DOMContentLoaded', () => {
     tempDiv.innerHTML = newItemHtml
     const newItemGroup = tempDiv.firstElementChild
 
-    container.insertBefore(newItemGroup, addButton)
+    // Insert either after the clicked item, or at the end
+    if (insertAfter && insertAfter.parentNode) {
+      insertAfter.parentNode.insertBefore(newItemGroup, insertAfter.nextSibling)
+    } else {
+      container.insertBefore(newItemGroup, addButton)
+    }
 
     updateItemFields(newItemGroup, itemData)
     if (itemData.item_id) await renderQuoteParameters(newItemGroup, itemData.item_id)
@@ -263,53 +269,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const items = await response.json()
         const itemData = items[0]
 
-        await addNewQuoteItem(itemData)
+        await addNewQuoteItem(itemData, currentGroup)
       } catch (error) {
         handleError('Error fetching item data for add same item', error, { itemId })
-      }
-    })
-  }
-
-  /**
-   * Handles the "Remove Item" button click, marking persisted items for destruction or removing new items.
-   */
-  const handleRemoveItem = () => {
-    document.addEventListener('click', function (e) {
-      const removeBtn = e.target.closest('.has_many_remove')
-      if (!removeBtn) return
-
-      e.preventDefault()
-      e.stopImmediatePropagation() // Prevent Active Admin's default handler
-
-      const fieldset = removeBtn.closest('.has_many_fields')
-      if (!fieldset) return
-
-      const form = document.querySelector('form.quote-form')
-      if (!form) return
-
-      const destroyField = fieldset.querySelector('input.destroy-field')
-      const idField = fieldset.querySelector('input[name*="[id]"]')
-      const destroyName = destroyField?.getAttribute('name') || ''
-
-      const isPersistedRecord = /\[\d+\]/.test(destroyName)
-
-      if (destroyField && idField && isPersistedRecord) {
-        destroyField.value = '1'
-
-        // Create or get hidden container
-        let hiddenContainer = form.querySelector('#hidden-quote-items')
-        if (!hiddenContainer) {
-          hiddenContainer = document.createElement('div')
-          hiddenContainer.id = 'hidden-quote-items'
-          hiddenContainer.style.display = 'none'
-          form.appendChild(hiddenContainer)
-        }
-
-        // Move fieldset to hidden container
-        fieldset.style.display = 'none'
-        hiddenContainer.appendChild(fieldset)
-      } else {
-        fieldset.remove()
       }
     })
   }
