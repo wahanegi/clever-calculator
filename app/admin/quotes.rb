@@ -109,10 +109,10 @@ ActiveAdmin.register Quote do
     div do
       button_tag 'Load Items', type: 'button', id: 'load-items-button', class: 'button'
     end
-    f.has_many :quote_items, allow_destroy: true, new_record: true, heading: 'Quote Items' do |qf|
+    f.has_many :quote_items, allow_destroy: false, new_record: true, heading: 'Quote Items' do |qf|
       qf.input :item_id, as: :hidden, input_html: { class: 'item-id-field' }
       qf.input :id, as: :hidden if qf.object.persisted?
-      qf.input :_destroy, as: :hidden, input_html: { value: '0', class: 'destroy-field' }
+      qf.input :_destroy, as: :hidden, input_html: { value: '0', class: 'destroy-field' } if qf.object.persisted?
 
       if qf.object.pricing_parameters.present? && qf.object.item&.open_parameters_label.present?
         qf.object.item.open_parameters_label.each do |label|
