@@ -18,7 +18,7 @@ class ItemFormulaSyntaxValidator < ActiveModel::Validator
   end
 
   def check_all_formula_parameters_present(record)
-    missing_parameters = record.formula_parameters.map.with_index { |key, index| key.to_formula_name(index) }.reject do |param|
+    missing_parameters = record.formula_parameters.map.with_index { |k, i| k.to_formula_name(i) }.reject do |param|
       record.calculation_formula.match?(/\b#{Regexp.escape(param)}\b/)
     end
 
