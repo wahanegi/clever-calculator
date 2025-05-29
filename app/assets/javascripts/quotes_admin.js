@@ -14,12 +14,12 @@ document.addEventListener('DOMContentLoaded', () => {
     itemId: 'input.item-id-field',
     itemName: 'span.item-name-field',
     category: 'span.category-name-field',
-    discount: "input[id$='_discount']",
-    price: "input[id$='_price']",
-    finalPrice: "input[id$='_final_price']",
+    discount: 'input[id$=\'_discount\']',
+    price: 'input[id$=\'_price\']',
+    finalPrice: 'input[id$=\'_final_price\']',
     preview: '.quote-parameters-preview',
-    categoryCheckboxes: "input[name='quote[category_ids][]']",
-    itemCheckboxes: "input[name='quote[item_ids][]']",
+    categoryCheckboxes: 'input[name=\'quote[category_ids][]\']',
+    itemCheckboxes: 'input[name=\'quote[item_ids][]\']',
     loadButton: '#load-items-button',
     parametersContainer: '.quote-parameters-container',
   }
@@ -46,9 +46,9 @@ document.addEventListener('DOMContentLoaded', () => {
       fields.itemName.dataset.item_name = itemData.item_name
     }
     if (fields.category) fields.category.textContent = itemData.category_name || 'Other'
-    if (fields.discount) fields.discount.value = itemData.discount || '0'
-    if (fields.price) fields.price.value = '0'
-    if (fields.finalPrice) fields.finalPrice.value = '0'
+    if (!fields.discount.value) fields.discount.value = '0'
+    if (!fields.price.value) fields.price.value = '0'
+    if (!fields.finalPrice.value) fields.finalPrice.value = '0'
 
     const shouldShowFields = itemData.has_formula_parameters
     if (fields.discount) fields.discount.closest('.input').style.display = shouldShowFields ? '' : 'none'
@@ -129,6 +129,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const newItemHtml = addButton.dataset.html.replace(/NEW_QUOTE_ITEM_RECORD/g, newIndex)
     const tempDiv = document.createElement('div')
     tempDiv.innerHTML = newItemHtml
+    // Add an event listener to the discount input in the new item template
+    tempDiv.querySelector('input.discount-input')?.addEventListener('input', handleDiscountInput)
+
     const newItemGroup = tempDiv.firstElementChild
 
     container.insertBefore(newItemGroup, addButton)
@@ -158,7 +161,7 @@ document.addEventListener('DOMContentLoaded', () => {
             item_ids: [itemId],
           })
           const items = await response.json()
-          const itemData = items[0] 
+          const itemData = items[0]
 
           updateItemFields(group, itemData)
           if (itemData.has_formula_parameters) {
@@ -269,9 +272,29 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     })
   }
+  const handleDiscountInput = (e) => {
+    const value = e.target.value
+    let discountValue = parseFloat(value)
+
+    if (isNaN(discountValue)) return
+
+    const min = parseFloat(e.target.min) || 0
+    const max = parseFloat(e.target.max) || 100
+    discountValue = Math.max(min, Math.min(max, discountValue))
+
+    e.target.value = discountValue
+  }
+
+  /*
+   * Handles the input event for discount inputs
+   */
+  document.querySelectorAll('input.discount-input').forEach((input) => {
+    input.addEventListener('input', handleDiscountInput)
+  })
 
   // Initialize the form and event handlers
   initializeForm()
   handleLoadItems()
   handleAddSameItem()
 })
+

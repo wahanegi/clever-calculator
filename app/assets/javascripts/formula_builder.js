@@ -1,11 +1,3 @@
-function toFormulaName(text) {
-  return text
-    .toLowerCase()
-    .replace(/[^a-z0-9\s]/g, '')
-    .trim()
-    .replace(/\s+/g, '_')
-}
-
 function insertSymbol(symbol) {
   const selection = window.getSelection()
 
@@ -55,7 +47,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   document.querySelectorAll('.formula-btn.param-btn').forEach((btn) => {
     btn.addEventListener('click', () => {
-      const symbol = toFormulaName(btn.innerText)
+      const symbol = btn.dataset.param
       insertSymbol(symbol)
     })
   })

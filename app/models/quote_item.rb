@@ -38,7 +38,7 @@ class QuoteItem < ApplicationRecord
     return unless item_requires_formula?
 
     calculator = Dentaku::Calculator.new
-    transformed = pricing_parameters.transform_keys(&:to_formula_name)
+    transformed = pricing_parameters.transform_keys.with_index { |k, i| k.to_formula_name(i) }
     self.price = calculator.evaluate(item.calculation_formula, transformed)
   rescue Dentaku::UnboundVariableError => e
     errors.add(:price, "missing variable(s): #{e.unbound_variables.join(', ')}")
