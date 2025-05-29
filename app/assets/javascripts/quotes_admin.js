@@ -46,7 +46,7 @@ document.addEventListener('DOMContentLoaded', () => {
       fields.itemName.textContent = itemData.item_name
       fields.itemName.dataset.item_name = itemData.item_name
     }
-    if (fields.category) fields.category.textContent = itemData.category_name || 'Other'
+    if (fields.category) fields.category.textContent = itemData.category_name || 'Without Category'
     if (fields.discount) fields.discount.value = itemData.discount || '0'
     if (fields.price) fields.price.value = '0'
     if (fields.finalPrice) fields.finalPrice.value = '0'
