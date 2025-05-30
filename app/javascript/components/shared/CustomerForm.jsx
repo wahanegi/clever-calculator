@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Button, Col, Form, Row } from 'react-bootstrap'
-import { PcDropdownSelect, PcInput, PcLogoUploader } from '../ui'
+import { PcDropdownSelect, PcInput, PcLogoUploader, PcInputTextarea } from '../ui'
 import { EMPTY_ENTITIES, INPUT_VALIDATORS, ROUTES, STEPS } from './constants'
 import { fetchCustomers, fetchQuotes } from '../services'
 import { useAppHooks } from '../hooks'
@@ -260,15 +260,12 @@ export const CustomerForm = () => {
         </Row>
         <Row>
           <Col>
-            <PcInput
+            <PcInputTextarea
               id="notes"
-              as="textarea"
               placeholder="Important information"
               label="Notes"
-              height="100px"
               value={customer.notes}
-              onChange={handleInputChange}
-            />
+              onChange={handleInputChange}/>
           </Col>
         </Row>
       </div>
