@@ -10,14 +10,14 @@
 
     <h4>Available parameters:</h4>
     <div class="formula-buttons">
-      <% @formula_params.each do |param| %>
-        <button type="button" class="formula-btn param-btn"><%= param %></button>
+      <% @formula_params.each_with_index do |param, i| %>
+        <button type="button" class="formula-btn param-btn" data-param="<%= param.to_formula_name(i) %>"><%= param %></button>
       <% end %>
     </div>
 
     <h4>Operators:</h4>
     <div class="formula-buttons">
-      <% ['+', '-', '*', '/', '(', ')'].each do |op| %>
+      <% %w[+ - * / ( )].each do |op| %>
         <button type="button" class="formula-btn operator-btn"><%= op %></button>
       <% end %>
     </div>

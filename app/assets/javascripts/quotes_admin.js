@@ -15,12 +15,12 @@ document.addEventListener('DOMContentLoaded', () => {
     itemId: 'input.item-id-field',
     itemName: 'span.item-name-field',
     category: 'span.category-name-field',
-    discount: "input[id$='_discount']",
-    price: "input[id$='_price']",
-    finalPrice: "input[id$='_final_price']",
+    discount: 'input[id$=\'_discount\']',
+    price: 'input[id$=\'_price\']',
+    finalPrice: 'input[id$=\'_final_price\']',
     preview: '.quote-parameters-preview',
-    categoryCheckboxes: "input[name='quote[category_ids][]']",
-    itemCheckboxes: "input[name='quote[item_ids][]']",
+    categoryCheckboxes: 'input[name=\'quote[category_ids][]\']',
+    itemCheckboxes: 'input[name=\'quote[item_ids][]\']',
     loadButton: '#load-items-button',
     parametersContainer: '.quote-parameters-container',
   }
@@ -47,9 +47,9 @@ document.addEventListener('DOMContentLoaded', () => {
       fields.itemName.dataset.item_name = itemData.item_name
     }
     if (fields.category) fields.category.textContent = itemData.category_name || 'Without Category'
-    if (fields.discount) fields.discount.value = itemData.discount || '0'
-    if (fields.price) fields.price.value = '0'
-    if (fields.finalPrice) fields.finalPrice.value = '0'
+    if (!fields.discount.value) fields.discount.value = '0'
+    if (!fields.price.value) fields.price.value = '0'
+    if (!fields.finalPrice.value) fields.finalPrice.value = '0'
 
     const shouldShowFields = itemData.has_formula_parameters
     if (fields.discount) fields.discount.closest('.input').style.display = shouldShowFields ? '' : 'none'
@@ -130,6 +130,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const newItemHtml = addButton.dataset.html.replace(/NEW_QUOTE_ITEM_RECORD/g, newIndex)
     const tempDiv = document.createElement('div')
     tempDiv.innerHTML = newItemHtml
+    // Add an event listener to the discount input in the new item template
+    const discountInput = tempDiv.querySelector('input.discount-input')
+
+    if (discountInput) {
+      discountInput.addEventListener('input', handleDiscountInput)
+      discountInput.addEventListener('click', handleDiscountClick)
+    }
+
     const newItemGroup = tempDiv.firstElementChild
 
     // Insert either after the clicked item, or at the end
@@ -275,6 +283,33 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     })
   }
+  const handleDiscountInput = (e) => {
+    const value = e.target.value
+    let discountValue = parseFloat(value)
+
+    if (isNaN(discountValue)) return
+
+    const min = parseFloat(e.target.min) || 0
+    const max = parseFloat(e.target.max) || 100
+    discountValue = Math.max(min, Math.min(max, discountValue))
+
+    e.target.value = discountValue
+  }
+
+  const handleDiscountClick = (e) => {
+    const value = e.target.value
+    if (['0.0', '0'].includes(value)) {
+      e.target.value = ''
+    }
+  }
+
+  /*
+   * Handles the input event for discount inputs
+   */
+  document.querySelectorAll('input.discount-input').forEach((input) => {
+    input.addEventListener('input', handleDiscountInput)
+    input.addEventListener('click', handleDiscountClick)
+  })
 
   // Initialize the form and event handlers
   initializeForm()
@@ -282,3 +317,4 @@ document.addEventListener('DOMContentLoaded', () => {
   handleAddSameItem()
   handleRemoveItem()
 })
+
