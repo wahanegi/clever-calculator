@@ -38,6 +38,18 @@ function insertSymbol(symbol) {
   selection.addRange(range)
 }
 
+function placeCaretAtEnd(element) {
+  if (!element) return
+
+  const range = document.createRange()
+  range.selectNodeContents(element)
+  range.collapse(false)
+
+  const sel = window.getSelection()
+  sel.removeAllRanges()
+  sel.addRange(range)
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   const formulaDisplay = document.getElementById('formulaDisplay')
   const formulaInput = document.getElementById('formulaInput')
@@ -46,6 +58,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (!formulaDisplay || !formulaInput) return
 
   formulaDisplay.focus()
+  placeCaretAtEnd(formulaDisplay)
 
   document.querySelectorAll('.formula-btn.operator-btn').forEach((btn) => {
     btn.addEventListener('click', () => {
@@ -126,12 +139,7 @@ document.addEventListener('DOMContentLoaded', () => {
         formulaDisplay.innerText = words.join(' ') + ' '
 
         autocompleteBox.style.display = 'none'
-        const range = document.createRange()
-        const sel = window.getSelection()
-        range.selectNodeContents(formulaDisplay)
-        range.collapse(false)
-        sel.removeAllRanges()
-        sel.addRange(range)
+        placeCaretAtEnd(formulaDisplay)
       }
       autocompleteBox.appendChild(div)
     })
