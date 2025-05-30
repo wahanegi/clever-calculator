@@ -9,6 +9,19 @@
 
   &-controls {
     width: 42px;
+
+    & button {
+      background-image: linear-gradient(to right, rgb(255 255 255 / 9%) 5%, white 20%);
+    }
+  }
+
+  &-hide-elements {
+    width: 10px;
+    padding: 1px 0 1px 2px;
+
+    div {
+      background-image: linear-gradient(to left, rgb(255 255 255 / 9%) 5%, white 50%);
+    }
   }
 }
 

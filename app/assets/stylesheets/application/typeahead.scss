@@ -80,7 +80,7 @@ $rbt-placeholder-color: var(--bs-secondary) !default;
 
 .rbt-input-multi {
   position: relative;
-  padding: 12px 42px 12px 10px;
+  padding: 12px 30px 12px 1px;
   border: 1px solid var(--bs-primary) !important;
   border-radius: 4px;
   overflow: hidden;
@@ -126,7 +126,7 @@ $rbt-placeholder-color: var(--bs-secondary) !default;
     justify-content: start;
     align-items: center;
     gap: 4px;
-    padding-right: 2px;
+    padding: 0 6px 0 10px;
     overflow-y: hidden;
     overflow-x: auto;
     scrollbar-width: none;
@@ -152,7 +152,7 @@ $rbt-token-active-color: $rbt-color-white !default;
 
 .rbt-token {
   display: inline-flex;
-  min-width: 80px;
+  min-width: 89px;
   justify-content: center;
   align-items: center;
   padding: 3px 12px 3px 16px;
