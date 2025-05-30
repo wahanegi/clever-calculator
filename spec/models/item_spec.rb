@@ -187,20 +187,25 @@ RSpec.describe Item, type: :model do
         expect(item).to be_valid
       end
 
-      it 'is valid with nested numeric string values' do
+      it 'is valid with valid options array format' do
         item = build(:item, :with_pricing_options)
         expect(item).to be_valid
       end
 
-      it 'is valid with nested numeric values' do
-        item = build(:item, pricing_options: { "Tier" => { "1-5" => 100 } })
+      it 'is valid with numeric values in options' do
+        item = build(:item, pricing_options: {
+                       "Plan" => {
+                         "options" => [ { "value" => 100, "description" => "Basic" } ],
+                         "value_label" => "Monthly Fee"
+                       }
+                     })
         expect(item).to be_valid
       end
 
-      it 'is invalid with non-numeric nested string values' do
+      it 'is invalid with non-numeric values in options' do
         item = build(:item, :with_invalid_pricing_options)
         expect(item).not_to be_valid
-        expect(item.errors[:pricing_options]).to include("value for 'Tier -> 1-5' must be a number")
+        expect(item.errors[:pricing_options].first).to include("value 'abc' in option 'Broken' (Tier) must be numeric")
       end
 
       it 'is invalid with non-hash values' do

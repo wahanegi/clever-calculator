@@ -30,35 +30,62 @@ class Item < ApplicationRecord
   end
 
   def fixed_parameters_values_must_be_numeric
-    validate_jsonb_numeric_values(:fixed_parameters)
-  end
+    return if fixed_parameters.blank?
 
-  def pricing_options_values_must_be_numeric
-    validate_jsonb_numeric_values(:pricing_options) do |key_path, val|
-      key_path.last != 'value_label' && !numeric?(val)
-    end
-  end
-
-  def validate_jsonb_numeric_values(attribute, &block)
-    value = self[attribute] || {}
-    unless value.is_a?(Hash)
-      errors.add(attribute, "must be a JSON object")
+    unless fixed_parameters.is_a?(Hash)
+      errors.add(:fixed_parameters, "must be a JSON object")
       return
     end
 
-    validate_nested_numeric_values(value, attribute, [], &block)
+    fixed_parameters.each do |key, val|
+      errors.add(:fixed_parameters, "value for '#{key}' must be a number") unless numeric?(val)
+    end
   end
 
-  def validate_nested_numeric_values(hash, attribute, key_path = [], &block)
-    hash.each do |key, val|
-      current_path = key_path + [key]
-      if val.is_a?(Hash)
-        validate_nested_numeric_values(val, attribute, current_path, &block)
-      else
-        should_error = block_given? ? yield(current_path, val) : !numeric?(val)
-        errors.add(attribute, "value for '#{current_path.join(' -> ')}' must be a number") if should_error
-      end
+  def pricing_options_values_must_be_numeric
+    return if pricing_options.blank?
+
+    unless pricing_options.is_a?(Hash)
+      errors.add(:pricing_options, "must be a JSON object")
+      return
     end
+
+    pricing_options.each do |key, data|
+      validate_pricing_option_structure(key, data)
+    end
+  end
+
+  def validate_pricing_option_structure(key, data)
+    return unless pricing_option_structure_valid?(key, data)
+
+    data["options"].each_with_index do |opt, index|
+      validate_pricing_option_entry(key, opt, index)
+    end
+  end
+
+  def pricing_option_structure_valid?(key, data)
+    unless data.is_a?(Hash)
+      errors.add(:pricing_options, "entry for '#{key}' must be a JSON object")
+      return false
+    end
+
+    unless data["options"].is_a?(Array)
+      errors.add(:pricing_options, "options for '#{key}' must be an array")
+      return false
+    end
+
+    true
+  end
+
+  def validate_pricing_option_entry(key, opt, index)
+    unless opt.is_a?(Hash) && opt["description"] && opt["value"]
+      errors.add(:pricing_options, "option #{index} in '#{key}' must include 'description' and 'value'")
+      return
+    end
+
+    return if numeric?(opt["value"])
+
+    errors.add(:pricing_options, "value '#{opt['value']}' in option '#{opt['description']}' (#{key}) must be numeric")
   end
 
   def numeric?(val)
