@@ -130,7 +130,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const tempDiv = document.createElement('div')
     tempDiv.innerHTML = newItemHtml
     // Add an event listener to the discount input in the new item template
-    tempDiv.querySelector('input.discount-input')?.addEventListener('input', handleDiscountInput)
+    const discountInput = tempDiv.querySelector('input.discount-input')
+
+    if (discountInput) {
+      discountInput.addEventListener('input', handleDiscountInput)
+      discountInput.addEventListener('click', handleDiscountClick)
+    }
 
     const newItemGroup = tempDiv.firstElementChild
 
@@ -285,11 +290,19 @@ document.addEventListener('DOMContentLoaded', () => {
     e.target.value = discountValue
   }
 
+  const handleDiscountClick = (e) => {
+    const value = e.target.value
+    if (['0.0', '0'].includes(value)) {
+      e.target.value = ''
+    }
+  }
+
   /*
    * Handles the input event for discount inputs
    */
   document.querySelectorAll('input.discount-input').forEach((input) => {
     input.addEventListener('input', handleDiscountInput)
+    input.addEventListener('click', handleDiscountClick)
   })
 
   // Initialize the form and event handlers
