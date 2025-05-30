@@ -1,5 +1,6 @@
 //= require active_admin_helpers
 //= require note_active_admin
+//= require remove_item
 
 document.addEventListener('DOMContentLoaded', () => {
   // Main container for quote items
@@ -45,7 +46,7 @@ document.addEventListener('DOMContentLoaded', () => {
       fields.itemName.textContent = itemData.item_name
       fields.itemName.dataset.item_name = itemData.item_name
     }
-    if (fields.category) fields.category.textContent = itemData.category_name || 'Other'
+    if (fields.category) fields.category.textContent = itemData.category_name || 'Without Category'
     if (fields.discount) fields.discount.value = itemData.discount || '0'
     if (fields.price) fields.price.value = '0'
     if (fields.finalPrice) fields.finalPrice.value = '0'
@@ -114,7 +115,7 @@ document.addEventListener('DOMContentLoaded', () => {
    * Adds a new quote item to the form
    * @param {Object} itemData - Item data containing id, name, category, and discount
    */
-  const addNewQuoteItem = async (itemData) => {
+  const addNewQuoteItem = async (itemData, insertAfter = null) => {
     const addButton = container.querySelector(selectors.addButton)
     if (!addButton || !addButton.dataset.html) {
       handleError('Quote item add button or template not found')
@@ -131,7 +132,12 @@ document.addEventListener('DOMContentLoaded', () => {
     tempDiv.innerHTML = newItemHtml
     const newItemGroup = tempDiv.firstElementChild
 
-    container.insertBefore(newItemGroup, addButton)
+    // Insert either after the clicked item, or at the end
+    if (insertAfter && insertAfter.parentNode) {
+      insertAfter.parentNode.insertBefore(newItemGroup, insertAfter.nextSibling)
+    } else {
+      container.insertBefore(newItemGroup, addButton)
+    }
 
     updateItemFields(newItemGroup, itemData)
     if (itemData.item_id) await renderQuoteParameters(newItemGroup, itemData.item_id)
@@ -158,7 +164,7 @@ document.addEventListener('DOMContentLoaded', () => {
             item_ids: [itemId],
           })
           const items = await response.json()
-          const itemData = items[0] 
+          const itemData = items[0]
 
           updateItemFields(group, itemData)
           if (itemData.has_formula_parameters) {
@@ -263,7 +269,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const items = await response.json()
         const itemData = items[0]
 
-        await addNewQuoteItem(itemData)
+        await addNewQuoteItem(itemData, currentGroup)
       } catch (error) {
         handleError('Error fetching item data for add same item', error, { itemId })
       }
@@ -274,4 +280,5 @@ document.addEventListener('DOMContentLoaded', () => {
   initializeForm()
   handleLoadItems()
   handleAddSameItem()
+  handleRemoveItem()
 })

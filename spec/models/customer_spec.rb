@@ -16,6 +16,15 @@ RSpec.describe Customer, type: :model do
       it { is_expected.to validate_length_of(:company_name).is_at_most(50) }
     end
 
+    context 'email' do
+      it { is_expected.to allow_value('bob@example.com').for(:email) }
+
+      invalid_emails = ['bob', 'bob@gmail,com', 'bob@.com', 'bob bob@gmail.com']
+      invalid_emails.each do |email|
+        it { is_expected.not_to allow_value(email).for(:email).with_message('must be a valid email format') }
+      end
+    end
+
     context 'logo' do
       let!(:customer) { create(:customer) }
       let(:valid_logo) { file_fixture('valid_logo.png') }
