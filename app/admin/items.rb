@@ -326,7 +326,7 @@ ActiveAdmin.register Item do
         return redirect_back(fallback_location: @item&.id ? edit_admin_item_path(@item) : new_admin_item_path)
       end
 
-      sub_hash = {}
+      sub_array = []
       valid_options = false
       (params[:select_options] || []).each do |pair|
         desc = pair["description"].to_s.strip
@@ -338,7 +338,7 @@ ActiveAdmin.register Item do
           return redirect_back(fallback_location: @item&.id ? edit_admin_item_path(@item) : new_admin_item_path)
         end
 
-        sub_hash[desc] = val
+        sub_array << { "description" => desc, "value" => val }
         valid_options = true
       end
       # Validate parameter value
@@ -350,7 +350,7 @@ ActiveAdmin.register Item do
 
       select = session_service.get(:select) || {}
       select[param_name] = {
-        "options" => sub_hash,
+        "options" => sub_array,
         "value_label" => value_label
       }
       session_service.set(:select, select)
@@ -388,8 +388,8 @@ ActiveAdmin.register Item do
       select = session_service.get(:select) || {}
 
       if desc_key.present?
-        select[key]&.delete(desc_key)
-        select.delete(key) if select[key] && select[key].empty?
+        select[key]["options"].reject! { |opt| opt["description"] == desc_key }
+        select.delete(key) if select[key]["options"].empty?
       else
         select = select.reject { |k, _| k.to_s == key }
       end

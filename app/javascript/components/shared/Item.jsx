@@ -141,7 +141,10 @@ export const Item = ({ itemData, selectedOptions, setSelectedOptions, quoteId, s
       <PcItemFormGroup key={`select-${paramKey}`} paramType="selectable-param" label={paramKey}>
         <PcItemSelectControl
           value={selectedValues[paramKey]}
-          options={Object.entries(options).map(([label, value]) => ({ label, value }))}
+          options={options.map(({ description, value }) => ({
+            label: description,
+            value,
+          }))}
           onChange={handleSelectedChange(paramKey)}
         />
       </PcItemFormGroup>

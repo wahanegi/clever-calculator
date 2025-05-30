@@ -32,12 +32,14 @@
           <td class="param-name"><strong><%= parameter_display_name(sel_name) %></strong> <abbr title="required">*</abbr></td>
           <td class="param-value">
             <select name="quote[quote_items_attributes][NEW_RECORD][select_param_values][<%= sel_name %>]"
-                      class="quote-select-param-input param-input">
+                    class="quote-select-param-input param-input">
               <option value="">— Select —</option>
-              <% data['options'].each do |label, val| %>
+              <% data['options'].each do |opt| %>
+                <% val = opt['value'] %>
+                <% label = opt['description'] %>
                 <option value="<%= val %>" <%= 'selected' if select_param_values[sel_name].to_s == val.to_s %>>
-                    <%= label %> (<%= val %>)
-                  </option>
+                  <%= label %> (<%= val %>)
+                </option>
                 <% end %>
               </select>
             </td>

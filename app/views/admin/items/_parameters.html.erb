@@ -60,7 +60,7 @@
   <% select_parameters.each do |sel_name, raw_param_data| %>
     <% param_data = raw_param_data.with_indifferent_access %>
     <% value_label = param_data[:value_label] || "—" %>
-    <% options_data = param_data[:options] || {} %>
+    <% options_data = param_data[:options] || [] %>
     <table class="parameter-table">
       <thead>
         <tr>
@@ -79,15 +79,15 @@
           <td><%= value_label %></td>
           <td>
             <div class="options-container">
-              <% options_data.each do |desc, val| %>
-                <div class="option-row"><%= desc %></div>
+              <% options_data.each do |option| %>
+                <div class="option-row"><%= option["description"] %></div>
               <% end %>
             </div>
           </td>
           <td>
             <div class="options-container">
-              <% options_data.each do |desc, val| %>
-                <div class="option-row"><%= val %></div>
+              <% options_data.each do |option| %>
+                <div class="option-row"><%= option["value"] %></div>
               <% end %>
             </div>
           </td>

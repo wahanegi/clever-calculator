@@ -29,7 +29,12 @@ RSpec.describe 'Admin::Items', type: :request do
              category: category,
              fixed_parameters: { 'Platform Fee' => '1000' },
              open_parameters_label: ['Users'],
-             pricing_options: { "Tier" => { "options" => { "Silver" => "200" }, "value_label" => "Cost Per User" } },
+             pricing_options: {
+               "Tier" => {
+                 "options" => [ { "value" => "200", "description" => "Silver" } ],
+                 "value_label" => "Cost Per User"
+               }
+             },
              calculation_formula: 'platform_fee * tier',
              formula_parameters: ["Platform fee", "Tier"])
     end
@@ -138,7 +143,7 @@ RSpec.describe 'Admin::Items', type: :request do
         item = Item.last
         expect(item.fixed_parameters).to eq('Acquisition' => '2500')
         expect(item.open_parameters_label).to eq(['Custom'])
-        expect(item.pricing_options).to eq("Tier" => { "options" => { "1-5" => "100" }, "value_label" => "Cost Per User" })
+        expect(item.pricing_options).to eq("Tier" => { "options" => [{ "description" => "1-5", "value" => "100" }], "value_label" => "Cost Per User" })
         expect(item.formula_parameters).to eq(%w[Acquisition Custom Tier])
         expect(item.calculation_formula).to eq('acquisition * tier + custom')
         expect(item.is_fixed).to be true
