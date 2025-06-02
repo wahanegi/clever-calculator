@@ -2,7 +2,7 @@
   position: absolute;
   top: -0.4rem;
   left: 0.8rem;
-  background: linear-gradient(to bottom, var(--bs-light) 50%, $white 50%);
+  background: linear-gradient(to bottom, transparent 30%, #fff 40%);
 }
 
 .form-control::placeholder {
@@ -114,6 +114,5 @@ textarea {
     &:focus {
       box-shadow: none !important;
     }
-    height: 82px;
   }
 }

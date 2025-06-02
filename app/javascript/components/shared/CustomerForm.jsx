@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Button, Col, Form, Row } from 'react-bootstrap'
-import { PcDropdownSelect, PcInput, PcLogoUploader, PcInputTextarea } from '../ui'
+import { PcDropdownSelect, PcInput, PcLogoUploader } from '../ui'
 import { EMPTY_ENTITIES, INPUT_VALIDATORS, ROUTES, STEPS } from './constants'
 import { fetchCustomers, fetchQuotes } from '../services'
 import { useAppHooks } from '../hooks'
@@ -41,6 +41,7 @@ export const CustomerForm = () => {
     if (selectedCustomer) {
       setCustomer(selectedCustomer.attributes)
       newCompanyName = selectedCustomer.attributes.company_name
+      setErrors({})
     } else {
       setCustomer(prev => ({ ...prev, company_name: label }))
     }
@@ -84,6 +85,13 @@ export const CustomerForm = () => {
   const handleEmailChange = (e) => {
     const { value } = e.target
 
+    setCustomer((prev) => ({ ...prev, email: value }))
+  }
+
+  const handleEmailValidationMouseLeave = (e) => {
+    const { value } = e.target
+    e.target.blur()
+
     if (value && !INPUT_VALIDATORS.emailFormat.test(value)) {
       setIsNextDisabled(true)
       setErrors((prev) => ({ ...prev, email: 'Invalid email format' }))
@@ -92,7 +100,6 @@ export const CustomerForm = () => {
       setErrors((prev) => ({ ...prev, email: '' }))
     }
 
-    setCustomer((prev) => ({ ...prev, email: value }))
   }
 
   const handleFullNameChange = (e) => {
@@ -243,6 +250,7 @@ export const CustomerForm = () => {
                 height="42px"
                 value={customer.email}
                 error={errors.email}
+                onMouseLeave={handleEmailValidationMouseLeave}
                 onChange={handleEmailChange}
               />
             </Col>
@@ -260,12 +268,15 @@ export const CustomerForm = () => {
         </Row>
         <Row>
           <Col>
-            <PcInputTextarea
+            <PcInput
               id="notes"
+              as="textarea"
               placeholder="Important information"
               label="Notes"
+              height="100px"
               value={customer.notes}
-              onChange={handleInputChange}/>
+              onChange={handleInputChange}
+            />
           </Col>
         </Row>
       </div>
