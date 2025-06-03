@@ -6,7 +6,7 @@ export const PcInput = ({ id, type = 'text', label, height, error, ...props }) =
     <Form.Group controlId={id} className="position-relative">
       <Form.Control
         type={type}
-        className="border border-primary rounded-1 py-4"
+        className="border border-primary rounded-1 py-2"
         style={{ height }}
         {...props}
       />

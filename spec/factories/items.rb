@@ -24,9 +24,11 @@ FactoryBot.define do
       pricing_options do
         {
           "Tier" => {
-            "1-5" => "100",
-            "6-15" => "200",
-            "16+" => "350"
+            "options" => [
+              { "value" => "100", "description" => "Silver" },
+              { "value" => "200", "description" => "Gold" }
+            ],
+            "value_label" => "Cost per hour"
           }
         }
       end
@@ -47,7 +49,14 @@ FactoryBot.define do
     end
 
     trait :with_invalid_pricing_options do
-      pricing_options { { "Tier" => { "1-5" => "abc" } } }
+      pricing_options do
+        {
+          "Tier" => {
+            "options" => [{ "value" => "abc", "description" => "Broken" }],
+            "value_label" => "Cost"
+          }
+        }
+      end
     end
 
     trait :with_disabled_category do
