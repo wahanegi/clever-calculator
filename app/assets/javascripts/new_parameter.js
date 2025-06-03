@@ -1,21 +1,20 @@
 // --- Parameter type switch ---
-document.addEventListener("DOMContentLoaded", function () {
-    function toggleFields() {
-        const val = document.querySelector('input[name="parameter_type"]:checked');
-        const type = val ? val.value : "";
+document.addEventListener('DOMContentLoaded', function () {
+  function toggleFields() {
+    const val = document.querySelector('input[name="parameter_type"]:checked')
+    const type = val ? val.value : ''
 
-        document.getElementById("fixed_fields").style.display = type === "Fixed" ? "block" : "none";
-        document.getElementById("open_fields").style.display = type === "Open" ? "block" : "none";
-        document.getElementById("select_fields").style.display = type === "Select" ? "block" : "none";
-    }
+    document.getElementById('fixed_fields').style.display = type === 'Fixed' ? 'block' : 'none'
+    document.getElementById('open_fields').style.display = type === 'Open' ? 'block' : 'none'
+    document.getElementById('select_fields').style.display = type === 'Select' ? 'block' : 'none'
+  }
 
-    const radios = document.querySelectorAll('input[name="parameter_type"]');
-    radios.forEach((radio) => {
-        radio.addEventListener("change", toggleFields);
-    });
-
-    toggleFields();
-});
+    toggleFields()
+    
+  document
+    .querySelectorAll('input[name="parameter_type"]')
+    .forEach((radio) => radio.addEventListener('change', toggleFields))
+})
 
 // --- Add Option and Delete ---
 document.addEventListener("DOMContentLoaded", () => {
