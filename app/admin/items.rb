@@ -282,33 +282,34 @@ ActiveAdmin.register Item do
 
   member_action :create_parameter, method: :post do
     @item = Item.find_by(id: params[:id]) || Item.new
+    @param_type = params[:parameter_type]
+    @params_data = params
 
-    param_type = params[:parameter_type]
-    param_name = case param_type
+    param_name = case @param_type
                  when "Fixed" then params[:fixed_parameter_name].to_s.strip
                  when "Open" then params[:open_parameter_name].to_s.strip
                  when "Select" then params[:select_parameter_name].to_s.strip
                  end
 
     if param_name.blank?
-      flash[:error] = "Parameter name can't be blank"
-      return redirect_back(fallback_location: @item&.id ? edit_admin_item_path(@item) : new_admin_item_path)
+      flash.now[:error] = "Parameter name can't be blank"
+      return render :new_parameter
     end
 
     session_service.add_formula_parameter(param_name)
 
-    case param_type
+    case @param_type
     when "Fixed"
       param_value = params[:fixed_parameter_value].to_s.strip
       # Validate parameter value
       if param_value.blank?
-        flash[:error] = "Parameter value can't be blank for Fixed parameter"
-        return redirect_back(fallback_location: @item&.id ? edit_admin_item_path(@item) : new_admin_item_path)
+        flash.now[:error] = "Parameter value can't be blank for Fixed parameter"
+        return render :new_parameter
       end
 
       if param_value > MAX_ALLOWED_VALUE
-        flash[:error] = "Parameter value exceeds maximum allowed value of #{MAX_ALLOWED_VALUE}"
-        return redirect_back(fallback_location: @item&.id ? edit_admin_item_path(@item) : new_admin_item_path)
+        flash.now[:error] = "Parameter value exceeds maximum allowed value of #{MAX_ALLOWED_VALUE}"
+        return render :new_parameter
       end
       fixed = session_service.get(:fixed) || {}
       fixed[param_name] = param_value
@@ -322,35 +323,40 @@ ActiveAdmin.register Item do
     when "Select"
       value_label = params[:value_label].to_s.strip
       if value_label.blank?
-        flash[:error] = "Value Label is required for Select parameter"
-        return redirect_back(fallback_location: @item&.id ? edit_admin_item_path(@item) : new_admin_item_path)
+        flash.now[:error] = "Value Label is required for Select parameter"
+        return render :new_parameter
       end
 
-      sub_hash = {}
-      valid_options = false
+      sub_array = []
+      valid_options_count = 0
       (params[:select_options] || []).each do |pair|
         desc = pair["description"].to_s.strip
         val = pair["value"].to_s.strip
-        next if desc.blank? || val.blank?
+        next if desc.blank? && val.blank?
 
-        if val > MAX_ALLOWED_VALUE
-          flash[:error] = "Option value '#{val}' for '#{desc}' exceeds maximum allowed value of #{MAX_ALLOWED_VALUE}"
-          return redirect_back(fallback_location: @item&.id ? edit_admin_item_path(@item) : new_admin_item_path)
+        if (desc.present? && val.blank?) || (val.present? && desc.blank?)
+          flash.now[:error] = 'Each Select option must have both a description and a value.'
+          return render :new_parameter
         end
 
-        sub_hash[desc] = val
-        valid_options = true
+        if val > MAX_ALLOWED_VALUE
+          flash.now[:error] = "Option value '#{val}' for '#{desc}' exceeds maximum allowed value of #{MAX_ALLOWED_VALUE}"
+          return render :new_parameter
+        end
+
+        sub_array << { "description" => desc, "value" => val }
+        valid_options_count += 1
       end
-      # Validate parameter value
-      unless valid_options
-        flash[:error] =
-          "At least one valid option (with non-empty description and value) is required for Select parameter"
-        return redirect_back(fallback_location: @item&.id ? edit_admin_item_path(@item) : new_admin_item_path)
+
+      # Require at least two valid options
+      unless valid_options_count >= 2
+        flash.now[:error] = "At least two valid options (each with non-empty description and value) are required for Select parameter"
+        return render :new_parameter
       end
 
       select = session_service.get(:select) || {}
       select[param_name] = {
-        "options" => sub_hash,
+        "options" => sub_array,
         "value_label" => value_label
       }
       session_service.set(:select, select)
@@ -388,8 +394,8 @@ ActiveAdmin.register Item do
       select = session_service.get(:select) || {}
 
       if desc_key.present?
-        select[key]&.delete(desc_key)
-        select.delete(key) if select[key] && select[key].empty?
+        select[key]["options"].reject! { |opt| opt["description"] == desc_key }
+        select.delete(key) if select[key]["options"].empty?
       else
         select = select.reject { |k, _| k.to_s == key }
       end

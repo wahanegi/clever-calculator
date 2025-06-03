@@ -16,14 +16,10 @@ export const PcItemFormGroup = ({
     paramType === 'open-price-input'
   const isSuffixRight = paramType === 'discount'
 
-  const normalizeLabel = (label) => {
-    return label.replace(/_/g, ' ')
-  }
-  
   return (
-    <Form.Group className={`position-relative pc-item-input ${paramType} ${className}`} title={normalizeLabel(label)}>
+    <Form.Group className={`position-relative pc-item-input ${paramType} ${className}`} title={label}>
       <Form.Label className="pc-label position-absolute top-0 translate-middle-y px-1 py-0 bg-white text-gray-750">
-        {normalizeLabel(label)}
+        {label}
       </Form.Label>
 
       {children}
