@@ -129,7 +129,16 @@ export const MultiSelectDropdown = ({
             </button>
           </div>
         )}
-        inputProps={{ onClick: handleClick }}
+        inputProps={{
+          onClick: handleClick,
+        }}
+        onKeyDown={(e) => {
+          const input = e.target.value
+          if (e.key === 'Backspace' && input === '' && selectedOptions.length > 0) {
+            const updated = selectedOptions.slice(0, -1)
+            onChange(updated)
+          }
+        }}
       />
 
       <Form.Label className="pc-label position-absolute fw-bold fs-10 lh-lg m-0 py-0 px-1" column={true}>
