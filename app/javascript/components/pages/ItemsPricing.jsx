@@ -296,13 +296,20 @@ export const ItemsPricing = () => {
                           onChange={(e) => handleNotesChange(item.id, e.target.value)}
                           onBlur={() => handleNotesBlur(item.id)}
                         />
-                        <Form.Check
-                          type={'checkbox'}
-                          label={'Include notes with quote'}
-                          className={'fs-10'}
-                          checked={notesState.include || false}
-                          onChange={(e) => handleIncludeNotesChange(item.id, e.target.checked)}
-                        />
+                        <Form.Group
+                          controlId={`include-notes-${item.id}`}
+                          className="form-check pc-item-input notes fs-10"
+                        >
+                          <Form.Check.Input
+                            type="checkbox"
+                            id={`include-notes-${item.id}`}
+                            checked={notesState.include || false}
+                            onChange={(e) => handleIncludeNotesChange(item.id, e.target.checked)}
+                          />
+                          <Form.Label htmlFor={`include-notes-${item.id}`} className="form-check-label">
+                            Include notes with quote
+                          </Form.Label>
+                        </Form.Group>
                       </PcItemFormGroup>
                     )}
                   </PcItemAccordion>
