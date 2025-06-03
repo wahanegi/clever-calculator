@@ -1,5 +1,6 @@
 //= require active_admin_helpers
 //= require note_active_admin
+//= require remove_item
 
 document.addEventListener('DOMContentLoaded', () => {
   // Main container for quote items
@@ -14,12 +15,12 @@ document.addEventListener('DOMContentLoaded', () => {
     itemId: 'input.item-id-field',
     itemName: 'span.item-name-field',
     category: 'span.category-name-field',
-    discount: "input[id$='_discount']",
-    price: "input[id$='_price']",
-    finalPrice: "input[id$='_final_price']",
+    discount: 'input[id$=\'_discount\']',
+    price: 'input[id$=\'_price\']',
+    finalPrice: 'input[id$=\'_final_price\']',
     preview: '.quote-parameters-preview',
-    categoryCheckboxes: "input[name='quote[category_ids][]']",
-    itemCheckboxes: "input[name='quote[item_ids][]']",
+    categoryCheckboxes: 'input[name=\'quote[category_ids][]\']',
+    itemCheckboxes: 'input[name=\'quote[item_ids][]\']',
     loadButton: '#load-items-button',
     parametersContainer: '.quote-parameters-container',
   }
@@ -45,10 +46,10 @@ document.addEventListener('DOMContentLoaded', () => {
       fields.itemName.textContent = itemData.item_name
       fields.itemName.dataset.item_name = itemData.item_name
     }
-    if (fields.category) fields.category.textContent = itemData.category_name || 'Other'
-    if (fields.discount) fields.discount.value = itemData.discount || '0'
-    if (fields.price) fields.price.value = '0'
-    if (fields.finalPrice) fields.finalPrice.value = '0'
+    if (fields.category) fields.category.textContent = itemData.category_name || 'Without Category'
+    if (!fields.discount.value) fields.discount.value = '0'
+    if (!fields.price.value) fields.price.value = '0'
+    if (!fields.finalPrice.value) fields.finalPrice.value = '0'
 
     const shouldShowFields = itemData.has_formula_parameters
     if (fields.discount) fields.discount.closest('.input').style.display = shouldShowFields ? '' : 'none'
@@ -114,7 +115,7 @@ document.addEventListener('DOMContentLoaded', () => {
    * Adds a new quote item to the form
    * @param {Object} itemData - Item data containing id, name, category, and discount
    */
-  const addNewQuoteItem = async (itemData) => {
+  const addNewQuoteItem = async (itemData, insertAfter = null) => {
     const addButton = container.querySelector(selectors.addButton)
     if (!addButton || !addButton.dataset.html) {
       handleError('Quote item add button or template not found')
@@ -129,9 +130,22 @@ document.addEventListener('DOMContentLoaded', () => {
     const newItemHtml = addButton.dataset.html.replace(/NEW_QUOTE_ITEM_RECORD/g, newIndex)
     const tempDiv = document.createElement('div')
     tempDiv.innerHTML = newItemHtml
+    // Add an event listener to the discount input in the new item template
+    const discountInput = tempDiv.querySelector('input.discount-input')
+
+    if (discountInput) {
+      discountInput.addEventListener('input', handleDiscountInput)
+      discountInput.addEventListener('click', handleDiscountClick)
+    }
+
     const newItemGroup = tempDiv.firstElementChild
 
-    container.insertBefore(newItemGroup, addButton)
+    // Insert either after the clicked item, or at the end
+    if (insertAfter && insertAfter.parentNode) {
+      insertAfter.parentNode.insertBefore(newItemGroup, insertAfter.nextSibling)
+    } else {
+      container.insertBefore(newItemGroup, addButton)
+    }
 
     updateItemFields(newItemGroup, itemData)
     if (itemData.item_id) await renderQuoteParameters(newItemGroup, itemData.item_id)
@@ -158,7 +172,7 @@ document.addEventListener('DOMContentLoaded', () => {
             item_ids: [itemId],
           })
           const items = await response.json()
-          const itemData = items[0] 
+          const itemData = items[0]
 
           updateItemFields(group, itemData)
           if (itemData.has_formula_parameters) {
@@ -263,15 +277,44 @@ document.addEventListener('DOMContentLoaded', () => {
         const items = await response.json()
         const itemData = items[0]
 
-        await addNewQuoteItem(itemData)
+        await addNewQuoteItem(itemData, currentGroup)
       } catch (error) {
         handleError('Error fetching item data for add same item', error, { itemId })
       }
     })
   }
+  const handleDiscountInput = (e) => {
+    const value = e.target.value
+    let discountValue = parseFloat(value)
+
+    if (isNaN(discountValue)) return
+
+    const min = parseFloat(e.target.min) || 0
+    const max = parseFloat(e.target.max) || 100
+    discountValue = Math.max(min, Math.min(max, discountValue))
+
+    e.target.value = discountValue
+  }
+
+  const handleDiscountClick = (e) => {
+    const value = e.target.value
+    if (['0.0', '0'].includes(value)) {
+      e.target.value = ''
+    }
+  }
+
+  /*
+   * Handles the input event for discount inputs
+   */
+  document.querySelectorAll('input.discount-input').forEach((input) => {
+    input.addEventListener('input', handleDiscountInput)
+    input.addEventListener('click', handleDiscountClick)
+  })
 
   // Initialize the form and event handlers
   initializeForm()
   handleLoadItems()
   handleAddSameItem()
+  handleRemoveItem()
 })
+

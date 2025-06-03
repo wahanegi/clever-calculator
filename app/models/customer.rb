@@ -6,6 +6,8 @@ class Customer < ApplicationRecord
 
   validates :company_name, presence: true, uniqueness: { case_sensitive: false }, length: { maximum: 50 }
   validate :logo_size_and_type, if: -> { logo.attached? }
+  validates :email, format: { with: URI::MailTo::EMAIL_REGEXP, message: "must be a valid email format" },
+                    if: -> { email.present? }
 
   MAX_LOGO_SIZE = 2.megabytes
   ALLOWED_LOGO_TYPES = %w[image/jpeg image/png].freeze
