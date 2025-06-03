@@ -18,13 +18,15 @@ class ItemFormulaSyntaxValidator < ActiveModel::Validator
   end
 
   def check_all_formula_parameters_present(record)
-    missing_parameters = record.formula_parameters.map { |param| DentakuKeyEncoder.encode(param) }.reject do |param|
-      record.calculation_formula.match?(/\b#{Regexp.escape(param)}\b/)
+    missing_parameters = record.formula_parameters.map { |param| dentaku_key_encode(param) }.reject do |param|
+      record.calculation_formula.include?(param)
     end
 
     return if missing_parameters.empty?
 
-    record.errors.add(:calculation_formula, "is missing parameters: #{missing_parameters.join(', ')}")
+    record.errors.add(:calculation_formula, "is missing parameters: #{missing_parameters.map do |param|
+      DentakuKeyEncoder.decode(param)
+    end.join(', ')}")
   end
 
   def check_allowed_parameters(record)
@@ -38,7 +40,7 @@ class ItemFormulaSyntaxValidator < ActiveModel::Validator
     end
     return if invalid_parameters.empty?
 
-    record.errors.add(:calculation_formula, "contains invalid parameters: #{invalid_parameters.uniq.join(', ')}")
+    record.errors.add(:calculation_formula, "contains invalid parameters: #{human_readable(invalid_parameters)}")
   end
 
   def check_operator_placement(record)
@@ -82,5 +84,17 @@ class ItemFormulaSyntaxValidator < ActiveModel::Validator
     else
       record.errors.add(:calculation_formula, "has a syntax error: #{error.message}")
     end
+  end
+
+  def dentaku_key_encode(param)
+    DentakuKeyEncoder.encode(param)
+  end
+
+  def dentaku_key_decode(param)
+    DentakuKeyEncoder.decode(param)
+  end
+
+  def human_readable(params)
+    params.uniq.map { |token| dentaku_key_decode(token) }.join(', ')
   end
 end

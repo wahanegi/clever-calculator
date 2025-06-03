@@ -10,8 +10,4 @@ module DentakuKeyEncoder
   rescue ArgumentError
     raise ArgumentError, "Invalid encoded Dentaku key format"
   end
-
-  def self.is_dentaku_key?(key)
-    key.start_with?("var_") && key.end_with?("_end")
-  end
 end

@@ -28,9 +28,41 @@ form.filter_form {
 }
 
 .formula-preview {
-  margin: 12px 0 20px 10px;
-  font-size: 14px;
-  color: #333;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 10px;
+  font-size: 16px;
+
+  &-bubble {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    border-radius: 10px;
+    padding: 5px 10px;
+  }
+
+  &-param {
+    color: red;
+    border: 1px solid red;
+    font-weight: bold;
+    background: #ffcece;
+  }
+
+  &-operator {
+    font-weight: bold;
+    border: 1px solid green;
+    color: green;
+    background: #c1ffc1;
+  }
+
+  &-custom-value {
+    font-weight: bold;
+    border: 1px solid blue;
+    color: blue;
+    background: #b9b9ff;
+  }
 }
 
 .formula-label {

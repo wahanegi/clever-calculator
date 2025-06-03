@@ -2,28 +2,31 @@
   <h2>Formula Builder for <%= @item.name %></h2>
 
   <div>
-    <div class="formula-display" id="formulaDisplay" contenteditable="true" placeholder="Click buttons below to build a formula...">
-      <%= @initial_formula.to_s %>
+    <div class="formula-display" id="formulaDisplay">
+      <%= formula_builder_html(@initial_formula.to_s) %>
     </div>
 
-    <div id="autocompleteBox" class="autocomplete-box"></div>
+    <h4>Enter custom number:</h4>
+    <button type="button" class="formula-btn custom-value-btn" data-custom-value="<input type='number' min='0' name='custom_value' value='0'>">
+      Add custom value
+    </button>
 
     <h4>Available parameters:</h4>
     <div class="formula-buttons">
       <% @formula_params.each do |param| %>
-        <button type="button" class="formula-btn param-btn" data-param="<%= DentakuKeyEncoder.encode(param) %>"><%= param %></button>
+        <button type="button" class="formula-btn param-btn" data-param="<span data-param='<%= DentakuKeyEncoder.encode(param) %>'><%= param %></span>"><%= param %></button>
       <% end %>
     </div>
 
     <h4>Operators:</h4>
     <div class="formula-buttons">
-      <% %w[+ - * / ( )].each do |op| %>
-        <button type="button" class="formula-btn operator-btn"><%= op %></button>
+      <% %w[+ - * / ( )].each do |operator| %>
+        <button type="button" class="formula-btn operator-btn" data-operator="<span data-operator='<%= operator %>'><%= operator %></span>"><%= operator %></button>
       <% end %>
     </div>
 
     <% item_id = @item.persisted? ? @item.id : "new" %>
-    <%= form_with url: update_formula_admin_item_path(id: item_id), method: :post, local: true do %>
+    <%= form_with url: update_formula_admin_item_path(id: item_id), method: :post, local: true, id: "formulaForm" do %>
       <%= hidden_field_tag :calculation_formula, '', id: 'formulaInput' %>
       <div class="form-actions">
         <%= submit_tag "Save Formula", class: "button" %>

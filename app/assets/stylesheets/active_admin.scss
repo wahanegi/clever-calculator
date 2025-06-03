@@ -71,12 +71,72 @@
 
 // === Formula Builder styles ===
 .formula-display {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
   border: 1px solid #ccc;
   padding: 10px;
-  min-height: 40px;
+  min-height: 66px;
   margin-bottom: 15px;
   background: #fefefe;
   font-size: 16px;
+
+  &-bubble {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    border-radius: 5px;
+    padding: 5px;
+  }
+
+  &-param {
+    color: red;
+    border: 1px solid red;
+    font-weight: bold;
+    background: #ffcece;
+  }
+
+  &-operator {
+    font-weight: bold;
+    border: 1px solid green;
+    color: green;
+    background: #c1ffc1;
+  }
+
+  &-custom-value {
+    font-weight: bold;
+    border: 1px solid blue;
+    color: blue;
+    background: #b9b9ff;
+  }
+
+  &-controls {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 5px;
+
+    &-remove-button, &-move-left-button, &-move-right-button {
+      color: white;
+      border: none;
+      padding: 5px 10px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    &-remove-button {
+      background: red;
+    }
+
+    &-move-left-button {
+      background: green;
+    }
+
+    &-move-right-button {
+      background: green;
+    }
+  }
 }
 
 .formula-buttons {
@@ -92,20 +152,10 @@
   border-radius: 4px;
   cursor: pointer;
   font-weight: bold;
-}
 
-.formula-btn:hover {
-  background: #d0d0d0;
-}
-
-.autocomplete-box {
-  background: white;
-  border: 1px solid #ccc;
-  max-width: 400px;
-  z-index: 1000;
-  padding: 5px;
-  border-radius: 4px;
-  display: none;
+  &:hover {
+    background: #d0d0d0;
+  }
 }
 
 .parameter-panel {

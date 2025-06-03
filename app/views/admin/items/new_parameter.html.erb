@@ -56,7 +56,6 @@
       </div>
     </div>
     <div class="form-actions">
-      <% item_key = resource.persisted? ? resource.id.to_s : "new" %>
       <% back_path = resource.persisted? ? edit_admin_item_path(resource) : new_resource_path %>
       <%= submit_tag "Add Parameter", class: "button" %>
       <%= link_to "Cancel", back_path, class: "button cancel-button" %>

@@ -14,7 +14,7 @@
     <tbody>
       <% fixed_parameters.each do |name, value| %>
         <tr>
-          <td style="width: 40%;"><%= parameter_display_name(name) %></td>
+          <td style="width: 40%;"><%= name %></td>
           <td style="width: 40%;"><%= value %></td>
           <% if mode == :edit %>
             <td style="width: 20%;">
@@ -42,7 +42,7 @@
     <tbody>
       <% open_parameters_label.each do |label| %>
         <tr>
-          <td style="width: 40%;"><%= parameter_display_name(label) %></td>
+          <td style="width: 40%;"><%= label %></td>
           <td style="width: 40%;">Value is entered by the user</td>
           <% if mode == :edit %>
             <td style="width: 20%;">
@@ -75,7 +75,7 @@
       </thead>
       <tbody>
         <tr>
-          <td><%= parameter_display_name(sel_name) %></td>
+          <td><%= sel_name %></td>
           <td><%= value_label %></td>
           <td>
             <div class="options-container">

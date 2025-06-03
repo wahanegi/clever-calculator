@@ -1,48 +1,48 @@
 <table class="quote-params-table">
   <tbody>
-    <% if fixed_parameters.present? %>
-      <% fixed_parameters.each do |name, value| %>
-        <tr>
-          <td class="param-name"><strong><%= parameter_display_name(name) %></strong></td>
-          <td class="param-value">
-            <input type="number"
-                    class="read-only-param"
-                    readonly
-                    value= <%= value %> />
-          </td>
-        </tr>
-      <% end %>
+  <% if fixed_parameters.present? %>
+    <% fixed_parameters.each do |name, value| %>
+      <tr>
+        <td class="param-name"><strong><%= name %></strong></td>
+        <td class="param-value">
+          <input type="number"
+                 class="read-only-param"
+                 readonly
+                 value=<%= value %> />
+        </td>
+      </tr>
     <% end %>
-    <% if open_parameters_label.present? %>
-      <% open_parameters_label.each do |label| %>
-        <tr>
-          <td class="param-name"><strong><%= parameter_display_name(label) %></strong> <abbr title="required">*</abbr></td>
-          <td class="param-value">
-            <input type="number"
-                     name="quote[quote_items_attributes][NEW_RECORD][open_param_values][<%= label %>]"
-                     class="quote-open-param-input param-input"
-                     value="<%= open_param_values[label].presence || '' %>" />
-          </td>
-        </tr>
-      <% end %>
+  <% end %>
+  <% if open_parameters_label.present? %>
+    <% open_parameters_label.each do |label| %>
+      <tr>
+        <td class="param-name"><strong><%= label %></strong> <abbr title="required">*</abbr></td>
+        <td class="param-value">
+          <input type="number"
+                 name="quote[quote_items_attributes][NEW_RECORD][open_param_values][<%= label %>]"
+                 class="quote-open-param-input param-input"
+                 value="<%= open_param_values[label].presence || '' %>" />
+        </td>
+      </tr>
     <% end %>
-    <% if select_parameters.present? %>
-      <% select_parameters.each do |sel_name, data| %>
-        <tr>
-          <td class="param-name"><strong><%= parameter_display_name(sel_name) %></strong> <abbr title="required">*</abbr></td>
-          <td class="param-value">
-            <select name="quote[quote_items_attributes][NEW_RECORD][select_param_values][<%= sel_name %>]"
-                      class="quote-select-param-input param-input">
-              <option value="">— Select —</option>
-              <% data['options'].each do |label, val| %>
-                <option value="<%= val %>" <%= 'selected' if select_param_values[sel_name].to_s == val.to_s %>>
-                    <%= label %> (<%= val %>)
-                  </option>
-                <% end %>
-              </select>
-            </td>
-          </tr>
-        <% end %>
-      <% end %>
-    </tbody>
-  </table>
+  <% end %>
+  <% if select_parameters.present? %>
+    <% select_parameters.each do |sel_name, data| %>
+      <tr>
+        <td class="param-name"><strong><%= sel_name %></strong> <abbr title="required">*</abbr></td>
+        <td class="param-value">
+          <select name="quote[quote_items_attributes][NEW_RECORD][select_param_values][<%= sel_name %>]"
+                  class="quote-select-param-input param-input">
+            <option value="">— Select —</option>
+            <% data['options'].each do |label, val| %>
+              <option value="<%= val %>" <%= 'selected' if select_param_values[sel_name].to_s == val.to_s %>>
+                <%= label %> (<%= val %>)
+              </option>
+            <% end %>
+          </select>
+        </td>
+      </tr>
+    <% end %>
+  <% end %>
+  </tbody>
+</table>

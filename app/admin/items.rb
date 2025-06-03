@@ -74,16 +74,8 @@ ActiveAdmin.register Item do
     f.inputs "Calculation Formula" do
       f.input :formula_parameters, as: :hidden
       div class: "formula-preview" do
-        div class: "formula-preview" do
-          span class: "formula-label" do
-            "Calculation Formula:"
-          end
-
-          span class: "formula" do
-            formula = session_service.get(:calculation_formula) || f.object.calculation_formula
-            formula.presence || "No formula yet"
-          end
-        end
+        formula = session_service.get(:calculation_formula) || f.object.calculation_formula
+        formula.present? ? formula_preview_html(formula) : "No formula yet"
       end
 
       tmp_fixed = session_service.get(:fixed) || {}
@@ -128,10 +120,8 @@ ActiveAdmin.register Item do
 
     if item.calculation_formula.present?
       panel "Calculation Formula" do
-        div class: "calculation-formula-box" do
-          item.calculation_formula
-              .gsub(%r{[+\-*/()]}) { |operator| "<span style=\"color: green; font-weight: bold;\">#{operator}</span>" }
-              .gsub(/var_[0-9a-fA-F]+_end/) { |dentaku_var| "<span style=\"color: red;border: 1px solid red; background: #fff; border-radius: 4px; padding: 4px;\">#{DentakuKeyEncoder.decode(dentaku_var)}</span>" }.html_safe
+        div class: "formula-preview" do
+          formula_preview_html(item.calculation_formula)
         end
       end
     end
