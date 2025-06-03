@@ -2,7 +2,13 @@ import React, { useState, useEffect, useRef } from 'react'
 import { Button, Container, Form } from 'react-bootstrap'
 import { useAppHooks } from '../hooks'
 import { DeleteItemModal, ItemsPricingTopBar, Item, QuoteCreation, DownloadSuccessModal } from '../shared'
-import { CancelQuoteAlertModal, OverLimitAlertModal, PcCategoryAccordion, PcItemAccordion, PcItemFormGroup, PcItemTextareaControl } from '../ui'
+import {
+  CancelQuoteAlertModal,
+  OverLimitAlertModal,
+  PcCategoryAccordion,
+  PcItemAccordion,
+  PcItemFormGroup,
+} from '../ui'
 import { getCurrentStepId, totalFinalPrice, triggerFileDownload } from '../utils'
 import { fetchNotes, fetchQuoteItems, fetchQuotes, fetchSelectableOptions } from '../services'
 import { AlertModal } from '../shared/AlertModal'
@@ -285,13 +291,14 @@ export const ItemsPricing = () => {
                           quoteId={quoteId}
                           selectedOptions={selectedOptions}
                           setSelectedOptions={setSelectedOptions}
-                          setIsOverPriceLimit={setIsOverPriceLimit}/>
+                          setIsOverPriceLimit={setIsOverPriceLimit} />
 
                     {notesState.isNotesOpen && (
                       <PcItemFormGroup label={'Notes'} paramType={'notes'}>
-                        <PcItemTextareaControl
-                          placeholder={''}
-                          className={'mb-3 mt-9'}
+                        <Form.Control
+                          as="textarea"
+                          style={{ height: '80px' }}
+                          className={'mb-3 mt-9 py-2'}
                           value={notesState.tempNote || ''}
                           onChange={(e) => handleNotesChange(item.id, e.target.value)}
                           onBlur={() => handleNotesBlur(item.id)}
@@ -339,7 +346,8 @@ export const ItemsPricing = () => {
         onConfirmDelete={handleConfirmDelete}
       />
       <ResetQuoteAlertModal />
-      <CancelQuoteAlertModal isShowCancelQuoteAlertModal={isShowCancelQuoteAlertModal} setIsShowCancelQuoteAlertModal={setIsShowCancelQuoteAlertModal}/>
+      <CancelQuoteAlertModal isShowCancelQuoteAlertModal={isShowCancelQuoteAlertModal}
+                             setIsShowCancelQuoteAlertModal={setIsShowCancelQuoteAlertModal} />
       <OverLimitAlertModal isOverPriceLimit={isOverPriceLimit} setIsOverPriceLimit={setIsOverPriceLimit} />
     </Container>
   )

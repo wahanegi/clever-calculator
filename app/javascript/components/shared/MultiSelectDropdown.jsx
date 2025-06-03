@@ -51,12 +51,17 @@ export const MultiSelectDropdown = ({
   }
 
   const TypeaheadControls = () => (
-    <div className={'multi-select-dropdown-controls position-absolute end-0 top-0 h-100'}>
+    <div className={'multi-select-dropdown-controls position-absolute end-0 top-0 h-100 py-1 pe-1 bg-transparent'}>
       <PcTransparentButton onClick={handleMenuOpen} className={'h-100 w-100'}>
         <PcIcon name={`${isMenuOpen ? 'arrowUpLight' : 'arrowDownLight'}`} />
       </PcTransparentButton>
     </div>
   )
+
+  const TypeaheadHideElements = () =>
+    <div className={'multi-select-dropdown-hide-elements position-absolute start-0 top-0 h-100 bg-transparent'}>
+      <div className="w-100 h-100"></div>
+    </div>
 
   return (
     <Form.Group controlId={id} className="multi-select-dropdown w-100 position-relative">
@@ -82,7 +87,8 @@ export const MultiSelectDropdown = ({
             <PcCheckboxOption
               label={<span dangerouslySetInnerHTML={{ __html: highlightedLabel }} />}
               checked={isSelected(option)}
-              onChange={() => {}}
+              onChange={() => {
+              }}
               className={'pc-checkbox-items-pricing'}
             />
           )
@@ -93,6 +99,7 @@ export const MultiSelectDropdown = ({
             key={index}
             className="rbt-token rbt-token-removeable"
             tabIndex={0}
+            title={option.name}
             onClick={(e) => {
               e.stopPropagation()
               const updated = selectedOptions.filter(
@@ -130,6 +137,8 @@ export const MultiSelectDropdown = ({
       </Form.Label>
 
       {hasIcon && <TypeaheadControls />}
+
+      <TypeaheadHideElements />
     </Form.Group>
   )
 }
