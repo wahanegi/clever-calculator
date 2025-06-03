@@ -328,7 +328,7 @@ ActiveAdmin.register Item do
       end
 
       sub_array = []
-      valid_options = false
+      valid_options_count = 0
       (params[:select_options] || []).each do |pair|
         desc = pair["description"].to_s.strip
         val = pair["value"].to_s.strip
@@ -345,12 +345,12 @@ ActiveAdmin.register Item do
         end
 
         sub_array << { "description" => desc, "value" => val }
-        valid_options = true
+        valid_options_count += 1
       end
-      # Validate parameter value
-      unless valid_options
-        flash.now[:error] =
-          "At least one valid option (with non-empty description and value) is required for Select parameter"
+
+      # Require at least two valid options
+      unless valid_options_count >= 2
+        flash.now[:error] = "At least two valid options (each with non-empty description and value) are required for Select parameter"
         return render :new_parameter
       end
 
