@@ -130,6 +130,8 @@ ActiveAdmin.register Item do
       panel "Calculation Formula" do
         div class: "calculation-formula-box" do
           item.calculation_formula
+              .gsub(%r{[+\-*/()]}) { |operator| "<span style=\"color: green; font-weight: bold;\">#{operator}</span>" }
+              .gsub(/var_[0-9a-fA-F]+_end/) { |dentaku_var| "<span style=\"color: red;border: 1px solid red; background: #fff; border-radius: 4px; padding: 4px;\">#{DentakuKeyEncoder.decode(dentaku_var)}</span>" }.html_safe
         end
       end
     end

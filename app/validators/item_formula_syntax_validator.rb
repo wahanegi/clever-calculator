@@ -18,7 +18,7 @@ class ItemFormulaSyntaxValidator < ActiveModel::Validator
   end
 
   def check_all_formula_parameters_present(record)
-    missing_parameters = record.formula_parameters.map.with_index { |k, i| k.to_formula_name(i) }.reject do |param|
+    missing_parameters = record.formula_parameters.map { |param| DentakuKeyEncoder.encode(param) }.reject do |param|
       record.calculation_formula.match?(/\b#{Regexp.escape(param)}\b/)
     end
 
@@ -34,7 +34,7 @@ class ItemFormulaSyntaxValidator < ActiveModel::Validator
     invalid_parameters = tokens.reject do |token|
       token.match?(/\A\d+(\.\d+)?\z/) ||
         operators.include?(token) ||
-        record.formula_parameters.map.with_index { |key, index| key.to_formula_name(index) }.include?(token)
+        record.formula_parameters.map { |param| DentakuKeyEncoder.encode(param) }.include?(token)
     end
     return if invalid_parameters.empty?
 
@@ -60,7 +60,8 @@ class ItemFormulaSyntaxValidator < ActiveModel::Validator
   end
 
   def check_max_allowed_value(record)
-    numbers = record.calculation_formula.scan(/-?\d+(?:\.\d+)?/)
+    stripped = record.calculation_formula.gsub(/var_[0-9a-fA-F]+_end/, '')
+    numbers = stripped.scan(/-?\d+(?:\.\d+)?/)
     float_numbers = numbers.map(&:to_f)
 
     invalid_numbers = float_numbers.select { |num| num > MAX_ALLOWED_VALUE }
