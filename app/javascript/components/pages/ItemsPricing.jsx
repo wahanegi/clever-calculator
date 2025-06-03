@@ -297,7 +297,6 @@ export const ItemsPricing = () => {
                           onBlur={() => handleNotesBlur(item.id)}
                         />
                         <Form.Group
-                          controlId={`include-notes-${item.id}`}
                           className="form-check pc-item-input notes fs-10"
                         >
                           <Form.Check.Input
