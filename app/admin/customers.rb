@@ -1,5 +1,6 @@
 ActiveAdmin.register Customer do
   permit_params :company_name, :first_name, :last_name, :email, :position, :address, :notes, :logo
+  includes logo_attachment: :blob
 
   index do
     selectable_column

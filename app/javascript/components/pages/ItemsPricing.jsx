@@ -266,7 +266,7 @@ export const ItemsPricing = () => {
       <section className={'d-flex flex-column gap-4 mb-12'}>
         {selectedOptions.map((selectedOption) =>
           <PcCategoryAccordion
-            key={`category-${selectedOption.id}`}
+            key={`${selectedOption.type}"-${selectedOption.id}`}
             categoryName={selectedOption.name}
             isOpen={expandedAccordions.includes(selectedOption.id)}
             onToggle={() => handleToggle(selectedOption.id)}

@@ -16,6 +16,8 @@ ActiveAdmin.register Quote do
                                                              :is_printable,
                                                              :_destroy] }]
 
+  includes :user, :customer
+
   filter :customer_company_name, as: :string, label: 'Company Name'
   filter :user, as: :select, collection: proc {
     User.joins(:quotes).distinct.order(:email).map do |u|

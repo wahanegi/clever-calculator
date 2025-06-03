@@ -7,6 +7,7 @@ ActiveAdmin.register Item do
       fixed_parameters pricing_options open_parameters_label formula_parameters calculation_formula
     ]
   end
+  includes :category
 
   filter :name_cont, as: :string, label: "Product Name"
   filter :category, as: :select, collection: -> { Category.pluck(:name, :id) }

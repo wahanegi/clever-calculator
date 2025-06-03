@@ -8,7 +8,7 @@
           <input type="number"
                  class="read-only-param"
                  readonly
-                 value=<%= value %> />
+                 value= <%= value %> />
         </td>
       </tr>
     <% end %>
@@ -26,25 +26,25 @@
       </tr>
     <% end %>
   <% end %>
-    <% if select_parameters.present? %>
-      <% select_parameters.each do |sel_name, data| %>
-        <tr>
-          <td class="param-name"><strong><%= parameter_display_name(sel_name) %></strong> <abbr title="required">*</abbr></td>
-          <td class="param-value">
-            <select name="quote[quote_items_attributes][NEW_RECORD][select_param_values][<%= sel_name %>]"
-                    class="quote-select-param-input param-input">
-              <option value="">— Select —</option>
-              <% data['options'].each do |opt| %>
-                <% val = opt['value'] %>
-                <% label = opt['description'] %>
-                <option value="<%= val %>" <%= 'selected' if select_param_values[sel_name].to_s == val.to_s %>>
-                  <%= label %> (<%= val %>)
-                </option>
-                <% end %>
-              </select>
-            </td>
-          </tr>
-        <% end %>
-      <% end %>
-    </tbody>
-  </table>
+  <% if select_parameters.present? %>
+    <% select_parameters.each do |sel_name, data| %>
+      <tr>
+        <td class="param-name"><strong><%= sel_name %></strong> <abbr title="required">*</abbr></td>
+        <td class="param-value">
+          <select name="quote[quote_items_attributes][NEW_RECORD][select_param_values][<%= sel_name %>]"
+                  class="quote-select-param-input param-input">
+            <option value="">— Select —</option>
+            <% data['options'].each do |opt| %>
+              <% val = opt['value'] %>
+              <% label = opt['description'] %>
+              <option value="<%= val %>" <%= 'selected' if select_param_values[sel_name].to_s == val.to_s %>>
+                <%= label %> (<%= val %>)
+              </option>
+            <% end %>
+          </select>
+        </td>
+      </tr>
+    <% end %>
+  <% end %>
+  </tbody>
+</table>

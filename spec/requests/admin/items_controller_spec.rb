@@ -32,7 +32,7 @@ RSpec.describe 'Admin::Items', type: :request do
              fixed_parameters: { 'Platform Fee' => '1000' },
              open_parameters_label: ['Users'],
 
-              pricing_options: {
+             pricing_options: {
                "Tier" => {
                  "options" => [ { "value" => "200", "description" => "Silver" } ],
                  "value_label" => "Cost Per User"
