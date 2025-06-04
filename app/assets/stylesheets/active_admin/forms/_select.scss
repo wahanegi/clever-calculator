@@ -30,39 +30,13 @@ form.filter_form {
 .formula-preview {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
-  padding: 10px;
-  font-size: 16px;
-
-  &-bubble {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 5px;
-    border-radius: 10px;
-    padding: 5px 10px;
-  }
-
-  &-param {
-    color: red;
-    border: 1px solid red;
-    font-weight: bold;
-    background: #ffcece;
-  }
-
-  &-operator {
-    font-weight: bold;
-    border: 1px solid green;
-    color: green;
-    background: #c1ffc1;
-  }
-
-  &-custom-value {
-    font-weight: bold;
-    border: 1px solid blue;
-    color: blue;
-    background: #b9b9ff;
-  }
+  gap: 5px;
+  padding: 5px;
+  font-size: 18px;
+  border-radius: 5px;
+  background: #fefefe;
+  border: 1px solid #ccc;
+  margin-inline: 10px;
 }
 
 .formula-label {

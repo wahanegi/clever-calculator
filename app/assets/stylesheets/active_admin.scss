@@ -71,72 +71,26 @@
 
 // === Formula Builder styles ===
 .formula-display {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  border: 1px solid #ccc;
-  padding: 10px;
-  min-height: 66px;
+  min-height: 40px;
   margin-bottom: 15px;
   background: #fefefe;
-  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 10px;
+  font-size: 18px;
+  line-height: 30px;
+}
 
-  &-bubble {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 5px;
-    border-radius: 5px;
-    padding: 5px;
-  }
-
-  &-param {
-    color: red;
-    border: 1px solid red;
-    font-weight: bold;
-    background: #ffcece;
-  }
-
-  &-operator {
-    font-weight: bold;
-    border: 1px solid green;
-    color: green;
-    background: #c1ffc1;
-  }
-
-  &-custom-value {
-    font-weight: bold;
-    border: 1px solid blue;
-    color: blue;
-    background: #b9b9ff;
-  }
-
-  &-controls {
-    display: flex;
-    flex-wrap: nowrap;
-    gap: 5px;
-
-    &-remove-button, &-move-left-button, &-move-right-button {
-      color: white;
-      border: none;
-      padding: 5px 10px;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-
-    &-remove-button {
-      background: red;
-    }
-
-    &-move-left-button {
-      background: green;
-    }
-
-    &-move-right-button {
-      background: green;
-    }
-  }
+.formula-bubble {
+  background: #f3f3f3;
+  border: 1px solid #ccc;
+  color: #353535;
+  border-radius: 5px;
+  padding: 2px 5px;
+  font-size: 15px;
+  font-weight: bold;
+  white-space: nowrap;
+  box-sizing: border-box;
 }
 
 .formula-buttons {

@@ -1,46 +1,43 @@
-function insertSymbol(htmlData, type) {
-  const element = document.createElement('div')
-  const controls = document.createElement('div')
-  const buttonX = document.createElement('button')
-  const buttonMoveRight = document.createElement('button')
-  const buttonMoveLeft = document.createElement('button')
+function insertAtCaret(html) {
+  const sel = window.getSelection()
+  if (!sel || sel.rangeCount === 0) return
 
-  buttonX.innerText = 'x'
-  buttonX.classList.add('formula-display-controls-remove-button')
-  buttonX.addEventListener('click', () => {
-    element.remove()
-  })
+  const range = sel.getRangeAt(0)
+  range.deleteContents() // optional: removes selected content
 
-  buttonMoveLeft.innerText = '<'
-  buttonMoveLeft.classList.add('formula-display-controls-move-left-button')
-  buttonMoveLeft.addEventListener('click', () => {
-    const prev = element.previousElementSibling
-    if (prev) {
-      formulaDisplay.insertBefore(element, prev)
-    }
-  })
+  // Create a fragment with the new content
+  const temp = document.createElement('div')
+  temp.innerHTML = html
 
-  buttonMoveRight.innerText = '>'
-  buttonMoveRight.classList.add('formula-display-controls-move-right-button')
-  buttonMoveRight.addEventListener('click', () => {
-    const next = element.nextElementSibling
-    if (next) {
-      formulaDisplay.insertBefore(next, element)
-    }
-  })
+  const frag = document.createDocumentFragment()
+  let node, lastNode
 
-  controls.classList.add('formula-display-controls')
-  controls.appendChild(buttonMoveLeft)
-  controls.appendChild(buttonX)
-  controls.appendChild(buttonMoveRight)
+  while ((node = temp.firstChild)) {
+    lastNode = frag.appendChild(node)
+  }
 
-  element.innerHTML = htmlData
-  element.dataset.type = type
-  element.classList.add('formula-display-bubble')
-  element.classList.add(`formula-display-${type}`)
-  element.appendChild(controls)
+  // Insert the fragment at the range
+  range.insertNode(frag)
 
-  formulaDisplay.insertAdjacentElement('beforeend', element)
+  // Move caret after inserted content
+  if (lastNode) {
+    range.setStartAfter(lastNode)
+    range.collapse(true)
+    sel.removeAllRanges()
+    sel.addRange(range)
+  }
+}
+
+function placeCaretAtEnd(element) {
+  if (!element) return
+
+  const range = document.createRange()
+  range.selectNodeContents(element)
+  range.collapse(false)
+
+  const sel = window.getSelection()
+  sel.removeAllRanges()
+  sel.addRange(range)
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -49,86 +46,101 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (!formulaDisplay || !formulaInput) return
 
+  formulaDisplay.focus()
+  placeCaretAtEnd(formulaDisplay)
+
   document.querySelectorAll('.formula-btn.operator-btn').forEach((btn) => {
     btn.addEventListener('click', () => {
-      insertSymbol(btn.dataset.operator, 'operator')
+      formulaDisplay.focus()
+      insertAtCaret(' ' + btn.dataset.template + ' ')
     })
   })
 
   document.querySelectorAll('.formula-btn.param-btn').forEach((btn) => {
     btn.addEventListener('click', () => {
-      insertSymbol(btn.dataset.param, 'param')
+      formulaDisplay.focus()
+      insertAtCaret(' ' + btn.dataset.template + ' ')
     })
   })
 
-  document.querySelectorAll('.formula-btn.custom-value-btn').forEach((btn) => {
-    btn.addEventListener('click', () => {
-      insertSymbol(btn.dataset.customValue, 'custom-value')
+  document.querySelector('form#formulaForm').addEventListener('submit', (e) => {
+    // Clone the editor to avoid changing live DOM during replacement
+    const clone = formulaDisplay.cloneNode(true)
+
+    // Replace each bubble span with its paramId text node
+    clone.querySelectorAll('.formula-bubble').forEach(bubble => {
+      const textNode = document.createTextNode(bubble.dataset.paramId)
+      bubble.replaceWith(textNode)
     })
-  })
 
-  document.querySelectorAll('.formula-display-bubble').forEach(bubble => {
-    bubble.querySelectorAll('.formula-display-controls').forEach(controls => {
+    // Get the plain text after replacements
+    let formula = clone.innerText.trim()
 
-      controls.querySelector('.formula-display-controls-remove-button')
-        .addEventListener('click', () => {
-          bubble.remove()
-        })
+    // Replace non-breaking spaces (if any) with normal space
+    formula = formula.replace(/\u00A0/g, ' ')
 
-      controls.querySelector('.formula-display-controls-move-left-button')
-        .addEventListener('click', () => {
-          const prev = bubble.previousElementSibling
-          if (prev) {
-            formulaDisplay.insertBefore(bubble, prev)
-          }
-        })
+    // Add spaces around operators
+    formula = formula.replace(/([+\-*/()])/g, ' $1 ')
 
-      controls.querySelector('.formula-display-controls-move-right-button')
-        .addEventListener('click', () => {
-          const next = bubble.nextElementSibling
-          if (next) {
-            formulaDisplay.insertBefore(next, bubble)
-          }
-        })
+    // Normalize whitespace
+    formula = formula.replace(/\s+/g, ' ')
 
-    })
-  })
-
-  document.querySelector('form#formulaForm').addEventListener('submit', () => {
-    let formula = ''
-
-    const bubbles = formulaDisplay.querySelectorAll('.formula-display-bubble')
-
-    bubbles.forEach(bubble => {
-      const span = bubble.querySelector('span')
-
-      switch (bubble.dataset.type) {
-        case 'operator':
-          if (span?.dataset.operator) {
-            formula += `${span.dataset.operator} `
-          }
-          break
-
-        case 'param':
-          if (span?.dataset.param) {
-            formula += `${span.dataset.param} `
-          }
-          break
-
-        case 'custom-value':
-          const input = bubble.querySelector('input[name="custom_value"]')
-          if (input?.value) {
-            formula += `${input.value.trim()} `
-          }
-          break
-
-        default:
-          console.error('Unknown bubble type:', bubble.dataset.type)
-          break
-      }
-    })
+    // Replace commas with dots
+    formula = formula.replace(/,/g, '.')
 
     formulaInput.value = formula.trim()
   })
 
+  formulaDisplay.addEventListener('input', () => {
+    const textContent = formulaDisplay.textContent.trim()
+    const htmlContent = formulaDisplay.innerHTML.trim()
+
+    // Case: user deletes all visible text, but tags remain
+    if (textContent === '' && htmlContent === '') {
+      // Remove all lingering tags
+      formulaDisplay.innerHTML = ''
+    }
+  })
+
+  formulaDisplay.addEventListener('keydown', (e) => {
+    if (e.key !== 'Backspace') return
+
+    const sel = window.getSelection()
+    if (!sel.rangeCount) return
+
+    const range = sel.getRangeAt(0)
+
+    // CASE 1: Only a non-editable span exists in the editor
+    if (
+      formulaDisplay.childNodes.length === 1 &&
+      formulaDisplay.firstChild.nodeType === 1 &&
+      formulaDisplay.firstChild.contentEditable === 'false'
+    ) {
+      e.preventDefault()
+      formulaDisplay.innerHTML = ''
+      return
+    }
+
+    // CASE 2: Caret is at start of a text node, just after a non-editable span
+    const node = range.startContainer
+    if (node.nodeType === Node.TEXT_NODE && range.startOffset === 0) {
+      const prev = node.previousSibling
+
+      if (prev && prev.nodeType === 1 && prev.contentEditable === 'false') {
+        e.preventDefault()
+        prev.remove()
+        return
+      }
+    }
+
+    // CASE 3: Caret is directly inside the editor (not in a text node), and after a span
+    if (
+      node === formulaDisplay &&
+      range.startOffset > 0 &&
+      formulaDisplay.childNodes[range.startOffset - 1]?.contentEditable === 'false'
+    ) {
+      e.preventDefault()
+      formulaDisplay.childNodes[range.startOffset - 1].remove()
+    }
+  })
 })

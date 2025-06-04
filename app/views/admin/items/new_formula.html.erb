@@ -2,26 +2,21 @@
   <h2>Formula Builder for <%= @item.name %></h2>
 
   <div>
-    <div class="formula-display" id="formulaDisplay">
+    <div class="formula-display" id="formulaDisplay" contenteditable="true" placeholder="Click buttons below to build a formula...">
       <%= formula_builder_html(@initial_formula.to_s) %>
     </div>
-
-    <h4>Enter custom number:</h4>
-    <button type="button" class="formula-btn custom-value-btn" data-custom-value="<input type='number' min='0' name='custom_value' value='0'>">
-      Add custom value
-    </button>
 
     <h4>Available parameters:</h4>
     <div class="formula-buttons">
       <% @formula_params.each do |param| %>
-        <button type="button" class="formula-btn param-btn" data-param="<span data-param='<%= DentakuKeyEncoder.encode(param) %>'><%= param %></span>"><%= param %></button>
+        <button type="button" class="formula-btn param-btn" data-template="<%= template_bubble_tag(param, DentakuKeyEncoder.encode(param)) %>"><%= param %></button>
       <% end %>
     </div>
 
     <h4>Operators:</h4>
     <div class="formula-buttons">
       <% %w[+ - * / ( )].each do |operator| %>
-        <button type="button" class="formula-btn operator-btn" data-operator="<span data-operator='<%= operator %>'><%= operator %></span>"><%= operator %></button>
+        <button type="button" class="formula-btn operator-btn" data-template="<%= operator %>"><%= operator %></button>
       <% end %>
     </div>
 

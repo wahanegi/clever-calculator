@@ -30,13 +30,12 @@ class ItemFormulaSyntaxValidator < ActiveModel::Validator
   end
 
   def check_allowed_parameters(record)
-    operators = %w[+ - * / % ( )]
     tokens = record.calculation_formula.scan(%r{\d+\.\d+|\d+|[A-Za-z_]\w*|[+\-*/%()\]]})
 
     invalid_parameters = tokens.reject do |token|
       token.match?(/\A\d+(\.\d+)?\z/) ||
-        operators.include?(token) ||
-        record.formula_parameters.map { |param| DentakuKeyEncoder.encode(param) }.include?(token)
+        %w[+ - * / % ( )].include?(token) ||
+        record.formula_parameters.map { |param| dentaku_key_encode(param) }.include?(token)
     end
     return if invalid_parameters.empty?
 
