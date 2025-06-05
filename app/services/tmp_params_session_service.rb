@@ -19,10 +19,7 @@ class TmpParamsSessionService
   end
 
   def delete_all
-    Rails.logger.debug "!!!!!!Deleting all tmp params"
-    Rails.logger.debug "!!!!!!Before clearing tmp params: #{@session[:tmp_params]}"
     @session[:tmp_params].clear
-    Rails.logger.debug "!!!!!!After clearing tmp params: #{@session[:tmp_params]}"
   end
 
   def add_formula_parameter(name)

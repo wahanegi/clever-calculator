@@ -449,12 +449,9 @@ ActiveAdmin.register Item do
     force_clear = request.body.read.present? && JSON.parse(request.body.read)["force"]
 
     if referer_path.start_with?('/admin/items/new') && !force_clear
-      Rails.logger.warn "❌ Ignored session clear because referer is still in item creation flow: #{referer_path}"
       head :ok
       return
     end
-
-    Rails.logger.warn "✅ Clearing session from referer: #{referer_path}"
     session_service.delete_all
     head :ok
   end
