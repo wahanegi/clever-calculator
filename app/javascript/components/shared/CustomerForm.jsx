@@ -87,14 +87,14 @@ export const CustomerForm = () => {
     setCustomer((prev) => ({ ...prev, email: value }))
 
     // Only validate if there's an existing email error to clear it immediately
-    if (errors.email) {
-      if (value && !INPUT_VALIDATORS.emailFormat.test(value)) {
-        setErrors((prev) => ({ ...prev, email: 'Invalid email format' }))
-        setIsNextDisabled(true)
-      } else {
-        setErrors((prev) => ({ ...prev, email: '' }))
-        setIsNextDisabled(!customer.company_name || (value && !INPUT_VALIDATORS.emailFormat.test(value)))
-      }
+    if (!errors.email) return
+
+    if (value && !INPUT_VALIDATORS.emailFormat.test(value)) {
+      setErrors((prev) => ({ ...prev, email: 'Invalid email format' }))
+      setIsNextDisabled(true)
+    } else {
+      setErrors((prev) => ({ ...prev, email: '' }))
+      setIsNextDisabled(!customer.company_name || (value && !INPUT_VALIDATORS.emailFormat.test(value)))
     }
   }
 
