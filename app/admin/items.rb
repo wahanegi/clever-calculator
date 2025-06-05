@@ -169,7 +169,7 @@ ActiveAdmin.register Item do
       session_service.update_with_tmp_to_item(@item)
 
       if @item.save
-        session_service.delete_all
+        session_service.clear
         redirect_to target_path, notice: "Item was successfully created."
       else
         flash.now[:error] = "Failed to create item: #{@item.errors.full_messages.to_sentence}"
@@ -201,7 +201,7 @@ ActiveAdmin.register Item do
       end
 
       if @item.update(permitted_params[:item].except(:formula_parameters))
-        session_service.delete_all
+        session_service.clear
         redirect_to target_path, notice: "Item was successfully updated."
       else
         flash[:error] = "Failed to update item: #{@item.errors.full_messages.to_sentence}"
@@ -452,7 +452,7 @@ ActiveAdmin.register Item do
       head :ok
       return
     end
-    session_service.delete_all
+    session_service.clear
     head :ok
   end
 end

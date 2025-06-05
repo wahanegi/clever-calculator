@@ -18,7 +18,7 @@ class TmpParamsSessionService
     @session[:tmp_params][@item_key][symbol_key.to_s] = value
   end
 
-  def delete_all
+  def clear
     @session[:tmp_params].clear
   end
 
