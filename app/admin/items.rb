@@ -169,8 +169,7 @@ ActiveAdmin.register Item do
       session_service.update_with_tmp_to_item(@item)
 
       if @item.save
-        session_service.delete
-
+        session_service.delete_all
         redirect_to target_path, notice: "Item was successfully created."
       else
         flash.now[:error] = "Failed to create item: #{@item.errors.full_messages.to_sentence}"
@@ -202,8 +201,7 @@ ActiveAdmin.register Item do
       end
 
       if @item.update(permitted_params[:item].except(:formula_parameters))
-        session_service.delete
-
+        session_service.delete_all
         redirect_to target_path, notice: "Item was successfully updated."
       else
         flash[:error] = "Failed to update item: #{@item.errors.full_messages.to_sentence}"
@@ -435,9 +433,22 @@ ActiveAdmin.register Item do
     redirect_to params[:id] == "new" ? new_resource_path : edit_admin_item_path(params[:id])
   end
 
-  member_action :clear_session, method: :post do
-    session_service.delete
+  collection_action :clear_session, method: :post do
+    referer_path = begin
+      URI.parse(request.referer.to_s).path
+    rescue StandardError
+      ''
+    end
+    force_clear = request.body.read.present? && JSON.parse(request.body.read)["force"]
 
+    if referer_path.start_with?('/admin/items/new') && !force_clear
+      Rails.logger.warn "❌ Ignored session clear because referer is still in item creation flow: #{referer_path}"
+      head :ok
+      return
+    end
+
+    Rails.logger.warn "✅ Clearing session from referer: #{referer_path}"
+    session_service.delete_all
     head :ok
   end
 end

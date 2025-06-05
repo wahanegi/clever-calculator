@@ -27,7 +27,7 @@ RSpec.describe TmpParamsSessionService do
   describe "#delete" do
     it "removes the item data from session" do
       service.set(:open, ["A"])
-      expect { service.delete }.to change { session[:tmp_params].key?(item_key) }.from(true).to(false)
+      expect { service.delete_all }.to change { session[:tmp_params].key?(item_key) }.from(true).to(false)
     end
   end
 

@@ -18,8 +18,11 @@ class TmpParamsSessionService
     @session[:tmp_params][@item_key][symbol_key.to_s] = value
   end
 
-  def delete
-    @session[:tmp_params].delete(@item_key)
+  def delete_all
+    Rails.logger.debug "!!!!!!Deleting all tmp params"
+    Rails.logger.debug "!!!!!!Before clearing tmp params: #{@session[:tmp_params]}"
+    @session[:tmp_params].clear
+    Rails.logger.debug "!!!!!!After clearing tmp params: #{@session[:tmp_params]}"
   end
 
   def add_formula_parameter(name)
