@@ -154,10 +154,10 @@ ActiveAdmin.register Quote do
       )
 
       qf.input :price, as: :number, input_html: { min: 0, readonly: true, value: qf.object.price || 0, class: 'read-only-price' },
-               required: false, hint: 'Price will be calculated automatically based on Pricing parameters'
+                       required: false, hint: 'Price will be calculated automatically based on Pricing parameters'
       qf.input :discount, as: :number, input_html: { min: 0, max: 100, class: 'discount-input' }
       qf.input :final_price, as: :number, input_html: { min: 0, readonly: true, value: qf.object.final_price || 0, class: 'read-only-price' },
-               required: false, hint: 'Final price will be calculated automatically based on Discount'
+                             required: false, hint: 'Final price will be calculated automatically based on Discount'
       qf.has_many :note, allow_destroy: true, new_record: true, heading: false, class: 'quote-item-note-wrapper' do |n|
         n.input :notes, as: :text, input_html: { class: 'note-textarea', rows: 6 }
         n.input :is_printable, as: :boolean, label: 'Is downloadable'
