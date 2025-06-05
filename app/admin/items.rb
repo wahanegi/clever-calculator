@@ -50,7 +50,7 @@ ActiveAdmin.register Item do
       f.input :description, as: :string,
                             input_html: { value: f.object.description.presence || meta_data["description"] }
       f.input :category_id, as: :select,
-                            collection: Category.pluck(:name, :id),
+                            collection: Category.enabled.pluck(:name, :id),
                             include_blank: "No Category",
                             selected: f.object.category_id.presence || meta_data["category_id"] || params[:category_id]
     end
@@ -74,9 +74,9 @@ ActiveAdmin.register Item do
 
     f.inputs "Calculation Formula" do
       f.input :formula_parameters, as: :hidden
-      div class: "formula-preview" do
+      div class: "formula" do
         formula = session_service.get(:calculation_formula) || f.object.calculation_formula
-        formula.present? ? formula_preview_html(formula) : "No formula yet"
+        formula.present? ? render_formula_with_bubbles(formula) : "No formula yet"
       end
 
       tmp_fixed = session_service.get(:fixed) || {}
@@ -121,8 +121,8 @@ ActiveAdmin.register Item do
 
     if item.calculation_formula.present?
       panel "Calculation Formula" do
-        div class: "formula-preview" do
-          formula_preview_html(item.calculation_formula)
+        div class: "formula" do
+          render_formula_with_bubbles(item.calculation_formula)
         end
       end
     end

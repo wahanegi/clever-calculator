@@ -49,22 +49,15 @@ document.addEventListener('DOMContentLoaded', () => {
   formulaDisplay.focus()
   placeCaretAtEnd(formulaDisplay)
 
-  document.querySelectorAll('.formula-btn.operator-btn').forEach((btn) => {
+  document.querySelectorAll('.formula-btn.operator-btn, .formula-btn.param-btn').forEach((btn) => {
     btn.addEventListener('click', () => {
       formulaDisplay.focus()
-      insertAtCaret(' ' + btn.dataset.template + ' ')
-    })
-  })
-
-  document.querySelectorAll('.formula-btn.param-btn').forEach((btn) => {
-    btn.addEventListener('click', () => {
-      formulaDisplay.focus()
-      insertAtCaret(' ' + btn.dataset.template + ' ')
+      insertAtCaret(` ${btn.dataset.template} `)
     })
   })
 
   document.querySelector('form#formulaForm').addEventListener('submit', (e) => {
-    // Clone the editor to avoid changing live DOM during replacement
+    // Clone the editor
     const clone = formulaDisplay.cloneNode(true)
 
     // Replace each bubble span with its paramId text node
@@ -95,7 +88,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const textContent = formulaDisplay.textContent.trim()
     const htmlContent = formulaDisplay.innerHTML.trim()
 
-    // Case: user deletes all visible text, but tags remain
     if (textContent === '' && htmlContent === '') {
       // Remove all lingering tags
       formulaDisplay.innerHTML = ''

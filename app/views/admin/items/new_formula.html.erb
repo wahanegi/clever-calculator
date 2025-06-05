@@ -3,7 +3,7 @@
 
   <div>
     <div class="formula-display" id="formulaDisplay" contenteditable="true" placeholder="Click buttons below to build a formula...">
-      <%= formula_builder_html(@initial_formula.to_s) %>
+      <%= render_formula_with_bubbles(@initial_formula.to_s) %>
     </div>
 
     <h4>Available parameters:</h4>
