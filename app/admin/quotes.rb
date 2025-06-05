@@ -153,9 +153,11 @@ ActiveAdmin.register Quote do
         end
       )
 
-      qf.input :price, as: :number, input_html: { min: 0, readonly: true, value: qf.object.price || 0, class: 'read-only-price' }, required: false, hint: 'Price will be calculated automatically based on Pricing parameters'
+      qf.input :price, as: :number, input_html: { min: 0, readonly: true, value: qf.object.price || 0, class: 'read-only-price' },
+               required: false, hint: 'Price will be calculated automatically based on Pricing parameters'
       qf.input :discount, as: :number, input_html: { min: 0, max: 100, class: 'discount-input' }
-      qf.input :final_price, as: :number, input_html: { min: 0, readonly: true, value: qf.object.final_price || 0, class: 'read-only-price' }, required: false, hint: 'Final price will be calculated automatically based on Discount'
+      qf.input :final_price, as: :number, input_html: { min: 0, readonly: true, value: qf.object.final_price || 0, class: 'read-only-price' },
+               required: false, hint: 'Final price will be calculated automatically based on Discount'
       qf.has_many :note, allow_destroy: true, new_record: true, heading: false, class: 'quote-item-note-wrapper' do |n|
         n.input :notes, as: :text, input_html: { class: 'note-textarea', rows: 6 }
         n.input :is_printable, as: :boolean, label: 'Is downloadable'
@@ -269,25 +271,14 @@ ActiveAdmin.register Quote do
 
   controller do
     helper ActiveAdmin::ItemsHelper
-    before_action :sanitize_blank_arrays, only: [:create, :update]
+    before_action :sanitize_blank_arrays, only: %i[create update]
 
     def update
       @quote = Quote.find(params[:id])
-      permitted_attrs = permitted_quote_items_attrs
-      process_quote_items(permitted_attrs)
 
-      if @quote.errors.any?
-        render :edit
-        return
-      end
-
-      quote_params = prepare_quote_params
-      @quote.quote_items.reload
-      if @quote.update(quote_params)
-        @quote.recalculate_total_price
+      if @quote.update(prepare_quote_params)
         redirect_to admin_quote_path(@quote), notice: "Quote updated successfully."
       else
-        @quote.quote_items.reload
         render :edit
       end
     end
@@ -299,55 +290,16 @@ ActiveAdmin.register Quote do
 
     private
 
-    def permitted_quote_items_attrs
-      params[:quote][:quote_items_attributes]&.values&.map do |attrs|
-        attrs.permit(
-          :id, :item_id, :price, :discount, :final_price, :_destroy,
-          open_param_values: {}, select_param_values: {},
-          note_attributes: [:id, :notes, :is_printable, :_destroy]
-        )
-      end || []
-    end
-
     def prepare_quote_params
-      permitted_params[:quote].except(:quote_items_attributes).tap do |params|
-        existing_category_ids = @quote.quote_items.joins(:item).pluck('items.category_id').uniq.compact
-        params[:category_ids] = (params[:category_ids] || []) | existing_category_ids.map(&:to_s)
-        params.delete(:item_ids) if action_name == 'update'
+      permitted_params[:quote].tap do |params|
+        existing_category_ids = @quote.quote_items.joins(:item)
+                                      .where.not(items: { category_id: nil }).distinct
+                                      .pluck('items.category_id').map(&:to_s)
 
+        params[:category_ids] = (params[:category_ids] || []) | existing_category_ids
+        params.delete(:item_ids) if action_name == 'update'
         params.delete(:category_ids) if params[:category_ids].blank?
       end
-    end
-
-    def process_quote_items(attrs_list)
-      attrs_list.each do |attrs|
-        if attrs[:_destroy] == "1"
-          destroy_quote_item(attrs[:id])
-        elsif attrs[:id].present?
-          update_quote_item(attrs)
-        else
-          create_quote_item(attrs)
-        end
-      end
-    end
-
-    def destroy_quote_item(id)
-      if (quote_item = @quote.quote_items.find_by(id:))
-        quote_item.destroy
-      end
-    end
-
-    def update_quote_item(attrs)
-      if (quote_item = @quote.quote_items.find_by(id: attrs[:id])) && !quote_item.update(attrs.except(:_destroy, :id, :quote_id))
-        @quote.errors.add(:base, "Failed to update QuoteItem ##{quote_item.id}: #{quote_item.errors.full_messages.join(', ')}")
-      end
-    end
-
-    def create_quote_item(attrs)
-      quote_item = @quote.quote_items.build(attrs.except(:_destroy, :id, :quote_id))
-      return if quote_item.save
-
-      @quote.errors.add(:base, "Quote item could not be saved: #{quote_item.errors.full_messages.to_sentence}")
     end
 
     def extract_safe_params(param_set, allowed_keys)
