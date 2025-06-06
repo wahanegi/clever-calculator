@@ -283,7 +283,7 @@ ActiveAdmin.register Quote do
       @quote = Quote.new(quote_params)
 
       if @quote.save
-        redirect_to admin_quote_path(@quote), notice: "Quote created successfully."
+        redirect_to admin_quote_path(@quote), notice: "Quote was successfully created."
       else
         render :new
       end
