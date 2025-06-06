@@ -84,22 +84,30 @@ export const CustomerForm = () => {
 
   const handleEmailChange = (e) => {
     const { value } = e.target
-
     setCustomer((prev) => ({ ...prev, email: value }))
+
+    // Only validate if there's an existing email error to clear it immediately
+    if (!errors.email) return
+
+    if (value && !INPUT_VALIDATORS.emailFormat.test(value)) {
+      setErrors((prev) => ({ ...prev, email: 'Invalid email format' }))
+      setIsNextDisabled(true)
+    } else {
+      setErrors((prev) => ({ ...prev, email: '' }))
+      setIsNextDisabled(!customer.company_name || (value && !INPUT_VALIDATORS.emailFormat.test(value)))
+    }
   }
 
-  const handleEmailValidationMouseLeave = (e) => {
+  const handleEmailBlur = (e) => {
     const { value } = e.target
-    e.target.blur()
-
     if (value && !INPUT_VALIDATORS.emailFormat.test(value)) {
       setIsNextDisabled(true)
       setErrors((prev) => ({ ...prev, email: 'Invalid email format' }))
     } else {
-      setIsNextDisabled(false)
       setErrors((prev) => ({ ...prev, email: '' }))
+      // Enable Next button if all required fields are valid
+      setIsNextDisabled(!customer.company_name || (value && !INPUT_VALIDATORS.emailFormat.test(value)))
     }
-
   }
 
   const handleFullNameChange = (e) => {
@@ -179,7 +187,7 @@ export const CustomerForm = () => {
   return (
     <Form onSubmit={handleNext} className={'d-flex flex-column w-100 align-items-center'}>
       <div className="border rounded border-primary customer-form bg-light w-100 mb-10">
-        <Row className="mb-8">
+        <Row className="mb-3">
           <div className="d-flex flex-column flex-sm-row gap-8">
             <Col className={'image-placeholder mx-auto'}>
               <PcLogoUploader
@@ -190,7 +198,7 @@ export const CustomerForm = () => {
                 error={errors.logo} />
             </Col>
             <Col>
-              <Row className="mb-8">
+              <Row className="mb-3">
                 <Col>
                   <PcDropdownSelect
                     id="company_name"
@@ -239,7 +247,7 @@ export const CustomerForm = () => {
             </Col>
           </div>
         </Row>
-        <Row className="mb-8">
+        <Row className="mb-3">
           <div className="d-flex flex-column flex-sm-row gap-8">
             <Col>
               <PcInput
@@ -250,7 +258,7 @@ export const CustomerForm = () => {
                 height="42px"
                 value={customer.email}
                 error={errors.email}
-                onMouseLeave={handleEmailValidationMouseLeave}
+                onBlur={handleEmailBlur}
                 onChange={handleEmailChange}
               />
             </Col>
