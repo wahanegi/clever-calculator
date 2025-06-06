@@ -162,8 +162,7 @@ ActiveAdmin.register Item do
       session_service.update_with_tmp_to_item(@item)
 
       if @item.save
-        session_service.delete
-
+        session_service.clear
         redirect_to target_path, notice: "Item was successfully created."
       else
         flash.now[:error] = "Failed to create item: #{@item.errors.full_messages.to_sentence}"
@@ -195,8 +194,7 @@ ActiveAdmin.register Item do
       end
 
       if @item.update(permitted_params[:item].except(:formula_parameters))
-        session_service.delete
-
+        session_service.clear
         redirect_to target_path, notice: "Item was successfully updated."
       else
         flash[:error] = "Failed to update item: #{@item.errors.full_messages.to_sentence}"
@@ -289,78 +287,85 @@ ActiveAdmin.register Item do
       return render :new_parameter
     end
 
-    session_service.add_formula_parameter(param_name)
+    # Track if we add to formula_parameters for cleanup on failure
+    added_to_formula = false
 
-    case @param_type
-    when "Fixed"
-      param_value = params[:fixed_parameter_value].to_s.strip
-      # Validate parameter value
-      if param_value.blank?
-        flash.now[:error] = "Parameter value can't be blank for Fixed parameter"
-        return render :new_parameter
-      end
-
-      if param_value > MAX_ALLOWED_VALUE
-        flash.now[:error] = "Parameter value exceeds maximum allowed value of #{MAX_ALLOWED_VALUE}"
-        return render :new_parameter
-      end
-      fixed = session_service.get(:fixed) || {}
-      fixed[param_name] = param_value
-      session_service.set(:fixed, fixed)
-
-    when "Open"
-      open_params = session_service.get(:open) || []
-      open_params << param_name unless open_params.include?(param_name)
-      session_service.set(:open, open_params)
-
-    when "Select"
-      value_label = params[:value_label].to_s.strip
-      if value_label.blank?
-        flash.now[:error] = "Value Label is required for Select parameter"
-        return render :new_parameter
-      end
-
-      sub_array = []
-      valid_options_count = 0
-      (params[:select_options] || []).each do |pair|
-        desc = pair["description"].to_s.strip
-        val = pair["value"].to_s.strip
-        next if desc.blank? && val.blank?
-
-        if (desc.present? && val.blank?) || (val.present? && desc.blank?)
-          flash.now[:error] = 'Each Select option must have both a description and a value.'
-          return render :new_parameter
+    begin
+      case @param_type
+      when "Fixed"
+        param_value = params[:fixed_parameter_value].to_s.strip
+        if param_value.blank?
+          flash.now[:error] = "Parameter value can't be blank for Fixed parameter"
+          raise ActiveRecord::RecordInvalid, @item
         end
 
-        if val > MAX_ALLOWED_VALUE
-          flash.now[:error] = "Option value '#{val}' for '#{desc}' exceeds maximum allowed value of #{MAX_ALLOWED_VALUE}"
-          return render :new_parameter
+        if param_value > MAX_ALLOWED_VALUE
+          flash.now[:error] = "Parameter value exceeds maximum allowed value of #{MAX_ALLOWED_VALUE}"
+          raise ActiveRecord::RecordInvalid, @item
         end
 
-        sub_array << { "description" => desc, "value" => val }
-        valid_options_count += 1
+        session_service.add_formula_parameter(param_name)
+        added_to_formula = true
+        fixed = session_service.get(:fixed) || {}
+        fixed[param_name] = param_value
+        session_service.set(:fixed, fixed)
+
+      when "Open"
+        session_service.add_formula_parameter(param_name)
+        added_to_formula = true
+        open_params = session_service.get(:open) || []
+        open_params << param_name unless open_params.include?(param_name)
+        session_service.set(:open, open_params)
+
+      when "Select"
+        value_label = params[:value_label].to_s.strip
+        if value_label.blank?
+          flash.now[:error] = "Value Label is required for Select parameter"
+          raise ActiveRecord::RecordInvalid, @item
+        end
+
+        sub_array = []
+        valid_options_count = 0
+        (params[:select_options] || []).each do |pair|
+          desc = pair["description"].to_s.strip
+          val = pair["value"].to_s.strip
+          next if desc.blank? && val.blank?
+
+          if (desc.present? && val.blank?) || (val.present? && desc.blank?)
+            flash.now[:error] = "Each Select option must have both a description and a value"
+            raise ActiveRecord::RecordInvalid, @item
+          end
+
+          if val > MAX_ALLOWED_VALUE
+            flash.now[:error] = "Option value '#{val}' for '#{desc}' exceeds maximum allowed value of #{MAX_ALLOWED_VALUE}"
+            raise ActiveRecord::RecordInvalid, @item
+          end
+
+          sub_array << { "description" => desc, "value" => val }
+          valid_options_count += 1
+        end
+
+        unless valid_options_count >= 2
+          flash.now[:error] = "At least two valid options (each with non-empty description and value) are required for Select parameter"
+          raise ActiveRecord::RecordInvalid, @item
+        end
+
+        session_service.add_formula_parameter(param_name)
+        added_to_formula = true
+        select = session_service.get(:select) || {}
+        select[param_name] = {
+          "options" => sub_array,
+          "value_label" => value_label
+        }
+        session_service.set(:select, select)
       end
 
-      # Require at least two valid options
-      unless valid_options_count >= 2
-        flash.now[:error] = "At least two valid options (each with non-empty description and value) are required for Select parameter"
-        return render :new_parameter
-      end
-
-      select = session_service.get(:select) || {}
-      select[param_name] = {
-        "options" => sub_array,
-        "value_label" => value_label
-      }
-      session_service.set(:select, select)
-
-    else
-      flash[:error] = "Unknown parameter type"
-      return redirect_back(fallback_location: @item&.id ? edit_admin_item_path(@item) : new_admin_item_path)
+      flash[:notice] = "Parameter '#{param_name}' added (stored in session)"
+      redirect_to @item.persisted? ? edit_admin_item_path(@item) : new_admin_item_path
+    rescue ActiveRecord::RecordInvalid
+      session_service.remove_formula_parameter(param_name) if added_to_formula
+      render :new_parameter
     end
-
-    flash[:notice] = "Parameter '#{param_name}' added (stored in session)."
-    redirect_to @item.persisted? ? edit_admin_item_path(@item) : new_resource_path
   end
 
   member_action :remove_parameter, method: :delete do
@@ -428,9 +433,19 @@ ActiveAdmin.register Item do
     redirect_to params[:id] == "new" ? new_resource_path : edit_admin_item_path(params[:id])
   end
 
-  member_action :clear_session, method: :post do
-    session_service.delete
+  collection_action :clear_session, method: :post do
+    referer_path = begin
+      URI.parse(request.referer.to_s).path
+    rescue StandardError
+      ''
+    end
+    force_clear = request.body.read.present? && JSON.parse(request.body.read)["force"]
 
+    if referer_path.start_with?('/admin/items/new') && !force_clear
+      head :ok
+      return
+    end
+    session_service.clear
     head :ok
   end
 end
