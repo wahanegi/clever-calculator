@@ -3,7 +3,7 @@ function insertAtCaret(html) {
   if (!sel || sel.rangeCount === 0) return
 
   const range = sel.getRangeAt(0)
-  range.deleteContents() // optional: removes selected content
+  range.deleteContents() // Removes selected content
 
   // Create a fragment with the new content
   const temp = document.createElement('div')
@@ -45,6 +45,14 @@ document.addEventListener('DOMContentLoaded', () => {
   const formulaInput = document.getElementById('formulaInput')
 
   if (!formulaDisplay || !formulaInput) return
+  let lastRange = null;
+
+  formulaDisplay.addEventListener('blur', () => {
+    const sel = window.getSelection()
+    if (sel.rangeCount > 0) {
+      lastRange = sel.getRangeAt(0).cloneRange()
+    }
+  })
 
   formulaDisplay.focus()
   placeCaretAtEnd(formulaDisplay)
@@ -52,7 +60,22 @@ document.addEventListener('DOMContentLoaded', () => {
   document.querySelectorAll('.formula-btn.operator-btn, .formula-btn.param-btn').forEach((btn) => {
     btn.addEventListener('click', () => {
       formulaDisplay.focus()
+
+      if (lastRange) {
+        const sel = window.getSelection()
+        sel.removeAllRanges()
+        sel.addRange(lastRange)
+      } else {
+        placeCaretAtEnd(formulaDisplay)
+      }
+
       insertAtCaret(` ${btn.dataset.template} `)
+
+      // Save updated range after insertion
+      const sel = window.getSelection()
+      if (sel.rangeCount > 0) {
+        lastRange = sel.getRangeAt(0).cloneRange()
+      }
     })
   })
 
