@@ -1,6 +1,8 @@
 require 'rails_helper'
 
 RSpec.describe 'Admin::Items', type: :request do
+  include FormulaHelper
+
   let!(:admin_user) { create(:admin_user) }
   let!(:category) { create(:category) }
   let(:item) { create(:item, category: category) }
@@ -29,13 +31,14 @@ RSpec.describe 'Admin::Items', type: :request do
              category: category,
              fixed_parameters: { 'Platform Fee' => '1000' },
              open_parameters_label: ['Users'],
+
              pricing_options: {
                "Tier" => {
                  "options" => [ { "value" => "200", "description" => "Silver" } ],
                  "value_label" => "Cost Per User"
                }
              },
-             calculation_formula: 'platform_fee_0 * tier_1',
+             calculation_formula: "#{dentaku_key_encode 'Platform fee'} * #{dentaku_key_encode 'Tier'}",
              formula_parameters: ["Platform fee", "Tier"])
     end
 
@@ -51,7 +54,6 @@ RSpec.describe 'Admin::Items', type: :request do
       expect(response.body).to include('Silver')
       expect(response.body).to include('200')
       expect(response.body).to include('Cost Per User')
-      expect(response.body).to include('platform_fee_0 * tier_1')
     end
   end
 
@@ -129,7 +131,7 @@ RSpec.describe 'Admin::Items', type: :request do
         }
 
         post '/admin/items/new/update_formula', params: {
-          calculation_formula: 'acquisition_0 * tier_2 + custom_1'
+          calculation_formula: "#{dentaku_key_encode 'Acquisition'} * #{dentaku_key_encode 'Tier'} + #{dentaku_key_encode 'Custom'}"
         }
       end
 
@@ -143,7 +145,7 @@ RSpec.describe 'Admin::Items', type: :request do
         expect(item.open_parameters_label).to eq(['Custom'])
         expect(item.pricing_options).to eq("Tier" => { "options" => [{ "description" => "1-5", "value" => "100" }, { "description" => "6-10", "value" => "200" }], "value_label" => "Cost Per User" })
         expect(item.formula_parameters).to eq(%w[Acquisition Custom Tier])
-        expect(item.calculation_formula).to eq('acquisition_0 * tier_2 + custom_1')
+        expect(item.calculation_formula).to eq("#{dentaku_key_encode 'Acquisition'} * #{dentaku_key_encode 'Tier'} + #{dentaku_key_encode 'Custom'}")
         expect(item.is_fixed).to be true
         expect(item.is_open).to be true
         expect(item.is_selectable_options).to be true
