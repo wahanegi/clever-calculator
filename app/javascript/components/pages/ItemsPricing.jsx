@@ -274,20 +274,19 @@ export const ItemsPricing = () => {
             categoryPrice={totalFinalPrice(selectedOption.quote_items)}
           >
             <div className={'d-flex flex-column gap-6'}>
-              {selectedOption.quote_items.map((item) => {
-                const notesState = notesStates[item.id] || {}
+              {selectedOption.quote_items.map((quoteItem) => {
+                const notesState = notesStates[quoteItem.id] || {}
                 const notesIcon = notesState.note?.trim() ? 'noted' : 'note'
-
                 return (
                   <PcItemAccordion
-                    key={`quote-item-${item.id}`}
-                    item={item}
+                    key={`${selectedOption.type}"-${selectedOption.id}-quote-item-${quoteItem.id}`}
+                    item={quoteItem}
                     quoteId={quoteId}
                     setSelectedOptions={setSelectedOptions}
                     isNotesShow={notesState.isNotesOpen}
-                    onToggleNotes={() => toggleItemNotes(item.id)}
+                    onToggleNotes={() => toggleItemNotes(quoteItem.id)}
                     notesIcon={notesIcon}>
-                    <Item itemData={item}
+                    <Item itemData={quoteItem}
                           quoteId={quoteId}
                           selectedOptions={selectedOptions}
                           setSelectedOptions={setSelectedOptions}
@@ -300,19 +299,19 @@ export const ItemsPricing = () => {
                           style={{ height: '80px' }}
                           className={'mb-3 mt-9 py-2'}
                           value={notesState.tempNote || ''}
-                          onChange={(e) => handleNotesChange(item.id, e.target.value)}
-                          onBlur={() => handleNotesBlur(item.id)}
+                          onChange={(e) => handleNotesChange(quoteItem.id, e.target.value)}
+                          onBlur={() => handleNotesBlur(quoteItem.id)}
                         />
                         <Form.Group
                           className="form-check pc-item-input notes fs-10"
                         >
                           <Form.Check.Input
                             type="checkbox"
-                            id={`include-notes-${item.id}`}
+                            id={`include-notes-${quoteItem.id}`}
                             checked={notesState.include || false}
-                            onChange={(e) => handleIncludeNotesChange(item.id, e.target.checked)}
+                            onChange={(e) => handleIncludeNotesChange(quoteItem.id, e.target.checked)}
                           />
-                          <Form.Label htmlFor={`include-notes-${item.id}`} className="form-check-label">
+                          <Form.Label htmlFor={`include-notes-${quoteItem.id}`} className="form-check-label">
                             Include notes with quote
                           </Form.Label>
                         </Form.Group>

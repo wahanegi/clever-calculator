@@ -1,10 +1,10 @@
-import React, { memo, useState } from 'react'
+import React, { useState } from 'react'
 import { PcItemFormGroup, PcItemInputControl, PcItemSelectControl } from '../ui'
 import { getItemTypeConditions } from '../utils'
 import { fetchQuoteItems } from '../services'
 import debounce from 'lodash/debounce'
 
-export const Item = memo(({ itemData, selectedOptions, setSelectedOptions, quoteId, setIsOverPriceLimit }) => {
+export const Item = ({ itemData, selectedOptions, setSelectedOptions, quoteId, setIsOverPriceLimit }) => {
   const quoteItem = itemData.attributes
   const {
     isItemFixed,
@@ -236,11 +236,4 @@ export const Item = memo(({ itemData, selectedOptions, setSelectedOptions, quote
       )}
     </div>
   )
-}, (prevProps, nextProps) => {
-  const prevQuoteItem = prevProps.itemData.attributes
-  const nextQuoteItem = nextProps.itemData.attributes
-
-  return prevQuoteItem.discount === nextQuoteItem.discount &&
-    prevQuoteItem.price === nextQuoteItem.price &&
-    prevQuoteItem.final_price === nextQuoteItem.final_price
-})
+}
