@@ -200,7 +200,7 @@ ActiveAdmin.register Quote do
         column :price
         column :discount
         column :final_price
-        column :note do |quote_item|
+        column :note, class: 'col-note break-word' do |quote_item|
           quote_item&.note&.notes || 'No notes'
         end
         column 'Is note downloadable?' do |quote_item|
