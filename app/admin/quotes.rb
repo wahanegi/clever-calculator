@@ -16,6 +16,8 @@ ActiveAdmin.register Quote do
                                                              :is_printable,
                                                              :_destroy] }]
 
+  includes :user, :customer
+
   filter :customer_company_name, as: :string, label: 'Company Name'
   filter :user, as: :select, collection: proc {
     User.joins(:quotes).distinct.order(:email).map do |u|
@@ -188,9 +190,7 @@ ActiveAdmin.register Quote do
         column :item
         column 'Pricing Parameters' do |quote_item|
           if quote_item.pricing_parameters.present?
-            quote_item.pricing_parameters.map do |key, value|
-              "#{parameter_display_name(key)}: #{value}"
-            end.join(" | ")
+            quote_item.pricing_parameters.map { |key, value| "#{key}: #{value}" }.join(" | ")
           else
             "-"
           end

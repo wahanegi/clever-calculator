@@ -97,7 +97,7 @@ export const PcDropdownSelect = ({
 
         {hasIcon && <TypeaheadControls />}
       </div>
-      {error && <div className="text-danger fs-12">{error}</div>}
+      <div className="text-danger fs-10">{error || '\u00A0'}</div>
     </Form.Group>
   )
 }
