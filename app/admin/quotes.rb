@@ -2,15 +2,15 @@ ActiveAdmin.register Quote do
   permit_params :customer_id,
                 :user_id,
                 :total_price,
-                category_ids: [],
-                item_ids: [],
                 quote_items_attributes: [:id,
                                          :item_id,
                                          :price,
                                          :discount,
                                          :final_price,
                                          :_destroy,
-                                         { open_param_values: {}, select_param_values: {} },
+                                         :pricing_parameters,
+                                         :open_param_values,
+                                         :select_param_values,
                                          { note_attributes: [:id,
                                                              :notes,
                                                              :is_printable,
@@ -38,10 +38,6 @@ ActiveAdmin.register Quote do
   end
 
   form html: { class: 'quote-form' } do |f|
-    unless f.object.new_record?
-      f.object.category_ids = f.object.quote_items.joins(:item).pluck('items.category_id').uniq.compact
-    end
-
     f.inputs do
       f.input :customer, as: :select, collection: Customer.pluck(:company_name, :id), input_html: { class: 'custom-select' }
       f.input :user, as: :select, collection: User.order(:name).pluck(:name, :id), input_html: { class: 'custom-select' }
@@ -276,30 +272,46 @@ ActiveAdmin.register Quote do
     def update
       @quote = Quote.find(params[:id])
 
-      if @quote.update(prepare_quote_params)
+      if @quote.update(quote_params)
         redirect_to admin_quote_path(@quote), notice: "Quote updated successfully."
       else
         render :edit
       end
     end
 
+    def create
+      @quote = Quote.new(quote_params)
+
+      if @quote.save
+        redirect_to admin_quote_path(@quote), notice: "Quote created successfully."
+      else
+        render :new
+      end
+    end
+
     def sanitize_blank_arrays
-      params[:quote][:category_ids]&.reject!(&:blank?)
-      params[:quote][:item_ids]&.reject!(&:blank?)
+      params[:quote]&.delete(:category_ids)
+      params[:quote]&.delete(:item_ids)
     end
 
     private
 
-    def prepare_quote_params
-      permitted_params[:quote].tap do |params|
-        existing_category_ids = @quote.quote_items.joins(:item)
-                                      .where.not(items: { category_id: nil }).distinct
-                                      .pluck('items.category_id').map(&:to_s)
+    def quote_params
+      quote_param = params[:quote].to_unsafe_h
+      quote_items = quote_param['quote_items_attributes']
+      updated_items = {}
 
-        params[:category_ids] = (params[:category_ids] || []) | existing_category_ids
-        params.delete(:item_ids) if action_name == 'update'
-        params.delete(:category_ids) if params[:category_ids].blank?
+      quote_items&.each do |key, qip|
+        open = qip['open_param_values']
+        select = qip['select_param_values']
+
+        pricing = (open || {}).merge(select || {})
+        qip['pricing_parameters'] = pricing
+        updated_items[key] = qip
       end
+
+      quote_param['quote_items_attributes'] = updated_items
+      quote_param
     end
 
     def extract_safe_params(param_set, allowed_keys)
