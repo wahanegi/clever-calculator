@@ -26,7 +26,7 @@ gem "sprockets", '~> 3.7.5', '< 4.0'                                # Rack-based
 gem "sprockets-rails", '~> 3.5.2'                                   # The asset pipeline for Rails
 gem "stimulus-rails", '~> 1.3.4'                                    # Hotwire's modest JavaScript framework [https://stimulus.hotwired.dev]
 gem "thruster", '~> 0.1.13', require: false                         # Add HTTP asset caching/compression and X-Sendfile acceleration to Puma [https://github.com/basecamp/thruster/]
-gem "turbo-rails", '~> 2.0.13'                                      # Hotwire's SPA-like page accelerator [https://turbo.hotwired.dev]
+gem "turbo-rails", '~> 2.0.16'                                      # Hotwire's SPA-like page accelerator [https://turbo.hotwired.dev]
 gem "tzinfo-data", '~> 1.2025.2', platforms: %i[ windows jruby ]    # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 
 group :development, :test do
@@ -50,5 +50,5 @@ group :development do
 end
 
 group :production do
-  gem "aws-sdk-s3", '~> 1.188.0'                   # AWS SDK for Ruby
+  gem "aws-sdk-s3", '~> 1.189.0'                   # AWS SDK for Ruby
 end

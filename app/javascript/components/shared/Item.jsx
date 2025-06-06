@@ -30,11 +30,11 @@ export const Item = ({ itemData, selectedOptions, setSelectedOptions, quoteId, s
   const [touchedOpenParams, setTouchedOpenParams] = useState(
     is_open
       ? Object.fromEntries(
-          open_parameters_label.map((label) => [
-            label,
-            quoteItem.pricing_parameters[label] !== undefined && quoteItem.pricing_parameters[label] !== 0,
-          ]),
-        )
+        open_parameters_label.map((label) => [
+          label,
+          quoteItem.pricing_parameters[label] !== undefined && quoteItem.pricing_parameters[label] !== 0,
+        ]),
+      )
       : {},
   )
 
@@ -60,14 +60,14 @@ export const Item = ({ itemData, selectedOptions, setSelectedOptions, quoteId, s
       },
     }).then((updatedQuoteItem) => {
       setSelectedOptions(selectedOptions.map((option) => ({
-        ...option,
-        quote_items: option.quote_items.map((item) =>
-          updatedQuoteItem.data.id === item.id ? updatedQuoteItem.data : item,
-        ),
-      })),
-        )
-        setIsOverPriceLimit(false)
-      })
+          ...option,
+          quote_items: option.quote_items.map((item) =>
+            updatedQuoteItem.data.id === item.id ? updatedQuoteItem.data : item,
+          ),
+        })),
+      )
+      setIsOverPriceLimit(false)
+    })
       .catch((error) => {
         if (
           error?.response?.data?.errors?.final_price?.includes(

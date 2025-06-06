@@ -1,6 +1,8 @@
 require 'rails_helper'
 
 RSpec.describe QuoteItem, type: :model do
+  include FormulaHelper
+
   describe 'associations' do
     it { is_expected.to belong_to(:quote).required }
     it { is_expected.to belong_to(:item).required }
@@ -123,7 +125,7 @@ RSpec.describe QuoteItem, type: :model do
 
       it 'evaluates the formula using Dentaku' do
         item.update(
-          calculation_formula: 'users_0 * setup_1',
+          calculation_formula: "#{dentaku_key_encode 'users'} * #{dentaku_key_encode 'setup'}",
           fixed_parameters: { 'users' => 10 },
           open_parameters_label: ['setup']
         )
@@ -136,7 +138,7 @@ RSpec.describe QuoteItem, type: :model do
       end
 
       it 'adds error for missing variables' do
-        item.update(calculation_formula: 'users_0 * setup_1', fixed_parameters: {})
+        item.update(calculation_formula: "#{dentaku_key_encode 'users'} * #{dentaku_key_encode 'setup'}", fixed_parameters: {})
         quote_item.open_param_values = {}
 
         quote_item.valid?

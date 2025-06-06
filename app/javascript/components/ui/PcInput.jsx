@@ -11,7 +11,7 @@ export const PcInput = ({ id, type = 'text', label, height, error, ...props }) =
         {...props}
       />
       <Form.Label className="border-label fw-bold fs-11 lh-sm px-1">{label}</Form.Label>
-      {error && <div className="text-danger fs-12">{error}</div>}
+      <div className="text-danger fs-10">{error || '\u00A0'}</div>
     </Form.Group>
   )
 }
