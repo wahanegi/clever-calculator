@@ -9,7 +9,7 @@ ActiveAdmin.register Category do
   index do
     id_column
     column :name
-    column('Disabled') { |item| status_tag item.is_disabled, label: item.is_disabled? ? 'True' : 'False' }
+    column('Enabled') { |item| status_tag(!item.is_disabled, label: item.is_disabled? ? "False" : "True") }
     column :items_count
     column :created_at
     column :updated_at
@@ -62,7 +62,7 @@ ActiveAdmin.register Category do
     attributes_table do
       row :name
       row :description
-      row('Disabled') { |item| status_tag item.is_disabled, label: item.is_disabled? ? 'True' : 'False' }
+      row('Enabled') { |item| status_tag(!item.is_disabled, label: item.is_disabled? ? "False" : "True") }
       row :created_at
       row :updated_at
     end

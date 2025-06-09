@@ -1,12 +1,18 @@
 MAX_ALLOWED_VALUE = '99999999999999.99'.freeze
 
 ActiveAdmin.register Item do
-  permit_params do
-    %i[
-      name description category_id is_disabled is_fixed is_open is_selectable_options
-      fixed_parameters pricing_options open_parameters_label formula_parameters calculation_formula
-    ]
-  end
+  permit_params %i[name description
+                   category_id
+                   is_disabled
+                   is_fixed
+                   is_open
+                   is_selectable_options
+                   fixed_parameters
+                   pricing_options
+                   open_parameters_label
+                   formula_parameters
+                   calculation_formula]
+
   includes :category
 
   filter :name_cont, as: :string, label: "Product Name"
@@ -18,7 +24,7 @@ ActiveAdmin.register Item do
     id_column
     column :name
     column :category, sortable: :category_id
-    column("Enabled") { |item| status_tag !item.is_disabled, label: item.is_disabled? ? "False" : "True" }
+    column("Enabled") { |item| status_tag(!item.is_disabled, label: item.is_disabled? ? "False" : "True") }
     column :created_at
     column :updated_at
     actions defaults: false do |resource|
@@ -112,8 +118,8 @@ ActiveAdmin.register Item do
         item.description.presence || "No description"
       end
       row :category
-      row "Status" do |item|
-        status_tag(item.is_disabled? ? "Disable" : "Enable", class: item.is_disabled? ? "red" : "green")
+      row "Enabled" do |item|
+        status_tag(!item.is_disabled, label: item.is_disabled? ? "False" : "True")
       end
       row :created_at
       row :updated_at
