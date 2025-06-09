@@ -1,17 +1,22 @@
 MAX_ALLOWED_VALUE = '99999999999999.99'.freeze
 
 ActiveAdmin.register Item do
-  permit_params %i[name description
-                   category_id
-                   is_disabled
-                   is_fixed
-                   is_open
-                   is_selectable_options
-                   fixed_parameters
-                   pricing_options
-                   open_parameters_label
-                   formula_parameters
-                   calculation_formula]
+  permit_params do
+    %i[
+      name
+      description
+      category_id
+      is_disabled
+      is_fixed
+      is_open
+      is_selectable_options
+      fixed_parameters
+      pricing_options
+      open_parameters_label
+      formula_parameters
+      calculation_formula
+    ]
+  end
 
   includes :category
 
