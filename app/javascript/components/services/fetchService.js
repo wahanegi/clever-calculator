@@ -22,22 +22,15 @@ export const fetchCustomers = {
   show: () => get(ENDPOINTS.SETTING),
   index: () => get(ENDPOINTS.CUSTOMERS),
   upsert: (data) => post(ENDPOINTS.CUSTOMERS_UPSERT, data),
-  upsertUseFormData: async (customer) => {
+  upsertUseFormData: (customer) => {
     const formData = new FormData()
     const { first_name, last_name } = extractNames(customer.full_name)
 
-    if (customer.logo_url) {
-      const response = await fetch(customer.logo_url)
-
-      if (response.ok) {
-        const contentType = response.headers.get('Content-Type')
-        const blob = await response.blob()
+    if (customer.logo_file) {
+        const contentType = customer.logo_file.type
         const fileName = `logo.${contentType.split('/')[1] || 'png'}`
 
-        formData.append('customer[logo]', blob, fileName)
-      } else {
-        throw new Error('Failed to fetch logo')
-      }
+        formData.append('customer[logo]', customer.logo_file, fileName)
     }
     formData.append('customer[company_name]', customer.company_name)
     formData.append('customer[first_name]', first_name)
