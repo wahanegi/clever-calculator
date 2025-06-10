@@ -65,24 +65,22 @@ class User < ApplicationRecord
   end
 
   def self.international_phone(phone)
-    # Keep only + and digits
-    cleaned = phone.gsub(/[^+\d]/, '')
-    # Ensure one + at start
-    cleaned.sub!(/(?!^)\+/, '')
-    # Validate format
+    cleaned = "+#{phone.gsub(/\D/, '')}"
+
     if cleaned.match?(/\A\+\d{7,15}\z/)
       cleaned
     else
-      phone # Return original to trigger validation
+      phone
     end
   end
 
   def self.domestic_phone(phone)
     digits = phone.gsub(/\D/, '')
+
     if digits.length == 10
       "(#{digits[0..2]}) #{digits[3..5]}-#{digits[6..9]}"
     else
-      phone # Return original to trigger validation
+      phone
     end
   end
 
