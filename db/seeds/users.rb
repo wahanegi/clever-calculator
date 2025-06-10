@@ -1,5 +1,5 @@
 if Rails.env.development?
-  users_count = 10
+  users_count = 2
 
   if User.count.zero?
     Rails.logger.info 'Creating users'

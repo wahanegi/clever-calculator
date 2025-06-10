@@ -1,5 +1,5 @@
 if Rails.env.development?
-  customers_count = 10
+  customers_count = 5
 
   if Customer.count.zero?
     Rails.logger.info 'Creating customers'

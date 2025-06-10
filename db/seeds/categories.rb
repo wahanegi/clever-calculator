@@ -1,15 +1,10 @@
 if Rails.env.development?
-  disabled_count = 10
-  enabled_count = 5
-
-  def random_name_and_description
-    name = Faker::Team.unique.name
-    description = Faker::Food.description
-    [name, description]
-  end
+  disabled_count = 2
+  enabled_count = 1
 
   def create_category!(is_disabled)
-    name, description = random_name_and_description
+    name = Faker::Team.unique.name
+    description = Faker::Food.description
 
     Rails.logger.info "Creating Category: #{name}"
     Category.create!(name: name,
