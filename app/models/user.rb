@@ -6,7 +6,6 @@ class User < ApplicationRecord
 
   PASSWORD_SYMBOL_FORMAT = /\A(?=.*[^\w\s])[^\s]*\z/
   PASSWORD_REPEATED_CHAR_FORMAT = /\A(?!.*(.)\1\1).*\z/
-  PHONE_FORMAT = /\A\+?[0-9\s-]{7,20}\z/
 
   validates :name,
             presence: true
@@ -15,10 +14,6 @@ class User < ApplicationRecord
   validates :email, uniqueness: true,
                     format: { with: URI::MailTo::EMAIL_REGEXP, message: "must be a valid email format" },
                     if: -> { email.present? }
-  validates :phone,
-            format: { with: PHONE_FORMAT,
-                      message: "must be a valid phone number (digits, spaces, or dashes only, optional + at start)" },
-            if: -> { phone.present? }, allow_nil: true
 
   validates :password,
             presence: true,

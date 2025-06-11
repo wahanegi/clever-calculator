@@ -30,21 +30,14 @@ RSpec.describe User, type: :model do
     end
 
     describe 'phone' do
-      it { is_expected.to allow_value(nil).for(:phone) }
-      it { is_expected.to allow_value('').for(:phone) }
+      it { is_expected.to allow_value('(123) 456-7890').for(:phone) }
       it { is_expected.to allow_value('+1234567890').for(:phone) }
+      it { is_expected.to allow_value('+123456789012345').for(:phone) }
       it { is_expected.to allow_value('123-456-7890').for(:phone) }
+      it { is_expected.to allow_value('1234567890').for(:phone) }
       it { is_expected.to allow_value('123 456 7890').for(:phone) }
-
-      it {
-        is_expected.not_to allow_value('abc123').for(:phone)
-                                                .with_message('must be a valid phone number (digits, spaces, or dashes only, optional + at start)')
-      }
-
-      it {
-        is_expected.not_to allow_value('+123!456@7890').for(:phone)
-                                                       .with_message('must be a valid phone number (digits, spaces, or dashes only, optional + at start)')
-      }
+      it { is_expected.to allow_value('+123-456-7890 ext.1').for(:phone) }
+      it { is_expected.to allow_value('+123.456.7890').for(:phone) }
     end
 
     describe 'password' do
