@@ -95,6 +95,6 @@ class QuoteItem < ApplicationRecord
   end
 
   def formula_named_parameters
-    pricing_parameters.transform_keys.with_index { |k, i| k.to_formula_name(i) }
+    pricing_parameters.transform_keys { |param| DentakuKeyEncoder.encode(param) }
   end
 end

@@ -38,7 +38,7 @@ class BrandColorParser
       colors = %w[primary secondary blue-light blue-sky light].map do |color_name|
         match_color = variables.match(/\$#{Regexp.escape(color_name)}:#{HEX_REGEX};/)
 
-        match_color ? match_color[:color] : nil
+        match_color&.[](:color)
       end.compact_blank
 
       raise_if_colors_not_found colors

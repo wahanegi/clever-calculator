@@ -18,8 +18,8 @@ class TmpParamsSessionService
     @session[:tmp_params][@item_key][symbol_key.to_s] = value
   end
 
-  def delete
-    @session[:tmp_params].delete(@item_key)
+  def clear
+    @session[:tmp_params].clear
   end
 
   def add_formula_parameter(name)

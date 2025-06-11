@@ -1,6 +1,8 @@
 require 'rails_helper'
 
 RSpec.describe Item, type: :model do
+  include FormulaHelper
+
   describe 'factory' do
     it 'has a valid factory' do
       expect(build(:item)).to be_valid
@@ -102,7 +104,7 @@ RSpec.describe Item, type: :model do
           build(:item,
                 is_fixed: true,
                 formula_parameters: %w[param1 param2],
-                calculation_formula: 'param1_0 + param2_1 * 123')
+                calculation_formula: "#{dentaku_key_encode('param1')} + #{dentaku_key_encode('param2')} * 123")
         end
 
         it 'is valid with correct formula' do
@@ -110,42 +112,42 @@ RSpec.describe Item, type: :model do
         end
 
         it 'is invalid if all formula_parameters are missing in formula' do
-          item.calculation_formula = 'param1_0 + 123 + param212'
+          item.calculation_formula = "#{dentaku_key_encode('param1')} + 123 + #{dentaku_key_encode('param212')}"
           expect(item).not_to be_valid
-          expect(item.errors[:calculation_formula]).to include('is missing parameters: param2_1')
+          expect(item.errors[:calculation_formula]).to include('is missing parameters: param2')
         end
 
         it 'is invalid with unrecognized parameters' do
-          item.calculation_formula = 'param1_0 + abc * 123'
+          item.calculation_formula = "#{dentaku_key_encode('param1')} + #{dentaku_key_encode('abc')} * 123"
           expect(item).not_to be_valid
           expect(item.errors[:calculation_formula]).to include('contains invalid parameters: abc')
         end
 
         it 'is valid with numbers, operators, and formula_parameters' do
-          item.calculation_formula = 'param1_0 + ( 2 * param2_1 )'
+          item.calculation_formula = "#{dentaku_key_encode('param1')} + ( 2 * #{dentaku_key_encode('param2')} )"
           expect(item).to be_valid
         end
 
         it 'is invalid with formula starting with operator' do
-          item.calculation_formula = '+ param1 + param2'
+          item.calculation_formula = "+ #{dentaku_key_encode('param1')} + #{dentaku_key_encode('param2')}"
           expect(item).not_to be_valid
           expect(item.errors[:calculation_formula]).to include('cannot start with a mathematical operator')
         end
 
         it 'is invalid with formula ending with operator' do
-          item.calculation_formula = 'param1 + param2 +'
+          item.calculation_formula = "#{dentaku_key_encode('param1')} + #{dentaku_key_encode('param2')} +"
           expect(item).not_to be_valid
           expect(item.errors[:calculation_formula]).to include('cannot end with a mathematical operator')
         end
 
         it 'is invalid with Dentaku syntax error' do
-          item.calculation_formula = 'param1_0 + * param2_1'
+          item.calculation_formula = "#{dentaku_key_encode('param1')} + * #{dentaku_key_encode('param2')}"
           expect(item).not_to be_valid
           expect(item.errors[:calculation_formula].first).to include('has missing operands. Ensure the correct number of arguments')
         end
 
         it 'is invalid with unbalance parentheses' do
-          item.calculation_formula = '( param1_0 + param2_1'
+          item.calculation_formula = "( #{dentaku_key_encode('param1')} + #{dentaku_key_encode('param2')}"
           expect(item).not_to be_valid
           expect(item.errors[:calculation_formula].first).to include('too many opening parentheses')
         end
