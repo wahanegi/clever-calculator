@@ -288,13 +288,20 @@ ActiveAdmin.register Item do
     @params_data = params
 
     param_name = case @param_type
-                 when "Fixed" then params[:fixed_parameter_name].to_s.strip
-                 when "Open" then params[:open_parameter_name].to_s.strip
-                 when "Select" then params[:select_parameter_name].to_s.strip
+                 when "Fixed" then params[:fixed_parameter_name].to_s.squish
+                 when "Open" then params[:open_parameter_name].to_s.squish
+                 when "Select" then params[:select_parameter_name].to_s.squish
                  end
+
+    formula_params = session_service.get(:formula_parameters) || []
 
     if param_name.blank?
       flash.now[:error] = "Parameter name can't be blank"
+      return render :new_parameter
+    end
+
+    if formula_params.include?(param_name)
+      flash.now[:error] = "Parameter '#{param_name}' already exists in the formula parameters"
       return render :new_parameter
     end
 
