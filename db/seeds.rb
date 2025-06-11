@@ -9,6 +9,6 @@
 #   end
 
 # Change the order of model creation
-%w[admin_users users categories customers quotes].each do |name|
+%w[admin_users users categories customers items quotes].each do |name|
   require_relative "seeds/#{name}.rb"
 end
