@@ -1,6 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe "Admin::Quotes", type: :request do
+  include ActionView::Helpers::NumberHelper
   let!(:admin_user) { create(:admin_user) }
   let!(:customer) { create(:customer) }
   let!(:user) { create(:user) }
@@ -23,7 +24,7 @@ RSpec.describe "Admin::Quotes", type: :request do
       expect(unescaped_response_body).to include("Quotes")
       expect(unescaped_response_body).to include(customer.company_name)
       expect(unescaped_response_body).to include(user.name)
-      expect(unescaped_response_body).to include(quote.total_price.to_s)
+      expect(unescaped_response_body).to include(number_to_currency(quote.total_price))
     end
   end
 
@@ -35,9 +36,9 @@ RSpec.describe "Admin::Quotes", type: :request do
       expect(unescaped_response_body).to include(user.name)
       expect(unescaped_response_body).to include("Quote Items")
       expect(unescaped_response_body).to include(item_fixed.name)
-      expect(unescaped_response_body).to include("2500")
+      expect(unescaped_response_body).to include("$2,500.00")
       expect(unescaped_response_body).to include("10")
-      expect(unescaped_response_body).to include("2250")
+      expect(unescaped_response_body).to include("$2,250.00")
     end
   end
 
