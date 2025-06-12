@@ -1,7 +1,7 @@
 class QuoteDocxGenerator
   def initialize(quote)
     @setting = Setting.current
-    @logo = @setting.logo
+    @logo = @setting.word_header_document_logo
     @quote = quote
     @grouped_items = grouped_quote_items
     @colors = parsed_brand_colors
@@ -10,7 +10,7 @@ class QuoteDocxGenerator
 
   def call
     build_docx do |docx, logo|
-      QuoteDocxSections::HeaderSection.new(docx, logo.path, @colors, @logo_size).call
+      QuoteDocxSections::HeaderSection.new(docx, logo&.path, @colors, @logo_size).call
       QuoteDocxSections::PricingSheetSection.new(docx, @colors, @quote).call
       QuoteDocxSections::CostSummarySection.new(docx, @colors, @grouped_items, @quote).call
       QuoteDocxSections::CostDetailsSection.new(docx, @colors, @grouped_items).call
@@ -45,6 +45,9 @@ class QuoteDocxGenerator
 
   def logo_tempfile
     io, extension = fetch_logo
+
+    return if io.nil? || extension.nil?
+
     file = Tempfile.new ['logo', extension]
     file.binmode
     file.write(io.read)
@@ -58,19 +61,16 @@ class QuoteDocxGenerator
 
   def close_and_remove_each(*files)
     files.each do |f|
-      f.close
-      f.unlink
+      f&.close
+      f&.unlink
     end
   end
 
   def fetch_logo
-    if @logo.attached?
-      blob = @logo.blob
-      [StringIO.new(blob.download), ".#{blob.filename.extension}"]
-    else
-      path = Rails.root.join("app/assets/images/logo.png")
-      [File.open(path, 'rb'), File.extname(path)]
-    end
+    return unless @logo.attached?
+
+    blob = @logo.blob
+    [StringIO.new(blob.download), ".#{blob.filename.extension}"]
   end
 
   def parsed_brand_colors
@@ -82,7 +82,7 @@ class QuoteDocxGenerator
   end
 
   def logo_dimensions
-    return { width: 200, height: 200 } unless @logo.attached?
+    return unless @logo.attached?
 
     @logo.analyze unless @logo.analyzed?
 
