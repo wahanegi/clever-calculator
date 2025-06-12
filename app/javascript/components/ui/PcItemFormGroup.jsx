@@ -5,15 +5,10 @@ export const PcItemFormGroup = ({
   children,
   paramType = 'price',
   label = 'Price',
-  suffixLeft = '$',
   suffixRight = '%',
   className = '',
 }) => {
-  const isSuffixLeft =
-    paramType === 'price' ||
-    paramType === 'discounted-price' ||
-    paramType === 'original-cost' ||
-    paramType === 'open-price-input'
+
   const isSuffixRight = paramType === 'discount'
 
   return (
@@ -23,10 +18,6 @@ export const PcItemFormGroup = ({
       </Form.Label>
 
       {children}
-
-      {isSuffixLeft && (
-        <span className="pc-suffix pc-suffix-left position-absolute top-50 translate-middle-y">{suffixLeft}</span>
-      )}
 
       {isSuffixRight && (
         <span className="pc-suffix pc-suffix-right position-absolute top-50 translate-middle-y">{suffixRight}</span>
