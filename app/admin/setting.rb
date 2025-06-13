@@ -16,28 +16,25 @@ ActiveAdmin.register_page "Setting" do
   end
 
   page_action :remove_image, method: :delete do
-    case params[:type]
-    when 'logo'
-      @setting.logo.purge
-    when 'login_background'
-      @setting.login_background.purge
-    when 'app_background'
-      @setting.app_background.purge
-    else
-      redirect_to admin_setting_path, alert: 'Unknown or missing image type'
-      return
-    end
+    image_attribute = params[:type]
+    allowed_attributes = %w[app_logo_icon app_background_icon word_header_document_logo]
 
-    redirect_to admin_setting_path, notice: "#{params[:type].humanize} was successfully removed."
+    if allowed_attributes.include?(image_attribute)
+      @setting.public_send(image_attribute).purge
+
+      redirect_to admin_setting_path, notice: "#{image_attribute.humanize} was successfully removed."
+    else
+      redirect_to admin_setting_path, alert: 'Unknown or missing image type.'
+    end
   end
 
   page_action :reset, method: :patch do
-    primary, secondary, blue_light, blue_sky, light = BrandColorParser.default_colors
+    default_colors = BrandColorParser.default_colors
 
-    @setting.update(logo: nil,
-                    app_background: nil,
-                    login_background: nil,
-                    style: BrandColorBuilder.new(primary, secondary, blue_light, blue_sky, light).build_css)
+    @setting.update(app_logo_icon: nil,
+                    app_background_icon: nil,
+                    word_header_document_logo: nil,
+                    style: BrandColorBuilder.new(*default_colors).build_css)
 
     redirect_to admin_setting_path, notice: 'Settings reset successfully.'
   end
@@ -45,33 +42,41 @@ ActiveAdmin.register_page "Setting" do
   controller do
     before_action :set_setting
 
-    def permitted_params
-      params.require(:setting).permit(:logo,
-                                      :login_background,
-                                      :app_background,
-                                      :primary_color,
-                                      :secondary_color,
-                                      :blue_light_color,
-                                      :blue_sky_color,
-                                      :light_color)
-    end
-
     def setting_params
-      hash = { style: BrandColorBuilder.new(permitted_params[:primary_color],
-                                            permitted_params[:secondary_color],
-                                            permitted_params[:blue_light_color],
-                                            permitted_params[:blue_sky_color],
-                                            permitted_params[:light_color]).build_css }
-      hash[:logo] = permitted_params[:logo] if permitted_params[:logo]
-      hash[:app_background] = permitted_params[:app_background] if permitted_params[:app_background]
-      hash[:login_background] = permitted_params[:login_background] if permitted_params[:login_background]
-      hash
+      # Build the style CSS from color params
+      params_hash = { style: BrandColorBuilder.new(*selected_color_params).build_css }
+
+      # Attach optional uploaded files if present
+      %i[app_logo_icon app_background_icon word_header_document_logo].each do |key|
+        params_hash[key] = permitted_setting_params[key] if permitted_setting_params[key].present?
+      end
+
+      params_hash
     end
 
     private
 
     def set_setting
       @setting = Setting.current
+    end
+
+    def selected_color_params
+      permitted_setting_params.values_at(:primary_color,
+                                         :secondary_color,
+                                         :blue_light_color,
+                                         :blue_sky_color,
+                                         :light_color)
+    end
+
+    def permitted_setting_params
+      params.require(:setting).permit(:app_logo_icon,
+                                      :app_background_icon,
+                                      :word_header_document_logo,
+                                      :primary_color,
+                                      :secondary_color,
+                                      :blue_light_color,
+                                      :blue_sky_color,
+                                      :light_color)
     end
   end
 end
