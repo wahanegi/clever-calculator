@@ -47,19 +47,19 @@ RSpec.describe Setting, type: :model do
       it 'is invalid for app_logo_icon' do
         setting.app_logo_icon.attach(invalid_file)
         expect(setting).not_to be_valid
-        expect(setting.errors.messages_for(:app_logo_icon)).to include('must be a JPEG, SVG or PNG file')
+        expect(setting.errors.messages_for(:app_logo_icon)).to include('must be a JPEG or PNG file')
       end
 
       it 'is invalid for app_background_icon' do
         setting.app_background_icon.attach(invalid_file)
         expect(setting).not_to be_valid
-        expect(setting.errors.messages_for(:app_background_icon)).to include('must be a JPEG, SVG or PNG file')
+        expect(setting.errors.messages_for(:app_background_icon)).to include('must be a JPEG or PNG file')
       end
 
       it 'is invalid for word_header_document_logo' do
         setting.word_header_document_logo.attach(invalid_file)
         expect(setting).not_to be_valid
-        expect(setting.errors.messages_for(:word_header_document_logo)).to include('must be a JPEG, SVG or PNG file')
+        expect(setting.errors.messages_for(:word_header_document_logo)).to include('must be a JPEG or PNG file')
       end
     end
   end
