@@ -45,3 +45,30 @@ const getQuoteItemIndex = (group) => {
 const handleError = (message, error = null, context = {}) => {
   console.error(`${message}:`, { error, ...context })
 }
+
+ /**
+   * Formats the input value as a currency string
+   * @param {HTMLInputElement} input - The input element to format
+   */
+  function formatCurrencyInput(input) {
+      const value = parseFloat(input.value) || 0;
+      const formatted = new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD',
+        minimumFractionDigits: 2,
+      }).format(value);
+
+      // Remove any existing formatted-currency span
+      const existingSpan = input.parentNode.querySelector('.formatted-currency');
+      if (existingSpan) {
+        existingSpan.remove();
+      }
+
+      const displaySpan = document.createElement('span');
+      displaySpan.className = 'formatted-currency';
+      displaySpan.textContent = formatted;
+
+      // Insert after the input and hide the input visually
+      input.style.display = 'none';
+      input.parentNode.insertBefore(displaySpan, input.nextSibling);
+    }

@@ -1,6 +1,7 @@
 import React from 'react'
 import { Accordion, Button } from 'react-bootstrap'
 import { PcIcon } from './PcIcon'
+import { formatCurrency } from '../utils'
 
 export const PcCategoryAccordion = ({
   children,
@@ -31,7 +32,7 @@ export const PcCategoryAccordion = ({
 
             {/*Extra Accordion.Header elements. For involve button hydration error*/}
             <div className="pc-extra-actions position-absolute top-50 translate-middle-y d-flex align-items-center gap-5 z-1">
-              <div className="fs-10 text-secondary fw-medium">{`$ ${categoryPrice}`}</div>
+              <div className="fs-10 text-secondary fw-medium">{formatCurrency(categoryPrice)}</div>
 
               <Button variant={'outline'} className={'pc-icon-hover-btn'} onClick={handleOpenModal}>
                 <PcIcon name={'trashDefault'} className="icon-default" />

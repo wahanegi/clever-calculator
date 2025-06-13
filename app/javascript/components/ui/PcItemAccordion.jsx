@@ -3,6 +3,7 @@ import { Accordion } from 'react-bootstrap'
 import { PcExtraActionBtn } from './PcExtraActionBtn'
 import { PcIcon } from './PcIcon'
 import { fetchQuoteItems } from '../services'
+import { formatCurrency } from '../utils'
 
 export const PcItemAccordion = ({
                                   children,
@@ -77,7 +78,7 @@ export const PcItemAccordion = ({
     })
   }
 
-  const PriceDisplay = () => <div className="fs-10 text-secondary">{`$ ${quotePrice}`}</div>
+  const PriceDisplay = () => <div className="fs-10 text-secondary">{formatCurrency(quotePrice)}</div>
   const Toolbar = () => <>
     <PcExtraActionBtn children={'Add item'} onClick={handleItemAdd} />
     <PcExtraActionBtn children={'Remove item'} onClick={handleItemRemove} />
