@@ -108,3 +108,12 @@ label.category-name-label {
   padding: 6px;
   width: 30%;
 }
+
+.formatted-currency {
+  display: inline-block;
+  background-color: #d7d7d7 !important;
+  width: 30% !important;
+  padding: 7px 10px 7px;
+  border-radius: 3px;
+  line-height: 1.15;
+}

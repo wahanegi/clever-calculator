@@ -34,7 +34,9 @@ ActiveAdmin.register Quote do
     column 'Created By' do |quote|
       quote.user.name
     end
-    column :total_price
+    column 'Total Price' do |quote|
+      number_to_currency(quote.total_price)
+    end
     column :created_at
     actions
   end
@@ -102,7 +104,7 @@ ActiveAdmin.register Quote do
         end
       end
 
-      f.input :total_price, as: :number, input_html: { min: 0, readonly: true }, required: false, hint: 'Total price will be calculated automatically based on quote items.'
+      f.input :total_price, as: :number, input_html: { min: 0, readonly: true, class: 'read-only-price' }, required: false, hint: 'Total price will be calculated automatically based on quote items.'
     end
     div do
       button_tag 'Load Items', type: 'button', id: 'load-items-button', class: 'button'
@@ -179,7 +181,9 @@ ActiveAdmin.register Quote do
       row 'Created By' do |quote|
         quote.user.name
       end
-      row :total_price
+      row 'Total Price' do |quote|
+        number_to_currency(quote.total_price)
+      end
       row :created_at
     end
 
@@ -193,9 +197,13 @@ ActiveAdmin.register Quote do
             "-"
           end
         end
-        column :price
+        column 'Price' do |quote_item|
+          number_to_currency(quote_item.price)
+        end
         column :discount
-        column :final_price
+        column 'Final Price' do |quote_item|
+          number_to_currency(quote_item.final_price)
+        end
         column :note, class: 'col-note break-word' do |quote_item|
           quote_item&.note&.notes || 'No notes'
         end
