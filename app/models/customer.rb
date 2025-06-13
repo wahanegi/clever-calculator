@@ -2,16 +2,18 @@ class Customer < ApplicationRecord
   has_many :quotes, dependent: :destroy
   has_one_attached :logo
 
-  normalizes :company_name, with: ->(company_name) { company_name.gsub(/\s+/, ' ').strip }
-
-  validates :company_name, presence: true, uniqueness: { case_sensitive: false }, length: { maximum: 50 }
-  validate :logo_size_and_type, if: -> { logo.attached? }
-  validates :email, format: { with: URI::MailTo::EMAIL_REGEXP, message: "must be a valid email format" },
-                    if: -> { email.present? }
-
   MAX_LOGO_SIZE = 2.megabytes
   ALLOWED_LOGO_TYPES = %w[image/jpeg image/png].freeze
   LOGO_RESIZE_LIMIT = [280, 240].freeze
+
+  normalizes :company_name, with: ->(company_name) { company_name.gsub(/\s+/, ' ').strip }
+
+  validates :company_name, presence: true, uniqueness: { case_sensitive: false }, length: { maximum: 50 }
+  validates :email, format: { with: URI::MailTo::EMAIL_REGEXP, message: "must be a valid email format" },
+                    if: -> { email.present? }
+  validates :logo, file_size: { max: MAX_LOGO_SIZE },
+                   file_content_type: { allowed_types: ALLOWED_LOGO_TYPES },
+                   if: -> { logo.attached? }
 
   def full_name
     "#{first_name} #{last_name}".strip
@@ -28,15 +30,5 @@ class Customer < ApplicationRecord
 
   def self.ransackable_associations(_auth_object = nil)
     ["quotes"]
-  end
-
-  private
-
-  def logo_size_and_type
-    errors.add(:logo, "must be less than #{MAX_LOGO_SIZE / 1.megabyte}MB") if logo.byte_size > MAX_LOGO_SIZE
-
-    return if ALLOWED_LOGO_TYPES.include?(logo.content_type)
-
-    errors.add(:logo, 'must be a JPEG or PNG file')
   end
 end
