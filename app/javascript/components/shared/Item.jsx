@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { PcItemFormGroup, PcItemInputControl, PcItemSelectControl } from '../ui'
-import { getItemTypeConditions } from '../utils'
+import { formatCurrency, getItemTypeConditions } from '../utils'
 import { fetchQuoteItems } from '../services'
 import debounce from 'lodash/debounce'
 
@@ -121,7 +121,7 @@ export const Item = ({ itemData, selectedOptions, setSelectedOptions, quoteId, s
   const renderFixedParams = () =>
     Object.entries(fixed_parameters || {}).map(([label, value]) => (
       <PcItemFormGroup key={label} label={label}>
-        <PcItemInputControl paramType="price" value={parseFloat(value)} />
+        <PcItemInputControl paramType="price" value={formatCurrency(parseFloat(value))} />
       </PcItemFormGroup>
     ))
 
@@ -164,7 +164,7 @@ export const Item = ({ itemData, selectedOptions, setSelectedOptions, quoteId, s
     <PcItemFormGroup paramType="discounted-price" label={label}>
       <PcItemInputControl
         paramType="discounted-price"
-        value={Number(quoteItem.final_price) > 0 ? Number(quoteItem.final_price).toFixed(2) : 0}
+        value={formatCurrency(quoteItem.final_price) || formatCurrency(0)}
       />
     </PcItemFormGroup>
   )
@@ -216,7 +216,7 @@ export const Item = ({ itemData, selectedOptions, setSelectedOptions, quoteId, s
               <PcItemFormGroup paramType="price" label="Price">
                 <PcItemInputControl
                   paramType="price"
-                  value={Number(quoteItem.price) > 0 ? Number(quoteItem.price).toFixed(2) : 0}
+                  value={formatCurrency(quoteItem.price) || formatCurrency(0)}
                 />
               </PcItemFormGroup>
               {renderDiscountedPrice()}

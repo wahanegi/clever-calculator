@@ -55,6 +55,10 @@ document.addEventListener('DOMContentLoaded', () => {
     if (fields.discount) fields.discount.closest('.input').style.display = shouldShowFields ? '' : 'none'
     if (fields.finalPrice) fields.finalPrice.closest('.input').style.display = shouldShowFields ? '' : 'none'
     if (fields.parametersContainer) fields.parametersContainer.style.display = shouldShowFields ? '' : 'none'
+
+    // Format price and final_price on load to show $0.00
+    if (fields.price) formatCurrencyInput(fields.price);
+    if (fields.finalPrice) formatCurrencyInput(fields.finalPrice);
   }
 
   /**
@@ -199,6 +203,11 @@ document.addEventListener('DOMContentLoaded', () => {
       heading.style.display = 'block'
     }
     setTimeout(() => initializeQuoteItems(), 0)
+
+    // Format all read-only price fields
+    document.querySelectorAll('input.read-only-price').forEach((input) => {
+      formatCurrencyInput(input);
+    });
   }
 
   if (window.location.pathname.match(/\/admin\/quotes\/\d+\/edit/)) {
