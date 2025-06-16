@@ -30,6 +30,16 @@ class Setting < ApplicationRecord
     create!(style: style)
   end
 
+  def self.favicon_url
+    if current.app_logo_icon.attached?
+      variant = current.app_logo_icon.variant(resize_and_pad: [64, 64]).processed
+      Rails.application.routes.url_helpers.rails_representation_url(variant, only_path: true,
+                                                                             version: Time.current.to_i)
+    else
+      '/favicon.png'
+    end
+  end
+
   private
 
   def only_one_setting_allowed
