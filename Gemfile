@@ -25,7 +25,7 @@ gem "solid_queue", '~> 1.1.5'                                       # Use the da
 gem "sprockets", '~> 3.7.5', '< 4.0'                                # Rack-based asset packaging system
 gem "sprockets-rails", '~> 3.5.2'                                   # The asset pipeline for Rails
 gem "stimulus-rails", '~> 1.3.4'                                    # Hotwire's modest JavaScript framework [https://stimulus.hotwired.dev]
-gem "thruster", '~> 0.1.13', require: false                         # Add HTTP asset caching/compression and X-Sendfile acceleration to Puma [https://github.com/basecamp/thruster/]
+gem "thruster", '~> 0.1.14', require: false                         # Add HTTP asset caching/compression and X-Sendfile acceleration to Puma [https://github.com/basecamp/thruster/]
 gem "turbo-rails", '~> 2.0.16'                                      # Hotwire's SPA-like page accelerator [https://turbo.hotwired.dev]
 gem "tzinfo-data", '~> 1.2025.2', platforms: %i[ windows jruby ]    # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 
