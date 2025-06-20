@@ -1,9 +1,9 @@
 <div class="login d-flex justify-content-center align-items-center bg-blue-sky vh-100 px-4"
-     style="<%= current_setting.login_background.attached? ? "background-image: url('#{current_setting.login_background.url}') !important; background-size: 473px;" : '' %>">
+     style="<%= current_setting.app_background_icon.attached? ? "background-image: url('#{current_setting.app_background_icon.url}') !important; background-size: 473px;" : '' %>">
   <div class="bg-light d-flex flex-column flex-sm-row justify-content-around align-items-center gap-2 w-100 login-card rounded-4 shadow-lg">
     <div class="login-logo w-100 pb-15">
-      <% if current_setting.logo.attached? %>
-        <%= image_tag current_setting.logo, alt: "Company Logo", class: "login-logo-image object-fit-contain" %>
+      <% if current_setting.app_logo_icon.attached? %>
+        <%= image_tag current_setting.app_logo_icon, alt: "Company Logo", class: "login-logo-image object-fit-contain" %>
       <% else %>
         <%= image_tag "logo.png", alt: "Company Logo", class: "img-fluid" %>
       <% end %>

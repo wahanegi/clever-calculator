@@ -1,25 +1,32 @@
 <%= form_with model: setting, url: admin_setting_update_path, method: :put, html: { multipart: true } do |f| %>
   <fieldset class="inputs">
+    <legend class="fieldset-title"><span>Word Document</span></legend>
     <ol>
       <li class="file input optional">
-        <%= f.label :logo, class: 'label' %>
-        <%= f.file_field :logo, accept: Setting::ALLOWED_IMAGE_TYPES.join(',') %>
-        <% if setting.errors[:logo].present? %>
-          <p class="inline-errors"><%= setting.errors.full_messages_for(:logo).to_sentence %></p>
+        <%= f.label "Header logo", class: 'label', for: 'setting_word_header_document_logo' %>
+        <%= f.file_field :word_header_document_logo, accept: Setting::ALLOWED_IMAGE_TYPES.join(',') %>
+        <% if setting.errors[:word_header_document_logo].present? %>
+          <p class="inline-errors"><%= setting.errors.full_messages_for(:word_header_document_logo).to_sentence %></p>
+        <% end %>
+      </li>
+    </ol>
+  </fieldset>
+
+  <fieldset class="inputs">
+    <legend class="fieldset-title"><span>App</span></legend>
+    <ol>
+      <li class="file input optional">
+        <%= f.label 'Logo Icon', class: 'label', for:'setting_app_logo_icon' %>
+        <%= f.file_field :app_logo_icon, accept: Setting::ALLOWED_IMAGE_TYPES.join(',') %>
+        <% if setting.errors[:app_logo_icon].present? %>
+          <p class="inline-errors"><%= setting.errors.full_messages_for(:app_logo_icon).to_sentence %></p>
         <% end %>
       </li>
       <li class="file input optional">
-        <%= f.label :login_background, class: 'label' %>
-        <%= f.file_field :login_background, accept: Setting::ALLOWED_IMAGE_TYPES.join(',') %>
-        <% if setting.errors[:login_background].present? %>
-          <p class="inline-errors"><%= setting.errors.full_messages_for(:login_background).to_sentence %></p>
-        <% end %>
-      </li>
-      <li class="file input optional">
-        <%= f.label :app_background, class: 'label' %>
-        <%= f.file_field :app_background, accept: Setting::ALLOWED_IMAGE_TYPES.join(',') %>
-        <% if setting.errors[:app_background].present? %>
-          <p class="inline-errors"><%= setting.errors.full_messages_for(:app_background).to_sentence %></p>
+        <%= f.label "Background Icon", class: 'label', for:'setting_app_background_icon' %>
+        <%= f.file_field :app_background_icon, accept: Setting::ALLOWED_IMAGE_TYPES.join(',') %>
+        <% if setting.errors[:app_background_icon].present? %>
+          <p class="inline-errors"><%= setting.errors.full_messages_for(:app_background_icon).to_sentence %></p>
         <% end %>
       </li>
       <li class="color input optional">

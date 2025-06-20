@@ -1,24 +1,21 @@
 class Setting < ApplicationRecord
-  has_one_attached :logo
-  has_one_attached :login_background
-  has_one_attached :app_background
+  has_one_attached :app_logo_icon
+  has_one_attached :app_background_icon
+  has_one_attached :word_header_document_logo
 
   MAX_IMAGE_SIZE = 1.megabyte
-  ALLOWED_IMAGE_TYPES = %w[image/jpeg image/png image/svg+xml].freeze
+  ALLOWED_IMAGE_TYPES = %w[image/jpeg image/png].freeze
 
   validate :only_one_setting_allowed
-  validates :logo, file_size: { max: MAX_IMAGE_SIZE },
-                   file_content_type: { allowed_types: ALLOWED_IMAGE_TYPES,
-                                        message: 'must be a JPEG, SVG or PNG file' },
-                   if: -> { logo.attached? }
-  validates :app_background, file_size: { max: MAX_IMAGE_SIZE },
-                             file_content_type: { allowed_types: ALLOWED_IMAGE_TYPES,
-                                                  message: 'must be a JPEG, SVG or PNG file' },
-                             if: -> { app_background.attached? }
-  validates :login_background, file_size: { max: MAX_IMAGE_SIZE },
-                               file_content_type: { allowed_types: ALLOWED_IMAGE_TYPES,
-                                                    message: 'must be a JPEG, SVG or PNG file' },
-                               if: -> { login_background.attached? }
+  validates :app_logo_icon, file_size: { max: MAX_IMAGE_SIZE },
+                            file_content_type: { allowed_types: ALLOWED_IMAGE_TYPES },
+                            if: -> { app_logo_icon.attached? }
+  validates :app_background_icon, file_size: { max: MAX_IMAGE_SIZE },
+                                  file_content_type: { allowed_types: ALLOWED_IMAGE_TYPES },
+                                  if: -> { app_background_icon.attached? }
+  validates :word_header_document_logo, file_size: { max: MAX_IMAGE_SIZE },
+                                        file_content_type: { allowed_types: ALLOWED_IMAGE_TYPES },
+                                        if: -> { word_header_document_logo.attached? }
 
   # Returns the singleton setting instance, creates it if it doesn't exist
   def self.current
@@ -31,6 +28,16 @@ class Setting < ApplicationRecord
     style = BrandColorBuilder.new(primary, secondary, blue_light, blue_sky, light).build_css
 
     create!(style: style)
+  end
+
+  def self.favicon_url
+    if current.app_logo_icon.attached?
+      variant = current.app_logo_icon.variant(resize_and_pad: [64, 64]).processed
+      Rails.application.routes.url_helpers.rails_representation_url(variant, only_path: true,
+                                                                             version: Time.current.to_i)
+    else
+      '/favicon.png'
+    end
   end
 
   private

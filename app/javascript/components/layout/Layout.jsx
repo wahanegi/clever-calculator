@@ -14,7 +14,7 @@ export const Layout = () => {
     fetchSetting.show()
       .then((response) => {
         const { data: { attributes } } = response
-        const isSettingUpdated = attributes.logo !== setting.logo || attributes.app_background !== setting.app_background
+        const isSettingUpdated = attributes.app_logo_icon !== setting.app_logo_icon || attributes.app_background_icon !== setting.app_background_icon
 
         if (isSettingUpdated) {
           setSetting(attributes)
@@ -23,8 +23,8 @@ export const Layout = () => {
       })
   }, [])
 
-  const backgroundImageStyle = setting?.app_background ? {
-    backgroundImage: `url(${setting?.app_background})`,
+  const backgroundImageStyle = setting?.app_background_icon ? {
+    backgroundImage: `url(${setting?.app_background_icon})`,
     backgroundSize: '333px',
   } : {}
 
