@@ -42,9 +42,9 @@ class AdminUser < ApplicationRecord
   end
 
   def prevent_multiple_administrators
-    existing_administrator = AdminUser.where(administrator: true).where.not(id: id).exists?
+    existing_administrator_exists = AdminUser.where(administrator: true).where.not(id: id).exists?
 
-    return unless existing_administrator
+    return unless existing_administrator_exists
 
     errors.add(:administrator, 'can only be assigned to one admin user at a time')
   end
