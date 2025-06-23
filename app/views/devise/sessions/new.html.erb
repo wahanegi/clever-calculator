@@ -1,4 +1,4 @@
-<% support_email = AdminUser.find_by(administrator: true)&.email || AdminUser.order(:id).first&.email %>
+<% support_email = admin_email %>
 
 <div class="login d-flex justify-content-center align-items-center bg-blue-sky vh-100 px-4"
      style="<%= current_setting.app_background_icon.attached? ? "background-image: url('#{current_setting.app_background_icon.url}') !important; background-size: 473px;" : '' %>">
