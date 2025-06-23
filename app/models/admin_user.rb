@@ -21,6 +21,7 @@ class AdminUser < ApplicationRecord
   validates :password, format: { with: PASSWORD_REPEATED_CHAR_FORMAT,
                                  message: "must not contain repeated characters" },
                        unless: :skip_password_validation?, if: -> { password.present? }
+  validate :only_one_administrator, if: :administrator_changed?
 
   def update_without_password(params)
     @skip_password_validation = true
@@ -38,5 +39,11 @@ class AdminUser < ApplicationRecord
 
   def skip_password_validation?
     @skip_password_validation || false
+  end
+
+  def only_one_administrator
+    return unless AdminUser.where(administrator: true).where.not(id: id).exists?
+
+    errors.add(:administrator, 'can only be assigned to one admin user at a time')
   end
 end
