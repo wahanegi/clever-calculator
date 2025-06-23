@@ -1,5 +1,5 @@
 ActiveAdmin.register AdminUser do
-  permit_params :email, :name, :password
+  permit_params :email, :name, :password, :administrator
 
   action_item :back, only: :show do
     link_to 'Back to Admin Users', admin_admin_users_path
@@ -13,6 +13,7 @@ ActiveAdmin.register AdminUser do
     id_column
     column :name
     column :email
+    column :administrator
     column :created_at
     column :last_sign_in_at
     actions
@@ -23,6 +24,7 @@ ActiveAdmin.register AdminUser do
       row :id
       row :name
       row :email
+      row :administrator
       row :created_at
     end
   end
@@ -31,6 +33,7 @@ ActiveAdmin.register AdminUser do
     f.inputs do
       f.input :name
       f.input :email
+      f.input :administrator, as: :boolean
       f.input :password, required: resource.new_record?
     end
     f.actions

@@ -6,7 +6,8 @@ RSpec.describe "Admin::AdminUsersController", type: :request do
   let(:admin_user_params) do
     { email: 'admin.123@example.com',
       name: 'test',
-      password: 'password@123' }
+      password: 'password@123',
+      administrator: true }
   end
 
   before do
@@ -34,6 +35,16 @@ RSpec.describe "Admin::AdminUsersController", type: :request do
 
         expect(response.body).to include('Admin user was successfully created.')
         expect(last_admin_user.email).to be_eql admin_user_params[:email]
+        expect(AdminUser.last.administrator).to be true
+      end
+
+      it 'prevents creating a second administrator' do
+        create(:admin_user, administrator: true)
+
+        post admin_admin_users_path, params: { admin_user: admin_user_params }
+
+        expect(response.body).to include('can only be assigned to one admin user at a time')
+        expect(AdminUser.where(administrator: true).count).to eq 1
       end
     end
 
