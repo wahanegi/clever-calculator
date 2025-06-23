@@ -56,7 +56,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_23_082213) do
     t.datetime "last_sign_in_at"
     t.string "current_sign_in_ip"
     t.string "last_sign_in_ip"
-    t.boolean "administrator", default: false
+    t.boolean "administrator", default: false, null: false
     t.index ["email"], name: "index_admin_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_admin_users_on_reset_password_token", unique: true
   end

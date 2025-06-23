@@ -242,6 +242,12 @@
   hyphens: auto;
 }
 
+#admin_user_administrator_input label {
+  padding-bottom: 12px;
+  display: flex;
+  align-items: center;
+}
+
 @import 'active_admin/forms/select';
 @import 'active_admin/forms/dropdown-select';
 @import 'active_admin/forms/quote-form';
