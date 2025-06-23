@@ -1,3 +1,5 @@
+<% support_email = AdminUser.find_by(administrator: true)&.email || AdminUser.order(:id).first&.email %>
+
 <div class="login d-flex justify-content-center align-items-center bg-blue-sky vh-100 px-4"
      style="<%= current_setting.app_background_icon.attached? ? "background-image: url('#{current_setting.app_background_icon.url}') !important; background-size: 473px;" : '' %>">
   <div class="bg-light d-flex flex-column flex-sm-row justify-content-around align-items-center gap-2 w-100 login-card rounded-4 shadow-lg">
@@ -41,24 +43,24 @@
         </div>
         <div class="w-100 d-flex mt-2 lh-sm">
           <%= link_to "Forgot password?",
-                      "mailto:#{ENV['SUPPORT_EMAIL']}?subject=Password%20Reset%20Request&body=Hello,%20I%20need%20help%20resetting%20my%20password%20for%20The%20Sales%20Calculator.%0D%0A%0D%0A" \
+                      "mailto:#{support_email}?subject=Password%20Reset%20Request&body=Hello,%20I%20need%20help%20resetting%20my%20password%20for%20The%20Sales%20Calculator.%0D%0A%0D%0A" \
                         "My details:%0D%0A" \
                         "- Name: [please enter your name]%0D%0A" \
                         "- Email: [please enter your email]%0D%0A%0D%0A" \
                         "Thank you!",
-                      class: "fs-10 text-end w-100 #{ENV['SUPPORT_EMAIL'].present? ? '' : 'd-none'}" %>
+                      class: "fs-10 text-end w-100 #{support_email.present? ? '' : 'd-none'}" %>
         </div>
         <div class="actions w-100 mt-8 mb-6">
           <%= f.submit "LOGIN", class: "btn btn-primary text-white w-100 fw-medium lh-sm rounded-2 py-4 border-0" %>
         </div>
-        <div class="w-100 text-center <%= ENV['SUPPORT_EMAIL'].present? ? '' : 'd-none' %>">
+        <div class="w-100 text-center <%= support_email.present? ? '' : 'd-none' %>">
           <div class="or-divider position-relative mb-3">
             <span class="text-secondary py-3">or</span>
           </div>
           <p class="lh-sm mt-4 text-secondary fs-10 lh-lg">
             If you don’t have access
             <%= link_to "request here",
-                        "mailto:#{ENV['SUPPORT_EMAIL']}?subject=Access%20Request&body=Hello,%20I%20would%20like%20to%20request%20access%20to%20The%20Sales%20Calculator.%0D%0A%0D%0A" \
+                        "mailto:#{support_email}?subject=Access%20Request&body=Hello,%20I%20would%20like%20to%20request%20access%20to%20The%20Sales%20Calculator.%0D%0A%0D%0A" \
                           "My details:%0D%0A" \
                           "- Name: [please enter your name]%0D%0A" \
                           "- Email: [please enter your email]%0D%0A%0D%0A" \
