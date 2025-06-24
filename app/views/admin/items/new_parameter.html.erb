@@ -5,10 +5,11 @@
     <%= hidden_field_tag :authenticity_token, form_authenticity_token %>
     <%= hidden_field_tag :editing, true if params[:editing].present? %>
     <%= hidden_field_tag :original_name, params[:original_name] if params[:editing].present? %>
+    <%= hidden_field_tag :parameter_type, @param_type if @editing %>
     <div class="radio-group">
-      <label><%= radio_button_tag :parameter_type, "Fixed", @param_type == "Fixed" %> Fixed</label>
-      <label><%= radio_button_tag :parameter_type, "Open", @param_type == "Open" %> Open</label>
-      <label><%= radio_button_tag :parameter_type, "Select", @param_type == "Select" %> Select</label>
+      <label><%= radio_button_tag :parameter_type, "Fixed", @param_type == "Fixed", disabled: @editing %> Fixed </label>
+      <label><%= radio_button_tag :parameter_type, "Open", @param_type == "Open", disabled: @editing %> Open </label>
+      <label><%= radio_button_tag :parameter_type, "Select", @param_type == "Select", disabled: @editing %> Select </label>
     </div>
     <div id="fixed_fields">
       <h4>Fixed Parameter</h4>
