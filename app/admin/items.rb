@@ -301,6 +301,7 @@ ActiveAdmin.register Item do
   member_action :new_parameter, method: :get do
     @item = params[:id] == "new" ? Item.new : Item.find(params[:id])
     @param_type = params[:parameter_type]
+    @editing = params[:editing] == "true"
 
     case @param_type
     when "Fixed"
