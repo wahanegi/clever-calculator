@@ -338,7 +338,7 @@ ActiveAdmin.register Item do
     is_renaming_existing = @editing && param_name != @original_name
     is_duplicate_name = formula_params.include?(param_name)
 
-    if is_duplicate_name && is_renaming_existing
+    if is_duplicate_name && (!@editing || is_renaming_existing)
       flash.now[:error] = "Parameter '#{param_name}' already exists in the formula parameters"
       return render :new_parameter
     end
