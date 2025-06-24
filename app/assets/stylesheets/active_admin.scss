@@ -242,6 +242,12 @@
   hyphens: auto;
 }
 
+#admin_user_administrator_input label {
+  padding-bottom: 12px;
+  display: flex;
+  align-items: center;
+}
+
 .delete_item_param {
   padding-right: 10px;
 }
