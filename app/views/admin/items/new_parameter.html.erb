@@ -61,7 +61,7 @@
     <div class="form-actions">
       <% back_path = resource.persisted? ? edit_admin_item_path(resource) : new_resource_path %>
       <% if @editing %>
-        <%= submit_tag "Edit Parameter", class: "button" %>
+        <%= submit_tag "Update Parameter", class: "button" %>
       <% else %>
         <%= submit_tag "Add Parameter", class: "button" %>
       <% end %>
