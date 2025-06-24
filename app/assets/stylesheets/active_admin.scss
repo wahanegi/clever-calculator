@@ -242,6 +242,10 @@
   hyphens: auto;
 }
 
+.delete_item_param {
+  padding-right: 10px;
+}
+
 @import 'active_admin/forms/select';
 @import 'active_admin/forms/dropdown-select';
 @import 'active_admin/forms/quote-form';

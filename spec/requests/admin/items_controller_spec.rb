@@ -111,19 +111,19 @@ RSpec.describe 'Admin::Items', type: :request do
 
     context 'with session parameters' do
       before do
-        # Set up session[:tmp_params] via create_parameter requests
-        post '/admin/items/new/create_parameter', params: {
+        # Set up session[:tmp_params] via create_or_update_parameter requests
+        post '/admin/items/new/create_or_update_parameter', params: {
           parameter_type: 'Fixed',
           fixed_parameter_name: 'Acquisition',
           fixed_parameter_value: '2500'
         }
 
-        post '/admin/items/new/create_parameter', params: {
+        post '/admin/items/new/create_or_update_parameter', params: {
           parameter_type: 'Open',
           open_parameter_name: 'Custom'
         }
 
-        post '/admin/items/new/create_parameter', params: {
+        post '/admin/items/new/create_or_update_parameter', params: {
           parameter_type: 'Select',
           select_parameter_name: 'Tier',
           value_label: 'Cost Per User',
@@ -256,19 +256,19 @@ RSpec.describe 'Admin::Items', type: :request do
 
   describe 'DELETE /admin/items/:id/remove_parameter' do
     before do
-      # Set up session[:tmp_params] via create_parameter requests
-      post '/admin/items/new/create_parameter', params: {
+      # Set up session[:tmp_params] via create_or_update_parameter requests
+      post '/admin/items/new/create_or_update_parameter', params: {
         parameter_type: 'Fixed',
         fixed_parameter_name: 'Platform Fee',
         fixed_parameter_value: '2500'
       }
 
-      post '/admin/items/new/create_parameter', params: {
+      post '/admin/items/new/create_or_update_parameter', params: {
         parameter_type: 'Open',
         open_parameter_name: 'Custom'
       }
 
-      post '/admin/items/new/create_parameter', params: {
+      post '/admin/items/new/create_or_update_parameter', params: {
         parameter_type: 'Select',
         select_parameter_name: 'Tier',
         value_label: 'Cost Per User',
