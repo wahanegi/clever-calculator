@@ -1,7 +1,7 @@
 module QuoteDocxSections
   class HeaderSection
-    MAX_LOGO_WIDTH = 300
-    MAX_LOGO_HEIGHT = 150
+    MAX_LOGO_WIDTH = 120
+    MAX_LOGO_HEIGHT = 40
 
     def initialize(docx, logo_path, colors, logo_size)
       @docx = docx
@@ -10,15 +10,34 @@ module QuoteDocxSections
       @logo_size = resize_to_max(logo_size)
     end
 
-    def call
-      @docx.page_margins top: 580, bottom: 1400, left: 580, right: 580
-      @docx.page_numbers true, align: :right, label: 'Page'
-      @docx.img @logo_path, width: @logo_size[:width], height: @logo_size[:height], align: :center if @logo_path
-      @docx.p '230 W Ohio St, Suite 520, Chicago IL 60564', size: 13, align: :center
-      @docx.hr size: 4, color: @colors[:primary], spacing: 8
+    def build
+      @docx.page_margins top: 700, bottom: 2300, left: 1150, right: 1150
+      @docx.page_numbers true, align: :right, label: 'Confidential & Proprietary | Page ', size: 18, color: '000000'
+      @docx.table company_data do
+        cell_style cols[0], width: 4000
+      end
+      @docx.hr size: 10, spacing: 10, color: 'becbe4'
     end
 
     private
+
+    # rubocop:disable Metrics/MethodLength
+    def company_data
+      [[
+        Caracal::Core::Models::TableCellModel.new do |cell|
+          cell.img @logo_path, width: @logo_size[:width], height: @logo_size[:height], align: :left if @logo_path
+          cell.p 'CLEARBOX DECISIONS INC', size: 13, color: '677888', font: 'Montserrat SemiBold'
+          cell.p 'DBA. CLOVERPOP', align: :left, size: 13, color: '677888', font: 'Montserrat SemiBold'
+          cell.p '230 W. HURON ST, SUITE 520', align: :left, size: 13, color: '677888', font: 'Montserrat SemiBold'
+          cell.p 'CHICAGO IL, 60654', align: :left, size: 13, color: '677888', font: 'Montserrat SemiBold'
+        end,
+        Caracal::Core::Models::TableCellModel.new do |cell|
+          3.times { cell.p }
+          cell.h1 'Cloverpop Statement of Work', align: :right, color: '677888', font: 'Montserrat SemiBold', size: 36
+        end
+      ]]
+    end
+    # rubocop:enable Metrics/MethodLength
 
     def resize_to_max(logo_size)
       return unless logo_size
