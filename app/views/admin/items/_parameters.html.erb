@@ -19,7 +19,9 @@
           <% if mode == :edit %>
             <td style="width: 20%;">
               <%= link_to "Delete", remove_parameter_admin_item_path(item_key, param_type: :fixed, param_key: name.to_s),
-                          method: :delete, data: { confirm: "Delete fixed param '#{name}'?" } %>
+                          method: :delete, data: { confirm: "Delete fixed param '#{name}'?" }, class: 'delete_item_param' %>
+              <%= link_to "Edit", new_parameter_admin_item_path(item_key, parameter_type: :Fixed, fixed_parameter_name: name,
+                                                                fixed_parameter_value: value, original_name: name, editing: true) %>
             </td>
           <% end %>
         </tr>
@@ -47,7 +49,9 @@
           <% if mode == :edit %>
             <td style="width: 20%;">
               <%= link_to "Delete", remove_parameter_admin_item_path(item_key, param_type: :open, param_key: label.to_s),
-                          method: :delete, data: { confirm: "Delete open param '#{label}'?" } %>
+                          method: :delete, data: { confirm: "Delete open param '#{label}'?" }, class: 'delete_item_param' %>
+              <%= link_to "Edit", new_parameter_admin_item_path(item_key, parameter_type: :Open, open_parameter_name: label,
+                                                                original_name: label, editing: true) %>
             </td>
           <% end %>
         </tr>
@@ -94,7 +98,9 @@
           <% if mode == :edit %>
             <td>
               <%= link_to "Delete", remove_parameter_admin_item_path(item_key, param_type: :select, param_key: sel_name.to_s),
-                          method: :delete, data: { confirm: "Delete selectable param '#{sel_name}'?" } %>
+                          method: :delete, data: { confirm: "Delete selectable param '#{sel_name}'?" }, class: 'delete_item_param' %>
+              <%= link_to "Edit", new_parameter_admin_item_path(item_key, parameter_type: :Select, select_parameter_name: sel_name,
+                                                                value_label: value_label, select_options: options_data, original_name: sel_name, editing: true) %>
             </td>
           <% end %>
         </tr>

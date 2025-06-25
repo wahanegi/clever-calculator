@@ -9,5 +9,9 @@ module ActiveAdmin
     def template_bubble_tag(value, param_id)
       "<span class='formula-bubble' contenteditable='false' data-param-id='#{param_id}'>#{value}</span>"
     end
+
+    def value_with_flash_fallback(key, flash_value, fallback)
+      flash.now[:error].present? ? flash_value[key] : fallback
+    end
   end
 end
