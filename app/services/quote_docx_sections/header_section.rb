@@ -3,10 +3,9 @@ module QuoteDocxSections
     MAX_LOGO_WIDTH = 120
     MAX_LOGO_HEIGHT = 40
 
-    def initialize(docx, logo_path, colors, logo_size)
+    def initialize(docx, logo_path, logo_size)
       @docx = docx
       @logo_path = logo_path
-      @colors = colors
       @logo_size = resize_to_max(logo_size)
     end
 

@@ -10,7 +10,7 @@ class QuoteDocxGenerator
 
   def call
     build_docx do |docx, logo|
-      QuoteDocxSections::HeaderSection.new(docx, logo&.path, @colors, @logo_size).build
+      QuoteDocxSections::HeaderSection.new(docx, logo&.path, @logo_size).build
       QuoteDocxSections::ClientInfoSection.new(docx, @quote.customer, @grouped_items.keys.map(&:name)).build
       QuoteDocxSections::FeesSection.new(docx, @grouped_items).build
       QuoteDocxSections::AdditionalWarrantiesSection.new(docx).build

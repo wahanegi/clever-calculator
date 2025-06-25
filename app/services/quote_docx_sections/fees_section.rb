@@ -8,7 +8,7 @@ module QuoteDocxSections
     end
 
     def build
-      8.times { @docx.p }
+      @docx.page
       @docx.h2 '1. Fees'
       @docx.table table_data, border_size: 1, border_color: 'dadada' do
         cell_style cells, size: 16, border_size: 0

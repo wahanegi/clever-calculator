@@ -6,7 +6,7 @@ module QuoteDocxSections
 
     # rubocop:disable Metrics/AbcSize,Metrics/MethodLength,Layout/LineLength
     def build
-      @docx.p
+      @docx.page
       @docx.h2 '2. Additional Warranties'
       @docx.list_style do
         type    :ordered
