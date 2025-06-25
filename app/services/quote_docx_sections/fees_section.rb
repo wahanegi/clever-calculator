@@ -8,7 +8,7 @@ module QuoteDocxSections
     end
 
     def build
-      7.times { @docx.p }
+      8.times { @docx.p }
       @docx.h2 '1. Fees'
       @docx.table table_data, border_size: 1, border_color: 'dadada' do
         cell_style cells, size: 16, border_size: 0
@@ -53,8 +53,8 @@ module QuoteDocxSections
       quote_items.map do |qi|
         [
           qi.item.name,
-          '-',
-          '-',
+          quantity_or_unit_cell(qi.pricing_parameters.keys),
+          quantity_or_unit_cell(qi.pricing_parameters.values),
           format_number(qi.final_price, 'Included'),
           qi.note&.is_printable ? qi.note.notes.to_s : "-"
         ]
@@ -67,13 +67,25 @@ module QuoteDocxSections
         align: :left,
         background: '199dc7',
         color: 'ffffff'
-      }.merge(grow ? { width: 1000 } : {})
+      }.merge(grow ? { width: 2000 } : {})
     end
 
     def total_cost_row
       price = @grouped_items.values.sum { |quote_items| quote_items.sum(&:final_price) }
 
       [['TOTAL COST', 'Total Cost', "#{format_number(price)} (USD)"]]
+    end
+
+    def quantity_or_unit_cell(array)
+      Caracal::Core::Models::TableCellModel.new do |cell|
+        if array.empty?
+          cell.p '-'
+        else
+          array.each do |value|
+            cell.p value
+          end
+        end
+      end
     end
 
     def format_number(number, default = '-', currency: true)

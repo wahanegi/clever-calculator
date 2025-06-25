@@ -25,7 +25,11 @@ module QuoteDocxSections
     def company_data
       [[
         Caracal::Core::Models::TableCellModel.new do |cell|
-          cell.img @logo_path, width: @logo_size[:width], height: @logo_size[:height], align: :left if @logo_path
+          if @logo_path
+            cell.img @logo_path, width: @logo_size[:width], height: @logo_size[:height], align: :left
+          else
+            cell.p
+          end
           cell.p 'CLEARBOX DECISIONS INC', size: 13, color: '677888', font: 'Montserrat SemiBold'
           cell.p 'DBA. CLOVERPOP', align: :left, size: 13, color: '677888', font: 'Montserrat SemiBold'
           cell.p '230 W. HURON ST, SUITE 520', align: :left, size: 13, color: '677888', font: 'Montserrat SemiBold'
