@@ -10,12 +10,15 @@ module QuoteDocxSections
     end
 
     def build
-      @docx.page_margins top: 700, bottom: 2300, left: 1150, right: 1150
+      @docx.font do
+        name 'Montserrat SemiBold'
+      end
+      @docx.page_margins top: 700, bottom: 1500, left: 1150, right: 1150
       @docx.page_numbers true, align: :right, label: 'Confidential & Proprietary | Page ', size: 18, color: '000000'
       @docx.table company_data do
         cell_style cols[0], width: 4000
       end
-      @docx.hr size: 10, spacing: 10, color: 'becbe4'
+      @docx.hr size: 10, spacing: 10, color: '0759ae'
     end
 
     private
@@ -27,7 +30,7 @@ module QuoteDocxSections
           if @logo_path
             cell.img @logo_path, width: @logo_size[:width], height: @logo_size[:height], align: :left
           else
-            cell.p
+            2.times { cell.p }
           end
           cell.p 'CLEARBOX DECISIONS INC', size: 13, color: '677888', font: 'Montserrat SemiBold'
           cell.p 'DBA. CLOVERPOP', align: :left, size: 13, color: '677888', font: 'Montserrat SemiBold'

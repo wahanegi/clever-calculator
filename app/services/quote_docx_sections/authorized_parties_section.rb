@@ -6,7 +6,6 @@ module QuoteDocxSections
     end
 
     def build
-      @docx.page
       @docx.h2 '3. Authorized Parties'
       @docx.p
       @docx.hr size: 10, spacing: 10, color: '54504a'
