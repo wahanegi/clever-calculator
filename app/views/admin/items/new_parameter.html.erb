@@ -1,43 +1,46 @@
 <div class="panel parameter-panel">
   <h2>Add Parameter for <%= resource.name %></h2>
   <p>Choose one of the parameter types below.</p>
-  <%= form_with url: create_parameter_admin_item_path(resource.persisted? ? resource.id : "new"), method: :post, local: true do %>
+  <%= form_with url: create_or_update_parameter_admin_item_path(resource.persisted? ? resource.id : "new"), method: :post, local: true do %>
     <%= hidden_field_tag :authenticity_token, form_authenticity_token %>
+    <%= hidden_field_tag :editing, true if params[:editing].present? %>
+    <%= hidden_field_tag :original_name, params[:original_name] if params[:editing].present? %>
+    <%= hidden_field_tag :parameter_type, @param_type if @editing %>
     <div class="radio-group">
-      <label><%= radio_button_tag :parameter_type, "Fixed", @param_type == "Fixed" %> Fixed</label>
-      <label><%= radio_button_tag :parameter_type, "Open", @param_type == "Open" %> Open</label>
-      <label><%= radio_button_tag :parameter_type, "Select", @param_type == "Select" %> Select</label>
+      <label><%= radio_button_tag :parameter_type, "Fixed", @param_type == "Fixed", disabled: @editing %> Fixed </label>
+      <label><%= radio_button_tag :parameter_type, "Open", @param_type == "Open", disabled: @editing %> Open </label>
+      <label><%= radio_button_tag :parameter_type, "Select", @param_type == "Select", disabled: @editing %> Select </label>
     </div>
     <div id="fixed_fields">
       <h4>Fixed Parameter</h4>
       <div class="form-field">
         <%= label_tag :fixed_parameter_name, "Parameter Name *" %>
-        <%= text_field_tag :fixed_parameter_name, @params_data&.[](:fixed_parameter_name) %>
+        <%= text_field_tag :fixed_parameter_name, value_with_flash_fallback(:fixed_parameter_name, @params_data, @param_name) %>
       </div>
       <div class="form-field">
         <%= label_tag :fixed_parameter_value, "Parameter Value *" %>
-        <%= number_field_tag :fixed_parameter_value, @params_data&.[](:fixed_parameter_value), step: "any" %>
+        <%= number_field_tag :fixed_parameter_value, value_with_flash_fallback(:fixed_parameter_value, @params_data, @param_value), step: "any" %>
       </div>
     </div>
     <div id="open_fields" style="display:none;">
       <h4>Open Parameter</h4>
       <div class="form-field">
         <%= label_tag :open_parameter_name, "Parameter Name *" %>
-        <%= text_field_tag :open_parameter_name, @params_data&.[](:open_parameter_name) %>
+        <%= text_field_tag :open_parameter_name, value_with_flash_fallback(:open_parameter_name, @params_data, @param_name) %>
       </div>
     </div>
     <div id="select_fields" style="display:none;">
       <h4>Select Parameter</h4>
       <div class="form-field">
         <%= label_tag :select_parameter_name, "Select Name *" %>
-        <%= text_field_tag :select_parameter_name, @params_data&.[](:select_parameter_name) %>
+        <%= text_field_tag :select_parameter_name, value_with_flash_fallback(:select_parameter_name, @params_data, @param_name) %>
       </div>
       <div class="form-field">
         <%= label_tag :value_label, "Value Label *" %>
-        <%= text_field_tag :value_label, @params_data&.[](:value_label), class: "value-label-input" %>
+        <%= text_field_tag :value_label, value_with_flash_fallback(:value_label, @params_data, @value_label), class: "value-label-input" %>
       </div>
       <div id="select-options-wrapper">
-        <% submitted_options = @params_data&.[](:select_options) || [] %>
+        <% submitted_options = flash.now[:error].present? ? @params_data[:select_options] : @select_options %>
         <% (submitted_options.presence || [{}] * 2).each do |opt| %>
           <div class="select-option-row">
             <div class="select-field">
@@ -58,7 +61,11 @@
     </div>
     <div class="form-actions">
       <% back_path = resource.persisted? ? edit_admin_item_path(resource) : new_resource_path %>
-      <%= submit_tag "Add Parameter", class: "button" %>
+      <% if @editing %>
+        <%= submit_tag "Update Parameter", class: "button" %>
+      <% else %>
+        <%= submit_tag "Add Parameter", class: "button" %>
+      <% end %>
       <%= link_to "Cancel", back_path, class: "button cancel-button" %>
     </div>
   <% end %>

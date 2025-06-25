@@ -250,6 +250,26 @@ ActiveAdmin.register Item do
         admin_item_path(@item)
       end
     end
+
+    def remove_old_parameter(original_name, type)
+      session_service.remove_formula_parameter(original_name)
+      case type
+      when "Fixed"
+        fixed = session_service.get(:fixed) || {}
+        fixed.stringify_keys!
+        fixed.delete(original_name)
+        session_service.set(:fixed, fixed)
+      when "Open"
+        open = session_service.get(:open) || []
+        open.delete(original_name)
+        session_service.set(:open, open)
+      when "Select"
+        select = session_service.get(:select) || {}
+        select.stringify_keys!
+        select.delete(original_name)
+        session_service.set(:select, select)
+      end
+    end
   end
 
   actions :all, except: [:destroy]
@@ -280,12 +300,28 @@ ActiveAdmin.register Item do
 
   member_action :new_parameter, method: :get do
     @item = params[:id] == "new" ? Item.new : Item.find(params[:id])
+    @param_type = params[:parameter_type]
+    @editing = params[:editing] == "true"
+
+    case @param_type
+    when "Fixed"
+      @param_name = params[:fixed_parameter_name].to_s
+      @param_value = params[:fixed_parameter_value].to_s
+    when "Open"
+      @param_name = params[:open_parameter_name].to_s
+    when "Select"
+      @param_name = params[:select_parameter_name].to_s
+      @value_label = params[:value_label].to_s
+      @select_options = params[:select_options] || []
+    end
   end
 
-  member_action :create_parameter, method: :post do
+  member_action :create_or_update_parameter, method: :post do
     @item = Item.find_by(id: params[:id]) || Item.new
     @param_type = params[:parameter_type]
     @params_data = params
+    @editing = params[:editing] == "true"
+    @original_name = params[:original_name].to_s
 
     param_name = case @param_type
                  when "Fixed" then params[:fixed_parameter_name].to_s.squish
@@ -300,7 +336,10 @@ ActiveAdmin.register Item do
       return render :new_parameter
     end
 
-    if formula_params.include?(param_name)
+    is_renaming_existing = @editing && param_name != @original_name
+    is_duplicate_name = formula_params.include?(param_name)
+
+    if is_duplicate_name && (!@editing || is_renaming_existing)
       flash.now[:error] = "Parameter '#{param_name}' already exists in the formula parameters"
       return render :new_parameter
     end
@@ -309,6 +348,8 @@ ActiveAdmin.register Item do
     added_to_formula = false
 
     begin
+      remove_old_parameter(@original_name, @param_type) if @editing && param_name != @original_name
+
       case @param_type
       when "Fixed"
         param_value = params[:fixed_parameter_value].to_s.strip
