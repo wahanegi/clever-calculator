@@ -10,10 +10,11 @@ class QuoteDocxGenerator
 
   def call
     build_docx do |docx, logo|
-      QuoteDocxSections::HeaderSection.new(docx, logo&.path, @colors, @logo_size).call
-      QuoteDocxSections::PricingSheetSection.new(docx, @colors, @quote).call
-      QuoteDocxSections::CostSummarySection.new(docx, @colors, @grouped_items, @quote).call
-      QuoteDocxSections::CostDetailsSection.new(docx, @colors, @grouped_items).call
+      QuoteDocxSections::HeaderSection.new(docx, logo&.path, @logo_size).build
+      QuoteDocxSections::ClientInfoSection.new(docx, @quote.customer, @grouped_items.keys.map(&:name)).build
+      QuoteDocxSections::FeesSection.new(docx, @grouped_items).build
+      QuoteDocxSections::AdditionalWarrantiesSection.new(docx).build
+      QuoteDocxSections::AuthorizedPartiesSection.new(docx, @quote.customer).build
     end
   end
 
@@ -91,6 +92,6 @@ class QuoteDocxGenerator
 
     Rails.logger.warn "Logo metadata is missing dimensions: #{@logo.metadata.inspect}" if width.nil? || height.nil?
 
-    { width: width || 200, height: height || 200 }
+    { width: width || 120, height: height || 120 }
   end
 end
