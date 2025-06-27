@@ -38,7 +38,7 @@ module QuoteDocxSections
       [['TOTAL COST', 'Total Cost', "#{format_number(total_price)} (USD)"]]
     end
 
-    def main_header_row(model)
+    def main_header_row(model) # rubocop:disable Metrics/MethodLength
       [[
         {
           content: model.name,
@@ -46,11 +46,11 @@ module QuoteDocxSections
           background: '0248a1',
           color: 'ffffff',
           bold: true,
-          colspan: 5, 
+          colspan: 5,
           font: 'Montserrat SemiBold'
         }
       ]]
-    end
+    end # rubocop:enable Metrics/MethodLength
 
     def header_row
       [[

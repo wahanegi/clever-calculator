@@ -10,7 +10,7 @@ module QuoteDocxSections
     def build
       @docx.table client_data, border_size: 1, border_color: 'eeeeee' do
         cell_style cells, border_size: 0
-        cell_style cols[0], background: '199dc7', color: 'ffffff', align: :right,size: 20, font: 'Montserrat Medium'
+        cell_style cols[0], background: '199dc7', color: 'ffffff', align: :right, size: 20, font: 'Montserrat Medium'
         cell_style cols[1], color: '595959', background: 'ffffff', align: :left, size: 22, font: 'Montserrat Regular'
         cell_style cells[11], bold: true, color: '000000', size: 22, font: 'Aptos'
       end

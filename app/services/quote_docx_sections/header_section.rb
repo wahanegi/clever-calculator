@@ -44,7 +44,8 @@ module QuoteDocxSections
         end,
         Caracal::Core::Models::TableCellModel.new do |cell|
           3.times { cell.p }
-          cell.h1 'Cloverpop Statement of Work', align: :right, color: '677888', font: 'Montserrat SemiBold', size: 36, bold: true
+          cell.h1 'Cloverpop Statement of Work', align: :right, color: '677888', font: 'Montserrat SemiBold', size: 36,
+                                                 bold: true
         end
       ]]
     end
