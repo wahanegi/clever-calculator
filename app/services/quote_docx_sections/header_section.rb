@@ -15,11 +15,12 @@ module QuoteDocxSections
         name 'Montserrat SemiBold'
         name 'Montserrat Medium'
         name 'Montserrat Regular'
+        name 'Aptos'
       end
       @docx.page_margins top: 700, bottom: 1500, left: 1150, right: 1150
       @docx.page_numbers true, align: :right, label: 'Confidential & Proprietary | Page ', size: 18, color: '000000'
       @docx.table company_data do
-        cell_style cols[0], width: 4000
+        cell_style cols[0], width: 3500
       end
       @docx.hr size: 10, spacing: 10, color: '0759ae'
     end
@@ -43,7 +44,7 @@ module QuoteDocxSections
         end,
         Caracal::Core::Models::TableCellModel.new do |cell|
           3.times { cell.p }
-          cell.h1 'Cloverpop Statement of Work', align: :right, color: '677888', font: 'Montserrat SemiBold', size: 36
+          cell.h1 'Cloverpop Statement of Work', align: :right, color: '677888', font: 'Montserrat SemiBold', size: 36, bold: true
         end
       ]]
     end

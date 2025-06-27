@@ -10,16 +10,16 @@ module QuoteDocxSections
     # rubocop:disable Metrics/AbcSize,Metrics/MethodLength
     def build
       @docx.page
-      @docx.h2 '1. Fees'
+      @docx.h2 '1. Fees', font: 'Montserrat SemiBold'
       @docx.table quote_items_data, border_size: 1, border_color: 'dadada', width: 10_000 do
-        cell_style cells, size: 16, border_size: 0, font: 'Montserrat Regular'
+        cell_style cells, size: 16, border_size: 0, font: 'Aptos'
       end
       @docx.table total_cost_data, border_size: 1, border_color: 'dadada', width: 10_000 do
         cell_style cells, size: 18, border_size: 0
-        cell_style cells[0], background: '199dc7', color: 'ffffff', bold: true, font: 'Montserrat SemiBold'
+        cell_style cells[0], background: '199dc7', color: 'ffffff', font: 'Montserrat SemiBold'
         cell_style cells[1], background: '0248a1', color: 'ffffff', bold: true, width: 1300, align: :center,
-                             font: 'Montserrat SemiBold'
-        cell_style cells[2], background: 'ffffff', color: '000000', width: 2500, font: 'Montserrat Regular'
+                             font: 'Montserrat Medium'
+        cell_style cells[2], background: 'ffffff', color: '000000', width: 2500, font: 'Aptos'
       end
     end
     # rubocop:enable Metrics/AbcSize,Metrics/MethodLength
@@ -33,9 +33,9 @@ module QuoteDocxSections
     end
 
     def total_cost_data
-      price = @grouped_items.values.sum { |quote_items| quote_items.sum(&:final_price) }
+      total_price = @grouped_items.values.sum { |quote_items| quote_items.sum(&:final_price) }
 
-      [['TOTAL COST', 'Total Cost', "#{format_number(price)} (USD)"]]
+      [['TOTAL COST', 'Total Cost', "#{format_number(total_price)} (USD)"]]
     end
 
     def main_header_row(model)
@@ -46,7 +46,8 @@ module QuoteDocxSections
           background: '0248a1',
           color: 'ffffff',
           bold: true,
-          colspan: 5
+          colspan: 5, 
+          font: 'Montserrat SemiBold'
         }
       ]]
     end
@@ -66,7 +67,8 @@ module QuoteDocxSections
         content: name,
         align: :left,
         background: '199dc7',
-        color: 'ffffff'
+        color: 'ffffff',
+        font: 'Montserrat Medium'
       }
     end
 

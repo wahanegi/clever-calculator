@@ -21,17 +21,17 @@ module QuoteDocxSections
       [
         [cell_left(@customer.company_name),
          cell_right(@customer.full_name, @customer.position, @customer.company_name)],
-        [cell_left('Clearbox Decisions Inc. (Dba. Cloverpop.)'),
+        [cell_left('Clearbox Decisions Inc. (Dba. Cloverpop.)', spacing: 1),
          cell_right('Lanny Roytburg', 'Chief Commercial Officer', bold_position: false)]
       ]
     end
 
-    def cell_left(company_name)
+    def cell_left(company_name, spacing: 2)
       Caracal::Core::Models::TableCellModel.new do |cell|
-        2.times { cell.p }
+        spacing.times { cell.p }
         cell.p 'AGREED TO ON BEHALF OF ', size: 22, color: '606060', font: 'Montserrat SemiBold', bold: true
         cell.p company_name, size: 22, color: '0248a1', font: 'Montserrat SemiBold', bold: true
-        2.times { cell.p }
+        spacing.times { cell.p }
       end
     end
 

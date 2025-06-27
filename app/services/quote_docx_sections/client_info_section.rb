@@ -9,22 +9,23 @@ module QuoteDocxSections
     # rubocop:disable Metrics/AbcSize,Metrics/MethodLength
     def build
       @docx.table client_data, border_size: 1, border_color: 'eeeeee' do
-        cell_style cells, size: 22, border_size: 0, font: 'Montserrat Regular'
-        cell_style cols[0], background: '199dc7', color: 'ffffff', align: :right
-        cell_style cols[1], color: '595959', background: 'ffffff', align: :left
-        cell_style cells[11], bold: true, color: '000000', size: 18
+        cell_style cells, border_size: 0
+        cell_style cols[0], background: '199dc7', color: 'ffffff', align: :right,size: 20, font: 'Montserrat Medium'
+        cell_style cols[1], color: '595959', background: 'ffffff', align: :left, size: 22, font: 'Montserrat Regular'
+        cell_style cells[11], bold: true, color: '000000', size: 22, font: 'Aptos'
       end
       @docx.p
       @docx.table cloverpop_data, border_size: 1, border_color: 'eeeeee' do
-        cell_style cells, size: 22, border_size: 0, font: 'Montserrat Regular'
-        cell_style cols[0], background: '0759ae', color: 'ffffff', align: :right
-        cell_style cols[1], color: '595959', background: 'ffffff', align: :left
+        cell_style cells, border_size: 0
+        cell_style cols[0], background: '0759ae', color: 'ffffff', align: :right, size: 20, font: 'Montserrat Medium'
+        cell_style cols[1], color: '595959', background: 'ffffff', align: :left, size: 22, font: 'Montserrat Regular'
       end
       @docx.p
       @docx.table summary_data, border_size: 1, border_color: 'eeeeee' do
-        cell_style cells, size: 22, border_size: 0, font: 'Montserrat Regular'
-        cell_style cols[0], bold: true, background: '677888', color: 'ffffff', align: :right
-        cell_style cols[1], color: '595959', background: 'ffffff', align: :left
+        cell_style cells, border_size: 0
+        cell_style cols[0], bold: true, background: '677888', color: 'ffffff', align: :right,
+                            font: 'Montserrat SemiBold', size: 20
+        cell_style cols[1], color: '595959', background: 'ffffff', align: :left, font: 'Montserrat Medium', size: 22
       end
     end
     # rubocop:enable Metrics/AbcSize,Metrics/MethodLength
