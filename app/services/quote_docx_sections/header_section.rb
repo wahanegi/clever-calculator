@@ -9,9 +9,12 @@ module QuoteDocxSections
       @logo_size = resize_to_max(logo_size)
     end
 
+    # rubocop:disable Metrics/MethodLength
     def build
       @docx.font do
         name 'Montserrat SemiBold'
+        name 'Montserrat Medium'
+        name 'Montserrat Regular'
       end
       @docx.page_margins top: 700, bottom: 1500, left: 1150, right: 1150
       @docx.page_numbers true, align: :right, label: 'Confidential & Proprietary | Page ', size: 18, color: '000000'
@@ -20,6 +23,7 @@ module QuoteDocxSections
       end
       @docx.hr size: 10, spacing: 10, color: '0759ae'
     end
+    # rubocop:enable Metrics/MethodLength
 
     private
 
@@ -32,10 +36,10 @@ module QuoteDocxSections
           else
             2.times { cell.p }
           end
-          cell.p 'CLEARBOX DECISIONS INC', size: 13, color: '677888', font: 'Montserrat SemiBold'
-          cell.p 'DBA. CLOVERPOP', align: :left, size: 13, color: '677888', font: 'Montserrat SemiBold'
-          cell.p '230 W. HURON ST, SUITE 520', align: :left, size: 13, color: '677888', font: 'Montserrat SemiBold'
-          cell.p 'CHICAGO IL, 60654', align: :left, size: 13, color: '677888', font: 'Montserrat SemiBold'
+          cell.p 'CLEARBOX DECISIONS INC', size: 13, color: '677888', font: 'Montserrat Regular'
+          cell.p 'DBA. CLOVERPOP', align: :left, size: 13, color: '677888', font: 'Montserrat Regular'
+          cell.p '230 W. HURON ST, SUITE 520', align: :left, size: 13, color: '677888', font: 'Montserrat Regular'
+          cell.p 'CHICAGO IL, 60654', align: :left, size: 13, color: '677888', font: 'Montserrat Regular'
         end,
         Caracal::Core::Models::TableCellModel.new do |cell|
           3.times { cell.p }

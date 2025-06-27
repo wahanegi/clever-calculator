@@ -7,7 +7,7 @@ module QuoteDocxSections
     # rubocop:disable Metrics/AbcSize,Metrics/MethodLength,Layout/LineLength
     def build
       @docx.page
-      @docx.h2 '2. Additional Warranties'
+      @docx.h2 '2. Additional Warranties', font: 'Montserrat SemiBold'
       @docx.list_style do
         type    :ordered
         level   0
@@ -19,7 +19,7 @@ module QuoteDocxSections
         start   1
         restart 1
       end
-      @docx.ol color: '595959' do
+      @docx.ol color: '595959', font: 'Montserrat Regular' do
         li 'All Services are provided under the terms and conditions of this Order Form and the Terms of Service found here: http://www.cloverpop.com/terms-of-service/ (the “Agreement”). The person signing represents that he or she has the authority to bind the Client to this Agreement. Capitalized terms used in this Order Form but not defined herein shall have the meanings provided in the Terms of Service'
         li 'Client agrees to purchase the services as set out in the Fees section of this Order Form. All pricing and terms and conditions depend upon the Client’s execution and return of this Order Form no later than 5 business days from sending. (unless signed by Cloverpop)'
         li 'All fees will be invoiced upon signature of the Agreement by both parties (the “Effective Date”), in accordance with the Billing Period noted in the Fees section of this Order Form, or upon the issuance of a Customer purchase order. Payment terms are net 30 days, measured from the date of invoice unless otherwise stated in superseding “Master Service Agreement”'

@@ -12,13 +12,14 @@ module QuoteDocxSections
       @docx.page
       @docx.h2 '1. Fees'
       @docx.table quote_items_data, border_size: 1, border_color: 'dadada', width: 10_000 do
-        cell_style cells, size: 16, border_size: 0
+        cell_style cells, size: 16, border_size: 0, font: 'Montserrat Regular'
       end
       @docx.table total_cost_data, border_size: 1, border_color: 'dadada', width: 10_000 do
         cell_style cells, size: 18, border_size: 0
-        cell_style cells[0], background: '199dc7', color: 'ffffff', bold: true
-        cell_style cells[1], background: '0248a1', color: 'ffffff', bold: true, width: 1300, align: :center
-        cell_style cells[2], background: 'ffffff', color: '000000', width: 2500
+        cell_style cells[0], background: '199dc7', color: 'ffffff', bold: true, font: 'Montserrat SemiBold'
+        cell_style cells[1], background: '0248a1', color: 'ffffff', bold: true, width: 1300, align: :center,
+                             font: 'Montserrat SemiBold'
+        cell_style cells[2], background: 'ffffff', color: '000000', width: 2500, font: 'Montserrat Regular'
       end
     end
     # rubocop:enable Metrics/AbcSize,Metrics/MethodLength
