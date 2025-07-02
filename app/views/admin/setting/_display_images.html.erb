@@ -3,19 +3,19 @@
   <div class="panel_contents">
     <div class="columns">
       <div class="column" style="width: 32.0%; margin-right: 2%;">
-        <h3>App Logo Icon:</h3>
-        <% if setting.app_logo_icon.attached? && setting.app_logo_icon.persisted? %>
-          <%= image_tag setting.app_logo_icon, style: 'margin-bottom: 10px; object-fit: contain; width: 200px; max-height: 200px;' %>
-          <%= button_to 'Remove', admin_setting_remove_image_path(type: 'app_logo_icon'), method: :delete %>
+        <h3>Logo for light background:</h3>
+        <% if setting.logo_light_background.attached? && setting.logo_light_background.persisted? %>
+          <%= image_tag setting.logo_light_background, style: 'margin-bottom: 10px; object-fit: contain; width: 200px; max-height: 200px;' %>
+          <%= button_to 'Remove', admin_setting_remove_image_path(type: 'logo_light_background'), method: :delete %>
         <% else %>
           <p>Not yet uploaded.</p>
         <% end %>
       </div>
       <div class="column" style="width: 32.0%; margin-right: 2%;">
-        <h3>App Background Icon:</h3>
-        <% if setting.app_background_icon.attached? && setting.app_background_icon.persisted? %>
-          <%= image_tag setting.app_background_icon, style: 'margin-bottom: 10px; object-fit: contain; width: 200px; max-height: 200px;' %>
-          <%= button_to 'Remove', admin_setting_remove_image_path(type: 'app_background_icon'), method: :delete %>
+        <h3>Logo for dark background:</h3>
+        <% if setting.logo_dark_background.attached? && setting.logo_dark_background.persisted? %>
+          <%= image_tag setting.logo_dark_background, style: 'margin-bottom: 10px; object-fit: contain; width: 200px; max-height: 200px;' %>
+          <%= button_to 'Remove', admin_setting_remove_image_path(type: 'logo_dark_background'), method: :delete %>
         <% else %>
           <p>Not yet uploaded.</p>
         <% end %>
