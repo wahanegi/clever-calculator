@@ -16,17 +16,17 @@
     <legend class="fieldset-title"><span>App</span></legend>
     <ol>
       <li class="file input optional">
-        <%= f.label 'Logo Icon', class: 'label', for:'setting_app_logo_icon' %>
-        <%= f.file_field :app_logo_icon, accept: Setting::ALLOWED_IMAGE_TYPES.join(',') %>
-        <% if setting.errors[:app_logo_icon].present? %>
-          <p class="inline-errors"><%= setting.errors.full_messages_for(:app_logo_icon).to_sentence %></p>
+        <%= f.label 'Logo for light background', class: 'label', for:'setting_logo_light_background' %>
+        <%= f.file_field :logo_light_background, accept: Setting::ALLOWED_IMAGE_TYPES.join(',') %>
+        <% if setting.errors[:logo_light_background].present? %>
+          <p class="inline-errors"><%= setting.errors.full_messages_for(:logo_light_background).to_sentence %></p>
         <% end %>
       </li>
       <li class="file input optional">
-        <%= f.label "Background Icon", class: 'label', for:'setting_app_background_icon' %>
-        <%= f.file_field :app_background_icon, accept: Setting::ALLOWED_IMAGE_TYPES.join(',') %>
-        <% if setting.errors[:app_background_icon].present? %>
-          <p class="inline-errors"><%= setting.errors.full_messages_for(:app_background_icon).to_sentence %></p>
+        <%= f.label "Logo for dark background", class: 'label', for:'setting_logo_dark_background' %>
+        <%= f.file_field :logo_dark_background, accept: Setting::ALLOWED_IMAGE_TYPES.join(',') %>
+        <% if setting.errors[:logo_dark_background].present? %>
+          <p class="inline-errors"><%= setting.errors.full_messages_for(:logo_dark_background).to_sentence %></p>
         <% end %>
       </li>
       <li class="color input optional">

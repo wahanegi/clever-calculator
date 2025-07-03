@@ -13,7 +13,7 @@
   <%# Enable PWA manifest for installable apps (make sure to enable in config/routes.rb too!) %>
   <%#= tag.link rel: "manifest", href: pwa_manifest_path(format: :json) %>
 
-  <%= favicon_link_tag Setting.favicon_url, rel: 'icon', type: 'image/png' %>
+  <%= favicon_link_tag current_setting.favicon_url, rel: 'icon', type: 'image/png' %>
   <link rel="apple-touch-icon" href="/favicon.png">
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;600;700&family=Lato:wght@400;500;700&family=Inter:wght@500;700&family=Jost:wght@400&display=swap" rel="stylesheet">
   <%# Includes all stylesheet files in app/assets/stylesheets %>

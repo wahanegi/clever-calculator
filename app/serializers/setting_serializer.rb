@@ -1,11 +1,11 @@
 class SettingSerializer
   include JSONAPI::Serializer
 
-  attribute :app_logo_icon do |setting|
-    setting.app_logo_icon.attached? ? setting.app_logo_icon.url : nil
+  attribute :logo_light_background do |setting|
+    setting.logo_light_background.attached? ? setting.logo_light_background.url : nil
   end
 
-  attribute :app_background_icon do |setting|
-    setting.app_background_icon.attached? ? setting.app_background_icon.url : nil
+  attribute :logo_dark_background do |setting|
+    setting.logo_dark_background.attached? ? setting.logo_dark_background.url : nil
   end
 end
