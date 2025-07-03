@@ -17,7 +17,7 @@ ActiveAdmin.register_page "Setting" do
 
   page_action :remove_image, method: :delete do
     image_attribute = params[:type]
-    allowed_attributes = %w[app_logo_icon app_background_icon word_header_document_logo]
+    allowed_attributes = %w[logo_light_background logo_dark_background word_header_document_logo]
 
     if allowed_attributes.include?(image_attribute)
       @setting.public_send(image_attribute).purge
@@ -31,8 +31,8 @@ ActiveAdmin.register_page "Setting" do
   page_action :reset, method: :patch do
     default_colors = BrandColorParser.default_colors
 
-    @setting.update(app_logo_icon: nil,
-                    app_background_icon: nil,
+    @setting.update(logo_light_background: nil,
+                    logo_dark_background: nil,
                     word_header_document_logo: nil,
                     style: BrandColorBuilder.new(*default_colors).build_css)
 
@@ -47,7 +47,7 @@ ActiveAdmin.register_page "Setting" do
       params_hash = { style: BrandColorBuilder.new(*selected_color_params).build_css }
 
       # Attach optional uploaded files if present
-      %i[app_logo_icon app_background_icon word_header_document_logo].each do |key|
+      %i[logo_light_background logo_dark_background word_header_document_logo].each do |key|
         params_hash[key] = permitted_setting_params[key] if permitted_setting_params[key].present?
       end
 
@@ -69,14 +69,15 @@ ActiveAdmin.register_page "Setting" do
     end
 
     def permitted_setting_params
-      params.require(:setting).permit(:app_logo_icon,
-                                      :app_background_icon,
-                                      :word_header_document_logo,
-                                      :primary_color,
-                                      :secondary_color,
-                                      :blue_light_color,
-                                      :blue_sky_color,
-                                      :light_color)
+      params.require(:setting)
+            .permit(:logo_light_background,
+                    :logo_dark_background,
+                    :word_header_document_logo,
+                    :primary_color,
+                    :secondary_color,
+                    :blue_light_color,
+                    :blue_sky_color,
+                    :light_color)
     end
   end
 end
