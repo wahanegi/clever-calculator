@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_06_23_082213) do
+ActiveRecord::Schema[8.0].define(version: 2025_07_11_133602) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -70,6 +70,13 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_23_082213) do
     t.integer "items_count", default: 0, null: false
     t.index ["is_disabled"], name: "index_categories_on_is_disabled"
     t.index ["name"], name: "index_categories_on_name", unique: true, where: "(is_disabled = false)"
+  end
+
+  create_table "contract_types", force: :cascade do |t|
+    t.string "name", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["name"], name: "index_contract_types_on_name", unique: true
   end
 
   create_table "customers", force: :cascade do |t|
@@ -144,6 +151,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_23_082213) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "step", default: "customer_info", null: false
+    t.bigint "contract_type_id"
+    t.index ["contract_type_id"], name: "index_quotes_on_contract_type_id"
     t.index ["customer_id"], name: "index_quotes_on_customer_id"
     t.index ["user_id"], name: "index_quotes_on_user_id"
   end

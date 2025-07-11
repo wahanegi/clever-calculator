@@ -53,7 +53,7 @@ module Api
       end
 
       def quote_params
-        params.require(:quote).permit(:customer_id, :total_price, :step)
+        params.require(:quote).permit(:customer_id, :total_price, :step, :contract_type_id)
       end
 
       def serialize_quote(quote, **options)

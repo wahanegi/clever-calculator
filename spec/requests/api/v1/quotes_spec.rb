@@ -3,8 +3,9 @@ require 'rails_helper'
 RSpec.describe "Api::V1::Quotes", type: :request do
   let!(:user) { create :user }
   let!(:customer) { create :customer }
-  let(:valid_params) { { quote: { customer_id: customer.id, total_price: 0, step: 'customer_info' } } }
-  let(:invalid_params) { { quote: { customer_id: nil, total_price: -10, step: nil } } }
+  let!(:contract_type) { create :contract_type }
+  let(:valid_params) { { quote: { customer_id: customer.id, total_price: 0, step: 'customer_info', contract_type_id: contract_type.id } } }
+  let(:invalid_params) { { quote: { customer_id: nil, total_price: -10, step: nil, contract_type_id: nil } } }
   let(:json_response) { response.parsed_body }
 
   before { sign_in user }
@@ -42,7 +43,7 @@ RSpec.describe "Api::V1::Quotes", type: :request do
   end
 
   describe "PUT /api/v1/quotes/:id" do
-    let!(:quote) { create(:quote, customer: customer, user: user, total_price: 100, step: "customer_info") }
+    let!(:quote) { create(:quote, customer: customer, user: user, contract_type: contract_type, total_price: 100, step: "customer_info") }
     let(:update_params) { { quote: { total_price: 150, step: "items_pricing" } } }
     let(:invalid_update_params) { { quote: { total_price: -10, step: nil } } }
 
