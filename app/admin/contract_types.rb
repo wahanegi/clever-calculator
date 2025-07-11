@@ -7,7 +7,6 @@ ActiveAdmin.register ContractType do
     selectable_column
     id_column
     column :name
-    column :created_at
     actions
   end
 
@@ -16,7 +15,6 @@ ActiveAdmin.register ContractType do
       row :id
       row :name
       row :created_at
-      row :updated_at
     end
   end
 
