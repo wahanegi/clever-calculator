@@ -234,8 +234,8 @@ ActiveAdmin.register Quote do
     item_ids = params[:item_ids] || []
 
     items = Item.none
-    items = items.or(Item.where(category_id: category_ids)) if category_ids.any?
-    items = items.or(Item.where(id: item_ids)) if item_ids.any?
+    items = items.or(Item.enabled.where(category_id: category_ids)) if category_ids.any?
+    items = items.or(Item.enabled.where(id: item_ids)) if item_ids.any?
 
     render json: items.map { |item|
       {
