@@ -4,8 +4,22 @@ RSpec.describe "Api::V1::Quotes", type: :request do
   let!(:user) { create :user }
   let!(:customer) { create :customer }
   let!(:contract_type) { create :contract_type }
-  let(:valid_params) { { quote: { customer_id: customer.id, total_price: 0, step: 'customer_info', contract_type_id: contract_type.id } } }
-  let(:invalid_params) { { quote: { customer_id: nil, total_price: -10, step: nil, contract_type_id: nil } } }
+  let(:valid_params) do
+    { quote: { customer_id: customer.id,
+               total_price: 0,
+               step: 'customer_info',
+               contract_type_id: contract_type.id,
+               contract_start_date: Time.zone.today,
+               contract_end_date: Time.zone.today + 30 } }
+  end
+  let(:invalid_params) do
+    { quote: { customer_id: nil,
+               total_price: -10,
+               step: nil,
+               contract_type_id: nil,
+               contract_start_date: nil,
+               contract_end_date: nil } }
+  end
   let(:json_response) { response.parsed_body }
 
   before { sign_in user }

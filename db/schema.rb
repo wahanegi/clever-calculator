@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_07_11_133602) do
+ActiveRecord::Schema[8.0].define(version: 2025_07_11_141043) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -152,6 +152,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_11_133602) do
     t.datetime "updated_at", null: false
     t.string "step", default: "customer_info", null: false
     t.bigint "contract_type_id"
+    t.date "contract_start_date"
+    t.date "contract_end_date"
     t.index ["contract_type_id"], name: "index_quotes_on_contract_type_id"
     t.index ["customer_id"], name: "index_quotes_on_customer_id"
     t.index ["user_id"], name: "index_quotes_on_user_id"

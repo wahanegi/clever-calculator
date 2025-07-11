@@ -62,6 +62,8 @@ RSpec.describe "Admin::Quotes", type: :request do
         customer_id: customer.id,
         user_id: user.id,
         contract_type_id: contract_type.id,
+        contract_start_date: Time.zone.today,
+        contract_end_date: Time.zone.today + 30,
         quote_items_attributes: {
           "0" => {
             item_id: item_open.id,

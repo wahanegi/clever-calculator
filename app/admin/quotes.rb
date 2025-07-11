@@ -1,6 +1,9 @@
 ActiveAdmin.register Quote do
   permit_params :customer_id,
                 :user_id,
+                :contract_type_id,
+                :contract_start_date,
+                :contract_end_date,
                 :total_price,
                 quote_items_attributes: [:id,
                                          :item_id,
@@ -46,6 +49,9 @@ ActiveAdmin.register Quote do
     f.inputs do
       f.input :customer, as: :select, collection: Customer.pluck(:company_name, :id), input_html: { class: 'custom-select' }
       f.input :user, as: :select, collection: User.order(:name).pluck(:name, :id), input_html: { class: 'custom-select' }
+      f.input :contract_type, as: :select, collection: ContractType.pluck(:name, :id), input_html: { class: 'custom-select' }
+      f.input :contract_start_date, as: :datepicker, input_html: { style: 'width: 30%;' }
+      f.input :contract_end_date, as: :datepicker, input_html: { style: 'width: 30%;' }
       f.inputs class: 'dropdown-group' do
         li class: 'dropdown-fieldset' do
           span class: 'fieldset-title' do
@@ -181,6 +187,12 @@ ActiveAdmin.register Quote do
       end
       row 'Created By' do |quote|
         quote.user.name
+      end
+      row 'Contract Type' do |quote|
+        quote.contract_type.name
+      end
+      row 'Terms of subscription & service' do |quote|
+        quote.contract_period
       end
       row 'Total Price' do |quote|
         number_to_currency(quote.total_price)
