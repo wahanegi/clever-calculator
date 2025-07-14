@@ -29,7 +29,7 @@ module Api
 
       def generate_file
         quote = current_user.quotes
-                            .includes(:customer, :user, quote_items: [:note, { item: :category }])
+                            .includes(:customer, :user, :contract_type, quote_items: [:note, { item: :category }])
                             .find(params[:id])
 
         docx = QuoteDocxGenerator.new(quote).call
