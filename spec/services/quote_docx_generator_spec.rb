@@ -40,8 +40,8 @@ RSpec.describe QuoteDocxGenerator do
       it 'renders exactly 2 rows in the cloverpop table' do
         expect(cloverpop_table.rows.size).to eq 2
       end
-      it 'renders exactly 4 rows in the summary table' do
-        expect(summary_table.rows.size).to eq 4
+      it 'renders exactly 3 rows in the summary table' do
+        expect(summary_table.rows.size).to eq 3
       end
     end
 

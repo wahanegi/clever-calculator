@@ -19,7 +19,7 @@ ActiveAdmin.register Quote do
                                                              :is_printable,
                                                              :_destroy] }]
 
-  includes :user, :customer
+  includes :user, :customer, :contract_type
 
   filter :customer_company_name, as: :string, label: 'Company Name'
   filter :user, as: :select, collection: proc {
@@ -41,6 +41,8 @@ ActiveAdmin.register Quote do
     column 'Total Price' do |quote|
       number_to_currency(quote.total_price)
     end
+    column :contract_type
+    column 'Contract Period', &:contract_period
     column :created_at
     actions
   end
