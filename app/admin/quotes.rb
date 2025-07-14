@@ -27,7 +27,7 @@ ActiveAdmin.register Quote do
       ["#{u.email} (#{u.name})", u.id]
     end
   }
-  filter :contract_type, as: :select, collection: ContractType.pluck(:name, :id)
+  filter :contract_type, as: :select, collection: -> { ContractType.pluck(:name, :id) }
 
   index do
     selectable_column
