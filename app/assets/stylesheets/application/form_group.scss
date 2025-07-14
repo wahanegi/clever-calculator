@@ -222,7 +222,56 @@
 }
 
 .pc-item-input.contract-period {
+  .react-datepicker {
+    &__header {
+      background-color: var(--bs-secondary);
+    }
+
+    &__close-icon::after {
+      background-color: var(--bs-primary);
+    }
+
+    &-popper {
+      z-index: 9999;
+    }
+  }
+
   input {
     width: 220px;
+  }
+}
+
+.react-datepicker {
+  &__day--in-range {
+    background-color: var(--bs-primary);
+
+    &:not([aria-disabled=true]):hover {
+      background-color: var(--bs-secondary);
+    }
+  }
+
+  &__day--keyboard-selected {
+    background-color: var(--bs-primary);
+
+    &:not([aria-disabled=true]):hover {
+      background-color: var(--bs-secondary);
+    }
+  }
+
+  &__day--in-selecting-range:not(.react-datepicker__day--in-range, .react-datepicker__month-text--in-range, .react-datepicker__quarter-text--in-range, .react-datepicker__year-text--in-range) {
+    background-color: var(--bs-primary);
+
+    &:not([aria-disabled=true]):hover {
+      background-color: var(--bs-secondary);
+    }
+  }
+}
+
+.react-datepicker-popper {
+  &[data-placement^="bottom"] {
+    .react-datepicker__triangle {
+      fill: var(--bs-secondary);
+      color: var(--bs-secondary);
+    }
   }
 }

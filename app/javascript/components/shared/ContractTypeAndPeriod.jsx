@@ -47,7 +47,7 @@ const ContractTypeAndPeriod = ({ onUpdateContractType, onUpdateContractPeriod, q
     }
 
     return (
-        <div className='d-flex gap-4 mb-2'>
+        <div className='d-flex gap-4 mb-2 flex-column flex-sm-row flex-md-row flex-lg-row flex-xl-row flex-xxl-row'>
             <PcItemFormGroup label={'Contract Type'} paramType="selectable-param">
                 <PcItemSelectControl
                     options={contractTypes}
