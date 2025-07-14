@@ -118,6 +118,7 @@
 }
 
 .pc-item-input.discount,
+.pc-item-input.contract-period,
 .pc-item-input.notes {
   .form-control {
     padding-right: 24px;
@@ -169,7 +170,7 @@
       }
     }
 
-    .form-check-input:checked + .form-check-label {
+    .form-check-input:checked+.form-check-label {
       color: $dark;
     }
   }
@@ -218,4 +219,10 @@
 .nospin {
   -moz-appearance: textfield;
   appearance: textfield;
+}
+
+.pc-item-input.contract-period {
+  input {
+    width: 220px;
+  }
 }

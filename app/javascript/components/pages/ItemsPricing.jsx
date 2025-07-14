@@ -11,15 +11,15 @@ import {
 } from '../ui'
 import { getCurrentStepId, totalFinalPrice, triggerFileDownload } from '../utils'
 import { fetchNotes, fetchQuoteItems, fetchQuotes, fetchSelectableOptions } from '../services'
-import { AlertModal } from '../shared/AlertModal'
 import debounce from 'lodash/debounce'
+import ResetQuoteAlertModal from '../ui/ResetQuiteAlertModal'
+import ContractTypeAndPeriod from '../shared/ContractTypeAndPeriod'
 
 export const ItemsPricing = () => {
   const [isOverPriceLimit, setIsOverPriceLimit] = useState(false)
   const { queryParams, location } = useAppHooks()
   const quoteId = queryParams.get('quote_id')
   const currentStepId = getCurrentStepId(location.pathname)
-
   const [selectedOptions, setSelectedOptions] = useState([])
   const [expandedAccordions, setExpandedAccordions] = useState([])
   const [isShowDeleteModal, setIsShowDeleteModal] = useState(false)
@@ -29,34 +29,41 @@ export const ItemsPricing = () => {
   const [isShowCancelQuoteAlertModal, setIsShowCancelQuoteAlertModal] = useState(false)
   const [isShowResetQuoteAlertModal, setIsShowResetQuoteAlertModal] = useState(false)
   const [isShowSuccessfulDownloadModal, setIsShowSuccessfulDownloadModal] = useState(false)
-
   const isSelectedOptionsEmpty = selectedOptions.length === 0
   const totalPrice = selectedOptions.reduce((total, option) => total + parseFloat(totalFinalPrice(option?.quote_items || [])), 0).toFixed(2)
-
+  const [quote, setQuote] = useState({})
 
   useEffect(() => {
-    fetchSelectableOptions.index().then((data) => {
-      setSelectableOptions(data)
-    })
-    fetchQuoteItems.index(quoteId).then((data) => {
-      setSelectedOptions(data)
-
-      setExpandedAccordions(data.map((option) => option.id))
-
-      const initialNotesStates = {}
-      data.forEach((option) => {
-        option.quote_items.forEach((item) => {
-          const note = item.attributes?.note
-          initialNotesStates[item.id] = {
-            note: note?.notes || '',
-            include: note?.is_printable || false,
-            isNotesOpen: false,
-            tempNote: note?.notes || '',
-          }
-        })
+    fetchSelectableOptions.index()
+      .then((data) => {
+        setSelectableOptions(data)
       })
-      setNotesStates(initialNotesStates)
-    })
+
+    fetchQuoteItems.index(quoteId)
+      .then((data) => {
+        setSelectedOptions(data)
+
+        setExpandedAccordions(data.map((option) => option.id))
+
+        const initialNotesStates = {}
+        data.forEach((option) => {
+          option.quote_items.forEach((item) => {
+            const note = item.attributes?.note
+            initialNotesStates[item.id] = {
+              note: note?.notes || '',
+              include: note?.is_printable || false,
+              isNotesOpen: false,
+              tempNote: note?.notes || '',
+            }
+          })
+        })
+        setNotesStates(initialNotesStates)
+      })
+
+    fetchQuotes.show(quoteId)
+      .then((quoteData) => {
+        setQuote(quoteData.data)
+      })
   }, [])
 
   const showDeleteModal = (option) => {
@@ -194,8 +201,8 @@ export const ItemsPricing = () => {
 
         setIsShowSuccessfulDownloadModal(true)
       }).catch((err) => {
-      console.error('File download failed', err)
-    })
+        console.error('File download failed', err)
+      })
   }
 
   const handleCustomerBack = (e) => {
@@ -204,8 +211,36 @@ export const ItemsPricing = () => {
     setIsShowCancelQuoteAlertModal(true)
   }
 
-  const handleQuoteReset = () => {
+  const handleShowQuoteResetModal = () => {
     setIsShowResetQuoteAlertModal(true)
+  }
+
+  const handleCancelQuoteReset = () => {
+    setIsShowResetQuoteAlertModal(false)
+  }
+
+  const handleConfirmQuoteReset = () => {
+    setIsShowResetQuoteAlertModal(false)
+
+    fetchQuotes.reset(quoteId).then(() => {
+      setSelectedOptions([])
+      setExpandedAccordions([])
+      setNotesStates({})
+    })
+  }
+
+  const handleUpdateContractType = (id) => {
+    fetchQuotes.update(quoteId, { contract_type_id: id })
+      .then((quoteData) => {
+        setQuote(quoteData.data)
+      })
+  }
+
+  const handleUpdateContractPeriod = (startDate, endDate) => {
+    fetchQuotes.update(quoteId, { contract_start_date: startDate, contract_end_date: endDate })
+      .then((quoteData) => {
+        setQuote(quoteData.data)
+      })
   }
 
   const EmptyQuotePrompt = () => isSelectedOptionsEmpty && (
@@ -214,37 +249,12 @@ export const ItemsPricing = () => {
     </div>
   )
 
-  const ResetQuoteAlertModal = () => {
-    const handleCancel = () => {
-      setIsShowResetQuoteAlertModal(false)
-    }
-
-    const handleConfirm = () => {
-      setIsShowResetQuoteAlertModal(false)
-
-      fetchQuotes.reset(quoteId).then(() => {
-        setSelectedOptions([])
-        setExpandedAccordions([])
-        setNotesStates({})
-      })
-    }
-
-    return (
-      <AlertModal show={isShowResetQuoteAlertModal}
-                  onCancel={handleCancel}
-                  onConfirm={handleConfirm}
-                  confirmButtonText={'Reset'}
-                  title={'Are you sure?'}
-                  bodyText={'Do you really want to reset all selected items? You will be able to start over within this quote.'} />
-    )
-  }
-
   return (
     <Container className={'wrapper pt-16'}>
       <section className={'mb-12 px-8'}>
         <QuoteCreation currentStepId={currentStepId}
-                       onReset={handleQuoteReset}
-                       disabledResetButton={isSelectedOptionsEmpty}
+          onReset={handleShowQuoteResetModal}
+          disabledResetButton={isSelectedOptionsEmpty}
         />
 
         <ItemsPricingTopBar
@@ -259,6 +269,11 @@ export const ItemsPricing = () => {
           selectableOptions={selectableOptions}
           setExpandedAccordions={setExpandedAccordions}
         />
+
+        <ContractTypeAndPeriod
+          onUpdateContractPeriod={handleUpdateContractPeriod}
+          onUpdateContractType={handleUpdateContractType}
+          quote={quote} />
 
         <EmptyQuotePrompt />
       </section>
@@ -287,10 +302,10 @@ export const ItemsPricing = () => {
                     onToggleNotes={() => toggleItemNotes(quoteItem.id)}
                     notesIcon={notesIcon}>
                     <Item itemData={quoteItem}
-                          quoteId={quoteId}
-                          selectedOptions={selectedOptions}
-                          setSelectedOptions={setSelectedOptions}
-                          setIsOverPriceLimit={setIsOverPriceLimit} />
+                      quoteId={quoteId}
+                      selectedOptions={selectedOptions}
+                      setSelectedOptions={setSelectedOptions}
+                      setIsOverPriceLimit={setIsOverPriceLimit} />
 
                     {notesState.isNotesOpen && (
                       <PcItemFormGroup label={'Notes'} paramType={'notes'}>
@@ -343,16 +358,16 @@ export const ItemsPricing = () => {
       </section>
 
       <DownloadSuccessModal onHide={() => setIsShowSuccessfulDownloadModal(false)}
-                            show={isShowSuccessfulDownloadModal} />
+        show={isShowSuccessfulDownloadModal} />
       <DeleteItemModal
         nameItem={removeSelectedOption?.name}
         show={isShowDeleteModal}
         onHide={handleCancelDeleteCategory}
         onConfirmDelete={handleConfirmDelete}
       />
-      <ResetQuoteAlertModal />
+      <ResetQuoteAlertModal onCancel={handleCancelQuoteReset} onConfirm={handleConfirmQuoteReset} showModal={isShowResetQuoteAlertModal} />
       <CancelQuoteAlertModal isShowCancelQuoteAlertModal={isShowCancelQuoteAlertModal}
-                             setIsShowCancelQuoteAlertModal={setIsShowCancelQuoteAlertModal} />
+        setIsShowCancelQuoteAlertModal={setIsShowCancelQuoteAlertModal} />
       <OverLimitAlertModal isOverPriceLimit={isOverPriceLimit} setIsOverPriceLimit={setIsOverPriceLimit} />
     </Container>
   )

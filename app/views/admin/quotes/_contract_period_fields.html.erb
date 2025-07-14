@@ -1,0 +1,6 @@
+<li class="datepicker input required stringish" id="quote_contract_period_input">
+  <label for="" class="label">Contract period<abbr title="required">*</abbr></label>
+  <input style="width: 14.85%;<%=quote.errors.has_key?(:contract_start_date) ? 'border: 1px solid #932419;' : 'border: 1px solid #767676;' %>" class="datepicker" data-datepicker-options="{}" type="text" value="<%= quote.contract_start_date %>" name="quote[contract_start_date]">
+  <input style="width: 14.85%;<%=quote.errors.has_key?(:contract_end_date) ? 'border: 1px solid #932419;' : 'border: 1px solid #767676;' %>" class="datepicker" data-datepicker-options="{}" type="text" value="<%= quote.contract_end_date %>" name="quote[contract_end_date]">
+  <p class="inline-errors"><%= (quote.errors.messages_for(:contract_start_date) + quote.errors.messages_for(:contract_end_date)).uniq.to_sentence %></p>
+</li>

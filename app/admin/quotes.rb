@@ -50,8 +50,7 @@ ActiveAdmin.register Quote do
       f.input :customer, as: :select, collection: Customer.pluck(:company_name, :id), input_html: { class: 'custom-select' }
       f.input :user, as: :select, collection: User.order(:name).pluck(:name, :id), input_html: { class: 'custom-select' }
       f.input :contract_type, as: :select, collection: ContractType.pluck(:name, :id), input_html: { class: 'custom-select' }
-      f.input :contract_start_date, as: :datepicker, input_html: { style: 'width: 30%;' }
-      f.input :contract_end_date, as: :datepicker, input_html: { style: 'width: 30%;' }
+      render partial: 'admin/quotes/contract_period_fields', locals: { quote: f.object }
       f.inputs class: 'dropdown-group' do
         li class: 'dropdown-fieldset' do
           span class: 'fieldset-title' do
@@ -191,9 +190,7 @@ ActiveAdmin.register Quote do
       row 'Contract Type' do |quote|
         quote.contract_type.name
       end
-      row 'Terms of subscription & service' do |quote|
-        quote.contract_period
-      end
+      row 'Contract Period', &:contract_period
       row 'Total Price' do |quote|
         number_to_currency(quote.total_price)
       end
