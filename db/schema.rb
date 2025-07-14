@@ -330,6 +330,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_11_141043) do
   add_foreign_key "quote_categories", "quotes"
   add_foreign_key "quote_items", "items"
   add_foreign_key "quote_items", "quotes"
+  add_foreign_key "quotes", "contract_types"
   add_foreign_key "quotes", "customers"
   add_foreign_key "quotes", "users"
   add_foreign_key "solid_queue_blocked_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
