@@ -1,6 +1,6 @@
 class CreateNotes < ActiveRecord::Migration[8.0]
   def change
-    create_table :notes do |t|
+    create_table :notes, if_not_exists: true do |t|
       t.references :quote, null: false, foreign_key: true
       t.references :quote_item, foreign_key: true
       t.text :notes, null: false
