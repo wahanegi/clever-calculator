@@ -4,11 +4,13 @@ import { PcItemFormGroup } from "../ui"
 import { PcItemSelectControl } from "../ui"
 import { useEffect, useState } from "react"
 import { fetchContractTypes } from "../services"
+import MinRangeDaysAlertModal from "../ui/MinRangeDaysAlertModal"
 
 const ContractTypeAndPeriod = ({ onUpdateContractType, onUpdateContractPeriod, quote }) => {
     const [contractTypes, setContractTypes] = useState([])
     const [contractStartDate, setContractStartDate] = useState(null)
     const [contractEndDate, setContractEndDate] = useState(null)
+    const [showAlert, setShowAlert] = useState(false)
 
     useEffect(() => {
         fetchContractTypes.index()
@@ -33,6 +35,14 @@ const ContractTypeAndPeriod = ({ onUpdateContractType, onUpdateContractPeriod, q
     const handleChangeContractPeriod = (updatedDates) => {
         const [startDate, endDate] = updatedDates
 
+        if (startDate && endDate) {
+            const diffDays = (endDate - startDate) / (1000 * 60 * 60 * 24);
+            if (diffDays < 1) {
+                setShowAlert(true)
+                return;
+            }
+        }
+
         setContractStartDate(startDate)
         setContractEndDate(endDate)
     }
@@ -46,7 +56,7 @@ const ContractTypeAndPeriod = ({ onUpdateContractType, onUpdateContractPeriod, q
         }
     }
 
-    return (
+    return (<>
         <div className='d-flex gap-4 mb-7 flex-column flex-sm-row flex-md-row flex-lg-row flex-xl-row flex-xxl-row'>
             <PcItemFormGroup label={'Contract Type'} paramType="selectable-param" className="w-100">
                 <PcItemSelectControl
@@ -61,6 +71,7 @@ const ContractTypeAndPeriod = ({ onUpdateContractType, onUpdateContractPeriod, q
                 className="w-100"
                 labelProps={{ style: { maxWidth: "220px" } }}>
                 <DatePicker
+                    minDate={Date.now()}
                     className="fs-10 pc-lh-xl form-control"
                     selectsRange={true}
                     startDate={contractStartDate}
@@ -70,8 +81,10 @@ const ContractTypeAndPeriod = ({ onUpdateContractType, onUpdateContractPeriod, q
                     isClearable={true}
                 />
             </PcItemFormGroup>
+
         </div>
-    )
+        <MinRangeDaysAlertModal isOpen={showAlert} setIsOpen={setShowAlert} />
+    </>)
 }
 
 export default ContractTypeAndPeriod

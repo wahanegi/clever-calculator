@@ -190,7 +190,7 @@ ActiveAdmin.register Quote do
         quote.user.name
       end
       row 'Contract Type' do |quote|
-        quote.contract_type.name
+        quote.contract_type&.name
       end
       row 'Contract Period', &:contract_period
       row 'Total Price' do |quote|

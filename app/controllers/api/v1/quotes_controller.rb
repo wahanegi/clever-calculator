@@ -60,7 +60,7 @@ module Api
         quote_params.merge({
                              contract_start_date: Date.current,
                              contract_end_date: Date.current + 1,
-                             contract_type_id: ContractType.first.id
+                             contract_type_id: nil
                            })
       end
 

@@ -4,18 +4,17 @@ import { AlertModal } from '../shared/AlertModal'
 
 
 export const OverLimitAlertModal = ({ isOverPriceLimit, setIsOverPriceLimit }) => {
-  const handleConfirm = () => {
+  const handleHide = () => {
     setIsOverPriceLimit(false)
   }
 
   return (
     <AlertModal
       show={isOverPriceLimit}
-      onCancel={handleConfirm}
-      onConfirm={handleConfirm}
-      confirmButtonText={'OK'}
+      onCancel={handleHide}
+      showActions={false}
       title={'Total Price is Too High'}
-      bodyText={`The total price exceeds maximum allowed value of ${MAX_DECIMAL_14_2}. Please adjust your item input value.`}
+      bodyText={<>The total price exceeds maximum allowed value of ${MAX_DECIMAL_14_2}. <br/> Please adjust your item input value.</>}
     />
   )
 }

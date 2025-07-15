@@ -56,7 +56,7 @@ module QuoteDocxSections
       [
         ['Summary Description:', presence_or_default(nil)],
         ['Terms of subscription & service:', presence_or_default(@quote.contract_period)],
-        ['Contract Type:', presence_or_default(@quote.contract_type.name)],
+        ['Contract Type:', presence_or_default(@quote.contract_type&.name)],
         ['Capabilities Included:', Caracal::Core::Models::TableCellModel.new do |cell|
           @items.each do |item|
             cell.p item
