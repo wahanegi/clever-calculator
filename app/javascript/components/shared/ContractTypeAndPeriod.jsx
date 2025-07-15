@@ -47,8 +47,8 @@ const ContractTypeAndPeriod = ({ onUpdateContractType, onUpdateContractPeriod, q
     }
 
     return (
-        <div className='d-flex gap-4 mb-2 flex-column flex-sm-row flex-md-row flex-lg-row flex-xl-row flex-xxl-row'>
-            <PcItemFormGroup label={'Contract Type'} paramType="selectable-param">
+        <div className='d-flex gap-4 mb-7 flex-column flex-sm-row flex-md-row flex-lg-row flex-xl-row flex-xxl-row'>
+            <PcItemFormGroup label={'Contract Type'} paramType="selectable-param" className="w-100">
                 <PcItemSelectControl
                     options={contractTypes}
                     value={quote?.attributes?.contract_type_id}
@@ -56,7 +56,10 @@ const ContractTypeAndPeriod = ({ onUpdateContractType, onUpdateContractPeriod, q
                 />
             </PcItemFormGroup>
 
-            <PcItemFormGroup label={'Terms of subscription & service:'} paramType="contract-period">
+            <PcItemFormGroup label={'Terms of subscription & service:'}
+                paramType="contract-period"
+                className="w-100"
+                labelProps={{ style: { maxWidth: "220px" } }}>
                 <DatePicker
                     className="fs-10 pc-lh-xl form-control"
                     selectsRange={true}

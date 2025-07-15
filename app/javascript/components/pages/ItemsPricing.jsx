@@ -257,6 +257,11 @@ export const ItemsPricing = () => {
           disabledResetButton={isSelectedOptionsEmpty}
         />
 
+        <ContractTypeAndPeriod
+          onUpdateContractPeriod={handleUpdateContractPeriod}
+          onUpdateContractType={handleUpdateContractType}
+          quote={quote} />
+
         <ItemsPricingTopBar
           quoteId={quoteId}
           totalPrice={totalPrice}
@@ -269,11 +274,6 @@ export const ItemsPricing = () => {
           selectableOptions={selectableOptions}
           setExpandedAccordions={setExpandedAccordions}
         />
-
-        <ContractTypeAndPeriod
-          onUpdateContractPeriod={handleUpdateContractPeriod}
-          onUpdateContractType={handleUpdateContractType}
-          quote={quote} />
 
         <EmptyQuotePrompt />
       </section>

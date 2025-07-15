@@ -234,10 +234,10 @@
     &-popper {
       z-index: 9999;
     }
-  }
 
-  input {
-    width: 220px;
+    &-wrapper {
+      width: 100%;
+    }
   }
 }
 

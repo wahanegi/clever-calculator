@@ -7,13 +7,14 @@ export const PcItemFormGroup = ({
   label = 'Price',
   suffixRight = '%',
   className = '',
+  labelProps = {},
 }) => {
 
   const isSuffixRight = paramType === 'discount'
 
   return (
     <Form.Group className={`position-relative pc-item-input ${paramType} ${className}`} title={label}>
-      <Form.Label className="pc-label position-absolute top-0 translate-middle-y px-1 py-0 bg-white text-gray-750 z-2">
+      <Form.Label className="pc-label position-absolute top-0 translate-middle-y px-1 py-0 bg-white text-gray-750 z-2" {...labelProps} >
         {label}
       </Form.Label>
 
