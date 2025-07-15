@@ -24,7 +24,7 @@ module Api
 
       def create_from_category
         category = Category.find(params[:quote_item][:category_id])
-        items = category.items.map { |item| default_quote_item_attributes(item) }
+        items = category.items.enabled.map { |item| default_quote_item_attributes(item) }
         quote_items = nil
 
         ActiveRecord::Base.transaction do
