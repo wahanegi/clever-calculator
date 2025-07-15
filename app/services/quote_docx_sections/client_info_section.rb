@@ -1,9 +1,11 @@
 module QuoteDocxSections
   class ClientInfoSection
-    def initialize(docx, customer, items)
+    def initialize(docx, quote, items)
       @docx = docx
-      @customer = customer
+      @quote = quote
       @items = items
+      @customer = quote.customer
+      @user = quote.user
     end
 
     # rubocop:disable Metrics/AbcSize,Metrics/MethodLength
@@ -45,16 +47,16 @@ module QuoteDocxSections
 
     def cloverpop_data
       [
-        ['Cloverpop Delivery lead:', 'Lanny Roytburg'],
-        ['Cloverpop Delivery lead Email:', 'Lanny@cloverpop.com']
+        ['Cloverpop Representative:', presence_or_default(@user&.name)],
+        ['Cloverpop Representative Email:', presence_or_default(@user&.email)]
       ]
     end
 
     def summary_data
       [
         ['Summary Description:', presence_or_default(nil)],
-        ['Terms of subscription & service:', presence_or_default(nil)],
-        ['Contract Type:', presence_or_default(nil)],
+        ['Terms of subscription & service:', presence_or_default(@quote.contract_period)],
+        ['Contract Type:', presence_or_default(@quote.contract_type&.name)],
         ['Capabilities Included:', Caracal::Core::Models::TableCellModel.new do |cell|
           @items.each do |item|
             cell.p item

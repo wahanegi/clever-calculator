@@ -58,7 +58,7 @@ RSpec.describe QuoteDocxGenerator do
 
         expect(category_cells[0].text).to eq(quote_item.item.category.name)
         expect(quote_item_cells[0].text).to eq(quote_item.item.name)
-        expect(quote_item_cells[3].text).to eq(number_to_currency(quote_item.final_price))
+        expect(quote_item_cells[4].text).to eq(number_to_currency(quote_item.final_price))
       end
 
       it 'renders the total cost table' do

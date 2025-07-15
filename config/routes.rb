@@ -5,7 +5,8 @@ Rails.application.routes.draw do
 
   namespace :api do
     namespace :v1 do
-      resources :quotes, only: [:create, :update] do
+      resources :contract_types, only: [:index]
+      resources :quotes, only: [:create, :update, :show] do
         member do
           patch :reset
           get :generate_file

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_06_23_082213) do
+ActiveRecord::Schema[8.0].define(version: 2025_07_11_141043) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -70,6 +70,13 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_23_082213) do
     t.integer "items_count", default: 0, null: false
     t.index ["is_disabled"], name: "index_categories_on_is_disabled"
     t.index ["name"], name: "index_categories_on_name", unique: true, where: "(is_disabled = false)"
+  end
+
+  create_table "contract_types", force: :cascade do |t|
+    t.string "name", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["name"], name: "index_contract_types_on_name", unique: true
   end
 
   create_table "customers", force: :cascade do |t|
@@ -144,6 +151,10 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_23_082213) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "step", default: "customer_info", null: false
+    t.bigint "contract_type_id"
+    t.date "contract_start_date"
+    t.date "contract_end_date"
+    t.index ["contract_type_id"], name: "index_quotes_on_contract_type_id"
     t.index ["customer_id"], name: "index_quotes_on_customer_id"
     t.index ["user_id"], name: "index_quotes_on_user_id"
   end
@@ -319,6 +330,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_23_082213) do
   add_foreign_key "quote_categories", "quotes"
   add_foreign_key "quote_items", "items"
   add_foreign_key "quote_items", "quotes"
+  add_foreign_key "quotes", "contract_types"
   add_foreign_key "quotes", "customers"
   add_foreign_key "quotes", "users"
   add_foreign_key "solid_queue_blocked_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade

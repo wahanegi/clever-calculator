@@ -3,6 +3,7 @@ import { del, get, patch, post, put } from './api/httpRequests'
 import { extractNames } from '../utils'
 
 export const fetchQuotes = {
+  show: (id) => get(`${ENDPOINTS.QUOTES}/${id}`),
   create: (data) => post(ENDPOINTS.QUOTES, data),
   update: (id, data) => put(`${ENDPOINTS.QUOTES}/${id}`, data),
   reset: (id) => patch(`${ENDPOINTS.QUOTES}/${id}/reset`),
@@ -64,4 +65,8 @@ export const fetchSelectableOptions = {
 export const fetchNotes = {
   upsert: async (quoteId, quoteItemId, data) => await post(`${ENDPOINTS.QUOTES}/${quoteId}/quote_items/${quoteItemId}/note/upsert`, data),
   destroy: async (quoteId, quoteItemId) => await del(`${ENDPOINTS.QUOTES}/${quoteId}/quote_items/${quoteItemId}/note`),
+}
+
+export const fetchContractTypes = {
+  index: async () => await get(ENDPOINTS.CONTRACT_TYPES),
 }

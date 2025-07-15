@@ -1,6 +1,9 @@
 ActiveAdmin.register Quote do
   permit_params :customer_id,
                 :user_id,
+                :contract_type_id,
+                :contract_start_date,
+                :contract_end_date,
                 :total_price,
                 quote_items_attributes: [:id,
                                          :item_id,
@@ -16,7 +19,7 @@ ActiveAdmin.register Quote do
                                                              :is_printable,
                                                              :_destroy] }]
 
-  includes :user, :customer
+  includes :user, :customer, :contract_type
 
   filter :customer_company_name, as: :string, label: 'Company Name'
   filter :user, as: :select, collection: proc {
@@ -24,6 +27,7 @@ ActiveAdmin.register Quote do
       ["#{u.email} (#{u.name})", u.id]
     end
   }
+  filter :contract_type, as: :select, collection: -> { ContractType.pluck(:name, :id) }
 
   index do
     selectable_column
@@ -37,6 +41,8 @@ ActiveAdmin.register Quote do
     column 'Total Price' do |quote|
       number_to_currency(quote.total_price)
     end
+    column :contract_type
+    column 'Contract Period', &:contract_period
     column :created_at
     actions
   end
@@ -45,6 +51,8 @@ ActiveAdmin.register Quote do
     f.inputs do
       f.input :customer, as: :select, collection: Customer.pluck(:company_name, :id), input_html: { class: 'custom-select' }
       f.input :user, as: :select, collection: User.order(:name).pluck(:name, :id), input_html: { class: 'custom-select' }
+      f.input :contract_type, as: :select, collection: ContractType.pluck(:name, :id), input_html: { class: 'custom-select' }
+      render partial: 'admin/quotes/contract_period_fields', locals: { quote: f.object }
       f.inputs class: 'dropdown-group' do
         li class: 'dropdown-fieldset' do
           span class: 'fieldset-title' do
@@ -181,6 +189,10 @@ ActiveAdmin.register Quote do
       row 'Created By' do |quote|
         quote.user.name
       end
+      row 'Contract Type' do |quote|
+        quote.contract_type&.name
+      end
+      row 'Contract Period', &:contract_period
       row 'Total Price' do |quote|
         number_to_currency(quote.total_price)
       end

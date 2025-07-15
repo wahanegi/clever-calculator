@@ -15,6 +15,7 @@ export const ENDPOINTS = {
   CATEGORIES: '/api/v1/categories',
   UNCATEGORIZED_ITEMS: '/api/v1/items/uncategorized',
   SELECTABLE_OPTIONS: '/api/v1/selectable_options',
+  CONTRACT_TYPES: '/api/v1/contract_types',
 }
 
 export const STEPS = {

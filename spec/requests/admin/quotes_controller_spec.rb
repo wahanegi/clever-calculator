@@ -6,10 +6,11 @@ RSpec.describe "Admin::Quotes", type: :request do
   let!(:customer) { create(:customer) }
   let!(:user) { create(:user) }
   let!(:category) { create(:category) }
+  let!(:contract_type) { create(:contract_type) }
   let!(:item_fixed) { create(:item, :with_fixed_parameters, category: category, name: "Fixed Item") }
   let!(:item_open) { create(:item, :with_open_parameters, category: category, name: "Open Item") }
   let!(:item_select) { create(:item, :with_pricing_options, name: "Select Item", category: nil) }
-  let!(:quote) { create(:quote, customer: customer, user: user) }
+  let!(:quote) { create(:quote, customer: customer, user: user, contract_type: contract_type) }
   let!(:quote_item) { create(:quote_item, quote: quote, item: item_fixed, price: 2500, discount: 10, final_price: 2250) }
   let(:unescaped_response_body) { CGI.unescapeHTML(response.body) }
 
@@ -60,6 +61,9 @@ RSpec.describe "Admin::Quotes", type: :request do
       {
         customer_id: customer.id,
         user_id: user.id,
+        contract_type_id: contract_type.id,
+        contract_start_date: Time.zone.today,
+        contract_end_date: Time.zone.today + 30,
         quote_items_attributes: {
           "0" => {
             item_id: item_open.id,

@@ -20,6 +20,9 @@ $utilities: map-merge(
 // Libs styles
 @import "application/typeahead";
 
+// Datepicker styles
+@import "react-datepicker/src/stylesheets/datepicker.scss";
+
 // Component styles
 @import 'application/common';
 @import 'application/icons';

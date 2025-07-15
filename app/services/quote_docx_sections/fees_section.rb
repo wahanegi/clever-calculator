@@ -46,7 +46,7 @@ module QuoteDocxSections
           background: '0248a1',
           color: 'ffffff',
           bold: true,
-          colspan: 5,
+          colspan: 6,
           font: 'Montserrat SemiBold'
         }
       ]]
@@ -57,6 +57,7 @@ module QuoteDocxSections
         header_cell_style('Cost Component'),
         header_cell_style('Unit'),
         header_cell_style('Quantity'),
+        header_cell_style('Discount'),
         header_cell_style('Total Cost'),
         header_cell_style('Notes')
       ]]
@@ -72,17 +73,18 @@ module QuoteDocxSections
       }
     end
 
-    def quote_item_rows(quote_items)
+    def quote_item_rows(quote_items) # rubocop:disable Metrics/AbcSize
       quote_items.map do |qi|
         [
           qi.item.name,
           quantity_or_unit_cell(qi.pricing_parameters.keys),
           quantity_or_unit_cell(qi.pricing_parameters.values),
+          format_percentage(qi.discount),
           format_number(qi.final_price, 'Included'),
           qi.note&.is_printable ? qi.note.notes.to_s : "-"
         ]
       end
-    end
+    end # rubocop:enable Metrics/AbcSize
 
     def quantity_or_unit_cell(array)
       Caracal::Core::Models::TableCellModel.new do |cell|
@@ -100,6 +102,10 @@ module QuoteDocxSections
       return default if number.nil? || number.zero?
 
       (currency ? number_to_currency(number) : number)
+    end
+
+    def format_percentage(number)
+      "#{number}%"
     end
   end
 end

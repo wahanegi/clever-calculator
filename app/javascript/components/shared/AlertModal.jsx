@@ -10,10 +10,11 @@ export const AlertModal = ({
                              cancelButtonText = 'Cancel',
                              title,
                              bodyText,
+                             showActions = true,
                              props,
                            }) => {
   const ActionControls = () => (
-    <div className={'d-flex justify-content-center align-content-center gap-8 mt-10'}>
+    showActions &&<div className={'d-flex justify-content-center align-content-center gap-8 mt-10'}>
       <Button variant="primary"
               className={'pc-btn text-lato'}
               onClick={onConfirm}>{confirmButtonText}</Button>
@@ -34,7 +35,7 @@ export const AlertModal = ({
       <Modal.Body className={'d-flex flex-column align-items-center justify-content-center p-0'}>
         <PcIcon name={'alert'} className={'mb-4'} />
 
-        <h4 className={'mb-6 fw-bold'}>{title}</h4>
+        {title && <h4 className={'mb-6 fw-bold'}>{title}</h4>}
         <p className={'text-center'}>{bodyText}</p>
 
         <ActionControls />
