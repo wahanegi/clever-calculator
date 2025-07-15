@@ -73,7 +73,7 @@ module QuoteDocxSections
       }
     end
 
-    def quote_item_rows(quote_items)
+    def quote_item_rows(quote_items) # rubocop:disable Metrics/AbcSize
       quote_items.map do |qi|
         [
           qi.item.name,
@@ -84,7 +84,7 @@ module QuoteDocxSections
           qi.note&.is_printable ? qi.note.notes.to_s : "-"
         ]
       end
-    end
+    end # rubocop:enable Metrics/AbcSize
 
     def quantity_or_unit_cell(array)
       Caracal::Core::Models::TableCellModel.new do |cell|
