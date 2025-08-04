@@ -14,7 +14,7 @@ gem "jbuilder", '~> 2.13.0'                                         # Build JSON
 gem "jsbundling-rails", '~> 1.3.1'                                  # Bundle and transpile JavaScript [https://github.com/rails/jsbundling-rails]
 gem "jsonapi-serializer", "~> 2.2.0"                                # Fast, simple and easy to use JSON:API serialization library (also known as fast_jsonapi).
 gem "kamal", '~> 2.7.0', require: false                             # Deploy this application anywhere as a Docker container [https://kamal-deploy.org]
-gem "pg", "~> 1.5.9"                                                # Use postgresql as the database for Active Record
+gem "pg", "~> 1.6.1"                                                # Use postgresql as the database for Active Record
 gem "puma", "~> 6.6.0"                                              # Use the Puma web server [https://github.com/puma/puma]
 gem "rails", "~> 8.0.2"                                             # Bundle edge Rails instead: gem "rails", github: "rails/rails", branch: "main"
 gem "ruby-vips", "~> 2.2"                                           # Ruby extension for the libvips image processing library.
