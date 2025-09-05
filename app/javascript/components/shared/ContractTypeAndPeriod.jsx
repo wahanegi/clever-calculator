@@ -49,9 +49,8 @@ const ContractTypeAndPeriod = ({ onUpdateContractType, onUpdateContractPeriod, q
 
     const handleBlurContractPeriod = () => {
         if (contractStartDate && contractEndDate) {
-            const formatedStartDate = contractStartDate.toLocaleDateString()
-            const formatedEndDate = contractEndDate.toLocaleDateString()
-
+            const formatedStartDate = contractStartDate.toLocaleDateString('en-GB')
+            const formatedEndDate = contractEndDate.toLocaleDateString('en-GB')
             onUpdateContractPeriod(formatedStartDate, formatedEndDate)
         }
     }
@@ -71,7 +70,6 @@ const ContractTypeAndPeriod = ({ onUpdateContractType, onUpdateContractPeriod, q
                 className="w-100"
                 labelProps={{ style: { maxWidth: "220px" } }}>
                 <DatePicker
-                    minDate={Date.now()}
                     className="fs-10 pc-lh-xl form-control"
                     selectsRange={true}
                     startDate={contractStartDate}

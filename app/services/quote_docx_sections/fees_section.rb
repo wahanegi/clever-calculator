@@ -56,7 +56,7 @@ module QuoteDocxSections
       [[
         header_cell_style('Cost Component'),
         header_cell_style('Unit'),
-        header_cell_style('Quantity'),
+        header_cell_style('Value'),
         header_cell_style('Discount'),
         header_cell_style('Total Cost'),
         header_cell_style('Notes')
