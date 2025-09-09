@@ -50,5 +50,5 @@ group :development do
 end
 
 group :production do
-  gem "aws-sdk-s3", '~> 1.192.0'                   # AWS SDK for Ruby
+  gem "aws-sdk-s3", '~> 1.199.0'                   # AWS SDK for Ruby
 end
