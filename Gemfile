@@ -10,7 +10,7 @@ gem "cssbundling-rails", '~> 1.4.3'                                 # Bundle and
 gem 'dentaku', "~> 3.5.4"                                           # Evaluator for a mathematical and logical formulas
 gem "devise", "~> 4.9.4"                                            # Authentication
 gem "image_processing", "~> 1.2"                                    # Use Active Storage variants [https://guides.rubyonrails.org/active_storage_overview.html#transforming-images]
-gem "jbuilder", '~> 2.13.0'                                         # Build JSON APIs with ease [https://github.com/rails/jbuilder]
+gem "jbuilder", '~> 2.14.1'                                         # Build JSON APIs with ease [https://github.com/rails/jbuilder]
 gem "jsbundling-rails", '~> 1.3.1'                                  # Bundle and transpile JavaScript [https://github.com/rails/jsbundling-rails]
 gem "jsonapi-serializer", "~> 2.2.0"                                # Fast, simple and easy to use JSON:API serialization library (also known as fast_jsonapi).
 gem "kamal", '~> 2.7.0', require: false                             # Deploy this application anywhere as a Docker container [https://kamal-deploy.org]
