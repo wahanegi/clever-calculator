@@ -23,7 +23,9 @@ class Quote < ApplicationRecord
   scope :completed, -> { where(step: 'completed') }
 
   def contract_period
-    "#{contract_start_date} - #{contract_end_date}"
+    start_date = contract_start_date&.strftime('%m/%d/%Y')
+    end_date = contract_end_date&.strftime('%m/%d/%Y')
+    "#{start_date} - #{end_date}"
   end
 
   def self.last_unfinished

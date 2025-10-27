@@ -59,7 +59,7 @@ module Api
       def quote_params_with_defaults
         quote_params.merge({
                              contract_start_date: Date.current,
-                             contract_end_date: Date.current + 1,
+                             contract_end_date: Date.current.next_year - 1.day,
                              contract_type_id: nil
                            })
       end
