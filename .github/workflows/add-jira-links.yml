@@ -1,0 +1,447 @@
+name: Add Jira Links to PR
+
+on:
+  pull_request:
+    types: [opened, edited, synchronize]
+
+permissions:
+  pull-requests: write
+
+jobs:
+  add-jira-links:
+    if: github.event.action != 'edited' || github.event.changes.title != null
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Extract Jira Issue Keys
+        id: extract_keys
+        run: |
+          PR_TITLE="${{ github.event.pull_request.title }}"
+          BRANCH_NAME="${{ github.event.pull_request.head.ref }}"
+
+          # Extract all Jira keys matching patterns: CP-XXXX, VB-XXXX, AM-XXXX, CC-XXXX, etc. 
+          ALL_KEYS=$(echo "$PR_TITLE $BRANCH_NAME" | grep -oE '[A-Z]+-[0-9]+' || true)
+          ALL_KEYS=$(echo "$ALL_KEYS" | sort -u)
+
+          if [ -z "$ALL_KEYS" ]; then
+            echo "No Jira issue keys found in PR title or branch name"
+            echo "KEYS_FOUND=false" >> $GITHUB_ENV
+            exit 0
+          fi
+
+          echo "Found Jira issue keys: $ALL_KEYS"
+
+          KEYS_CSV=$(echo "$ALL_KEYS" | tr '\n' ',' | sed 's/,$//')
+          echo "ISSUE_KEYS=$KEYS_CSV" >> $GITHUB_ENV
+          echo "KEYS_FOUND=true" >> $GITHUB_ENV
+        shell: bash
+
+      - name: Extract Jira Issue Keys From Commits
+        if: env.KEYS_FOUND == 'true'
+        id: extract_commit_keys
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          REPO: ${{ github.repository }}
+          PR_ACTION: ${{ github.event.action }}
+          PR_BEFORE: ${{ github.event.before }}
+          PR_AFTER: ${{ github.event.after }}
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          CURRENT_BODY: ${{ github.event.pull_request.body }}
+        run: |
+          ZERO_SHA="0000000000000000000000000000000000000000"
+
+          extract_keys_from_commits_section() {
+            local body
+            body=$(printf '%s' "$1" | tr -d '\r')
+            local region
+            region=$(printf '%s' "$body" | python3 -c "import re, sys; raw = sys.stdin.read(); m = re.search(r'<!-- jira-bot:begin -->(.*?)<!-- jira-bot:end -->', raw, re.DOTALL); print(m.group(1) if m else raw, end='')")
+            if ! printf '%s' "$region" | grep -qE '(^|\n)### Referenced stories in commits'; then
+              return 0
+            fi
+            printf '%s' "$region" | awk '
+              /^### Referenced stories in commits/ { f=1; next }
+              f && /^## / { exit }
+              f { print }
+            ' | grep -oE '[A-Z]+-[0-9]+' || true
+          }
+
+          extract_keys_from_jira_section() {
+            local body
+            body=$(printf '%s' "$1" | tr -d '\r')
+            local region
+            region=$(printf '%s' "$body" | python3 -c "import re, sys; raw = sys.stdin.read(); m = re.search(r'<!-- jira-bot:begin -->(.*?)<!-- jira-bot:end -->', raw, re.DOTALL); print(m.group(1) if m else '', end='')")
+            printf '%s' "$region" | grep -oE '[A-Z]+-[0-9]+' || true
+          }
+
+          fetch_pr_messages() {
+            local mode="${1:-all}"
+            local stop_sha="${2:-}"
+            local page=1
+            local combined=""
+            local reached_stop=0
+            while [ "$page" -le 100 ]; do
+              local resp
+              resp=$(curl -s \
+                -H "Accept: application/vnd.github+json" \
+                -H "Authorization: Bearer $GITHUB_TOKEN" \
+                -H "X-GitHub-Api-Version: 2022-11-28" \
+                "https://api.github.com/repos/$REPO/pulls/${PR_NUMBER}/commits?per_page=100&page=${page}" 2>/dev/null || echo "{}")
+
+              if echo "$resp" | jq -e 'type == "array"' >/dev/null 2>&1; then
+                :
+              else
+                echo "Warning: pull commits page ${page} returned unexpected JSON"
+                break
+              fi
+
+              local chunk n
+              if [ "$mode" = "since_before" ] && [ -n "$stop_sha" ]; then
+                # Keep only commits that are newer than stop_sha inside the PR commit list.
+                chunk=$(echo "$resp" | jq -r --arg stop "$stop_sha" '
+                  .[] | if .sha == $stop then "__STOP__" else (.commit.message // empty) end
+                ' 2>/dev/null || echo "")
+                if printf '%s\n' "$chunk" | grep -q '^__STOP__$'; then
+                  reached_stop=1
+                  chunk=$(printf '%s\n' "$chunk" | awk '$0 != "__STOP__"')
+                fi
+              else
+                chunk=$(echo "$resp" | jq -r '.[]?.commit.message // empty' 2>/dev/null || echo "")
+              fi
+              n=$(echo "$resp" | jq 'length' 2>/dev/null || echo 0)
+
+              if [ -z "$chunk" ] && [ "${n:-0}" -eq 0 ]; then
+                break
+              fi
+              combined+="$chunk"$'\n'
+              if [ "$reached_stop" -eq 1 ]; then
+                break
+              fi
+              if [ "${n:-0}" -lt 100 ]; then
+                break
+              fi
+              page=$((page + 1))
+            done
+            printf '%s' "$combined"
+          }
+
+          DELTA_KEYS=""
+          if [ "$PR_ACTION" = "synchronize" ] && [ -n "$PR_BEFORE" ] && [ "$PR_BEFORE" != "$ZERO_SHA" ]; then
+            echo "Commit key scan: PR commits after before-sha ${PR_BEFORE}"
+            MSGS=$(fetch_pr_messages "since_before" "$PR_BEFORE")
+            DELTA_KEYS=$(echo "$MSGS" | grep -oE '[A-Z]+-[0-9]+' || true)
+            DELTA_KEYS=$(echo "$DELTA_KEYS" | sort -u)
+            if [ -z "$DELTA_KEYS" ]; then
+              echo "Commit key scan: no new keys after before-sha; fallback to full PR commit list #${PR_NUMBER}"
+              MSGS=$(fetch_pr_messages)
+              DELTA_KEYS=$(echo "$MSGS" | grep -oE '[A-Z]+-[0-9]+' || true)
+              DELTA_KEYS=$(echo "$DELTA_KEYS" | sort -u)
+            fi
+          elif [ "$PR_ACTION" = "opened" ] || [ "$PR_ACTION" = "reopened" ]; then
+            echo "Commit key scan: full commit list from PR #${PR_NUMBER}"
+            MSGS=$(fetch_pr_messages)
+            DELTA_KEYS=$(echo "$MSGS" | grep -oE '[A-Z]+-[0-9]+' || true)
+            DELTA_KEYS=$(echo "$DELTA_KEYS" | sort -u)
+          else
+            echo "Commit key scan: no new push range (action=$PR_ACTION); using keys already under ### Referenced stories in commits only"
+          fi
+
+          EXISTING_KEYS=$(extract_keys_from_commits_section "$CURRENT_BODY")
+          EXISTING_KEYS=$(echo "$EXISTING_KEYS" | sort -u)
+          EXISTING_JIRA_KEYS=$(extract_keys_from_jira_section "$CURRENT_BODY")
+          EXISTING_JIRA_KEYS=$(echo "$EXISTING_JIRA_KEYS" | sort -u)
+
+          # Add only truly new commit keys; keep existing commit keys via EXISTING_KEYS.
+          if [ -n "$DELTA_KEYS" ] && [ -n "$EXISTING_JIRA_KEYS" ]; then
+            DELTA_KEYS=$(printf '%s\n' "$DELTA_KEYS" | grep -vxF -f <(printf '%s\n' "$EXISTING_JIRA_KEYS") || true)
+          fi
+
+          ALL_KEYS=$(printf '%s\n%s\n' "$DELTA_KEYS" "$EXISTING_KEYS" | grep -oE '[A-Z]+-[0-9]+' || true)
+          ALL_KEYS=$(echo "$ALL_KEYS" | sort -u)
+
+          declare -A META_LOOKUP
+          if [ -n "${ISSUE_KEYS:-}" ]; then
+            IFS=',' read -ra __META <<< "$ISSUE_KEYS"
+            for k in "${__META[@]}"; do
+              META_LOOKUP["$k"]=1
+            done
+          fi
+
+          COMMIT_KEYS=""
+          for k in $ALL_KEYS; do
+            [ -z "$k" ] && continue
+            if [ -n "${META_LOOKUP[$k]+x}" ]; then
+              continue
+            fi
+            COMMIT_KEYS+="$k"$'\n'
+          done
+          # grep returns 1 when no lines match; keep script running under -e -o pipefail
+          COMMIT_KEYS=$(printf '%s' "$COMMIT_KEYS" | awk 'NF' | sort -u)
+
+          if [ -z "$COMMIT_KEYS" ]; then
+            echo "No commit-only Jira keys (delta + existing Referenced stories in commits, excluding title/branch keys)"
+            exit 0
+          fi
+
+          echo "Commit-only Jira keys: $COMMIT_KEYS"
+          COMMIT_KEYS_CSV=$(echo "$COMMIT_KEYS" | tr '\n' ',' | sed 's/,$//')
+          echo "COMMIT_KEYS=$COMMIT_KEYS_CSV" >> $GITHUB_ENV
+        shell: bash
+
+      - name: Update PR description (warning or Jira links)
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          REPO: ${{ github.repository }}
+          CURRENT_BODY: ${{ github.event.pull_request.body }}
+          JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
+          JIRA_EMAIL: ${{ secrets.JIRA_EMAIL }}
+          JIRA_INSTANCE: ${{ secrets.JIRA_INSTANCE }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: |
+          # inner = markdown inside <!-- jira-bot:begin/end --> (no ## Jira heading)
+          merge_jira_section() {
+            local inner="$1"
+            local current_body="$2"
+            export JIRA_BOT_INNER="$inner"
+            printf '%s' "$current_body" | python3 -c "import os,re,sys; body=sys.stdin.read(); inner=os.environ.get('JIRA_BOT_INNER',''); begin='<!-- jira-bot:begin -->'; end='<!-- jira-bot:end -->'; block=lambda: begin+'\n'+inner+'\n'+end+'\n\n'; pattern=re.compile(re.escape(begin)+r'(.*?)'+re.escape(end), re.DOTALL); m=pattern.search(body); body=pattern.sub(begin+'\n'+inner+'\n'+end, body, count=1) if m else body; sys.stdout.write(body if m else re.sub(r'^## Jira\\s*\\n.*?(?=^## |\\Z)', block(), body, count=1, flags=re.MULTILINE|re.DOTALL) if re.search(r'^## Jira\\s*$', body, re.MULTILINE) else block()+body)"
+          }
+
+          patch_github_pr_body() {
+            local new_body="$1"
+            local ok_msg="$2"
+            local escaped_body
+            escaped_body=$(echo "$new_body" | jq -Rs .)
+
+            local gh_response
+            gh_response=$(curl -s -w "%{http_code}" -X PATCH \
+              -H "Accept: application/vnd.github+json" \
+              -H "Authorization: Bearer $GITHUB_TOKEN" \
+              -H "X-GitHub-Api-Version: 2022-11-28" \
+              "https://api.github.com/repos/$REPO/pulls/$PR_NUMBER" \
+              -d "{\"body\": $escaped_body}" 2>/dev/null || echo "000")
+
+            local gh_http_code gh_body
+            if [ -n "$gh_response" ] && [ "${#gh_response}" -ge 3 ]; then
+              gh_http_code=${gh_response: -3}
+              gh_body=${gh_response:0:${#gh_response}-3}
+            else
+              gh_http_code="000"
+              gh_body=""
+            fi
+
+            if [ "$gh_http_code" -ge 200 ] && [ "$gh_http_code" -lt 300 ]; then
+              echo "$ok_msg"
+            else
+              echo "Error: GitHub API returned status $gh_http_code"
+              echo "Response: $gh_body"
+              exit 1
+            fi
+          }
+
+          if [ "${KEYS_FOUND:-false}" != "true" ]; then
+            WARNING_INNER="- No Jira issue key found in PR title or branch name, so Jira links were not generated."$'\n'"- Add a key like \`CP-1234\` in the PR title or branch name to enable automatic Jira links."
+            NEW_BODY=$(merge_jira_section "$WARNING_INNER" "$CURRENT_BODY")
+            patch_github_pr_body "$NEW_BODY" "Successfully updated PR description with missing Jira notice"
+            exit 0
+          fi
+
+          META_KEYS=()
+          if [ -n "${ISSUE_KEYS:-}" ]; then
+            IFS=',' read -ra META_KEYS <<< "$ISSUE_KEYS"
+          fi
+
+          COMMIT_KEYS_ARRAY=()
+          if [ -n "${COMMIT_KEYS:-}" ]; then
+            IFS=',' read -ra COMMIT_KEYS_ARRAY <<< "$COMMIT_KEYS"
+          fi
+
+          build_jira_line() {
+            local KEY="$1"
+            local CONTEXT="${2:-meta}"
+            local JIRA_URL="https://${JIRA_INSTANCE}/browse/$KEY"
+
+            local ISSUE_TYPE="" ISSUE_SUMMARY="" AI_DESCRIPTION=""
+            if [ -n "$JIRA_API_TOKEN" ] && [ -n "$JIRA_EMAIL" ] && [ -n "$JIRA_INSTANCE" ]; then
+              local JIRA_RESPONSE
+              JIRA_RESPONSE=$(curl -s \
+                --user "${JIRA_EMAIL}:${JIRA_API_TOKEN}" \
+                -H "Accept: application/json" \
+                "https://${JIRA_INSTANCE}/rest/api/3/issue/${KEY}?fields=issuetype,summary,description" 2>/dev/null || echo "")
+
+              if [ -n "$JIRA_RESPONSE" ]; then
+                local JIRA_KEY_FOUND JIRA_ERRORS
+                JIRA_KEY_FOUND=$(echo "$JIRA_RESPONSE" | jq -r '.key // ""' 2>/dev/null || echo "")
+                JIRA_ERRORS=$(echo "$JIRA_RESPONSE" | jq -r '.errorMessages[]? // empty' 2>/dev/null || echo "")
+                if [ -z "$JIRA_KEY_FOUND" ] || [ -n "$JIRA_ERRORS" ]; then
+                  echo "- Jira key \`$KEY\` not found (or no access)."
+                  return 0
+                fi
+
+                ISSUE_TYPE=$(echo "$JIRA_RESPONSE" | jq -r '.fields.issuetype.name // ""' 2>/dev/null || echo "")
+                ISSUE_SUMMARY=$(echo "$JIRA_RESPONSE" | jq -r '.fields.summary // ""' 2>/dev/null || echo "")
+
+                local RAW_DESCRIPTION
+                RAW_DESCRIPTION=$(echo "$JIRA_RESPONSE" | jq -r '
+                  if .fields.description then
+                    if .fields.description.content then
+                      [.fields.description.content[] |
+                       if .content then
+                         [.content[] |
+                          if .text then .text else empty end
+                         ] | join(" ")
+                       else empty end
+                      ] | join(" ")
+                    else
+                      .fields.description
+                    end
+                  else
+                    ""
+                  end
+                ' 2>/dev/null || echo "")
+
+                if [ -n "$OPENAI_API_KEY" ] && [ "${{ vars.ENABLE_AI_SUMMARIES }}" = "true" ]; then
+                  local AI_SUMMARY_INPUT="$ISSUE_SUMMARY"
+                  if [ -z "$AI_SUMMARY_INPUT" ]; then
+                    AI_SUMMARY_INPUT="Jira issue $KEY"
+                  fi
+                  local TRIMMED_DESC
+                  TRIMMED_DESC=$(echo "$RAW_DESCRIPTION" | head -c 2000)
+
+                  local AI_SYSTEM_PROMPT
+                  local AI_MAX_TOKENS=150
+                  if [ "$CONTEXT" = "commit" ]; then
+                    AI_SYSTEM_PROMPT="You are a technical assistant helping developers. Write exactly one concise sentence that summarizes the technical change for this Jira ticket. Focus only on implementation. Ignore links, Figma references, and requirements docs."
+                    AI_MAX_TOKENS=60
+                  else
+                    AI_SYSTEM_PROMPT="You are a technical assistant helping developers. Create a brief 2-3 sentence summary of what needs to be done in this PR based on the Jira ticket. Focus on the technical implementation, ignore links, Figma references, and requirements documents. Write in present tense. If description is empty, expand on the summary."
+                  fi
+
+                  local JSON_PAYLOAD
+                  JSON_PAYLOAD=$(jq -n \
+                    --arg summary "$AI_SUMMARY_INPUT" \
+                    --arg desc "$TRIMMED_DESC" \
+                    --arg system_prompt "$AI_SYSTEM_PROMPT" \
+                    --argjson max_tokens "$AI_MAX_TOKENS" \
+                    '{
+                      "model": "gpt-4o-mini",
+                      "messages": [
+                        {
+                          "role": "system",
+                          "content": $system_prompt
+                        },
+                        {
+                          "role": "user",
+                          "content": ("Jira Summary: " + $summary + "\n\nJira Description: " + $desc)
+                        }
+                      ],
+                      "max_tokens": $max_tokens,
+                      "temperature": 0.3
+                    }')
+
+                  local ai_response ai_http_code ai_body
+                  ai_response=$(curl -s -w "%{http_code}" --max-time 10 \
+                    -H "Authorization: Bearer $OPENAI_API_KEY" \
+                    -H "Content-Type: application/json" \
+                    -d "$JSON_PAYLOAD" \
+                    "https://api.openai.com/v1/chat/completions" 2>/dev/null || echo "000")
+
+                  if [ -n "$ai_response" ] && [ "${#ai_response}" -ge 3 ]; then
+                    ai_http_code=${ai_response: -3}
+                    ai_body=${ai_response:0:${#ai_response}-3}
+                  else
+                    ai_http_code="000"
+                    ai_body=""
+                  fi
+
+                  if [ "$ai_http_code" -ge 200 ] && [ "$ai_http_code" -lt 300 ]; then
+                    AI_DESCRIPTION=$(echo "$ai_body" | jq -r '.choices[0].message.content // ""' 2>/dev/null || echo "")
+                  else
+                    echo "Warning: OpenAI API returned status $ai_http_code for $KEY"
+                  fi
+                fi
+              fi
+            fi
+
+            local BADGE_COLOR="0052CC"
+            case "$ISSUE_TYPE" in
+              "Bug") BADGE_COLOR="FF5630" ;;
+              "Story") BADGE_COLOR="36B37E" ;;
+              "Task") BADGE_COLOR="0052CC" ;;
+              "Epic") BADGE_COLOR="6554C0" ;;
+            esac
+
+            local BADGE_LABEL="$ISSUE_TYPE"
+            if [ -z "$BADGE_LABEL" ]; then
+              BADGE_LABEL="Jira"
+            fi
+            local ESCAPED_KEY
+            ESCAPED_KEY=$(echo "$KEY" | sed 's/-/--/g')
+            local BADGE_URL="https://img.shields.io/badge/${ESCAPED_KEY}-${BADGE_LABEL}-${BADGE_COLOR}?style=flat-square&logo=jira"
+            local KEY_LINE="[![${KEY}](${BADGE_URL})](${JIRA_URL})"
+            if [ -n "$AI_DESCRIPTION" ]; then
+              KEY_LINE+=$'\n'"${AI_DESCRIPTION}"
+            fi
+            echo "$KEY_LINE"
+          }
+
+          extract_existing_key_block() {
+            local KEY="$1"
+            local BODY="$2"
+            printf '%s' "$BODY" | KEY="$KEY" python3 -c "import os,re,sys; key=os.environ.get('KEY',''); body=sys.stdin.read().replace('\r',''); m=re.search(r'<!-- jira-bot:begin -->(.*?)<!-- jira-bot:end -->', body, re.DOTALL); region=m.group(1) if m else ''; lines=region.splitlines(); target=re.compile(r'^\[!\['+re.escape(key)+r'\]\('); any_badge=re.compile(r'^\[!\[[A-Z]+-[0-9]+\]\('); start=next((i for i,line in enumerate(lines) if target.match(line.strip())), None); end=len(lines); end=next((j for j in range(start+1, len(lines)) if lines[j].strip().startswith('### Referenced stories in commits') or any_badge.match(lines[j].strip())), end) if start is not None else end; sys.stdout.write('\n'.join(lines[start:end]).strip() if start is not None else '')"
+          }
+
+          META_SECTION=""
+          declare -A META_LOOKUP
+          if [ "${#META_KEYS[@]}" -gt 0 ]; then
+            for KEY in "${META_KEYS[@]}"; do
+              META_LOOKUP["$KEY"]=1
+              KEY_BLOCK=$(extract_existing_key_block "$KEY" "$CURRENT_BODY")
+              if [ -z "$KEY_BLOCK" ]; then
+                KEY_BLOCK=$(build_jira_line "$KEY" "meta")
+              fi
+              if [ -n "$KEY_BLOCK" ]; then
+                if [ -n "$META_SECTION" ]; then
+                  META_SECTION+=$'\n'
+                fi
+                META_SECTION+="$KEY_BLOCK"$'\n'
+              fi
+            done
+          fi
+
+          COMMIT_SECTION=""
+          if [ "${#COMMIT_KEYS_ARRAY[@]}" -gt 0 ]; then
+            for KEY in "${COMMIT_KEYS_ARRAY[@]}"; do
+              if [ -n "${META_LOOKUP[$KEY]+x}" ]; then
+                continue
+              fi
+              KEY_BLOCK=$(extract_existing_key_block "$KEY" "$CURRENT_BODY")
+              if [ -z "$KEY_BLOCK" ]; then
+                KEY_BLOCK=$(build_jira_line "$KEY" "commit")
+              fi
+              if [ -n "$KEY_BLOCK" ]; then
+                if [ -n "$COMMIT_SECTION" ]; then
+                  COMMIT_SECTION+=$'\n'
+                fi
+                COMMIT_SECTION+="$KEY_BLOCK"$'\n'
+              fi
+            done
+          fi
+
+          JIRA_INNER=""
+          if [ -n "$META_SECTION" ]; then
+            JIRA_INNER+="$META_SECTION"
+          fi
+          if [ -n "$META_SECTION" ] && [ -n "$COMMIT_SECTION" ]; then
+            JIRA_INNER+=$'\n'"### Referenced stories in commits"$'\n'
+            JIRA_INNER+="$COMMIT_SECTION"
+          fi
+
+          if [ -n "$JIRA_INNER" ] && [ "$JIRA_INNER" != $'\n' ]; then
+            NEW_BODY=$(merge_jira_section "$JIRA_INNER" "$CURRENT_BODY")
+            patch_github_pr_body "$NEW_BODY" "Successfully updated PR description with Jira links"
+          else
+            echo "All Jira links already present in PR description"
+          fi
+        shell: bash
